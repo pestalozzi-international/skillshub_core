@@ -1,0 +1,119 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:student_name-SS{##}",
+ "creation": "2026-01-26 07:59:41.680598",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "student_column",
+  "student_name",
+  "context_section",
+  "feedback_phase",
+  "program",
+  "course",
+  "soft_skill",
+  "general_tab",
+  "section_break_jzih",
+  "impact_statement",
+  "metrics_section",
+  "confidence_finding_a_job"
+ ],
+ "fields": [
+  {
+   "fieldname": "student_column",
+   "fieldtype": "Column Break",
+   "label": "Student"
+  },
+  {
+   "fieldname": "student_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Student Name",
+   "options": "SH Student"
+  },
+  {
+   "fieldname": "context_section",
+   "fieldtype": "Section Break",
+   "label": "Context"
+  },
+  {
+   "fieldname": "feedback_phase",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Feedback Phase",
+   "options": "SkillsHub Phases"
+  },
+  {
+   "fetch_from": "student_name.current_programme",
+   "fieldname": "program",
+   "fieldtype": "Read Only",
+   "label": "Program"
+  },
+  {
+   "fetch_from": "student_name.course",
+   "fieldname": "course",
+   "fieldtype": "Read Only",
+   "label": "Course"
+  },
+  {
+   "fieldname": "general_tab",
+   "fieldtype": "Tab Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "section_break_jzih",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "impact_statement",
+   "fieldtype": "Small Text",
+   "label": "Impact Statement"
+  },
+  {
+   "fieldname": "metrics_section",
+   "fieldtype": "Section Break",
+   "label": "Metrics"
+  },
+  {
+   "fieldname": "confidence_finding_a_job",
+   "fieldtype": "Rating",
+   "label": "Confidence Finding a Job"
+  },
+  {
+   "fieldname": "soft_skill",
+   "fieldtype": "Link",
+   "label": "Soft Skill",
+   "options": "SkillsHub Soft Skills"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-01-26 08:14:39.823425",
+ "modified_by": "Administrator",
+ "module": "ZM SkillsHub",
+ "name": "SH Soft Skills Feedback",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

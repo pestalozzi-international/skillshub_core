@@ -1,0 +1,110 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "creation": "2026-01-23 08:40:05.230599",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "cohort_name",
+  "code",
+  "section_break_otxk",
+  "cohort_details"
+ ],
+ "fields": [
+  {
+   "fieldname": "code",
+   "fieldtype": "Data",
+   "label": "Code",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "cohort_name",
+   "fieldtype": "Select",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Cohort Name",
+   "options": "\nCohort 0\nCohort 1\nCohort 2\nCohort 3\nCohort 4\nCohort 5\nCohort 6\nCohort 7\nCohort 8\nCohort 9\nCohort 10\nCohort 11\nCohort 12\nCohort 13\nCohort 14\nCohort 15\nCohort 16\nCohort 17\nCohort 18\nCohort 19\nCohort 20\nCohort 21\nCohort 22\nCohort 23\nCohort 24\nCohort 25\nCohort 26\nCohort 27\nCohort 28\nCohort 29\nCohort 30\nCohort 31\nCohort 32\nCohort 33\nCohort 34\nCohort 35\nCohort 36\nCohort 37\nCohort 38\nCohort 39\nCohort 40\nCohort 41\nCohort 42\nCohort 43\nCohort 44\nCohort 45\nCohort 46\nCohort 47\nCohort 48\nCohort 49\nCohort 50",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_otxk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "cohort_details",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Cohort Details"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "link_doctype": "SH Programme Schedule",
+   "link_fieldname": "cohort"
+  }
+ ],
+ "modified": "2026-04-06 14:26:12.213995",
+ "modified_by": "Administrator",
+ "module": "ZM SkillsHub",
+ "name": "SkillsHub Cohort",
+ "naming_rule": "By script",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "PI Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Student",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "share": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "cohort_name"
+}

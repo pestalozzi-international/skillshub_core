@@ -1,0 +1,13 @@
+// Copyright (c) 2026, PI Dev and contributors
+// For license information, please see license.txt
+
+// frappe.ui.form.on("SH Student", {
+// 	refresh(frm) {
+
+// 	},
+// });
+frappe.ui.form.on('SH Student', {
+    refresh(frm) {
+
+    }
+});

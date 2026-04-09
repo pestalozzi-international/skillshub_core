@@ -1,0 +1,236 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"GT9u3mKvXT\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">SkillsHub Data</span>\",\"col\":12}},{\"id\":\"B4zJiaDoqc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Students\",\"col\":4}},{\"id\":\"aSSeyUVobr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Alumni\",\"col\":4}},{\"id\":\"7OGhxqZVSs\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"rn0VIJRaVM\",\"type\":\"card\",\"data\":{\"card_name\":\"Programme Design\",\"col\":4}},{\"id\":\"zCEDYKxuNK\",\"type\":\"card\",\"data\":{\"card_name\":\"Faculty\",\"col\":4}},{\"id\":\"SKkaE9TVdd\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}},{\"id\":\"gaEa9Bbw18\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"7dj3pDOBzP\",\"type\":\"card\",\"data\":{\"card_name\":\"Baseline Building Blocks\",\"col\":4}},{\"id\":\"YxWip5M53x\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Student Baseline Assessment\",\"col\":4}},{\"id\":\"a6urO1Q_E-\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Jpt1yuCRl1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Enrolment Forms\",\"col\":3}}]",
+ "creation": "2026-01-27 07:59:42.855549",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "today",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "Zambia: SkillsHub",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Faculty",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Teaching Partner",
+   "link_count": 0,
+   "link_to": "SH Teaching Partner",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Instructor",
+   "link_count": 0,
+   "link_to": "SH Instructor",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Attendance",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Attendance",
+   "link_count": 0,
+   "link_to": "SH Attendance",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Holidays",
+   "link_count": 0,
+   "link_to": "SH Holiday List",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Baseline Building Blocks",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "SH Student Motivation",
+   "link_count": 0,
+   "link_to": "SH Student Motivation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "SH Student Community Challenge",
+   "link_count": 0,
+   "link_to": "SH Student Community Challenge",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "SH Student Resilience",
+   "link_count": 0,
+   "link_to": "SH Student Resilience",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Programme Design",
+   "link_count": 6,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Programme Schedule",
+   "link_count": 0,
+   "link_to": "SH Programme Schedule",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Academic Year",
+   "link_count": 0,
+   "link_to": "SH Academic Year",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": " Cohort",
+   "link_count": 0,
+   "link_to": "SkillsHub Cohort",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Phase",
+   "link_count": 0,
+   "link_to": "SkillsHub Phases",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "SkillsHub Programme",
+   "link_count": 0,
+   "link_to": "SkillsHub Programme",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "SkillsHub Course",
+   "link_count": 0,
+   "link_to": "SkillsHub Course",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-04-01 21:13:11.599878",
+ "modified_by": "Administrator",
+ "module": "ZM SkillsHub",
+ "name": "Zambia: SkillsHub",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "Administrator"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 7.0,
+ "shortcuts": [
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Student Baseline Assessment",
+   "link_to": "SH Student Baseline Form",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Enrolment Forms",
+   "link_to": "Web Form",
+   "stats_filter": "[[\"Web Form\",\"module\",\"=\",\"ZM SkillsHub\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "SkillsHub Students",
+   "link_to": "SH Student",
+   "stats_filter": "[[\"SH Student\",\"status\",\"=\",\"Student\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Blue",
+   "doc_view": "List",
+   "label": "SkillsHub Alumni",
+   "link_to": "SH Student",
+   "stats_filter": "[[\"SH Student\",\"status\",\"=\",\"Alumni\",false]]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Zambia: SkillsHub"
+}

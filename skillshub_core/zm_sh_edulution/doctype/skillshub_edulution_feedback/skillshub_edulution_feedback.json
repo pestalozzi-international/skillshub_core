@@ -1,0 +1,409 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{student_name}-ED{##}",
+ "creation": "2026-01-28 10:21:38.059716",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "general_tab",
+  "portal_user_details_section",
+  "portal_user_account",
+  "section_break_vovo",
+  "student_column",
+  "student_name",
+  "pestalozzi_student_id",
+  "feedback_phase",
+  "column_break_pppv",
+  "cohort",
+  "program_schedule",
+  "academic_year",
+  "course",
+  "feedback_form_tab",
+  "goals_set",
+  "section_break_syuq",
+  "skills_html",
+  "skills_learned",
+  "section_break_vxus",
+  "how_well_have_you_progressed_with_your_goals",
+  "column_break_bfcr",
+  "describe_one_goal_and_the_steps_you_took_to_achieve_it",
+  "section_break_wamb",
+  "how_would_you_rate_your_confidence_levels",
+  "column_break_zfhe",
+  "what_motivated_or_inspired_you_this_month",
+  "section_break_zpan",
+  "how_would_you_rate_your_literacy_skills",
+  "column_break_zgrv",
+  "how_would_you_rate_your_numeracy_skills",
+  "section_break_jnsl",
+  "problem_solving",
+  "section_break_uqri",
+  "softskills_confidence",
+  "section_break_nyzt",
+  "reallife_example",
+  "what_is_your_best_soft_skill",
+  "section_break_rosf",
+  "how_resilient_are_you",
+  "column_break_nxxq",
+  "can_you_give_a_reallife_example_of_your_resilience",
+  "section_break_clpd",
+  "resilience_html",
+  "resilience_table",
+  "section_break_jonn",
+  "what_are_you_most_proud_of_since_joining_this_course",
+  "section_break_amgv",
+  "what_has_been_the_impact_of_the_course_on_your_life",
+  "section_break_yngq",
+  "do_you_want_coaching",
+  "would_you_recommend_this_course",
+  "section_break_lbyc",
+  "photo"
+ ],
+ "fields": [
+  {
+   "fieldname": "general_tab",
+   "fieldtype": "Tab Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "student_column",
+   "fieldtype": "Column Break",
+   "label": "Student"
+  },
+  {
+   "fetch_from": "portal_user_account.skillshub_record",
+   "fieldname": "student_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Student Name",
+   "options": "SH Student",
+   "search_index": 1
+  },
+  {
+   "fetch_from": "portal_user_account.pestalozzi_id_sh",
+   "fieldname": "pestalozzi_student_id",
+   "fieldtype": "Data",
+   "label": "Pestalozzi Student ID"
+  },
+  {
+   "fieldname": "feedback_phase",
+   "fieldtype": "Link",
+   "label": "Feedback Phase",
+   "options": "SkillsHub Phases"
+  },
+  {
+   "fieldname": "column_break_pppv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cohort",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Cohort",
+   "options": "SkillsHub Cohort"
+  },
+  {
+   "fieldname": "program_schedule",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Program Schedule",
+   "options": "SH Programme Schedule"
+  },
+  {
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Course",
+   "options": "SkillsHub Course"
+  },
+  {
+   "fieldname": "portal_user_details_section",
+   "fieldtype": "Section Break",
+   "label": "Portal User Details"
+  },
+  {
+   "fetch_from": "student_name.portal_user_account",
+   "fieldname": "portal_user_account",
+   "fieldtype": "Link",
+   "label": "Portal User Account",
+   "options": "User"
+  },
+  {
+   "fieldname": "feedback_form_tab",
+   "fieldtype": "Tab Break",
+   "label": "Feedback Form"
+  },
+  {
+   "fieldname": "section_break_vxus",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_bfcr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "goals_set",
+   "fieldtype": "Check",
+   "label": "Goals Set"
+  },
+  {
+   "fieldname": "how_well_have_you_progressed_with_your_goals",
+   "fieldtype": "Rating",
+   "label": "How well have you progressed with your goals?"
+  },
+  {
+   "fieldname": "describe_one_goal_and_the_steps_you_took_to_achieve_it",
+   "fieldtype": "Small Text",
+   "label": "Describe one goal and the steps you took to achieve it"
+  },
+  {
+   "fieldname": "section_break_wamb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "how_would_you_rate_your_confidence_levels",
+   "fieldtype": "Rating",
+   "label": "How would you rate your confidence levels?"
+  },
+  {
+   "fieldname": "column_break_zfhe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "what_motivated_or_inspired_you_this_month",
+   "fieldtype": "Small Text",
+   "label": "What motivated or inspired you this month?"
+  },
+  {
+   "fieldname": "section_break_zpan",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "how_would_you_rate_your_literacy_skills",
+   "fieldtype": "Rating",
+   "label": "How would you rate your literacy skills?"
+  },
+  {
+   "fieldname": "column_break_zgrv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "how_would_you_rate_your_numeracy_skills",
+   "fieldtype": "Rating",
+   "label": "How would you rate your numeracy skills?"
+  },
+  {
+   "fieldname": "section_break_jnsl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "problem_solving",
+   "fieldtype": "Small Text",
+   "label": "Give an example of when you used math problem-solving skills?"
+  },
+  {
+   "fieldname": "section_break_uqri",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "Rate on a scale of 1 to 5 with 5 as the highest",
+   "fieldname": "softskills_confidence",
+   "fieldtype": "Text Editor",
+   "label": "Which soft skills have you learned so far? How would you rate your soft skills?"
+  },
+  {
+   "fieldname": "section_break_nyzt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "reallife_example",
+   "fieldtype": "Small Text",
+   "label": "Can you give an example of when you used a numeracy, literacy or soft skill in your life?"
+  },
+  {
+   "fieldname": "what_is_your_best_soft_skill",
+   "fieldtype": "Data",
+   "label": "What is your best soft skill?"
+  },
+  {
+   "fieldname": "section_break_rosf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "how_resilient_are_you",
+   "fieldtype": "Rating",
+   "label": "How resilient are you?"
+  },
+  {
+   "fieldname": "column_break_nxxq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "can_you_give_a_reallife_example_of_your_resilience",
+   "fieldtype": "Small Text",
+   "label": "Can you give a real-life example of your resilience?"
+  },
+  {
+   "fieldname": "section_break_jonn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "what_are_you_most_proud_of_since_joining_this_course",
+   "fieldtype": "Small Text",
+   "label": "What are you most proud of since joining this course?"
+  },
+  {
+   "fieldname": "section_break_amgv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "what_has_been_the_impact_of_the_course_on_your_life",
+   "fieldtype": "Small Text",
+   "label": "What has been the impact of the course on your life?"
+  },
+  {
+   "fieldname": "section_break_yngq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "do_you_want_coaching",
+   "fieldtype": "Select",
+   "label": "Do you want coaching?",
+   "options": "\nYes\nNo"
+  },
+  {
+   "fieldname": "would_you_recommend_this_course",
+   "fieldtype": "Select",
+   "label": "Would you recommend this course",
+   "options": "\nYes\nNo\nMaybe"
+  },
+  {
+   "fieldname": "section_break_lbyc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "label": "Do you have any photos or videos you would be happy for us to share with donors or on social media?"
+  },
+  {
+   "fieldname": "section_break_vovo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_syuq",
+   "fieldtype": "Section Break",
+   "label": "Skills"
+  },
+  {
+   "fieldname": "skills_html",
+   "fieldtype": "Data",
+   "label": "Which soft skills have you learned so far?"
+  },
+  {
+   "fieldname": "skills_learned",
+   "fieldtype": "Table",
+   "label": "Skills Learned",
+   "options": "SkillsHub Soft Skills Link",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_clpd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "resilience_html",
+   "fieldtype": "Data",
+   "label": "Which of these statements describes you?"
+  },
+  {
+   "fieldname": "resilience_table",
+   "fieldtype": "Table",
+   "label": "Resilience Table",
+   "options": "SH Student Resilience Link",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "program_schedule.academic_year",
+   "fieldname": "academic_year",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Academic Year"
+  }
+ ],
+ "grid_page_length": 50,
+ "image_field": "photo",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-03-31 22:27:38.043653",
+ "modified_by": "Administrator",
+ "module": "ZM SH Edulution",
+ "name": "SkillsHub Edulution Feedback",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Student",
+   "share": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Administrator",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "share": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "PI Admin",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

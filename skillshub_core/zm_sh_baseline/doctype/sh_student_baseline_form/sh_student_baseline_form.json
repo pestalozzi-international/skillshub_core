@@ -1,0 +1,444 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:{student_name}-SS{##}",
+ "creation": "2026-01-28 10:37:16.220657",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "general_tab",
+  "portal_user_details_section",
+  "portal_user_account",
+  "section_break_vkis",
+  "student_column",
+  "student_name",
+  "pestalozzi_student_id",
+  "feedback_phase",
+  "column_break_pppv",
+  "program_schedule",
+  "cohort",
+  "course",
+  "skillshub_programme",
+  "section_break_javg",
+  "date_submitted",
+  "feedback_form_tab",
+  "motivation_column",
+  "student_motivation_html",
+  "student_motivation_table",
+  "column_break_jvdl",
+  "motivation_statement",
+  "section_break_aejp",
+  "how_would_you_rate_your_confidence_levels",
+  "confidence_finding_employment",
+  "section_break_kmnv",
+  "resilience_column",
+  "resilience_html",
+  "resilience_table",
+  "column_break_hjyt",
+  "how_resilient_are_you",
+  "community_and_family_tab",
+  "family_background_section",
+  "living_arrangement",
+  "family_relationship",
+  "family_hub_support",
+  "primary_provider",
+  "discussion_frequency",
+  "home_environment_section",
+  "home_env_desc",
+  "conflict_frequency",
+  "responsibilities_impact",
+  "community_environment_section",
+  "challenges_in_your_community_column",
+  "community_challenge_html",
+  "community_challenge_table",
+  "column_break_fzvy",
+  "community_safety",
+  "role_models_exist",
+  "involved_in_groups",
+  "group_details",
+  "social_support_section",
+  "social_support_growth",
+  "help_source",
+  "expectations_section",
+  "sh_goals",
+  "post_sh_contributions"
+ ],
+ "fields": [
+  {
+   "fieldname": "general_tab",
+   "fieldtype": "Tab Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "student_column",
+   "fieldtype": "Column Break",
+   "label": "Student"
+  },
+  {
+   "fetch_from": "portal_user_account.skillshub_record",
+   "fieldname": "student_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Student Name",
+   "options": "SH Student",
+   "search_index": 1
+  },
+  {
+   "fetch_from": "portal_user_account.pestalozzi_id_sh",
+   "fieldname": "pestalozzi_student_id",
+   "fieldtype": "Data",
+   "label": "Pestalozzi Student ID"
+  },
+  {
+   "fetch_from": "program_schedule.current_phase",
+   "fieldname": "feedback_phase",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Feedback Phase",
+   "options": "SkillsHub Phases"
+  },
+  {
+   "fieldname": "column_break_pppv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "program_schedule.cohort",
+   "fieldname": "cohort",
+   "fieldtype": "Link",
+   "label": "Cohort",
+   "options": "SkillsHub Cohort"
+  },
+  {
+   "fieldname": "program_schedule",
+   "fieldtype": "Link",
+   "label": "Program Schedule",
+   "options": "SH Programme Schedule"
+  },
+  {
+   "fetch_from": "program_schedule.skillshub_course",
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "label": "Course",
+   "options": "SkillsHub Course"
+  },
+  {
+   "fieldname": "portal_user_details_section",
+   "fieldtype": "Section Break",
+   "label": "Portal User Details"
+  },
+  {
+   "fetch_from": "student_name.portal_user_account",
+   "fetch_if_empty": 1,
+   "fieldname": "portal_user_account",
+   "fieldtype": "Link",
+   "label": "Portal User Account",
+   "options": "User"
+  },
+  {
+   "fieldname": "feedback_form_tab",
+   "fieldtype": "Tab Break",
+   "label": "Feedback Form"
+  },
+  {
+   "fieldname": "motivation_statement",
+   "fieldtype": "Small Text",
+   "label": "Motivation Statement"
+  },
+  {
+   "fieldname": "section_break_aejp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "how_would_you_rate_your_confidence_levels",
+   "fieldtype": "Rating",
+   "label": "How would you rate your confidence levels?"
+  },
+  {
+   "fieldname": "confidence_finding_employment",
+   "fieldtype": "Rating",
+   "label": "Confidence finding employment"
+  },
+  {
+   "fieldname": "column_break_hjyt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "how_resilient_are_you",
+   "fieldtype": "Rating",
+   "label": "How resilient are you?"
+  },
+  {
+   "fetch_from": "program_schedule.skillshub_programme",
+   "fieldname": "skillshub_programme",
+   "fieldtype": "Link",
+   "label": "SkillsHub Programme",
+   "options": "SkillsHub Programme"
+  },
+  {
+   "fieldname": "section_break_kmnv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "community_and_family_tab",
+   "fieldtype": "Tab Break",
+   "label": "Community and Family"
+  },
+  {
+   "fieldname": "family_background_section",
+   "fieldtype": "Section Break",
+   "label": "Family Background"
+  },
+  {
+   "fieldname": "living_arrangement",
+   "fieldtype": "Select",
+   "label": "Who do you currently live with?",
+   "options": "\nBoth parents\nOne parent\nGuardian\nRelatives\nAlone\nOther"
+  },
+  {
+   "fieldname": "family_relationship",
+   "fieldtype": "Select",
+   "label": "Relationship with family/guardian",
+   "options": "\nVery good\nGood\nFair\nPoor"
+  },
+  {
+   "fieldname": "family_hub_support",
+   "fieldtype": "Select",
+   "label": "Family support for Skills Hub",
+   "options": "\nYes, fully\nSomewhat\nNot sure\nNo"
+  },
+  {
+   "fieldname": "primary_provider",
+   "fieldtype": "Select",
+   "label": "Primary support for basic needs",
+   "options": "\nParents/Guardian\nRelatives\nSelf\nFriends\nOther"
+  },
+  {
+   "fieldname": "discussion_frequency",
+   "fieldtype": "Select",
+   "label": "Frequency of goal discussion",
+   "options": "\nOften\nSometimes\nRarely\nNever"
+  },
+  {
+   "fieldname": "home_environment_section",
+   "fieldtype": "Section Break",
+   "label": "Home Environment"
+  },
+  {
+   "fieldname": "home_env_desc",
+   "fieldtype": "Select",
+   "label": "Home environment description",
+   "options": "\nVery supportive\nSomewhat supportive\nStressful\nVery challenging"
+  },
+  {
+   "fieldname": "conflict_frequency",
+   "fieldtype": "Select",
+   "label": "Frequency of home conflicts",
+   "options": "\nNever\nSometimes\nOften"
+  },
+  {
+   "fieldname": "responsibilities_impact",
+   "fieldtype": "Select",
+   "label": "Family responsibilities impact",
+   "options": "\nYes\nNo"
+  },
+  {
+   "fieldname": "community_environment_section",
+   "fieldtype": "Section Break",
+   "label": "Community Environment"
+  },
+  {
+   "fieldname": "community_safety",
+   "fieldtype": "Select",
+   "label": "Community safety description",
+   "options": "\nSafe and supportive\nSome challenges but manageable\nUnsafe or highly challenging"
+  },
+  {
+   "fieldname": "role_models_exist",
+   "fieldtype": "Select",
+   "label": "Presence of role models",
+   "options": "\nYes\nA few\nNone"
+  },
+  {
+   "default": "0",
+   "fieldname": "involved_in_groups",
+   "fieldtype": "Check",
+   "label": "Community group involvement"
+  },
+  {
+   "depends_on": "involved_in_groups",
+   "fieldname": "group_details",
+   "fieldtype": "Small Text",
+   "label": "If yes, specify groups"
+  },
+  {
+   "fieldname": "social_support_section",
+   "fieldtype": "Section Break",
+   "label": "Social Support"
+  },
+  {
+   "fieldname": "social_support_growth",
+   "fieldtype": "Select",
+   "label": "Friends or mentors who encourage positive behaviour and growth",
+   "options": "\nYes\nSome\nNo"
+  },
+  {
+   "fieldname": "help_source",
+   "fieldtype": "Select",
+   "label": "When you face challenges, who do you usually turn to for help?",
+   "options": "\nFamily\nFriends\nCommunity leader\nChurch/NGO\nNo one"
+  },
+  {
+   "fieldname": "expectations_section",
+   "fieldtype": "Section Break",
+   "label": "Expectations"
+  },
+  {
+   "fieldname": "sh_goals",
+   "fieldtype": "Small Text",
+   "label": "What do you hope will improve in your relationship with your family after joining the Skills Hub?\u2028"
+  },
+  {
+   "fieldname": "post_sh_contributions",
+   "fieldtype": "Small Text",
+   "label": "How do you hope to contribute positively to your family or community after completing the programme?"
+  },
+  {
+   "fieldname": "section_break_vkis",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_fzvy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_jvdl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "motivation_column",
+   "fieldtype": "Column Break",
+   "label": "Motivation"
+  },
+  {
+   "fieldname": "student_motivation_html",
+   "fieldtype": "Data",
+   "label": "Student Motivation"
+  },
+  {
+   "fieldname": "student_motivation_table",
+   "fieldtype": "Table",
+   "label": "Student Motivation Table",
+   "options": "SH Student Motivation Link"
+  },
+  {
+   "fieldname": "resilience_column",
+   "fieldtype": "Column Break",
+   "label": "Resilience"
+  },
+  {
+   "fieldname": "resilience_html",
+   "fieldtype": "Data",
+   "label": "Which of these statements describes you?"
+  },
+  {
+   "fieldname": "resilience_table",
+   "fieldtype": "Table",
+   "label": "Student Resilience Table",
+   "options": "SH Student Resilience Link"
+  },
+  {
+   "fieldname": "challenges_in_your_community_column",
+   "fieldtype": "Column Break",
+   "label": "Challenges in your community"
+  },
+  {
+   "fieldname": "community_challenge_html",
+   "fieldtype": "Data",
+   "label": "Challenges faced in your community"
+  },
+  {
+   "fieldname": "community_challenge_table",
+   "fieldtype": "Table",
+   "label": "Community Challenges Table",
+   "options": "SH Student Community Challenge Link"
+  },
+  {
+   "fieldname": "section_break_javg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "date_submitted",
+   "fieldtype": "Date",
+   "label": "Date Submitted"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-01 21:17:48.478827",
+ "modified_by": "Administrator",
+ "module": "ZM SH Baseline",
+ "name": "SH Student Baseline Form",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "import": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "PI Admin",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Student",
+   "share": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "import": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Administrator",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

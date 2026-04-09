@@ -1,0 +1,114 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:programme_name",
+ "creation": "2026-01-22 11:27:04.217635",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "programme_name",
+  "section_break_oxcy",
+  "description",
+  "section_break_iijb",
+  "has_courses",
+  "courses"
+ ],
+ "fields": [
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "default": "0",
+   "fieldname": "has_courses",
+   "fieldtype": "Check",
+   "label": "Has Courses"
+  },
+  {
+   "fieldname": "section_break_oxcy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_iijb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "has_courses",
+   "fieldname": "courses",
+   "fieldtype": "Table",
+   "label": "Courses",
+   "options": "SkillsHub Course-Programme Link"
+  },
+  {
+   "fieldname": "programme_name",
+   "fieldtype": "Data",
+   "label": "Programme Name",
+   "unique": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "link_doctype": "SH Programme Schedule",
+   "link_fieldname": "skillshub_programme"
+  }
+ ],
+ "modified": "2026-04-06 14:26:12.735479",
+ "modified_by": "Administrator",
+ "module": "ZM SkillsHub",
+ "name": "SkillsHub Programme",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "PI Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Student",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "share": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

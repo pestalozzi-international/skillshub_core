@@ -1,0 +1,125 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "field:course_name",
+ "creation": "2026-01-22 11:30:11.509457",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "course_name",
+  "course_code",
+  "column_break_bgeh",
+  "course_image",
+  "section_break_qlrn",
+  "program_category",
+  "section_break_tdnh",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Description"
+  },
+  {
+   "fieldname": "course_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Course Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_bgeh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "course_image",
+   "fieldtype": "Attach Image",
+   "label": "Course Image"
+  },
+  {
+   "fieldname": "section_break_tdnh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "course_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Course Code"
+  },
+  {
+   "fieldname": "section_break_qlrn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "program_category",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Program Category",
+   "options": "SkillsHub Programme"
+  }
+ ],
+ "grid_page_length": 50,
+ "image_field": "course_image",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "make_attachments_public": 1,
+ "modified": "2026-04-06 14:26:12.422761",
+ "modified_by": "Administrator",
+ "module": "ZM SkillsHub",
+ "name": "SkillsHub Course",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "PI Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Student",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "share": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

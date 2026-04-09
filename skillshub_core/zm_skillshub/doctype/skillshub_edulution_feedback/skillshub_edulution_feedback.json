@@ -1,0 +1,130 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:student_name-F{##}",
+ "creation": "2026-01-23 07:52:01.714076",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "student_column",
+  "student_name",
+  "context_section",
+  "feedback_phase",
+  "program",
+  "course",
+  "metrics_section",
+  "confidence_finding_a_job",
+  "section_break_jzih",
+  "impact_statement",
+  "general_tab",
+  "edulution_tab",
+  "soft_skills_tab",
+  "vocational_training_tab"
+ ],
+ "fields": [
+  {
+   "fieldname": "student_column",
+   "fieldtype": "Column Break",
+   "label": "Student"
+  },
+  {
+   "fieldname": "student_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Student Name",
+   "options": "SH Student"
+  },
+  {
+   "fieldname": "context_section",
+   "fieldtype": "Section Break",
+   "label": "Context"
+  },
+  {
+   "fetch_from": "student_name.current_programme",
+   "fieldname": "program",
+   "fieldtype": "Read Only",
+   "label": "Program"
+  },
+  {
+   "fetch_from": "student_name.course",
+   "fieldname": "course",
+   "fieldtype": "Read Only",
+   "label": "Course"
+  },
+  {
+   "fieldname": "metrics_section",
+   "fieldtype": "Section Break",
+   "label": "Metrics"
+  },
+  {
+   "fieldname": "confidence_finding_a_job",
+   "fieldtype": "Rating",
+   "label": "Confidence Finding a Job"
+  },
+  {
+   "fieldname": "section_break_jzih",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "feedback_phase",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Feedback Phase",
+   "options": "SkillsHub Phases"
+  },
+  {
+   "fieldname": "impact_statement",
+   "fieldtype": "Small Text",
+   "label": "Impact Statement"
+  },
+  {
+   "fieldname": "general_tab",
+   "fieldtype": "Tab Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "edulution_tab",
+   "fieldtype": "Tab Break",
+   "label": "Edulution"
+  },
+  {
+   "fieldname": "soft_skills_tab",
+   "fieldtype": "Tab Break",
+   "label": "Soft Skills"
+  },
+  {
+   "fieldname": "vocational_training_tab",
+   "fieldtype": "Tab Break",
+   "label": "Vocational Training"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-01-23 08:31:34.853980",
+ "modified_by": "Administrator",
+ "module": "ZM SkillsHub",
+ "name": "SkillsHub Edulution Feedback",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
