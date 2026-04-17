@@ -82,7 +82,9 @@ class SHAttendance(Document):
         if not days_offered:
             return
         allowed_days = [d.day.upper() for d in days_offered]
-        day_name = datetime.datetime.strptime(str(self.date)[:10], "%Y-%m-%d").strftime("%A").upper()
+        day_name = datetime.datetime.strptime(
+            str(self.date)[:10], "%Y-%m-%d"
+        ).strftime("%A").upper()
         if day_name not in allowed_days:
             frappe.throw(
                 f"<b>{day_name}</b> is not a scheduled day for <b>{self.sh_programme_schedule}</b>. "
@@ -98,6 +100,12 @@ class SHAttendance(Document):
         self.update_programme_history_attendance()
 
     def update_programme_history_attendance(self):
+        """
+        Update attendance stats directly on the child table row and parent
+        summary using frappe.db.set_value — avoids triggering the full
+        SH Student save pipeline (before_save/after_save) for every student.
+        Uses SQL COUNT and frappe.get_all for reliable child row lookups.
+        """
         all_sessions = frappe.get_all(
             "SH Attendance",
             filters={"sh_programme_schedule": self.sh_programme_schedule},
@@ -105,30 +113,74 @@ class SHAttendance(Document):
         )
         total = len(all_sessions)
 
+        if not total:
+            return
+
         for row in self.student_attendance:
             if not row.student:
                 continue
 
-            present = frappe.db.count(
-                "SH Attendance Student Link",
-                {
-                    "student": row.student,
-                    "status": "Present",
-                    "parenttype": "SH Attendance",
-                    "parent": ("in", all_sessions)
-                }
-            )
-            pct = round((present / total) * 100, 1) if total else 0.0
+            # SQL COUNT — avoids frappe.db.count filter syntax quirks with "in"
+            present = frappe.db.sql("""
+                SELECT COUNT(*) FROM `tabSH Attendance Student Link`
+                WHERE student = %s
+                  AND status = 'Present'
+                  AND parenttype = 'SH Attendance'
+                  AND parent IN %s
+            """, (row.student, tuple(all_sessions)))[0][0]
 
-            student_doc = frappe.get_doc("SH Student", row.student)
-            for hist_row in student_doc.programme_history:
-                if hist_row.programme_schedule == self.sh_programme_schedule:
-                    hist_row.total_sessions = total
-                    hist_row.sessions_present = present
-                    hist_row.sessions_absent = total - present
-                    hist_row.attendance_pct = pct
-                    break
-            student_doc.save(ignore_permissions=True)
+            absent = total - present
+            pct = round(present / total * 100, 1)
+
+            # frappe.get_all — more reliable than frappe.db.get_value
+            # for multi-filter child table queries
+            child_rows = frappe.get_all(
+                "SkillsHub Programme-Student Link",
+                filters={
+                    "parent": row.student,
+                    "parenttype": "SH Student",
+                    "programme_schedule": self.sh_programme_schedule
+                },
+                fields=["name", "is_current"],
+                limit=1
+            )
+
+            if not child_rows:
+                frappe.log_error(
+                    f"No history row found for student {row.student} "
+                    f"with schedule {self.sh_programme_schedule}",
+                    "Attendance Sync Warning"
+                )
+                continue
+
+            child_row = child_rows[0]
+
+            # Write stats directly to child table row — no student doc save triggered
+            frappe.db.set_value(
+                "SkillsHub Programme-Student Link",
+                child_row.name,
+                {
+                    "total_sessions":   total,
+                    "sessions_present": present,
+                    "sessions_absent":  absent,
+                    "attendance_pct":   pct
+                },
+                update_modified=False
+            )
+
+            # If this is the student's current schedule, also update parent summary
+            if child_row.is_current:
+                frappe.db.set_value(
+                    "SH Student",
+                    row.student,
+                    {
+                        "total_sessions":   total,
+                        "sessions_present": present,
+                        "sessions_absent":  absent,
+                        "attendance_pct":   pct
+                    },
+                    update_modified=False
+                )
 
     @frappe.whitelist()
     def populate_from_schedule(self):
