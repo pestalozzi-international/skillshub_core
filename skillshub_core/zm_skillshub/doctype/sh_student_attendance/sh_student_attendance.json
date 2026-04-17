@@ -1,0 +1,214 @@
+{
+ "actions": [],
+ "allow_events_in_timeline": 1,
+ "allow_import": 1,
+ "allow_rename": 0,
+ "autoname": "custom",
+ "creation": "2026-04-17 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sh_student",
+  "student_name",
+  "sh_programme_schedule",
+  "date",
+  "column_break_top",
+  "status",
+  "week",
+  "day",
+  "late_minutes",
+  "notes",
+  "session_details_section",
+  "programme",
+  "course",
+  "column_break_session",
+  "cohort",
+  "academic_year",
+  "current_phase",
+  "recorded_by_section",
+  "marked_by"
+ ],
+ "fields": [
+  {
+   "fieldname": "sh_student",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Student",
+   "options": "SH Student",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "sh_student.student_name",
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Student Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sh_programme_schedule",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Programme Schedule",
+   "options": "SH Programme Schedule",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "label": "Date",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_top",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "\nPresent\nAbsent\nLeave\nLate",
+   "reqd": 1
+  },
+  {
+   "fieldname": "week",
+   "fieldtype": "Select",
+   "label": "Week",
+   "options": "\nWEEK 1\nWEEK 2\nWEEK 3\nWEEK 4\nWEEK 5\nWEEK 6\nWEEK 7\nWEEK 8\nWEEK 9\nWEEK 10\nWEEK 11\nWEEK 12\nWEEK 13\nWEEK 14\nWEEK 15\nWEEK 16\nWEEK 17\nWEEK 18\nWEEK 19\nWEEK 20\nWEEK 21\nWEEK 22\nWEEK 23\nWEEK 24\nWEEK 25\nWEEK 26\nWEEK 27\nWEEK 28\nWEEK 29\nWEEK 30\nWEEK 31\nWEEK 32\nWEEK 33\nWEEK 34\nWEEK 35",
+   "read_only": 1
+  },
+  {
+   "fieldname": "day",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Day",
+   "options": "\nMONDAY\nTUESDAY\nWEDNESDAY\nTHURSDAY\nFRIDAY\nSATURDAY\nSUNDAY",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.status == 'Late'",
+   "fieldname": "late_minutes",
+   "fieldtype": "Int",
+   "label": "Late (minutes)"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "session_details_section",
+   "fieldtype": "Section Break",
+   "label": "Session Details"
+  },
+  {
+   "fetch_from": "sh_programme_schedule.skillshub_programme",
+   "fieldname": "programme",
+   "fieldtype": "Read Only",
+   "label": "Programme"
+  },
+  {
+   "fetch_from": "sh_programme_schedule.skillshub_course",
+   "fieldname": "course",
+   "fieldtype": "Read Only",
+   "label": "Course"
+  },
+  {
+   "fieldname": "column_break_session",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "sh_programme_schedule.cohort",
+   "fieldname": "cohort",
+   "fieldtype": "Read Only",
+   "label": "Cohort"
+  },
+  {
+   "fetch_from": "sh_programme_schedule.academic_year",
+   "fieldname": "academic_year",
+   "fieldtype": "Read Only",
+   "label": "Academic Year"
+  },
+  {
+   "fetch_from": "sh_programme_schedule.current_phase",
+   "fieldname": "current_phase",
+   "fieldtype": "Read Only",
+   "label": "Phase"
+  },
+  {
+   "fieldname": "recorded_by_section",
+   "fieldtype": "Section Break",
+   "label": "Recorded By"
+  },
+  {
+   "fieldname": "marked_by",
+   "fieldtype": "Link",
+   "label": "Marked By",
+   "options": "User",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-17 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "ZM SkillsHub",
+ "name": "SH Student Attendance",
+ "naming_rule": "By script",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "import": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "PI Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Student",
+   "share": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "date",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
