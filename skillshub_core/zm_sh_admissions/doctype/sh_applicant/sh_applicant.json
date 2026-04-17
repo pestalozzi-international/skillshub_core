@@ -8,36 +8,62 @@
   "full_name",
   "email",
   "center",
-  "status"
+  "status",
+  "section_break_conv",
+  "converted_to_student"
  ],
  "fields": [
   {
    "fieldname": "full_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Full Name"
   },
   {
    "fieldname": "email",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Email",
+   "options": "Email",
    "unique": 1
   },
   {
    "fieldname": "center",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Center"
   },
   {
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Status",
-   "options": "\nApplied\nInterviewed\nAccepted\nRejected"
+   "options": "\nApplied\nInterviewed\nAccepted\nRejected\nConverted"
+  },
+  {
+   "fieldname": "section_break_conv",
+   "fieldtype": "Section Break",
+   "label": "Conversion"
+  },
+  {
+   "fieldname": "converted_to_student",
+   "fieldtype": "Link",
+   "label": "Converted to Student",
+   "options": "SH Student",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-01-26 10:39:14.379779",
+ "links": [
+  {
+   "group": "Student Record",
+   "link_doctype": "SH Student",
+   "link_fieldname": "applicant_record"
+  }
+ ],
+ "modified": "2026-04-17 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "ZM SH Admissions",
  "name": "SH Applicant",
@@ -52,6 +78,18 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "PI Admin",
    "share": 1,
    "write": 1
   }
