@@ -3,6 +3,7 @@
 
 import frappe
 import datetime
+import json
 from frappe.model.document import Document
 
 
@@ -25,7 +26,6 @@ class SHAttendance(Document):
         self.validate_duplicate()
         self.validate_holiday()
         self.validate_schedule_day()
-        self.compute_summary()
 
     def compute_day(self):
         if self.date:
@@ -87,122 +87,168 @@ class SHAttendance(Document):
         ).strftime("%A").upper()
         if day_name not in allowed_days:
             frappe.throw(
-                f"<b>{day_name}</b> is not a scheduled day for <b>{self.sh_programme_schedule}</b>. "
+                f"<b>{day_name}</b> is not a scheduled day for "
+                f"<b>{self.sh_programme_schedule}</b>. "
                 f"Scheduled days are: {', '.join(allowed_days)}"
             )
 
-    def compute_summary(self):
-        self.present_count = sum(1 for r in self.student_attendance if r.status == "Present")
-        self.absent_count  = sum(1 for r in self.student_attendance if r.status == "Absent")
-        self.leave_count   = sum(1 for r in self.student_attendance if r.status == "Leave")
-
     def after_save(self):
-        self.update_programme_history_attendance()
+        self._refresh_stats()
 
-    def update_programme_history_attendance(self):
+    def _refresh_stats(self):
         """
-        Update attendance stats directly on the child table row and parent
-        summary using frappe.db.set_value — avoids triggering the full
-        SH Student save pipeline (before_save/after_save) for every student.
-        Uses SQL COUNT and frappe.get_all for reliable child row lookups.
+        Recount totals directly from tabSH Student Attendance for this
+        schedule + date combination and write back to SH Attendance header
+        without triggering another save cycle.
         """
-        all_sessions = frappe.get_all(
+        row = frappe.db.sql("""
+            SELECT
+                COUNT(*)                    AS total,
+                SUM(status IN ('Present','Late')) AS present,
+                SUM(status = 'Absent')      AS absent,
+                SUM(status = 'Leave')       AS leave_cnt
+            FROM `tabSH Student Attendance`
+            WHERE sh_programme_schedule = %s
+              AND date = %s
+        """, (self.sh_programme_schedule, self.date), as_dict=True)[0]
+
+        total   = int(row.get("total")    or 0)
+        present = int(row.get("present")  or 0)
+        absent  = int(row.get("absent")   or 0)
+        leave   = int(row.get("leave_cnt") or 0)
+        rate    = round(present / total * 100, 1) if total else 0.0
+
+        frappe.db.set_value(
             "SH Attendance",
-            filters={"sh_programme_schedule": self.sh_programme_schedule},
-            pluck="name"
+            self.name,
+            {
+                "total_students":  total,
+                "present_count":   present,
+                "absent_count":    absent,
+                "leave_count":     leave,
+                "attendance_rate": rate
+            },
+            update_modified=False
         )
-        total = len(all_sessions)
-
-        if not total:
-            return
-
-        for row in self.student_attendance:
-            if not row.student:
-                continue
-
-            # SQL COUNT — avoids frappe.db.count filter syntax quirks with "in"
-            present = frappe.db.sql("""
-                SELECT COUNT(*) FROM `tabSH Attendance Student Link`
-                WHERE student = %s
-                  AND status = 'Present'
-                  AND parenttype = 'SH Attendance'
-                  AND parent IN %s
-            """, (row.student, tuple(all_sessions)))[0][0]
-
-            absent = total - present
-            pct = round(present / total * 100, 1)
-
-            # frappe.get_all — more reliable than frappe.db.get_value
-            # for multi-filter child table queries
-            child_rows = frappe.get_all(
-                "SkillsHub Programme-Student Link",
-                filters={
-                    "parent": row.student,
-                    "parenttype": "SH Student",
-                    "programme_schedule": self.sh_programme_schedule
-                },
-                fields=["name", "is_current"],
-                limit=1
-            )
-
-            if not child_rows:
-                frappe.log_error(
-                    f"No history row found for student {row.student} "
-                    f"with schedule {self.sh_programme_schedule}",
-                    "Attendance Sync Warning"
-                )
-                continue
-
-            child_row = child_rows[0]
-
-            # Write stats directly to child table row — no student doc save triggered
-            frappe.db.set_value(
-                "SkillsHub Programme-Student Link",
-                child_row.name,
-                {
-                    "total_sessions":   total,
-                    "sessions_present": present,
-                    "sessions_absent":  absent,
-                    "attendance_pct":   pct
-                },
-                update_modified=False
-            )
-
-            # If this is the student's current schedule, also update parent summary
-            if child_row.is_current:
-                frappe.db.set_value(
-                    "SH Student",
-                    row.student,
-                    {
-                        "total_sessions":   total,
-                        "sessions_present": present,
-                        "sessions_absent":  absent,
-                        "attendance_pct":   pct
-                    },
-                    update_modified=False
-                )
 
     @frappe.whitelist()
-    def populate_from_schedule(self):
-        if not self.sh_programme_schedule:
-            frappe.throw("Please set a Programme Schedule first.")
+    def get_session_attendance(self):
+        """
+        Returns enrolled students for this session together with their
+        current SH Student Attendance status (if already marked).
+        Called from the 'Mark Attendance' dialog in the JS.
+        """
+        if not self.sh_programme_schedule or not self.date:
+            frappe.throw("Programme Schedule and Date are required.")
 
         students = frappe.db.sql("""
             SELECT DISTINCT
-                s.name,
-                s.student_name
+                s.name          AS student,
+                s.student_name  AS full_name
             FROM `tabSH Student` s
             INNER JOIN `tabSkillsHub Programme-Student Link` h
                 ON h.parent = s.name
             WHERE h.programme_schedule = %s
-                AND h.is_current = 1
+              AND h.is_current = 1
             ORDER BY s.student_name ASC
         """, self.sh_programme_schedule, as_dict=True)
 
         if not students:
             frappe.msgprint(
-                f"No students found with current schedule: {self.sh_programme_schedule}"
+                f"No students currently enrolled in {self.sh_programme_schedule}."
             )
             return []
 
-        return students
+        # Existing attendance records keyed by student
+        existing_list = frappe.get_all(
+            "SH Student Attendance",
+            filters={
+                "sh_programme_schedule": self.sh_programme_schedule,
+                "date": self.date
+            },
+            fields=["sh_student", "status", "late_minutes", "notes", "name"]
+        )
+        existing_map = {r.sh_student: r for r in existing_list}
+
+        result = []
+        for s in students:
+            rec = existing_map.get(s.student, frappe._dict())
+            result.append({
+                "student":       s.student,
+                "full_name":     s.full_name,
+                "status":        rec.get("status") or "Present",
+                "late_minutes":  rec.get("late_minutes") or 0,
+                "notes":         rec.get("notes") or "",
+                "existing_name": rec.get("name") or ""
+            })
+
+        return result
+
+    @frappe.whitelist()
+    def save_session_attendance(self, rows):
+        """
+        Bulk create or update SH Student Attendance records for this session.
+        `rows` — JSON list of {student, status, late_minutes, notes}.
+        Returns a summary dict {created, updated, errors}.
+        """
+        if isinstance(rows, str):
+            rows = json.loads(rows)
+
+        counts = {"created": 0, "updated": 0, "errors": 0}
+
+        for row in rows:
+            student     = row.get("student")
+            status      = row.get("status", "Present")
+            late_min    = int(row.get("late_minutes") or 0)
+            notes       = row.get("notes") or ""
+
+            if not student:
+                continue
+
+            date_str = str(self.date)[:10]
+            rec_name = f"SA-{self.sh_programme_schedule}-{student}-{date_str}"
+
+            try:
+                if frappe.db.exists("SH Student Attendance", rec_name):
+                    frappe.db.set_value(
+                        "SH Student Attendance",
+                        rec_name,
+                        {
+                            "status":        status,
+                            "late_minutes":  late_min,
+                            "notes":         notes,
+                            "sh_attendance": self.name
+                        },
+                        update_modified=False
+                    )
+                    # Trigger stat recomputation via the flat record controller
+                    from skillshub_core.zm_skillshub.doctype.sh_student_attendance.sh_student_attendance import (
+                        _recompute_stats_for_student
+                    )
+                    _recompute_stats_for_student(student, self.sh_programme_schedule)
+                    counts["updated"] += 1
+                else:
+                    att = frappe.get_doc({
+                        "doctype":              "SH Student Attendance",
+                        "sh_student":           student,
+                        "sh_programme_schedule": self.sh_programme_schedule,
+                        "date":                 self.date,
+                        "status":               status,
+                        "late_minutes":         late_min,
+                        "notes":                notes,
+                        "sh_attendance":        self.name,
+                        "marked_by":            frappe.session.user
+                    })
+                    att.insert(ignore_permissions=True)
+                    # after_save on SHStudentAttendance handles stats automatically
+                    counts["created"] += 1
+            except Exception as e:
+                frappe.log_error(
+                    f"save_session_attendance error for {student}: {e}",
+                    "Save Session Attendance"
+                )
+                counts["errors"] += 1
+
+        # Refresh session header stats after all records are written
+        self._refresh_stats()
+        return counts

@@ -26,7 +26,8 @@
   "academic_year",
   "current_phase",
   "recorded_by_section",
-  "marked_by"
+  "marked_by",
+  "sh_attendance"
  ],
  "fields": [
   {
@@ -158,6 +159,14 @@
    "label": "Marked By",
    "options": "User",
    "read_only": 1
+  },
+  {
+   "fieldname": "sh_attendance",
+   "fieldtype": "Link",
+   "label": "Session Header",
+   "options": "SH Attendance",
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "grid_page_length": 50,

@@ -4,50 +4,16 @@
 frappe.ui.form.on("SH Attendance", {
 
     refresh(frm) {
-        // Summary bar — always show if rows exist
-        if (frm.doc.student_attendance && frm.doc.student_attendance.length) {
-            const present = frm.doc.present_count || 0;
-            const absent  = frm.doc.absent_count  || 0;
-            const leave   = frm.doc.leave_count   || 0;
-            const total   = frm.doc.student_attendance.length;
-            frm.set_intro(
-                `<b>Total:</b> ${total} &nbsp;|&nbsp; ` +
-                `<span style="color:green"><b>Present:</b> ${present}</span> &nbsp;|&nbsp; ` +
-                `<span style="color:red"><b>Absent:</b> ${absent}</span> &nbsp;|&nbsp; ` +
-                `<span style="color:orange"><b>Leave:</b> ${leave}</span>`,
-                "blue"
-            );
+        _update_stats_intro(frm);
 
-            frm.add_custom_button(__("Mark All Present"), function () {
-                frm.doc.student_attendance.forEach(row => {
-                    frappe.model.set_value(row.doctype, row.name, "status", "Present");
-                });
-                frm.refresh_field("student_attendance");
-            }, __("Tools"));
-
-            frm.add_custom_button(__("Mark All Absent"), function () {
-                frm.doc.student_attendance.forEach(row => {
-                    frappe.model.set_value(row.doctype, row.name, "status", "Absent");
-                });
-                frm.refresh_field("student_attendance");
-            }, __("Tools"));
-        }
-
-        // "Fetch Students" always visible when a schedule is set —
-        // regardless of whether the table is empty or already populated
-        if (frm.doc.sh_programme_schedule) {
-            frm.add_custom_button(__("Fetch Students"), function () {
-                fetch_students(frm, false);
-            }, __("Tools"));
-
-            frm.add_custom_button(__("Re-fetch (Clear & Reload)"), function () {
-                frappe.confirm(
-                    __("This will clear existing rows and re-fetch from the schedule. Continue?"),
-                    function () {
-                        fetch_students(frm, true);
-                    }
-                );
-            }, __("Tools"));
+        if (!frm.is_new() && frm.doc.sh_programme_schedule && frm.doc.date) {
+            frm.add_custom_button(__("Mark Attendance"), function () {
+                _open_attendance_dialog(frm);
+            });
+            // Make it prominent
+            frm.page.set_primary_action(__("Mark Attendance"), function () {
+                _open_attendance_dialog(frm);
+            });
         }
     },
 
@@ -55,61 +21,181 @@ frappe.ui.form.on("SH Attendance", {
         if (!frm.doc.date) {
             frm.set_value("date", frappe.datetime.get_today());
         }
-        // Clear table and fetch fresh on schedule change
-        frm.clear_table("student_attendance");
-        frm.refresh_field("student_attendance");
-
-        if (frm.doc.sh_programme_schedule) {
-            fetch_students(frm, false);
-        }
     }
+
 });
 
 
-// Shared fetch function
-// clear_first: true = wipe existing rows before adding (Re-fetch)
-//              false = append only missing students (Fetch Students)
-function fetch_students(frm, clear_first) {
+// ─── Stats intro bar ────────────────────────────────────────────────────────
+function _update_stats_intro(frm) {
+    const total   = frm.doc.total_students  || 0;
+    const present = frm.doc.present_count   || 0;
+    const absent  = frm.doc.absent_count    || 0;
+    const leave   = frm.doc.leave_count     || 0;
+    const rate    = frm.doc.attendance_rate || 0;
+
+    if (total > 0) {
+        frm.set_intro(
+            `<b>Session total:</b> ${total} &nbsp;|&nbsp; ` +
+            `<span style="color:green"><b>Present:</b> ${present}</span> &nbsp;|&nbsp; ` +
+            `<span style="color:red"><b>Absent:</b> ${absent}</span> &nbsp;|&nbsp; ` +
+            `<span style="color:orange"><b>Leave:</b> ${leave}</span> &nbsp;|&nbsp; ` +
+            `<b>Rate:</b> <span style="color:${rate >= 80 ? 'green' : rate >= 60 ? 'orange' : 'red'}">${rate}%</span>`,
+            "blue"
+        );
+    }
+}
+
+
+// ─── Mark Attendance dialog ──────────────────────────────────────────────────
+function _open_attendance_dialog(frm) {
     frappe.call({
-        method: "populate_from_schedule",
+        method: "get_session_attendance",
         doc: frm.doc,
         freeze: true,
-        freeze_message: __("Fetching students from schedule..."),
+        freeze_message: __("Loading student list…"),
         callback: function (r) {
-            if (!r.message || !r.message.length) return;
-
-            if (clear_first) {
-                frm.clear_table("student_attendance");
+            if (!r.message || !r.message.length) {
+                frappe.msgprint(__("No enrolled students found for this schedule."));
+                return;
             }
+            _show_attendance_dialog(frm, r.message);
+        }
+    });
+}
 
-            // Build set of already-present students to avoid duplicates
-            const existing = new Set(
-                (frm.doc.student_attendance || []).map(row => row.student)
-            );
 
-            let added = 0;
-            r.message.forEach(s => {
-                if (!existing.has(s.name)) {
-                    let row = frm.add_child("student_attendance");
-                    row.student = s.name;
-                    row.full_name = s.student_name;
-                    row.status = "Present";
-                    added++;
-                }
-            });
+function _show_attendance_dialog(frm, students) {
+    const STATUS_OPTS   = ["Present", "Absent", "Leave", "Late"];
+    const STATUS_COLORS = { Present: "green", Absent: "red", Leave: "orange", Late: "#0070c0" };
 
-            frm.refresh_field("student_attendance");
+    // ── Build the HTML table ──────────────────────────────────────────────
+    let rows_html = students.map((s, i) => {
+        const opts = STATUS_OPTS.map(o =>
+            `<option value="${o}" ${s.status === o ? "selected" : ""}>${o}</option>`
+        ).join("");
+        const late_visible = s.status === "Late" ? "" : "display:none;";
+        return `
+        <tr data-idx="${i}">
+            <td style="width:32px;text-align:center;color:#888">${i + 1}</td>
+            <td>
+                <b>${frappe.utils.escape_html(s.full_name)}</b><br>
+                <small class="text-muted">${frappe.utils.escape_html(s.student)}</small>
+            </td>
+            <td style="width:120px">
+                <select class="form-control input-xs att-status" data-idx="${i}">
+                    ${opts}
+                </select>
+            </td>
+            <td style="width:80px">
+                <input type="number" class="form-control input-xs att-late" data-idx="${i}"
+                       value="${s.late_minutes || 0}" min="0" max="999"
+                       style="${late_visible}">
+            </td>
+        </tr>`;
+    }).join("");
 
-            if (added > 0) {
+    const table_html = `
+        <div style="margin-bottom:8px;display:flex;gap:6px;">
+            <button class="btn btn-xs btn-success mark-all-btn" data-status="Present">✓ All Present</button>
+            <button class="btn btn-xs btn-danger  mark-all-btn" data-status="Absent" >✗ All Absent</button>
+            <button class="btn btn-xs btn-warning mark-all-btn" data-status="Leave"  >⏸ All Leave</button>
+        </div>
+        <div style="max-height:420px;overflow-y:auto;">
+        <table class="table table-bordered table-condensed" style="margin-bottom:0">
+            <thead style="position:sticky;top:0;background:#f5f5f5;">
+                <tr>
+                    <th style="width:32px">#</th>
+                    <th>Student</th>
+                    <th style="width:120px">Status</th>
+                    <th style="width:80px">Late&nbsp;(min)</th>
+                </tr>
+            </thead>
+            <tbody>${rows_html}</tbody>
+        </table>
+        </div>`;
+
+    // ── Build dialog ─────────────────────────────────────────────────────
+    const dialog = new frappe.ui.Dialog({
+        title: __(`Mark Attendance — ${frm.doc.sh_programme_schedule} — ${frm.doc.date}`),
+        size: "large",
+        fields: [{
+            fieldtype: "HTML",
+            fieldname: "att_table_html",
+            options: table_html
+        }],
+        primary_action_label: __(`Save ${students.length} Records`),
+        primary_action() {
+            const collected = _collect_rows(dialog, students);
+            _do_save(frm, dialog, collected);
+        }
+    });
+
+    dialog.show();
+
+    // ── Event bindings ────────────────────────────────────────────────────
+    // Mark-all buttons
+    dialog.$wrapper.find(".mark-all-btn").on("click", function () {
+        const s = $(this).data("status");
+        dialog.$wrapper.find(".att-status").val(s).trigger("change");
+    });
+
+    // Toggle late_minutes visibility
+    dialog.$wrapper.on("change", ".att-status", function () {
+        const idx = $(this).data("idx");
+        const show = $(this).val() === "Late";
+        dialog.$wrapper.find(`.att-late[data-idx="${idx}"]`).toggle(show);
+    });
+
+    // Colour-code status selects on change
+    dialog.$wrapper.on("change", ".att-status", function () {
+        const val = $(this).val();
+        $(this).css("color", STATUS_COLORS[val] || "");
+    });
+
+    // Initialise colours
+    dialog.$wrapper.find(".att-status").each(function () {
+        const val = $(this).val();
+        $(this).css("color", STATUS_COLORS[val] || "");
+    });
+}
+
+
+function _collect_rows(dialog, students) {
+    const result = [];
+    dialog.$wrapper.find("tr[data-idx]").each(function () {
+        const idx    = parseInt($(this).data("idx"));
+        const status = $(this).find(".att-status").val();
+        const late   = parseInt($(this).find(".att-late").val() || 0);
+        result.push({
+            student:      students[idx].student,
+            full_name:    students[idx].full_name,
+            status:       status,
+            late_minutes: late
+        });
+    });
+    return result;
+}
+
+
+function _do_save(frm, dialog, rows) {
+    frappe.call({
+        method: "save_session_attendance",
+        doc: frm.doc,
+        args: { rows: JSON.stringify(rows) },
+        freeze: true,
+        freeze_message: __("Saving attendance records…"),
+        callback: function (r) {
+            if (r.message) {
+                const c = r.message;
+                const had_errors = c.errors > 0;
                 frappe.show_alert({
-                    message: `${added} student(s) loaded — edit statuses then Save.`,
-                    indicator: "blue"
-                }, 5);
-            } else {
-                frappe.show_alert({
-                    message: "All students already in the table.",
-                    indicator: "orange"
-                }, 4);
+                    message: __(`Attendance saved — Created: ${c.created}, Updated: ${c.updated}`) +
+                             (had_errors ? __(`, Errors: ${c.errors} (check Error Log)`) : ""),
+                    indicator: had_errors ? "orange" : "green"
+                }, 7);
+                dialog.hide();
+                frm.reload_doc();
             }
         }
     });

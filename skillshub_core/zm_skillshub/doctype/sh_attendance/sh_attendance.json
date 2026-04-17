@@ -27,13 +27,15 @@
   "academic_year",
   "programme_schedule_phase",
   "section_break_cfmr",
+  "total_students",
+  "column_break_ts",
   "present_count",
   "column_break_ikbl",
   "absent_count",
   "column_break_odin",
   "leave_count",
-  "section_break_ceic",
-  "student_attendance"
+  "column_break_l_r",
+  "attendance_rate"
  ],
  "fields": [
   {
@@ -57,19 +59,20 @@
    "label": "General Notes"
   },
   {
-   "fieldname": "section_break_ceic",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "student_attendance",
-   "fieldtype": "Table",
-   "label": "Student Attendance",
-   "options": "SH Attendance Student Link"
-  },
-  {
    "fieldname": "section_break_cfmr",
    "fieldtype": "Section Break",
    "label": "Stats"
+  },
+  {
+   "fieldname": "total_students",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Students",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ts",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "present_count",
@@ -98,6 +101,17 @@
    "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Leave",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_l_r",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "attendance_rate",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Attendance Rate",
    "read_only": 1
   },
   {
@@ -196,8 +210,14 @@
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-04-06 14:26:09.904102",
+ "links": [
+  {
+   "group": "Student Attendance",
+   "link_doctype": "SH Student Attendance",
+   "link_fieldname": "sh_attendance"
+  }
+ ],
+ "modified": "2026-04-17 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Attendance",
