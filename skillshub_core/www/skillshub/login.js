@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
-                if (data.message === "Logged In") {
+                if (data.message === "Logged In" || data.message === "No App" || data.full_name) {
                     // Save user to localStorage
                     localStorage.setItem('sh_user', emailVal);
                     
