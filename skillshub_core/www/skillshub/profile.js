@@ -1,11 +1,14 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const studentId = localStorage.getItem('sh_student_id');
-    const userEmail = localStorage.getItem('sh_user');
+// Route Protection - Immediate Execution
+const studentId = localStorage.getItem('sh_student_id');
+const userEmail = localStorage.getItem('sh_user');
 
-    if (!studentId || !userEmail) {
-        window.location.href = '/skillshub/login';
-        return;
-    }
+if (!studentId || !userEmail) {
+    window.location.href = '/skillshub/login';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // We already checked above, but safe to grab them again
+    if (!studentId || !userEmail) return;
 
     // Logout handler
     document.getElementById('sh-logout').addEventListener('click', function() {
@@ -17,53 +20,48 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Elements
+    const loadingState = document.getElementById('sh-loading');
+    const errorState = document.getElementById('sh-error');
+    const profileContent = document.getElementById('sh-profile-content');
+
     // Fetch Profile Data
     fetch(`/api/method/skillshub_core.skillshub_core.api.get_student_summary?student=${studentId}`, {
+        method: 'GET',
         headers: {
             'Accept': 'application/json'
-        }
+        },
+        credentials: 'include'
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
-        if(data.message) {
+        if (data && data.message) {
             renderProfile(data.message);
         } else {
-            // Fallback if API method is not fully implemented yet, fetch from resource
-            fetchFallbackData(studentId);
+            throw new Error("Invalid data format returned");
         }
     })
     .catch(err => {
-        console.error("API failed, using fallback resource fetch", err);
-        fetchFallbackData(studentId);
+        console.error("Failed to load profile:", err);
+        loadingState.style.display = 'none';
+        errorState.style.display = 'block';
     });
 
-    function fetchFallbackData(id) {
-        fetch(`/api/resource/SH Student/${id}`)
-        .then(res => res.json())
-        .then(resData => {
-            if(resData.data) {
-                const student = resData.data;
-                // Fetch enrolments
-                fetch(`/api/resource/SH Student Enrolment?filters=[["student","=","${id}"]]&fields=["name","milestone","course","status","enrolment_date","attendance_rate"]`)
-                .then(er => er.json())
-                .then(eData => {
-                    renderProfile({
-                        student: student,
-                        enrolments: eData.data || []
-                    });
-                });
-            }
-        });
-    }
-
     function renderProfile(summary) {
-        document.getElementById('sh-loading').style.display = 'none';
-        document.getElementById('sh-profile-content').style.display = 'block';
+        // Hide loading, show content
+        loadingState.style.display = 'none';
+        errorState.style.display = 'none';
+        profileContent.style.display = 'block';
 
         const s = summary.student || {};
         
         // Header
-        document.getElementById('ph-name').textContent = s.student_name || s.first_name + ' ' + s.last_name || 'Unknown Student';
+        document.getElementById('ph-name').textContent = s.student_name || (s.first_name + ' ' + s.last_name) || 'Unknown Student';
         const cohort = s.current_cohort || 'No Cohort';
         const path = s.programme_path || 'No Path Assigned';
         document.getElementById('ph-cohort-path').textContent = `${cohort} • ${path}`;
@@ -82,26 +80,26 @@ document.addEventListener('DOMContentLoaded', function() {
         const enrolments = summary.enrolments || [];
 
         if (enrolments.length === 0) {
-            container.innerHTML = '<p style="color: #64748b;">No active or past programmes found.</p>';
+            container.innerHTML = '<p style="color: var(--color-slate-500);">No active or past programmes found.</p>';
             return;
         }
 
         enrolments.forEach(e => {
             const el = document.createElement('div');
-            el.className = 'sh-timeline-item';
+            el.className = 'timeline-item';
             
-            const badgeClass = e.status === 'Completed' ? 'sh-status-completed' 
-                             : e.status === 'Dropped' ? 'sh-status-dropped' 
-                             : 'sh-status-enrolled';
+            let badgeClass = 'sh-badge-enrolled';
+            if (e.status === 'Completed') badgeClass = 'sh-badge-completed';
+            if (e.status === 'Dropped') badgeClass = 'sh-badge-dropped';
             
             const attRate = e.attendance_rate !== undefined ? ` • ${e.attendance_rate}% Attendance` : '';
 
             el.innerHTML = `
                 <div>
-                    <div class="sh-programme-name">${e.milestone || e.skillshub_programme || 'Unknown Programme'} ${e.course ? '- ' + e.course : ''}</div>
-                    <div class="sh-programme-meta">Enrolled: ${e.enrolment_date || '--'} ${attRate}</div>
+                    <div class="timeline-name">${e.milestone || e.skillshub_programme || 'Unknown Programme'} ${e.course ? '- ' + e.course : ''}</div>
+                    <div class="timeline-meta">Enrolled: ${e.enrolment_date || '--'} ${attRate}</div>
                 </div>
-                <div class="sh-status-badge ${badgeClass}">${e.status || 'Enrolled'}</div>
+                <div class="sh-badge ${badgeClass}">${e.status || 'Enrolled'}</div>
             `;
             container.appendChild(el);
         });

@@ -1,133 +1,112 @@
-<style>
-.sh-att-wrapper {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 0 20px;
-    font-family: 'Inter', system-ui, sans-serif;
-    color: #333;
-}
-.sh-att-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-}
-.sh-att-header h1 { margin: 0; color: #111; font-size: 1.8rem; }
-.sh-offline-badge {
-    display: none;
-    background: #f59e0b;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-.sh-sync-btn {
-    background: #10b981;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.9rem;
-    display: none;
-}
-.sh-sync-btn:hover { background: #059669; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillsHub Attendance</title>
+    <link rel="stylesheet" href="/skillshub/theme.css">
+    <style>
+        .att-wrapper {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .att-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .att-header h1 {
+            margin: 0;
+            color: var(--color-slate-900);
+            font-size: 2rem;
+        }
+        .offline-badge {
+            display: none;
+            background: var(--color-amber-50);
+            color: var(--color-amber-700);
+            border: 1px solid var(--color-amber-200);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+        .sync-btn {
+            background-color: var(--color-emerald-700);
+            display: none;
+        }
+        .sync-btn:hover { background-color: var(--color-emerald-800); }
 
-.sh-panel {
-    background: #ffffff;
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    margin-bottom: 24px;
-}
-.sh-form-group { margin-bottom: 16px; }
-.sh-form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #4a4a4a; }
-.sh-form-group select, .sh-form-group input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    font-size: 1rem;
-}
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group:last-child { margin-bottom: 0; }
 
-.sh-student-list {
-    margin-top: 20px;
-}
-.sh-student-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 0;
-    border-bottom: 1px solid #f1f5f9;
-}
-.sh-student-row:last-child { border-bottom: none; }
-.sh-student-info { font-weight: 500; }
-.sh-student-id { font-size: 0.85rem; color: #64748b; font-weight: 400; margin-top: 4px; }
+        .student-list { margin-top: 1.5rem; }
+        .student-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--color-slate-100);
+        }
+        .student-row:last-child { border-bottom: none; }
+        .student-info { font-weight: 600; color: var(--color-slate-900); }
+        .student-id { font-size: 0.875rem; color: var(--color-slate-500); margin-top: 0.25rem; }
 
-.sh-toggle-group {
-    display: flex;
-    gap: 8px;
-}
-.sh-toggle-btn {
-    padding: 8px 16px;
-    border: 1px solid #cbd5e1;
-    background: #fff;
-    color: #475569;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-.sh-toggle-btn.present { background: #dcfce7; color: #15803d; border-color: #15803d; }
-.sh-toggle-btn.absent { background: #fee2e2; color: #b91c1c; border-color: #b91c1c; }
+        .toggle-group { display: flex; gap: 0.5rem; }
+        .toggle-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--color-slate-200);
+            background: #fff;
+            color: var(--color-slate-600);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+        .toggle-btn.present { background: var(--color-emerald-50); color: var(--color-emerald-700); border-color: var(--color-emerald-200); }
+        .toggle-btn.absent { background: var(--color-red-50); color: var(--color-red-700); border-color: var(--color-red-200); }
 
-.sh-submit-btn {
-    width: 100%;
-    padding: 14px;
-    background: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 20px;
-}
-.sh-submit-btn:disabled { background: #94a3b8; cursor: not-allowed; }
-.sh-submit-btn:hover:not(:disabled) { background: #1d4ed8; }
+        .submit-btn { width: 100%; margin-top: 1.5rem; }
+        #sh-attendance-area { display: none; margin-top: 2rem; }
+    </style>
+</head>
+<body>
 
-#sh-attendance-area { display: none; }
-</style>
-
-<div class="sh-att-wrapper">
-    <div class="sh-att-header">
+<div class="att-wrapper">
+    <div class="att-header">
         <h1>Mark Attendance</h1>
-        <div>
-            <span class="sh-offline-badge" id="offline-badge">Offline: Saved Locally</span>
-            <button class="sh-sync-btn" id="sync-btn">Sync Now (0)</button>
+        <div style="display: flex; align-items: center;">
+            <span class="offline-badge" id="offline-badge">Offline: Saved Locally</span>
+            <button class="sh-btn-primary sync-btn" id="sync-btn">Sync Now (0)</button>
+            <button class="sh-btn-secondary" id="sh-logout" style="margin-left: 1rem;">Sign Out</button>
         </div>
     </div>
 
-    <div class="sh-panel">
-        <div class="sh-form-group">
-            <label for="schedule-select">Programme Schedule</label>
-            <select id="schedule-select">
+    <div class="sh-card" style="margin-bottom: 2rem;">
+        <div class="form-group">
+            <label for="schedule-select" class="sh-label">Programme Schedule</label>
+            <select id="schedule-select" class="sh-input">
                 <option value="">Select a schedule...</option>
             </select>
         </div>
-        <div class="sh-form-group">
-            <label for="attendance-date">Date</label>
-            <input type="date" id="attendance-date">
+        <div class="form-group">
+            <label for="attendance-date" class="sh-label">Date</label>
+            <input type="date" id="attendance-date" class="sh-input">
         </div>
     </div>
 
-    <div class="sh-panel" id="sh-attendance-area">
-        <h3>Enrolled Students</h3>
-        <div class="sh-student-list" id="student-list">
+    <div class="sh-card" id="sh-attendance-area">
+        <h3 style="margin-top: 0;">Enrolled Students</h3>
+        <div class="student-list" id="student-list">
             <!-- Dynamic student rows here -->
         </div>
-        <button class="sh-submit-btn" id="submit-att-btn">Submit Attendance</button>
+        <button class="sh-btn-primary submit-btn" id="submit-att-btn">Submit Attendance</button>
     </div>
 </div>
+
+<script src="/skillshub/attendance.js" type="module"></script>
+</body>
+</html>

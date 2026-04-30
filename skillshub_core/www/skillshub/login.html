@@ -1,85 +1,60 @@
-<style>
-.sh-login-container {
-    max-width: 400px;
-    margin: 60px auto;
-    padding: 40px 30px;
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    font-family: 'Inter', system-ui, sans-serif;
-}
-.sh-login-container h2 { 
-    text-align: center; 
-    margin-bottom: 30px; 
-    color: #1a1a1a;
-    font-weight: 600;
-}
-.sh-input-group { 
-    margin-bottom: 20px; 
-}
-.sh-input-group label { 
-    display: block; 
-    margin-bottom: 8px; 
-    color: #4a4a4a; 
-    font-size: 0.95rem;
-    font-weight: 500; 
-}
-.sh-input-group input { 
-    width: 100%; 
-    padding: 14px; 
-    border: 1.5px solid #e2e8f0; 
-    border-radius: 8px; 
-    box-sizing: border-box;
-    font-size: 1rem;
-    transition: border-color 0.2s;
-}
-.sh-input-group input:focus {
-    outline: none;
-    border-color: #2563eb;
-}
-.sh-btn { 
-    width: 100%; 
-    padding: 14px; 
-    background: #2563eb; 
-    color: white; 
-    border: none; 
-    border-radius: 8px; 
-    font-size: 1rem; 
-    font-weight: 600;
-    cursor: pointer; 
-    transition: background-color 0.2s, transform 0.1s; 
-    margin-top: 10px;
-}
-.sh-btn:hover { 
-    background: #1d4ed8; 
-}
-.sh-btn:active {
-    transform: scale(0.98);
-}
-.sh-error { 
-    color: #dc2626; 
-    text-align: center; 
-    margin-top: 15px; 
-    font-size: 0.9rem;
-    display: none; 
-    background: #fee2e2;
-    padding: 10px;
-    border-radius: 6px;
-}
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillsHub Login</title>
+    <link rel="stylesheet" href="/skillshub/theme.css">
+    <style>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-card h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--color-teal-700);
+        }
+        .login-form-group {
+            margin-bottom: 1.5rem;
+        }
+        .login-btn {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .login-error {
+            display: none;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
 
-<div class="sh-login-container">
-    <h2>SkillsHub Portal</h2>
-    <form id="sh-login-form">
-        <div class="sh-input-group">
-            <label for="usr">Email Address</label>
-            <input type="email" id="usr" name="usr" placeholder="Enter your email" required autocomplete="email">
-        </div>
-        <div class="sh-input-group">
-            <label for="pwd">Password</label>
-            <input type="password" id="pwd" name="pwd" placeholder="Enter your password" required autocomplete="current-password">
-        </div>
-        <button type="submit" class="sh-btn" id="login-btn">Sign In</button>
-        <div id="login-error" class="sh-error">Invalid credentials. Please try again.</div>
-    </form>
+<div class="login-wrapper">
+    <div class="sh-card login-card">
+        <h2>SkillsHub Portal</h2>
+        <form id="sh-login-form">
+            <div class="login-form-group">
+                <label for="usr" class="sh-label">Email Address</label>
+                <input type="email" id="usr" name="usr" class="sh-input" placeholder="Enter your email" required autocomplete="email">
+            </div>
+            <div class="login-form-group">
+                <label for="pwd" class="sh-label">Password</label>
+                <input type="password" id="pwd" name="pwd" class="sh-input" placeholder="Enter your password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="sh-btn-primary login-btn" id="login-btn">Sign In</button>
+            <div id="login-error" class="sh-alert-error login-error">Invalid credentials. Please try again.</div>
+        </form>
+    </div>
 </div>
+
+<script src="/skillshub/login.js" type="module"></script>
+</body>
+</html>

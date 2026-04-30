@@ -1,9 +1,21 @@
+// Route Protection - Immediate Execution
+const userEmail = localStorage.getItem('sh_user');
+if (!userEmail) {
+    window.location.href = '/skillshub/login';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    const userEmail = localStorage.getItem('sh_user');
-    if (!userEmail) {
-        window.location.href = '/skillshub/login';
-        return;
-    }
+    if (!userEmail) return;
+
+    // Logout handler
+    document.getElementById('sh-logout').addEventListener('click', function() {
+        fetch('/api/method/logout', { method: 'POST', credentials: 'include' })
+        .then(() => {
+            localStorage.removeItem('sh_user');
+            localStorage.removeItem('sh_student_id');
+            window.location.href = '/skillshub/login';
+        });
+    });
 
     const scheduleSelect = document.getElementById('schedule-select');
     const dateInput = document.getElementById('attendance-date');
@@ -21,9 +33,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     updateSyncUI();
 
-    // 1. Fetch available schedules (Instructors typically see active schedules)
-    fetch('/api/resource/SH Programme Schedule?filters=[["status","=","Active"]]&fields=["name","skillshub_programme","skillshub_course","cohort"]')
-    .then(res => res.json())
+    // 1. Fetch available schedules
+    fetch('/api/resource/SH Programme Schedule?filters=[["status","=","Active"]]&fields=["name","skillshub_programme","skillshub_course","cohort"]', {
+        headers: { 'Accept': 'application/json' },
+        credentials: 'include'
+    })
+    .then(res => {
+        if(!res.ok) throw new Error("Failed to fetch schedules");
+        return res.json();
+    })
     .then(data => {
         if(data.data) {
             data.data.forEach(sch => {
@@ -43,19 +61,27 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        fetch(`/api/resource/SH Programme Schedule/${this.value}?fields=["enrolled_students"]`)
+        studentList.innerHTML = '<p style="color: var(--color-slate-500);">Loading students...</p>';
+        attendanceArea.style.display = 'block';
+        submitBtn.disabled = true;
+
+        fetch(`/api/resource/SH Programme Schedule/${this.value}?fields=["enrolled_students"]`, {
+            headers: { 'Accept': 'application/json' },
+            credentials: 'include'
+        })
         .then(res => res.json())
         .then(data => {
             const doc = data.data;
             if(doc && doc.enrolled_students && doc.enrolled_students.length > 0) {
                 currentStudents = doc.enrolled_students;
                 renderRoster(currentStudents);
-                attendanceArea.style.display = 'block';
             } else {
-                studentList.innerHTML = '<p>No students enrolled in this schedule.</p>';
-                submitBtn.disabled = true;
-                attendanceArea.style.display = 'block';
+                studentList.innerHTML = '<p style="color: var(--color-slate-500);">No students enrolled in this schedule.</p>';
             }
+        })
+        .catch(err => {
+            console.error(err);
+            studentList.innerHTML = '<p class="sh-alert-error">Error loading roster. Check connection.</p>';
         });
     });
 
@@ -65,21 +91,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
         students.forEach(s => {
             const row = document.createElement('div');
-            row.className = 'sh-student-row';
+            row.className = 'student-row';
             row.innerHTML = `
                 <div>
-                    <div class="sh-student-info">${s.student_name}</div>
-                    <div class="sh-student-id">${s.student}</div>
+                    <div class="student-info">${s.student_name}</div>
+                    <div class="student-id">${s.student}</div>
                 </div>
-                <div class="sh-toggle-group" data-student="${s.student}">
-                    <button class="sh-toggle-btn present">Present</button>
-                    <button class="sh-toggle-btn absent">Absent</button>
+                <div class="toggle-group" data-student="${s.student}">
+                    <button class="toggle-btn present">Present</button>
+                    <button class="toggle-btn absent">Absent</button>
                 </div>
             `;
             studentList.appendChild(row);
 
             // Toggle logic
-            const btns = row.querySelectorAll('.sh-toggle-btn');
+            const btns = row.querySelectorAll('.toggle-btn');
             btns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     btns.forEach(b => b.classList.remove('present', 'absent'));
@@ -100,15 +126,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if(!schedule || !date) return alert("Select schedule and date.");
 
         const records = [];
-        const rows = studentList.querySelectorAll('.sh-toggle-group');
+        const rows = studentList.querySelectorAll('.toggle-group');
         let allMarked = true;
 
         rows.forEach(row => {
             const studentId = row.getAttribute('data-student');
-            const activeBtn = row.querySelector('.sh-toggle-btn.present, .sh-toggle-btn.absent');
+            const activeBtn = row.querySelector('.toggle-btn.present, .toggle-btn.absent');
             if(!activeBtn) allMarked = false;
             
-            const status = activeBtn ? activeBtn.textContent : 'Absent'; // default fallback
+            const status = activeBtn ? activeBtn.textContent : 'Absent';
             records.push({
                 student: studentId,
                 status: status
@@ -135,6 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify(payload)
         })
         .then(response => {
@@ -191,6 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(payload)
             }).then(res => {
                 if(!res.ok) throw new Error("Sync failed");
