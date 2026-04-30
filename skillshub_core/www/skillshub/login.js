@@ -10,26 +10,28 @@ document.addEventListener('DOMContentLoaded', function() {
             loginBtn.textContent = 'Signing in...';
             loginBtn.disabled = true;
 
-            const emailInput = document.getElementById('usr').value;
-            const passwordInput = document.getElementById('pwd').value;
+            // 1. Explicitly grab the text values (ensure you are using .value)
+            const emailVal = document.getElementById('usr').value.trim();
+            const pwdVal = document.getElementById('pwd').value;
 
-            // 1. Post to standard Frappe login
+            // 2. Package as standard Form Data
+            const formData = new FormData();
+            formData.append('usr', emailVal);
+            formData.append('pwd', pwdVal);
+
+            // 3. Fetch without manual JSON headers (fetch handles FormData headers automatically)
             fetch('/api/method/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ usr: emailInput, pwd: passwordInput })
+                body: formData
             })
             .then(response => response.json())
             .then(data => {
                 if (data.message === "Logged In") {
                     // Save user to localStorage
-                    localStorage.setItem('sh_user', emailInput);
+                    localStorage.setItem('sh_user', emailVal);
                     
                     // 2. Fetch SH Student to determine RBAC routing
-                    return fetch(`/api/resource/SH Student?filters=[["portal_user_account","=","${emailInput}"]]&fields=["name"]`, {
+                    return fetch(`/api/resource/SH Student?filters=[["portal_user_account","=","${emailVal}"]]&fields=["name"]`, {
                         headers: {
                             'Accept': 'application/json'
                         }
