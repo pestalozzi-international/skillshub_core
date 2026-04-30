@@ -1,0 +1,266 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 0,
+ "autoname": "format:{student}-{programme_schedule}",
+ "creation": "2026-04-30 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "student",
+  "student_name",
+  "column_break_main",
+  "programme_schedule",
+  "milestone",
+  "section_break_context",
+  "academic_year",
+  "cohort",
+  "column_break_context2",
+  "course",
+  "programme_path",
+  "section_break_status",
+  "status",
+  "enrolment_date",
+  "column_break_status2",
+  "completion_date",
+  "exit_reason",
+  "section_break_attendance",
+  "sessions_total",
+  "sessions_present",
+  "column_break_attendance2",
+  "sessions_absent",
+  "attendance_rate",
+  "section_break_flags",
+  "feedback_submitted",
+  "baseline_submitted",
+  "section_break_notes",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "student",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Student",
+   "options": "SH Student",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "student.student_name",
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "Student Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_main",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "programme_schedule",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Programme Schedule",
+   "options": "SH Programme Schedule",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "programme_schedule.skillshub_programme",
+   "fieldname": "milestone",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Milestone",
+   "options": "SkillsHub Programme",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_context",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fetch_from": "programme_schedule.academic_year",
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "label": "Academic Year",
+   "options": "SH Academic Year",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "programme_schedule.cohort",
+   "fieldname": "cohort",
+   "fieldtype": "Link",
+   "label": "Cohort",
+   "options": "SkillsHub Cohort",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_context2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "programme_schedule.skillshub_course",
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "label": "Course",
+   "options": "SkillsHub Course",
+   "read_only": 1
+  },
+  {
+   "fieldname": "programme_path",
+   "fieldtype": "Select",
+   "label": "Path",
+   "options": "\nPath A\nPath B"
+  },
+  {
+   "fieldname": "section_break_status",
+   "fieldtype": "Section Break",
+   "label": "Status"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "\nEnrolled\nCompleted\nDropped\nTransferred",
+   "reqd": 1
+  },
+  {
+   "fieldname": "enrolment_date",
+   "fieldtype": "Date",
+   "label": "Enrolment Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_status2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "completion_date",
+   "fieldtype": "Date",
+   "label": "Completion Date"
+  },
+  {
+   "depends_on": "eval:doc.status == 'Dropped'",
+   "fieldname": "exit_reason",
+   "fieldtype": "Small Text",
+   "label": "Exit Reason"
+  },
+  {
+   "fieldname": "section_break_attendance",
+   "fieldtype": "Section Break",
+   "label": "Attendance"
+  },
+  {
+   "fieldname": "sessions_total",
+   "fieldtype": "Int",
+   "label": "Total Sessions",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sessions_present",
+   "fieldtype": "Int",
+   "label": "Sessions Present",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_attendance2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sessions_absent",
+   "fieldtype": "Int",
+   "label": "Sessions Absent",
+   "read_only": 1
+  },
+  {
+   "fieldname": "attendance_rate",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Attendance Rate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_flags",
+   "fieldtype": "Section Break",
+   "label": "Completion Flags"
+  },
+  {
+   "default": "0",
+   "fieldname": "feedback_submitted",
+   "fieldtype": "Check",
+   "label": "Feedback Submitted",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "baseline_submitted",
+   "fieldtype": "Check",
+   "label": "Baseline Submitted",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_notes",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-30 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "ZM SkillsHub",
+ "name": "SH Student Enrolment",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "PI Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Student",
+   "share": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "student_name",
+ "track_changes": 1
+}
