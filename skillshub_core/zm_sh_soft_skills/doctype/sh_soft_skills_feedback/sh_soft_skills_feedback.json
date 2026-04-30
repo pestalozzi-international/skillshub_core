@@ -10,11 +10,9 @@
  "field_order": [
   "general_tab",
   "portal_user_details_section",
-  "portal_user_account",
   "section_break_bcuw",
   "student_column",
   "student_name",
-  "pestalozzi_student_id",
   "feedback_phase",
   "column_break_pppv",
   "program_schedule",
@@ -43,22 +41,14 @@
   "ss_beneficiaries_html",
   "ss_beneficiaries_table",
   "section_break_abzv",
-  "impact_example"
+  "impact_example",
+  "milestone"
  ],
  "fields": [
   {
    "fieldname": "student_column",
    "fieldtype": "Column Break",
    "label": "Student"
-  },
-  {
-   "fetch_from": "portal_user_account.skillshub_record",
-   "fieldname": "student_name",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Student Name",
-   "options": "SH Student",
-   "search_index": 1
   },
   {
    "fetch_from": "program_schedule.current_phase",
@@ -168,21 +158,9 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "portal_user_account",
-   "fieldtype": "Link",
-   "label": "Portal User Account",
-   "options": "User"
-  },
-  {
    "fieldname": "portal_user_details_section",
    "fieldtype": "Section Break",
    "label": "Portal User Details"
-  },
-  {
-   "fetch_from": "portal_user_account.pestalozzi_id_sh",
-   "fieldname": "pestalozzi_student_id",
-   "fieldtype": "Data",
-   "label": "Pestalozzi Student ID"
   },
   {
    "fieldname": "section_break_bcuw",
@@ -235,6 +213,15 @@
    "fieldname": "academic_year",
    "fieldtype": "Read Only",
    "label": "Academic Year"
+  },
+  {
+   "fetch_from": "programme_schedule.skillshub_programme",
+   "fieldname": "milestone",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Milestone",
+   "options": "SkillsHub Programme",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,

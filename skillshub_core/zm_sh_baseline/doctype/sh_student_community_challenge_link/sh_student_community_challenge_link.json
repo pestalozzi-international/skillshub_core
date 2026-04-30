@@ -6,7 +6,8 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "challenge"
+  "challenge",
+  "milestone"
  ],
  "fields": [
   {
@@ -15,6 +16,14 @@
    "in_list_view": 1,
    "label": "Challenge",
    "options": "SH Student Community Challenge"
+  },
+  {
+   "fieldname": "milestone",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Milestone",
+   "options": "SkillsHub Programme",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,

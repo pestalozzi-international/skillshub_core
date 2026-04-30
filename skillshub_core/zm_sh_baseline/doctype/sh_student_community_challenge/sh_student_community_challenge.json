@@ -7,7 +7,8 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "challenge"
+  "challenge",
+  "milestone"
  ],
  "fields": [
   {
@@ -15,6 +16,14 @@
    "fieldtype": "Data",
    "label": "Challenge",
    "unique": 1
+  },
+  {
+   "fieldname": "milestone",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Milestone",
+   "options": "SkillsHub Programme",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
