@@ -39,11 +39,6 @@ jobs:
       - name: Clone
         uses: actions/checkout@v3
 
-      - name: Find tests
-        run: |
-          echo "Finding tests"
-          grep -rn "def test" > /dev/null
-
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -101,6 +96,15 @@ jobs:
         working-directory: /home/runner/frappe-bench
         run: |
           bench --site test_site set-config allow_tests true
-          bench --site test_site run-tests --app skillshub_core
+          # Only invoke the test runner if the app contains test_*.py files.
+          # Without this guard, Frappe's runner recurses into dependency doctypes
+          # (e.g. Nationality) that aren't installed in a plain Frappe-only site,
+          # causing a DoesNotExistError before any test is actually executed.
+          if find apps/skillshub_core -name "test_*.py" | grep -q .; then
+            echo "Test files found — running test suite."
+            bench --site test_site run-tests --app skillshub_core
+          else
+            echo "No test_*.py files found — skipping test run."
+          fi
         env:
           TYPE: server
