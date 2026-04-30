@@ -10,13 +10,19 @@
   "niche",
   "address",
   "section_break_fkel",
+  "employer_type",
   "occupation",
+  "role",
   "currency",
   "salary",
+  "monthly_salary_zmw",
   "income_level",
   "section_break_wtwf",
   "start_date",
-  "end_date"
+  "end_date",
+  "is_current",
+  "section_break_notes_emp",
+  "notes"
  ],
  "fields": [
   {
@@ -44,6 +50,13 @@
   {
    "fieldname": "section_break_fkel",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "employer_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Employer Type",
+   "options": "\nFormal\nInformal\nSelf-Employed"
   },
   {
    "fieldname": "salary",
@@ -90,13 +103,42 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Occupation"
+  },
+  {
+   "fieldname": "role",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Role / Position"
+  },
+  {
+   "fieldname": "monthly_salary_zmw",
+   "fieldtype": "Currency",
+   "label": "Monthly Salary (ZMW)",
+   "options": "currency",
+   "precision": "2"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_current",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Current Job"
+  },
+  {
+   "fieldname": "section_break_notes_emp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-04-07 14:40:14.303433",
+ "modified": "2026-04-30 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Employment History",

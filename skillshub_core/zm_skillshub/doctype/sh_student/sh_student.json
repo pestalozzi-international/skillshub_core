@@ -80,24 +80,12 @@
   "skillshub_programme",
   "current_course",
   "current_cohort",
-  "current_phase",
+  "programme_path",
   "enrolment_column",
   "enrolment_date",
   "graduation_completion_date",
+  "exit_reason",
   "airtable_student_cohort_identifier",
-  "attendance_column",
-  "total_sessions",
-  "sessions_present",
-  "sessions_absent",
-  "attendance_pct",
-  "programme_history_section",
-  "column_break_ifmw",
-  "programme_history",
-  "mindset_camp_tab",
-  "mindset_camp_attendance",
-  "section_break_uiya",
-  "mindset_camp_date",
-  "mindset_camp_notes",
   "family_tab",
   "section_break_yswd",
   "household_income",
@@ -128,37 +116,9 @@
   "attachment_completed",
   "end_date",
   "section_break_lzmy",
-  "occupation_post_completion",
-  "employer",
   "employment_history"
  ],
  "fields": [
-  {
-   "fieldname": "mindset_camp_tab",
-   "fieldtype": "Tab Break",
-   "label": "Mindset Camp"
-  },
-  {
-   "default": "0",
-   "fieldname": "mindset_camp_attendance",
-   "fieldtype": "Check",
-   "label": "Mindset Camp Attendance"
-  },
-  {
-   "depends_on": "mindset_camp_attendance",
-   "fieldname": "section_break_uiya",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "mindset_camp_date",
-   "fieldtype": "Date",
-   "label": "Mindset Camp Date"
-  },
-  {
-   "fieldname": "mindset_camp_notes",
-   "fieldtype": "Small Text",
-   "label": "Mindset Camp Notes"
-  },
   {
    "fieldname": "core_record_section",
    "fieldtype": "Section Break",
@@ -175,13 +135,6 @@
    "label": "Current Schedule",
    "mandatory_depends_on": "eval:doc.status == \"Student\"",
    "options": "SH Programme Schedule"
-  },
-  {
-   "fieldname": "programme_history",
-   "fieldtype": "Table",
-   "label": "Programme History",
-   "options": "SkillsHub Programme-Student Link",
-   "read_only": 1
   },
   {
    "fieldname": "applications_section",
@@ -274,16 +227,6 @@
    "label": "Date submitted Enrolment Form"
   },
   {
-   "fieldname": "occupation_post_completion",
-   "fieldtype": "Data",
-   "label": "Occupation Post Completion"
-  },
-  {
-   "fieldname": "employer",
-   "fieldtype": "Data",
-   "label": "Employer"
-  },
-  {
    "fetch_from": "current_schedule.skillshub_course",
    "fieldname": "current_course",
    "fieldtype": "Read Only",
@@ -310,10 +253,17 @@
    "label": "Current Cohort"
   },
   {
-   "fetch_from": "current_schedule.current_phase",
-   "fieldname": "current_phase",
-   "fieldtype": "Read Only",
-   "label": "Current Phase"
+   "fieldname": "programme_path",
+   "fieldtype": "Select",
+   "label": "Programme Path",
+   "options": "\nPath A\nPath B",
+   "read_only": 1
+  },
+  {
+   "fieldname": "exit_reason",
+   "fieldtype": "Small Text",
+   "label": "Exit Reason",
+   "depends_on": "eval:doc.status == 'Alumni' || doc.status == 'Dropped'"
   },
   {
    "fieldname": "misc_section",
@@ -511,7 +461,7 @@
    "label": "Number of Siblings"
   },
   {
-   "description": "<div class=\"alert alert-info\" style=\"margin-top: 10px; border: 1px dashed #3498db; background-color: #f7fbff; padding: 15px; border-radius: 4px;\">\n    <h5 style=\"margin-top: 0; color: #2980b9; font-weight: bold;\">\n        <i class=\"fa fa-info-circle\"></i> Provisioning Instructions\n    </h5>\n    <p style=\"margin-bottom: 10px; color: #2c3e50;\">To set up this student's digital identity, please follow these steps in order:</p>\n    <ol style=\"padding-left: 20px; color: #2c3e50;\">\n        <li><b>Generate Email:</b> Go to <b>Actions</b> &gt; <i>\"Generate Student Email\"</i>.</li>\n        <li><b>Save the Record:</b> Click <b>Save</b> to lock in the new email address.</li>\n    </ol>\n    \n    <div style=\"background-color: #e8f4fd; padding: 10px; border-radius: 4px; margin-top: 10px; border-left: 4px solid #3498db;\">\n        <p style=\"margin-bottom: 0; font-size: 0.95em; color: #2c3e50;\">\n            <strong>Account Credentials:</strong><br>\n            \u2022 <b>Username:</b> Use the generated Pestalozzi Student Email.<br>\n            \u2022 <b>Initial Password:</b> Use the Student's <b>Pestalozzi ID</b>.\n        </p>\n    </div>\n\n    <p style=\"font-size: 0.85em; color: #7f8c8d; margin-top: 10px; font-style: italic;\">\n        Note: The buttons will automatically disappear from the menu once each step is successfully completed.\n    </p>\n</div>",
+   "description": "<div class=\"alert alert-info\" style=\"margin-top: 10px; border: 1px dashed #3498db; background-color: #f7fbff; padding: 15px; border-radius: 4px;\">\n    <h5 style=\"margin-top: 0; color: #2980b9; font-weight: bold;\">\n        <i class=\"fa fa-info-circle\"></i> Provisioning Instructions\n    </h5>\n    <p style=\"margin-bottom: 10px; color: #2c3e50;\">To set up this student's digital identity, please follow these steps in order:</p>\n    <ol style=\"padding-left: 20px; color: #2c3e50;\">\n        <li><b>Generate Email:</b> Go to <b>Actions</b> &gt; <i>\"Generate Student Email\"</i>.</li>\n        <li><b>Save the Record:</b> Click <b>Save</b> to lock in the new email address.</li>\n    </ol>\n    \n    <div style=\"background-color: #e8f4fd; padding: 10px; border-radius: 4px; margin-top: 10px; border-left: 4px solid #3498db;\">\n        <p style=\"margin-bottom: 0; font-size: 0.95em; color: #2c3e50;\">\n            <strong>Account Credentials:</strong><br>\n            • <b>Username:</b> Use the generated Pestalozzi Student Email.<br>\n            • <b>Initial Password:</b> Use the Student's <b>Pestalozzi ID</b>.\n        </p>\n    </div>\n\n    <p style=\"font-size: 0.85em; color: #7f8c8d; margin-top: 10px; font-style: italic;\">\n        Note: The buttons will automatically disappear from the menu once each step is successfully completed.\n    </p>\n</div>",
    "fieldname": "pestalozzi_student_email",
    "fieldtype": "Data",
    "label": "Pestalozzi Student Email",
@@ -549,7 +499,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nStudent\nAlumni",
+   "options": "\nStudent\nAlumni\nDropped",
    "reqd": 1
   },
   {
@@ -686,44 +636,6 @@
    "label": "Airtable Student Cohort Identifier"
   },
   {
-   "fieldname": "attendance_column",
-   "fieldtype": "Column Break",
-   "label": "Attendance"
-  },
-  {
-   "fieldname": "total_sessions",
-   "fieldtype": "Int",
-   "label": "Total Sessions",
-   "read_only": 1
-  },
-  {
-   "fieldname": "sessions_present",
-   "fieldtype": "Int",
-   "label": "Present",
-   "read_only": 1
-  },
-  {
-   "fieldname": "sessions_absent",
-   "fieldtype": "Int",
-   "label": "Absent",
-   "read_only": 1
-  },
-  {
-   "fieldname": "attendance_pct",
-   "fieldtype": "Percent",
-   "label": "Attendance %",
-   "read_only": 1
-  },
-  {
-   "fieldname": "programme_history_section",
-   "fieldtype": "Section Break",
-   "label": " Programme History"
-  },
-  {
-   "fieldname": "column_break_ifmw",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "id_and_application_tab",
    "fieldtype": "Tab Break",
    "label": "ID and Application"
@@ -817,40 +729,45 @@
   {
    "group": "Baseline",
    "link_doctype": "SH Student Baseline Form",
-   "link_fieldname": "student_name"
+   "link_fieldname": "sh_student"
   },
   {
    "group": "Soft Skills",
    "link_doctype": "SH Soft Skills Feedback",
-   "link_fieldname": "student_name"
+   "link_fieldname": "sh_student"
   },
   {
    "group": "Vocational Training",
    "link_doctype": "SkillsHub Vocational Training Feedback",
-   "link_fieldname": "student_name"
+   "link_fieldname": "sh_student"
   },
   {
    "group": "Edulution",
    "link_doctype": "SkillsHub Edulution Feedback",
-   "link_fieldname": "student_name"
+   "link_fieldname": "sh_student"
   },
   {
    "group": "Vocational Training",
    "link_doctype": "ZM SkillsHub Attachment Feedback",
-   "link_fieldname": "student_name"
+   "link_fieldname": "sh_student"
   },
   {
    "group": "Parents",
    "link_doctype": "ZM SkillsHub Parent Feedback",
-   "link_fieldname": "student_name"
+   "link_fieldname": "sh_student"
   },
   {
    "group": "Mindset Camp",
    "link_doctype": "SH Mindset Camp Feedback",
-   "link_fieldname": "student_name"
+   "link_fieldname": "sh_student"
+  },
+  {
+   "group": "Enrolments",
+   "link_doctype": "SH Student Enrolment",
+   "link_fieldname": "student"
   }
  ],
- "modified": "2026-04-07 14:13:32.615326",
+ "modified": "2026-04-30 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Student",
