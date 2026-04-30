@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillsHub Admin — Students</title>
+  <link rel="stylesheet" href="/skillshub/theme.css">
+  <style>
+    body{background:var(--color-slate-50)}
+    .admin-header{background:white;border-bottom:1px solid var(--color-slate-200);padding:1rem 2rem;box-shadow:var(--shadow-soft)}
+    .admin-header-inner{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+    .admin-header h1{font-size:1.5rem;color:var(--color-slate-900);margin:0}
+    .admin-nav{display:flex;gap:1.5rem;align-items:center}
+    .admin-nav a{font-size:.875rem;font-weight:600;color:var(--color-teal-700);text-decoration:none;border-bottom:2px solid var(--color-teal-700);padding-bottom:.125rem}
+    .admin-nav button{background:none;border:none;font-size:.875rem;color:var(--color-slate-600);cursor:pointer;font-weight:500}
+    .admin-nav button:hover{color:var(--color-slate-900)}
+    .container{max-width:1400px;margin:2rem auto;padding:0 1.5rem}
+    .filter-row{background:white;border-radius:var(--border-radius-card);padding:1.25rem 1.5rem;margin-bottom:1.5rem;box-shadow:var(--shadow-soft);display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;align-items:end}
+    .filter-group label{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;color:var(--color-slate-600);letter-spacing:.05em;margin-bottom:.4rem}
+    .filter-group select,.filter-group input{width:100%;padding:.5rem .75rem;border:1px solid var(--color-slate-200);border-radius:.5rem;font-size:.875rem;color:var(--color-slate-900);box-sizing:border-box}
+    .filter-group select:focus,.filter-group input:focus{outline:none;border-color:var(--color-teal-700)}
+    .path-toggle{display:flex;gap:.375rem}
+    .path-btn{flex:1;padding:.5rem;border:1px solid var(--color-slate-200);background:white;color:var(--color-slate-600);border-radius:.5rem;cursor:pointer;font-size:.8125rem;font-weight:600;transition:all .15s}
+    .path-btn.active{background:var(--color-teal-700);color:white;border-color:var(--color-teal-700)}
+    .table-wrap{background:white;border-radius:var(--border-radius-card);overflow:hidden;box-shadow:var(--shadow-soft)}
+    table{width:100%;border-collapse:collapse}
+    thead{background:var(--color-slate-50);border-bottom:1px solid var(--color-slate-200)}
+    th{padding:.875rem 1rem;text-align:left;font-size:.75rem;font-weight:600;text-transform:uppercase;color:var(--color-slate-600);letter-spacing:.05em}
+    td{padding:.875rem 1rem;font-size:.875rem;color:var(--color-slate-900);border-bottom:1px solid var(--color-slate-100)}
+    tbody tr:hover{background:var(--color-slate-50)}
+    .sid{font-family:monospace;font-size:.8125rem;color:var(--color-teal-700);font-weight:600}
+    .att-high{color:var(--color-emerald-700);font-weight:600}
+    .att-med{color:var(--color-amber-700);font-weight:600}
+    .att-low{color:var(--color-red-700);font-weight:600}
+    .fb-yes{background:var(--color-emerald-50);color:var(--color-emerald-700);border:1px solid var(--color-emerald-200);padding:.2rem .6rem;border-radius:9999px;font-size:.75rem;font-weight:600}
+    .fb-no{background:var(--color-amber-50);color:var(--color-amber-700);border:1px solid var(--color-amber-200);padding:.2rem .6rem;border-radius:9999px;font-size:.75rem;font-weight:600}
+    .view-btn{background:var(--color-slate-100);color:var(--color-slate-700);border:none;border-radius:.5rem;padding:.375rem .75rem;font-size:.8125rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+    .view-btn:hover{background:var(--color-slate-200)}
+    .state-box{background:white;border-radius:var(--border-radius-card);padding:3rem 2rem;text-align:center;box-shadow:var(--shadow-soft);color:var(--color-slate-500)}
+    .footer{text-align:center;padding:1rem;font-size:.875rem;color:var(--color-slate-500)}
+  </style>
+</head>
+<body>
+  <div class="admin-header">
+    <div class="admin-header-inner">
+      <h1>SkillsHub Admin</h1>
+      <div class="admin-nav">
+        <a href="/skillshub/admin/students">Students</a>
+        <button id="logout-btn">Sign Out</button>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="filter-row">
+      <div class="filter-group"><label>Cohort</label><select id="f-cohort"><option value="">All Cohorts</option></select></div>
+      <div class="filter-group"><label>Programme</label><select id="f-programme"><option value="">All Programmes</option></select></div>
+      <div class="filter-group"><label>Search</label><input type="text" id="f-search" placeholder="Name or ID..."></div>
+      <div class="filter-group"><label>Path</label>
+        <div class="path-toggle">
+          <button class="path-btn active" data-path="">All</button>
+          <button class="path-btn" data-path="Path A">Path A</button>
+          <button class="path-btn" data-path="Path B">Path B</button>
+        </div>
+      </div>
+    </div>
+    <div id="content"><div class="state-box">Loading students...</div></div>
+    <div id="footer" class="footer" style="display:none"></div>
+  </div>
+  <script src="/skillshub/admin/students.js"></script>
+</body>
+</html>

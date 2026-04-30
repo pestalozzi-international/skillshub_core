@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillsHub Admin — Student Detail</title>
+  <link rel="stylesheet" href="/skillshub/theme.css">
+  <style>
+    body{background:var(--color-slate-50)}
+    .admin-header{background:white;border-bottom:1px solid var(--color-slate-200);padding:1rem 2rem;box-shadow:var(--shadow-soft)}
+    .admin-header-inner{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+    .admin-header h1{font-size:1.5rem;color:var(--color-slate-900);margin:0}
+    .admin-nav button{background:none;border:none;font-size:.875rem;color:var(--color-slate-600);cursor:pointer;font-weight:500}
+    .container{max-width:1400px;margin:0 auto;padding:1.5rem}
+    .back-link{color:var(--color-teal-700);text-decoration:none;font-size:.875rem;display:inline-flex;align-items:center;gap:.375rem;margin-bottom:1.5rem}
+    .back-link:hover{text-decoration:underline}
+    .detail-header{background:white;border-radius:var(--border-radius-card);padding:1.5rem 2rem;margin-bottom:1.5rem;box-shadow:var(--shadow-soft);display:flex;justify-content:space-between;align-items:center}
+    .detail-header h2{margin:0 0 .375rem;font-size:1.75rem}
+    .detail-header .sid{font-family:monospace;font-size:.875rem;color:var(--color-teal-700);font-weight:600}
+    .status-badge{padding:.375rem .875rem;border-radius:9999px;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+    .badge-student{background:var(--color-emerald-50);color:var(--color-emerald-700);border:1px solid var(--color-emerald-200)}
+    .badge-alumni{background:var(--color-slate-100);color:var(--color-slate-600)}
+    .detail-grid{display:grid;grid-template-columns:300px 1fr;gap:1.5rem}
+    @media(max-width:768px){.detail-grid{grid-template-columns:1fr}}
+    .sidebar{display:flex;flex-direction:column;gap:1.5rem}
+    .card-label{font-size:.75rem;font-weight:600;text-transform:uppercase;color:var(--color-slate-500);letter-spacing:.05em;margin-bottom:.25rem}
+    .card-value{font-size:.9rem;color:var(--color-slate-900);font-weight:500;margin-bottom:.875rem}
+    .card-value:last-child{margin-bottom:0}
+    .right-col{display:flex;flex-direction:column;gap:1.5rem}
+    /* Timeline */
+    .timeline{position:relative;padding-left:1.75rem}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--color-slate-200)}
+    .tl-item{position:relative;margin-bottom:1.5rem}
+    .tl-item:last-child{margin-bottom:0}
+    .tl-item::before{content:'';position:absolute;left:-2.125rem;top:.25rem;width:.75rem;height:.75rem;border-radius:50%;background:var(--color-teal-700);border:2px solid white;box-shadow:0 0 0 2px var(--color-teal-700)}
+    .tl-item.completed::before{background:var(--color-emerald-700);box-shadow:0 0 0 2px var(--color-emerald-700)}
+    .tl-item.dropped::before{background:var(--color-red-700);box-shadow:0 0 0 2px var(--color-red-700)}
+    .tl-title{font-weight:600;color:var(--color-slate-900)}
+    .tl-meta{font-size:.8125rem;color:var(--color-slate-500);margin-top:.25rem}
+    .tl-pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem}
+    .pill{padding:.125rem .5rem;border-radius:9999px;font-size:.75rem;font-weight:600}
+    .pill-att{background:var(--color-slate-100);color:var(--color-slate-700)}
+    .pill-fb-ok{background:var(--color-emerald-50);color:var(--color-emerald-700);border:1px solid var(--color-emerald-200)}
+    .pill-fb-no{background:var(--color-amber-50);color:var(--color-amber-700);border:1px solid var(--color-amber-200)}
+    /* Employment table */
+    .emp-table{width:100%;border-collapse:collapse;font-size:.875rem}
+    .emp-table th{padding:.625rem .875rem;text-align:left;font-size:.75rem;font-weight:600;text-transform:uppercase;color:var(--color-slate-600);letter-spacing:.05em;background:var(--color-slate-50);border-bottom:1px solid var(--color-slate-200)}
+    .emp-table td{padding:.625rem .875rem;border-bottom:1px solid var(--color-slate-100);color:var(--color-slate-900)}
+    .state-box{text-align:center;padding:3rem;color:var(--color-slate-500)}
+  </style>
+</head>
+<body>
+  <div class="admin-header">
+    <div class="admin-header-inner">
+      <h1>SkillsHub Admin</h1>
+      <div class="admin-nav">
+        <button id="logout-btn">Sign Out</button>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <a href="/skillshub/admin/students" class="back-link">← Back to Students</a>
+    <div id="content"><div class="sh-card state-box">Loading student...</div></div>
+  </div>
+  <script src="/skillshub/admin/student.js"></script>
+</body>
+</html>
