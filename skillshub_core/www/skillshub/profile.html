@@ -1,140 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkillsHub Profile</title>
-    <link rel="stylesheet" href="/skillshub/theme.css">
-    <style>
-        .profile-wrapper {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        .profile-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding: 2rem;
-            background: var(--color-teal-700);
-            border-radius: var(--border-radius-card);
-            color: white;
-            box-shadow: var(--shadow-soft);
-        }
-        .profile-header h1 {
-            color: white;
-            margin: 0 0 0.5rem 0;
-            font-size: 2rem;
-        }
-        .profile-header p {
-            margin: 0;
-            color: var(--color-emerald-50);
-            font-size: 1.1rem;
-        }
-        .logout-btn {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .logout-btn:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-        
-        .profile-grid {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 2rem;
-        }
-        @media (max-width: 768px) {
-            .profile-grid { grid-template-columns: 1fr; }
-        }
-
-        .sidebar h3, .main-content h3 {
-            margin-top: 0;
-            border-bottom: 1px solid var(--color-slate-200);
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
-            color: var(--color-slate-900);
-        }
-
-        .detail-item { margin-bottom: 1.25rem; }
-        .detail-item:last-child { margin-bottom: 0; }
-        .detail-label { 
-            font-size: 0.75rem; 
-            color: var(--color-slate-500); 
-            font-weight: 600; 
-            text-transform: uppercase; 
-            letter-spacing: 0.05em; 
-            margin-bottom: 0.25rem;
-        }
-        .detail-value { font-size: 1rem; color: var(--color-slate-900); font-weight: 500; }
-
-        .timeline-item {
-            padding: 1.5rem 0;
-            border-bottom: 1px solid var(--color-slate-100);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-        .timeline-item:last-child { border-bottom: none; padding-bottom: 0; }
-        .timeline-name { font-weight: 600; font-size: 1.125rem; color: var(--color-slate-900); margin-bottom: 0.5rem; }
-        .timeline-meta { font-size: 0.875rem; color: var(--color-slate-500); }
-        
-        .loading-state { text-align: center; padding: 4rem; color: var(--color-slate-500); font-size: 1.125rem; }
-        .error-state { display: none; margin-top: 2rem; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile — SkillsHub</title>
+  <link rel="stylesheet" href="/skillshub/theme.css">
+  <style>
+    body { background-color: var(--color-slate-50); }
+    .profile-header {
+      background: var(--color-teal-700);
+      padding: 2rem 2.5rem;
+    }
+    .ph-content {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem;
+    }
+    .ph-title h1 { color: white; margin: 0 0 0.5rem 0; font-size: 2rem; }
+    .ph-title p { color: rgba(255,255,255,0.8); margin: 0; }
+    .ph-nav { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    .ph-nav a { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: var(--border-radius-btn); padding: 0.5rem 1rem; text-decoration: none; font-size: 0.875rem; font-weight: 500; }
+    .ph-nav a:hover { background: rgba(255,255,255,0.25); }
+    #logout-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: var(--border-radius-btn); padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; }
+    .profile-grid {
+      max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem 2rem;
+      display: grid; grid-template-columns: 340px 1fr; gap: 2rem;
+    }
+    @media(max-width:768px){ .profile-grid{ grid-template-columns:1fr; } .ph-content{ flex-direction:column; } }
+    .sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+    .detail-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--color-slate-500); letter-spacing: 0.05em; margin-bottom: 0.25rem; }
+    .detail-value { font-size: 0.9375rem; color: var(--color-slate-900); font-weight: 500; }
+    .detail-item { margin-bottom: 1.1rem; }
+    .detail-item:last-of-type { margin-bottom: 0; }
+    .edit-contact-form { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--color-slate-200); }
+    .edit-contact-form.show { display: block; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--color-slate-600); letter-spacing: 0.05em; margin-bottom: 0.4rem; }
+    .form-group input { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--color-slate-200); border-radius: 0.5rem; font-size: 0.875rem; color: var(--color-slate-900); box-sizing: border-box; }
+    .form-group input:focus { outline: none; border-color: var(--color-teal-700); }
+    .form-actions { display: flex; gap: 0.75rem; margin-top: 0.75rem; }
+    .btn-small-primary { background: var(--color-teal-700); color: white; border: none; border-radius: var(--border-radius-btn); padding: 0.5rem 1rem; font-size: 0.8125rem; font-weight: 600; cursor: pointer; }
+    .btn-small-secondary { background: var(--color-slate-100); color: var(--color-slate-700); border: none; border-radius: var(--border-radius-btn); padding: 0.5rem 1rem; font-size: 0.8125rem; font-weight: 600; cursor: pointer; }
+    .contact-message { display: none; margin-top: 0.75rem; padding: 0.625rem 0.875rem; border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 500; }
+    .contact-message.success { background: var(--color-emerald-50); color: var(--color-emerald-700); border: 1px solid var(--color-emerald-200); }
+    .contact-message.error { background: var(--color-red-50); color: var(--color-red-700); border: 1px solid var(--color-red-200); }
+    .timeline { position: relative; padding-left: 1.75rem; }
+    .timeline::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--color-slate-200); }
+    .timeline-item { position: relative; margin-bottom: 1.75rem; }
+    .timeline-item::before { content:''; position:absolute; left:-1.875rem; top:0.25rem; width:0.75rem; height:0.75rem; border-radius:50%; background:var(--color-teal-700); border:2px solid white; box-shadow:0 0 0 2px var(--color-teal-700); }
+    .timeline-date { font-size: 0.75rem; color: var(--color-slate-500); margin-bottom: 0.25rem; }
+    .timeline-title { font-weight: 600; color: var(--color-slate-900); margin-bottom: 0.25rem; }
+    .timeline-description { font-size: 0.875rem; color: var(--color-slate-600); }
+  </style>
 </head>
 <body>
-
-<div class="profile-wrapper" id="sh-profile-app">
-    <div class="loading-state" id="sh-loading">Loading your profile...</div>
-    <div class="sh-alert-error error-state" id="sh-error">Failed to load profile. Please try again.</div>
-    
-    <div id="sh-profile-content" style="display: none;">
-        <div class="profile-header">
-            <div>
-                <h1 id="ph-name">Student Name</h1>
-                <p id="ph-cohort-path">Cohort • Path</p>
-            </div>
-            <button class="sh-btn-secondary logout-btn" id="sh-logout">Sign Out</button>
-        </div>
-
-        <div class="profile-grid">
-            <div class="sh-card sidebar">
-                <h3>Demographics & Contact</h3>
-                <div class="detail-item">
-                    <div class="detail-label">Student ID</div>
-                    <div class="detail-value" id="ps-id">--</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Age</div>
-                    <div class="detail-value" id="ps-age">--</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Gender</div>
-                    <div class="detail-value" id="ps-gender">--</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Location</div>
-                    <div class="detail-value" id="ps-location">--</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Status</div>
-                    <div class="detail-value" id="ps-status">--</div>
-                </div>
-            </div>
-
-            <div class="sh-card main-content">
-                <h3>Programme Timeline</h3>
-                <div id="sh-timeline-container">
-                    <!-- Dynamic enrolments will be rendered here -->
-                </div>
-            </div>
-        </div>
+  <div class="profile-header">
+    <div class="ph-content">
+      <div class="ph-title">
+        <h1 id="ph-name">Loading...</h1>
+        <p id="ph-cohort-path">—</p>
+      </div>
+      <div class="ph-nav">
+        <a href="/skillshub/feedback/mindset-camp">Feedback</a>
+        <a href="/skillshub/baseline">Baseline</a>
+        <button id="logout-btn">Sign Out</button>
+      </div>
     </div>
-</div>
+  </div>
 
-<script src="/skillshub/profile.js" type="module"></script>
+  <div class="profile-grid">
+    <div class="sidebar">
+      <div class="sh-card">
+        <h3 style="margin-top:0;border-bottom:1px solid var(--color-slate-200);padding-bottom:0.75rem;margin-bottom:1rem;font-size:0.9375rem;">Personal Details</h3>
+        <div class="detail-item"><div class="detail-label">Student ID</div><div class="detail-value" id="ps-student-id">—</div></div>
+        <div class="detail-item"><div class="detail-label">Date of Birth</div><div class="detail-value" id="ps-dob">—</div></div>
+        <div class="detail-item"><div class="detail-label">Gender</div><div class="detail-value" id="ps-gender">—</div></div>
+        <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value" id="ps-location">—</div></div>
+      </div>
+
+      <div class="sh-card">
+        <h3 style="margin-top:0;border-bottom:1px solid var(--color-slate-200);padding-bottom:0.75rem;margin-bottom:1rem;font-size:0.9375rem;">Address</h3>
+        <div class="detail-item"><div class="detail-label">Address Line 1</div><div class="detail-value" id="ps-address-1">—</div></div>
+        <div class="detail-item"><div class="detail-label">Address Line 2</div><div class="detail-value" id="ps-address-2">—</div></div>
+        <div class="detail-item"><div class="detail-label">Postcode</div><div class="detail-value" id="ps-pincode">—</div></div>
+        <button id="edit-contact-btn" class="btn-small-primary" style="margin-top:0.75rem;width:100%;">Edit Address</button>
+        <form id="contact-form" class="edit-contact-form">
+          <div class="form-group"><label>Address Line 1</label><input type="text" id="contact-address-1"></div>
+          <div class="form-group"><label>Address Line 2</label><input type="text" id="contact-address-2"></div>
+          <div class="form-group"><label>Postcode / Pincode</label><input type="text" id="contact-pincode"></div>
+          <div class="form-actions">
+            <button type="submit" class="btn-small-primary">Save</button>
+            <button type="button" id="cancel-contact-btn" class="btn-small-secondary">Cancel</button>
+          </div>
+        </form>
+        <div id="contact-message" class="contact-message"></div>
+      </div>
+    </div>
+
+    <div class="sh-card main-content">
+      <h3 style="margin-top:0;border-bottom:1px solid var(--color-slate-200);padding-bottom:0.75rem;margin-bottom:1.5rem;">Programme Timeline</h3>
+      <div id="timeline-container" class="timeline"></div>
+    </div>
+  </div>
+
+  <script src="/skillshub/profile.js" type="module"></script>
 </body>
 </html>

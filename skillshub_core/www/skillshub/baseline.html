@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillsHub — Baseline Assessment</title>
+  <link rel="stylesheet" href="/skillshub/theme.css">
+  <style>
+    .form-wrapper { max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+    .form-header { margin-bottom: 2rem; }
+    .back-link { color: var(--color-teal-700); text-decoration: none; font-size: 0.875rem; display: inline-block; margin-bottom: 1rem; }
+    .back-link:hover { text-decoration: underline; }
+    .form-header h1 { font-size: 1.875rem; margin: 0; color: var(--color-slate-900); }
+    #sh-loading { text-align: center; color: var(--color-slate-500); padding: 2rem; }
+    .context-card { background: var(--color-slate-50); border: 1px solid var(--color-slate-200); border-radius: var(--border-radius-card); padding: 1.5rem; margin-bottom: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .detail-item { display: flex; flex-direction: column; }
+    .detail-label { font-size: 0.75rem; font-weight: 600; color: var(--color-slate-600); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.375rem; }
+    .detail-value { font-size: 1rem; color: var(--color-slate-900); font-weight: 500; }
+    .form-section { margin-bottom: 2rem; }
+    .section-title { font-size: 1.125rem; font-weight: 600; color: var(--color-slate-900); margin-bottom: 1rem; border-bottom: 2px solid var(--color-emerald-200); padding-bottom: 0.5rem; }
+    .form-group { display: flex; flex-direction: column; margin-bottom: 1.5rem; }
+    .sh-label { font-size: 0.9375rem; font-weight: 600; color: var(--color-slate-900); margin-bottom: 0.5rem; }
+    .sh-input { padding: 0.75rem; border: 1px solid var(--color-slate-200); border-radius: var(--border-radius-btn); font-size: 1rem; font-family: inherit; color: var(--color-slate-900); }
+    .sh-input:focus { outline: none; border-color: var(--color-teal-700); }
+    select.sh-input { cursor: pointer; }
+    .rating-group { display: flex; align-items: center; gap: 1rem; }
+    .rating-group input[type="range"] { flex: 1; accent-color: var(--color-teal-700); }
+    .rating-value { font-weight: 700; color: var(--color-teal-700); min-width: 1.5rem; text-align: center; }
+    .rating-hint { font-size: 0.8125rem; color: var(--color-slate-500); margin-top: 0.25rem; }
+    .sh-alert-error { background: var(--color-red-50); color: var(--color-red-700); border: 1px solid var(--color-red-200); padding: 1rem; border-radius: var(--border-radius-card); margin-bottom: 1.5rem; }
+    .sh-success-msg { background: var(--color-emerald-50); color: var(--color-emerald-700); border: 1px solid var(--color-emerald-200); padding: 1rem; border-radius: var(--border-radius-card); margin-bottom: 1.5rem; }
+    .sh-btn-primary { width: 100%; padding: 0.875rem 1.5rem; background: var(--color-teal-700); color: white; border: none; border-radius: var(--border-radius-btn); font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 1.5rem; }
+    .sh-btn-primary:hover:not(:disabled) { background: var(--color-teal-800); }
+    .sh-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .required-star { color: var(--color-red-700); }
+  </style>
+</head>
+<body>
+<div class="form-wrapper">
+  <div class="form-header">
+    <a href="/skillshub/profile" class="back-link">← Back to Profile</a>
+    <h1>Baseline Assessment</h1>
+  </div>
+  <div id="sh-loading">Loading your details...</div>
+  <div id="sh-error" class="sh-alert-error" style="display:none"></div>
+  <form id="sh-baseline-form" style="display:none">
+    <div class="context-card">
+      <div class="detail-item"><div class="detail-label">Student ID</div><div class="detail-value" id="ctx-id">—</div></div>
+      <div class="detail-item"><div class="detail-label">Name</div><div class="detail-value" id="ctx-name">—</div></div>
+    </div>
+    <div class="form-section">
+      <div class="form-group">
+        <label class="sh-label">Current Programme <span class="required-star">*</span></label>
+        <select class="sh-input" id="milestone" required><option value="">Select your current programme...</option></select>
+      </div>
+    </div>
+    <div class="form-section">
+      <div class="section-title">Wellbeing Self-Assessment (1 = Low, 5 = High)</div>
+      <div class="form-group">
+        <label class="sh-label">Confidence in your abilities</label>
+        <div class="rating-group"><input type="range" id="confidence" min="1" max="5" value="3"><span class="rating-value" id="confidence_val">3</span></div>
+      </div>
+      <div class="form-group">
+        <label class="sh-label">Communication skills</label>
+        <div class="rating-group"><input type="range" id="communication" min="1" max="5" value="3"><span class="rating-value" id="communication_val">3</span></div>
+      </div>
+      <div class="form-group">
+        <label class="sh-label">Teamwork ability</label>
+        <div class="rating-group"><input type="range" id="teamwork" min="1" max="5" value="3"><span class="rating-value" id="teamwork_val">3</span></div>
+      </div>
+      <div class="form-group">
+        <label class="sh-label">Problem solving</label>
+        <div class="rating-group"><input type="range" id="problem_solving" min="1" max="5" value="3"><span class="rating-value" id="problem_solving_val">3</span></div>
+      </div>
+      <div class="form-group">
+        <label class="sh-label">Resilience / handling setbacks</label>
+        <div class="rating-group"><input type="range" id="resilience" min="1" max="5" value="3"><span class="rating-value" id="resilience_val">3</span></div>
+      </div>
+      <div class="form-group">
+        <label class="sh-label">Financial literacy</label>
+        <div class="rating-group"><input type="range" id="financial_literacy" min="1" max="5" value="3"><span class="rating-value" id="financial_literacy_val">3</span></div>
+      </div>
+    </div>
+    <div class="form-section">
+      <div class="form-group"><label class="sh-label">What are your biggest challenges right now?</label><textarea class="sh-input" id="current_challenges" rows="4" placeholder="Share your current struggles..."></textarea></div>
+      <div class="form-group"><label class="sh-label">Goals for the next phase</label><textarea class="sh-input" id="goals_next_phase" rows="4" placeholder="Your aspirations..."></textarea></div>
+      <div class="form-group"><label class="sh-label">What additional support would help most?</label><textarea class="sh-input" id="additional_support" rows="4" placeholder="Your needs..."></textarea></div>
+    </div>
+    <div id="sh-success" class="sh-success-msg" style="display:none">Baseline submitted successfully ✓</div>
+    <button type="submit" class="sh-btn-primary" id="sh-submit-btn">Submit Assessment</button>
+  </form>
+</div>
+<script src="/skillshub/baseline.js" type="module"></script>
+</body>
+</html>
