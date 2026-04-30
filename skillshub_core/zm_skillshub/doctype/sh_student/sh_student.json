@@ -41,15 +41,6 @@
   "mobile",
   "personal_email",
   "id_and_application_tab",
-  "core_record_section",
-  "pestalozzi_student_id",
-  "pestalozzi_student_email",
-  "column_break_dusj",
-  "fullname_and_id",
-  "naming_series",
-  "portal_access_column",
-  "portal_enabled",
-  "portal_user_account",
   "applications_section",
   "date_submitted_enrolment_form",
   "applicant_record",
@@ -68,10 +59,18 @@
   "section_break_bman",
   "has_history_of_medical_conditions",
   "details_of_medical_conditions",
+  "core_record_section",
+  "pestalozzi_student_id",
+  "pestalozzi_student_email",
+  "column_break_dusj",
+  "fullname_and_id",
+  "naming_series",
+  "portal_access_column",
+  "portal_enabled",
+  "portal_user_account",
   "enroled_programmes_and_history_tab",
   "status_section",
   "status",
-  "graduated",
   "enrolled_programmes_section",
   "programme_column",
   "current_schedule",
@@ -188,7 +187,8 @@
    "fieldname": "applicant_record",
    "fieldtype": "Link",
    "label": "Applicant Record",
-   "options": "SH Applicant"
+   "options": "SH Applicant",
+   "search_index": 1
   },
   {
    "fieldname": "last_school_attended",
@@ -509,7 +509,7 @@
    "label": "Number of Siblings"
   },
   {
-   "description": "<div class=\"alert alert-info\" style=\"margin-top: 10px; border: 1px dashed #3498db; background-color: #f7fbff; padding: 15px; border-radius: 4px;\">\n    <h5 style=\"margin-top: 0; color: #2980b9; font-weight: bold;\">\n        <i class=\"fa fa-info-circle\"></i> Provisioning Instructions\n    </h5>\n    <p style=\"margin-bottom: 10px; color: #2c3e50;\">To set up this student's digital identity, please follow these steps in order:</p>\n    <ol style=\"padding-left: 20px; color: #2c3e50;\">\n        <li><b>Generate Email:</b> Go to <b>Actions</b> &gt; <i>\"Generate Student Email\"</i>.</li>\n        <li><b>Save the Record:</b> Click <b>Save</b> to lock in the new email address.</li>\n    </ol>\n    \n    <div style=\"background-color: #e8f4fd; padding: 10px; border-radius: 4px; margin-top: 10px; border-left: 4px solid #3498db;\">\n        <p style=\"margin-bottom: 0; font-size: 0.95em; color: #2c3e50;\">\n            <strong>Account Credentials:</strong><br>\n            • <b>Username:</b> Use the generated Pestalozzi Student Email.<br>\n            • <b>Initial Password:</b> Use the Student's <b>Pestalozzi ID</b>.\n        </p>\n    </div>\n\n    <p style=\"font-size: 0.85em; color: #7f8c8d; margin-top: 10px; font-style: italic;\">\n        Note: The buttons will automatically disappear from the menu once each step is successfully completed.\n    </p>\n</div>",
+   "description": "<div class=\"alert alert-info\" style=\"margin-top: 10px; border: 1px dashed #3498db; background-color: #f7fbff; padding: 15px; border-radius: 4px;\">\n    <h5 style=\"margin-top: 0; color: #2980b9; font-weight: bold;\">\n        <i class=\"fa fa-info-circle\"></i> Provisioning Instructions\n    </h5>\n    <p style=\"margin-bottom: 10px; color: #2c3e50;\">To set up this student's digital identity, please follow these steps in order:</p>\n    <ol style=\"padding-left: 20px; color: #2c3e50;\">\n        <li><b>Generate Email:</b> Go to <b>Actions</b> &gt; <i>\"Generate Student Email\"</i>.</li>\n        <li><b>Save the Record:</b> Click <b>Save</b> to lock in the new email address.</li>\n    </ol>\n    \n    <div style=\"background-color: #e8f4fd; padding: 10px; border-radius: 4px; margin-top: 10px; border-left: 4px solid #3498db;\">\n        <p style=\"margin-bottom: 0; font-size: 0.95em; color: #2c3e50;\">\n            <strong>Account Credentials:</strong><br>\n            \u2022 <b>Username:</b> Use the generated Pestalozzi Student Email.<br>\n            \u2022 <b>Initial Password:</b> Use the Student's <b>Pestalozzi ID</b>.\n        </p>\n    </div>\n\n    <p style=\"font-size: 0.85em; color: #7f8c8d; margin-top: 10px; font-style: italic;\">\n        Note: The buttons will automatically disappear from the menu once each step is successfully completed.\n    </p>\n</div>",
    "fieldname": "pestalozzi_student_email",
    "fieldtype": "Data",
    "label": "Pestalozzi Student Email",
@@ -709,15 +709,6 @@
    "label": "Sibling Details"
   },
   {
-   "default": "1",
-   "depends_on": "eval:doc.status == \"Alumni\"",
-   "fieldname": "graduated",
-   "fieldtype": "Check",
-   "in_list_view": 1,
-   "label": "Graduated",
-   "mandatory_depends_on": "eval:doc.status == \"Alumni\""
-  },
-  {
    "fieldname": "work_tab",
    "fieldtype": "Tab Break",
    "label": "Work"
@@ -836,7 +827,7 @@
    "link_fieldname": "sh_student"
   }
  ],
- "modified": "2026-04-17 00:00:00.000000",
+ "modified": "2026-04-28 10:14:25.134295",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Student",
