@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillsHub — Edulution Feedback</title>
+  <link rel="stylesheet" href="/skillshub/theme.css">
+  <style>
+    .form-wrapper{max-width:760px;margin:2rem auto;padding:0 1rem}
+    .back-link{color:var(--color-teal-700);text-decoration:none;font-size:.875rem;display:inline-block;margin-bottom:1rem}
+    h1{font-size:1.875rem;margin:0 0 2rem;color:var(--color-slate-900)}
+    .context-card{background:var(--color-slate-50);border:1px solid var(--color-slate-200);border-radius:var(--border-radius-card);padding:1.5rem;margin-bottom:2rem;display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+    .detail-label{font-size:.75rem;font-weight:600;color:var(--color-slate-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.25rem}
+    .detail-value{font-size:1rem;color:var(--color-slate-900);font-weight:500}
+    .section-title{font-size:1.125rem;font-weight:600;color:var(--color-slate-900);margin-bottom:1rem;border-bottom:2px solid var(--color-emerald-200);padding-bottom:.5rem}
+    .form-section{margin-bottom:2rem}
+    .form-group{display:flex;flex-direction:column;margin-bottom:1.5rem}
+    .sh-label{font-size:.9375rem;font-weight:600;color:var(--color-slate-900);margin-bottom:.5rem}
+    .sh-input{padding:.75rem;border:1px solid var(--color-slate-200);border-radius:var(--border-radius-btn);font-size:1rem;font-family:inherit;color:var(--color-slate-900)}
+    .sh-input:focus{outline:none;border-color:var(--color-teal-700)}
+    .checkbox-item{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+    .checkbox-item input[type=checkbox]{width:1.25rem;height:1.25rem;accent-color:var(--color-teal-700)}
+    .checkbox-item label{cursor:pointer;color:var(--color-slate-800);font-weight:500}
+    .rating-group{display:flex;align-items:center;gap:1rem}
+    .rating-group input[type=range]{flex:1;accent-color:var(--color-teal-700)}
+    .rating-value{font-weight:700;color:var(--color-teal-700);min-width:1.5rem;text-align:center}
+    .path-notice{background:var(--color-amber-50);color:var(--color-amber-700);border:1px solid var(--color-amber-200);padding:1rem;border-radius:var(--border-radius-card);margin-bottom:1.5rem}
+    .sh-alert-error{background:var(--color-red-50);color:var(--color-red-700);border:1px solid var(--color-red-200);padding:1rem;border-radius:var(--border-radius-card);margin-bottom:1.5rem}
+    .sh-success-msg{background:var(--color-emerald-50);color:var(--color-emerald-700);border:1px solid var(--color-emerald-200);padding:1rem;border-radius:var(--border-radius-card);margin-bottom:1.5rem}
+    .sh-btn-primary{width:100%;padding:.875rem 1.5rem;background:var(--color-teal-700);color:white;border:none;border-radius:var(--border-radius-btn);font-size:1rem;font-weight:600;cursor:pointer;margin-top:1.5rem}
+    .sh-btn-primary:hover:not(:disabled){background:var(--color-teal-800)}
+    .sh-btn-primary:disabled{opacity:.6;cursor:not-allowed}
+  </style>
+</head>
+<body>
+<div class="form-wrapper">
+  <a href="/skillshub/profile" class="back-link">← Back to Profile</a>
+  <h1>Edulution Feedback</h1>
+  <div id="sh-loading">Loading your details...</div>
+  <div id="sh-error" class="sh-alert-error" style="display:none"></div>
+  <div id="path-notice" class="path-notice" style="display:none">This form is only available for Path A students. If you believe this is an error, please contact your coordinator.</div>
+  <form id="sh-feedback-form" style="display:none">
+    <div class="context-card">
+      <div><div class="detail-label">Student ID</div><div class="detail-value" id="ctx-id">—</div></div>
+      <div><div class="detail-label">Name</div><div class="detail-value" id="ctx-name">—</div></div>
+      <div><div class="detail-label">Schedule</div><div class="detail-value" id="ctx-schedule">—</div></div>
+      <div><div class="detail-label">Path</div><div class="detail-value" id="ctx-path">—</div></div>
+    </div>
+    <div class="form-section">
+      <div class="checkbox-item"><input type="checkbox" id="achieved_goals"><label for="achieved_goals">I achieved my learning goals in this programme</label></div>
+    </div>
+    <div class="form-section">
+      <div class="section-title">Confidence Ratings (1 = Low, 5 = High)</div>
+      <div class="form-group"><label class="sh-label">Confidence</label><div class="rating-group"><input type="range" id="confidence_rating" min="1" max="5" value="3"><span class="rating-value" id="cr_v">3</span></div></div>
+      <div class="form-group"><label class="sh-label">Literacy / Reading</label><div class="rating-group"><input type="range" id="literacy_rating" min="1" max="5" value="3"><span class="rating-value" id="lr_v">3</span></div></div>
+      <div class="form-group"><label class="sh-label">Numeracy / Maths</label><div class="rating-group"><input type="range" id="numeracy_rating" min="1" max="5" value="3"><span class="rating-value" id="nr_v">3</span></div></div>
+      <div class="form-group"><label class="sh-label">Resilience</label><div class="rating-group"><input type="range" id="resilience_rating" min="1" max="5" value="3"><span class="rating-value" id="rr_v">3</span></div></div>
+      <div class="form-group"><label class="sh-label">Problem Solving</label><div class="rating-group"><input type="range" id="problem_solving_rating" min="1" max="5" value="3"><span class="rating-value" id="psr_v">3</span></div></div>
+    </div>
+    <div class="form-section">
+      <div class="form-group"><label class="sh-label">Key skills you learned</label><textarea class="sh-input" id="key_skills_learned" rows="4" placeholder="Share your learning..."></textarea></div>
+      <div class="form-group"><label class="sh-label">How has this programme impacted you?</label><textarea class="sh-input" id="impact_statement" rows="4" placeholder="Your story..."></textarea></div>
+      <div class="checkbox-item"><input type="checkbox" id="opt_in_coaching"><label for="opt_in_coaching">I am interested in continued coaching support</label></div>
+      <div class="form-group" style="margin-top:1rem"><label class="sh-label">Suggestions for improvement</label><textarea class="sh-input" id="suggestions" rows="4" placeholder="Your feedback..."></textarea></div>
+    </div>
+    <div id="sh-success" class="sh-success-msg" style="display:none">Feedback submitted successfully ✓</div>
+    <button type="submit" class="sh-btn-primary" id="sh-submit-btn">Submit Feedback</button>
+  </form>
+</div>
+<script src="/skillshub/feedback/edulution.js" type="module"></script>
+</body>
+</html>
