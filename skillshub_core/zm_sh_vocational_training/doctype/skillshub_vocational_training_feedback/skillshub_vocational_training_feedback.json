@@ -1,25 +1,26 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{student_name}-VT{##}",
+ "autoname": "format:{sh_student}-VT{##}",
  "creation": "2026-01-28 13:12:56.546015",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "general_tab",
-  "portal_user_details_section",
-  "portal_user_account",
   "section_break_sbdv",
-  "student_column",
-  "student_name",
-  "pestalozzi_student_id",
-  "feedback_phase",
+  "sh_student",
+  "student_full_name",
   "column_break_pppv",
-  "program_schedule",
+  "programme_schedule",
+  "milestone",
+  "section_break_context",
   "academic_year",
   "cohort",
+  "column_break_context2",
   "course",
+  "section_break_whmc",
+  "date_submitted",
   "feedback_form_tab",
   "section_break_uoxy",
   "course_expectations_column",
@@ -51,313 +52,71 @@
   "section_break_arte",
   "volunteer",
   "vol_details",
-  "section_break_ilfx",
-  "date_submitted"
+  "section_break_ilfx"
  ],
  "fields": [
-  {
-   "fieldname": "general_tab",
-   "fieldtype": "Tab Break",
-   "label": "General"
-  },
-  {
-   "fieldname": "student_column",
-   "fieldtype": "Column Break",
-   "label": "Student"
-  },
-  {
-   "fetch_from": "portal_user_account.skillshub_record",
-   "fieldname": "student_name",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Student Name",
-   "options": "SH Student",
-   "search_index": 1
-  },
-  {
-   "fetch_from": "portal_user_account.pestalozzi_id_sh",
-   "fieldname": "pestalozzi_student_id",
-   "fieldtype": "Data",
-   "label": "Pestalozzi Student ID"
-  },
-  {
-   "fetch_from": "program_schedule.current_phase",
-   "fieldname": "feedback_phase",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Feedback Phase",
-   "options": "SkillsHub Phases"
-  },
-  {
-   "fieldname": "column_break_pppv",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fetch_from": "program_schedule.cohort",
-   "fieldname": "cohort",
-   "fieldtype": "Link",
-   "label": "Cohort",
-   "options": "SkillsHub Cohort"
-  },
-  {
-   "fieldname": "program_schedule",
-   "fieldtype": "Link",
-   "label": "Program Schedule",
-   "options": "SH Programme Schedule"
-  },
-  {
-   "fetch_from": "program_schedule.skillshub_course",
-   "fieldname": "course",
-   "fieldtype": "Link",
-   "label": "Course",
-   "options": "SkillsHub Course"
-  },
-  {
-   "fieldname": "portal_user_details_section",
-   "fieldtype": "Section Break",
-   "label": "Portal User Details"
-  },
-  {
-   "fieldname": "portal_user_account",
-   "fieldtype": "Link",
-   "label": "Portal User Account",
-   "options": "User"
-  },
-  {
-   "fieldname": "feedback_form_tab",
-   "fieldtype": "Tab Break",
-   "label": "Feedback Form"
-  },
-  {
-   "fieldname": "course_expectations_met",
-   "fieldtype": "Select",
-   "label": "Did the course meet your expectations?",
-   "options": "\nYes\nSomewhat\nNo"
-  },
-  {
-   "fieldname": "objective_comms",
-   "fieldtype": "Select",
-   "label": "How well were the course objectives communicated to you?",
-   "options": "\nVery well\nWell\nSomewhat Well\nNot Very Well\nNot At All"
-  },
-  {
-   "fieldname": "section_break_rjwt",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "goals",
-   "fieldtype": "Small Text",
-   "label": "What were your course goals?"
-  },
-  {
-   "fieldname": "goal_realism",
-   "fieldtype": "Select",
-   "label": "How realistic and achievable were these goals?",
-   "options": "\nVery\nSomewhat\nNot Very\nNot At All"
-  },
-  {
-   "fieldname": "how_can_we_improve_the_way_trainee_goals_are_set",
-   "fieldtype": "Small Text",
-   "label": "How can we improve the way trainee goals are set?"
-  },
-  {
-   "fieldname": "section_break_uzqz",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "trainer_comms_skills",
-   "fieldtype": "Rating",
-   "label": "How would you rate the Trainers communication skills?"
-  },
-  {
-   "fieldname": "time_manage",
-   "fieldtype": "Rating",
-   "label": "How would you rate your time management skills after doing the course?"
-  },
-  {
-   "fieldname": "teamwork",
-   "fieldtype": "Rating",
-   "label": "How would you rate your team working skills after doing the course?"
-  },
-  {
-   "fieldname": "mental_resilience",
-   "fieldtype": "Rating",
-   "label": "How would you rate your mental resilience after doing the course?"
-  },
-  {
-   "fieldname": "section_break_mcgb",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "improve",
-   "fieldtype": "Small Text",
-   "label": "What areas of the program need improvement?"
-  },
-  {
-   "fieldname": "section_break_hold",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "impact",
-   "fieldtype": "Small Text",
-   "label": "Please share an example of how others have been positively impacted by your participation in SkillsHub"
-  },
-  {
-   "fieldname": "section_break_arte",
-   "fieldtype": "Section Break"
-  },
-  {
-   "default": "0",
-   "fieldname": "volunteer",
-   "fieldtype": "Check",
-   "label": "Have you done any local volunteering since joining SkillsHub?"
-  },
-  {
-   "depends_on": "volunteer",
-   "fieldname": "vol_details",
-   "fieldtype": "Small Text",
-   "label": "Please share information about the volunteering you have done"
-  },
-  {
-   "fieldname": "section_break_sbdv",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "section_break_qcik",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "section_break_uoxy",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "course_expectations_column",
-   "fieldtype": "Column Break",
-   "label": "Course Expectations"
-  },
-  {
-   "fieldname": "vt_expectations_html",
-   "fieldtype": "Data",
-   "label": "What were your expectations of the course?"
-  },
-  {
-   "fieldname": "vt_expectations_table",
-   "fieldtype": "Table",
-   "label": "Course Expectations Table",
-   "options": "SH VT Course Expectation Link",
-   "read_only": 1
-  },
-  {
-   "fieldname": "section_break_mrhr",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "beneficiary_column",
-   "fieldtype": "Column Break",
-   "label": "Beneficiary"
-  },
-  {
-   "fieldname": "vt_beneficiaries_html",
-   "fieldtype": "Data",
-   "label": "Who else has benefited from your participation in SkillsHub?"
-  },
-  {
-   "fieldname": "vt_beneficiaries_table",
-   "fieldtype": "Table",
-   "label": "Beneficiaries Copy",
-   "options": "SH Beneficiary Link",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "program_schedule.academic_year",
-   "fieldname": "academic_year",
-   "fieldtype": "Read Only",
-   "label": "Academic Year"
-  },
-  {
-   "fieldname": "beneficial_aspects_html",
-   "fieldtype": "Data",
-   "label": "Beneficial Aspects"
-  },
-  {
-   "fieldname": "beneficial_aspects_table",
-   "fieldtype": "Table",
-   "label": "Beneficial Aspects Table",
-   "options": "SH VT Beneficial Programme Aspect Link",
-   "read_only": 1
-  },
-  {
-   "fieldname": "problem_solving_rating",
-   "fieldtype": "Rating",
-   "label": "How would you rate your problem solving skills after doing the course?"
-  },
-  {
-   "fieldname": "section_break_ilfx",
-   "fieldtype": "Section Break"
-  },
-  {
-   "default": "Now",
-   "fieldname": "date_submitted",
-   "fieldtype": "Datetime",
-   "label": "Date Submitted"
-  }
+  {"fieldname": "general_tab", "fieldtype": "Tab Break", "label": "General"},
+  {"fieldname": "section_break_sbdv", "fieldtype": "Section Break"},
+  {"fieldname": "sh_student", "fieldtype": "Link", "in_list_view": 1, "label": "Student", "options": "SH Student", "reqd": 1, "search_index": 1},
+  {"fetch_from": "sh_student.student_name", "fieldname": "student_full_name", "fieldtype": "Data", "label": "Student Name", "read_only": 1},
+  {"fieldname": "column_break_pppv", "fieldtype": "Column Break"},
+  {"fieldname": "programme_schedule", "fieldtype": "Link", "in_list_view": 1, "label": "Programme Schedule", "options": "SH Programme Schedule", "reqd": 1},
+  {"fetch_from": "programme_schedule.skillshub_programme", "fieldname": "milestone", "fieldtype": "Link", "in_list_view": 1, "label": "Milestone", "options": "SkillsHub Programme", "read_only": 1},
+  {"fieldname": "section_break_context", "fieldtype": "Section Break"},
+  {"fetch_from": "programme_schedule.academic_year", "fieldname": "academic_year", "fieldtype": "Read Only", "label": "Academic Year"},
+  {"fetch_from": "programme_schedule.cohort", "fieldname": "cohort", "fieldtype": "Link", "label": "Cohort", "options": "SkillsHub Cohort"},
+  {"fieldname": "column_break_context2", "fieldtype": "Column Break"},
+  {"fetch_from": "programme_schedule.skillshub_course", "fieldname": "course", "fieldtype": "Link", "label": "Course", "options": "SkillsHub Course"},
+  {"fieldname": "section_break_whmc", "fieldtype": "Section Break"},
+  {"default": "Now", "fieldname": "date_submitted", "fieldtype": "Datetime", "label": "Date Submitted"},
+  {"fieldname": "feedback_form_tab", "fieldtype": "Tab Break", "label": "Feedback Form"},
+  {"fieldname": "course_expectations_met", "fieldtype": "Select", "label": "Did the course meet your expectations?", "options": "\nYes\nSomewhat\nNo"},
+  {"fieldname": "objective_comms", "fieldtype": "Select", "label": "How well were the course objectives communicated to you?", "options": "\nVery well\nWell\nSomewhat Well\nNot Very Well\nNot At All"},
+  {"fieldname": "section_break_rjwt", "fieldtype": "Section Break"},
+  {"fieldname": "goals", "fieldtype": "Small Text", "label": "What were your course goals?"},
+  {"fieldname": "goal_realism", "fieldtype": "Select", "label": "How realistic and achievable were these goals?", "options": "\nVery\nSomewhat\nNot Very\nNot At All"},
+  {"fieldname": "how_can_we_improve_the_way_trainee_goals_are_set", "fieldtype": "Small Text", "label": "How can we improve the way trainee goals are set?"},
+  {"fieldname": "section_break_uzqz", "fieldtype": "Section Break"},
+  {"fieldname": "trainer_comms_skills", "fieldtype": "Rating", "label": "How would you rate the Trainers communication skills?"},
+  {"fieldname": "time_manage", "fieldtype": "Rating", "label": "How would you rate your time management skills after doing the course?"},
+  {"fieldname": "teamwork", "fieldtype": "Rating", "label": "How would you rate your team working skills after doing the course?"},
+  {"fieldname": "mental_resilience", "fieldtype": "Rating", "label": "How would you rate your mental resilience after doing the course?"},
+  {"fieldname": "section_break_mcgb", "fieldtype": "Section Break"},
+  {"fieldname": "improve", "fieldtype": "Small Text", "label": "What areas of the program need improvement?"},
+  {"fieldname": "section_break_hold", "fieldtype": "Section Break"},
+  {"fieldname": "impact", "fieldtype": "Small Text", "label": "Please share an example of how others have been positively impacted by your participation in SkillsHub"},
+  {"fieldname": "section_break_arte", "fieldtype": "Section Break"},
+  {"default": "0", "fieldname": "volunteer", "fieldtype": "Check", "label": "Have you done any local volunteering since joining SkillsHub?"},
+  {"depends_on": "volunteer", "fieldname": "vol_details", "fieldtype": "Small Text", "label": "Please share information about the volunteering you have done"},
+  {"fieldname": "section_break_sbdv", "fieldtype": "Section Break"},
+  {"fieldname": "section_break_qcik", "fieldtype": "Section Break"},
+  {"fieldname": "section_break_uoxy", "fieldtype": "Section Break"},
+  {"fieldname": "course_expectations_column", "fieldtype": "Column Break", "label": "Course Expectations"},
+  {"fieldname": "vt_expectations_html", "fieldtype": "Data", "label": "What were your expectations of the course?"},
+  {"fieldname": "vt_expectations_table", "fieldtype": "Table", "label": "Course Expectations Table", "options": "SH VT Course Expectation Link", "read_only": 1},
+  {"fieldname": "section_break_mrhr", "fieldtype": "Section Break"},
+  {"fieldname": "beneficiary_column", "fieldtype": "Column Break", "label": "Beneficiary"},
+  {"fieldname": "vt_beneficiaries_html", "fieldtype": "Data", "label": "Who else has benefited from your participation in SkillsHub?"},
+  {"fieldname": "vt_beneficiaries_table", "fieldtype": "Table", "label": "Beneficiaries Copy", "options": "SH Beneficiary Link", "read_only": 1},
+  {"fieldname": "beneficial_aspects_html", "fieldtype": "Data", "label": "Beneficial Aspects"},
+  {"fieldname": "beneficial_aspects_table", "fieldtype": "Table", "label": "Beneficial Aspects Table", "options": "SH VT Beneficial Programme Aspect Link", "read_only": 1},
+  {"fieldname": "problem_solving_rating", "fieldtype": "Rating", "label": "How would you rate your problem solving skills after doing the course?"},
+  {"fieldname": "section_break_ilfx", "fieldtype": "Section Break"}
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-04-01 16:47:46.200419",
+ "modified": "2026-04-30 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "ZM SH Vocational Training",
  "name": "SkillsHub Vocational Training Feedback",
  "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "email": 1,
-   "export": 1,
-   "if_owner": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Student",
-   "share": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Administrator",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "PI Admin",
-   "share": 1,
-   "write": 1
-  }
+  {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "System Manager", "share": 1, "write": 1},
+  {"email": 1, "export": 1, "if_owner": 1, "print": 1, "read": 1, "report": 1, "role": "Student", "share": 1},
+  {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "Administrator", "share": 1, "write": 1},
+  {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "PI Admin", "share": 1, "write": 1}
  ],
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,

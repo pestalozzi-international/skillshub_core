@@ -1,115 +1,68 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:student_name-SS{##}",
+ "autoname": "format:{sh_student}-SS{##}",
  "creation": "2026-01-26 07:59:41.680598",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "student_column",
-  "student_name",
-  "context_section",
-  "feedback_phase",
-  "program",
-  "course",
-  "soft_skill",
   "general_tab",
+  "section_break_vovo",
+  "sh_student",
+  "student_full_name",
+  "column_break_pppv",
+  "programme_schedule",
+  "milestone",
+  "section_break_context",
+  "academic_year",
+  "cohort",
+  "column_break_context2",
+  "course",
+  "section_break_whmc",
+  "date_submitted",
+  "feedback_form_tab",
   "section_break_jzih",
+  "soft_skill",
   "impact_statement",
   "metrics_section",
   "confidence_finding_a_job"
  ],
  "fields": [
-  {
-   "fieldname": "student_column",
-   "fieldtype": "Column Break",
-   "label": "Student"
-  },
-  {
-   "fieldname": "student_name",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Student Name",
-   "options": "SH Student"
-  },
-  {
-   "fieldname": "context_section",
-   "fieldtype": "Section Break",
-   "label": "Context"
-  },
-  {
-   "fieldname": "feedback_phase",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Feedback Phase",
-   "options": "SkillsHub Phases"
-  },
-  {
-   "fetch_from": "student_name.current_programme",
-   "fieldname": "program",
-   "fieldtype": "Read Only",
-   "label": "Program"
-  },
-  {
-   "fetch_from": "student_name.course",
-   "fieldname": "course",
-   "fieldtype": "Read Only",
-   "label": "Course"
-  },
-  {
-   "fieldname": "general_tab",
-   "fieldtype": "Tab Break",
-   "label": "General"
-  },
-  {
-   "fieldname": "section_break_jzih",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "impact_statement",
-   "fieldtype": "Small Text",
-   "label": "Impact Statement"
-  },
-  {
-   "fieldname": "metrics_section",
-   "fieldtype": "Section Break",
-   "label": "Metrics"
-  },
-  {
-   "fieldname": "confidence_finding_a_job",
-   "fieldtype": "Rating",
-   "label": "Confidence Finding a Job"
-  },
-  {
-   "fieldname": "soft_skill",
-   "fieldtype": "Link",
-   "label": "Soft Skill",
-   "options": "SkillsHub Soft Skills"
-  }
+  {"fieldname": "general_tab", "fieldtype": "Tab Break", "label": "General"},
+  {"fieldname": "section_break_vovo", "fieldtype": "Section Break"},
+  {"fieldname": "sh_student", "fieldtype": "Link", "in_list_view": 1, "label": "Student", "options": "SH Student", "reqd": 1, "search_index": 1},
+  {"fetch_from": "sh_student.student_name", "fieldname": "student_full_name", "fieldtype": "Data", "label": "Student Name", "read_only": 1},
+  {"fieldname": "column_break_pppv", "fieldtype": "Column Break"},
+  {"fieldname": "programme_schedule", "fieldtype": "Link", "in_list_view": 1, "label": "Programme Schedule", "options": "SH Programme Schedule", "reqd": 1},
+  {"fetch_from": "programme_schedule.skillshub_programme", "fieldname": "milestone", "fieldtype": "Link", "in_list_view": 1, "label": "Milestone", "options": "SkillsHub Programme", "read_only": 1},
+  {"fieldname": "section_break_context", "fieldtype": "Section Break"},
+  {"fetch_from": "programme_schedule.academic_year", "fieldname": "academic_year", "fieldtype": "Read Only", "label": "Academic Year"},
+  {"fetch_from": "programme_schedule.cohort", "fieldname": "cohort", "fieldtype": "Link", "label": "Cohort", "options": "SkillsHub Cohort"},
+  {"fieldname": "column_break_context2", "fieldtype": "Column Break"},
+  {"fetch_from": "programme_schedule.skillshub_course", "fieldname": "course", "fieldtype": "Link", "label": "Course", "options": "SkillsHub Course"},
+  {"fieldname": "section_break_whmc", "fieldtype": "Section Break"},
+  {"default": "Now", "fieldname": "date_submitted", "fieldtype": "Datetime", "label": "Date Submitted"},
+  {"fieldname": "feedback_form_tab", "fieldtype": "Tab Break", "label": "Feedback Form"},
+  {"fieldname": "section_break_jzih", "fieldtype": "Section Break"},
+  {"fieldname": "soft_skill", "fieldtype": "Link", "label": "Soft Skill", "options": "SkillsHub Soft Skills"},
+  {"fieldname": "impact_statement", "fieldtype": "Small Text", "label": "Impact Statement"},
+  {"fieldname": "metrics_section", "fieldtype": "Section Break", "label": "Metrics"},
+  {"fieldname": "confidence_finding_a_job", "fieldtype": "Rating", "label": "Confidence Finding a Job"}
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-26 08:14:39.823425",
+ "modified": "2026-04-30 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Soft Skills Feedback",
- "naming_rule": "Expression",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "System Manager",
-   "share": 1,
-   "write": 1
-  }
+  {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "System Manager", "share": 1, "write": 1},
+  {"email": 1, "export": 1, "if_owner": 1, "print": 1, "read": 1, "report": 1, "role": "Student", "share": 1},
+  {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "PI Admin", "share": 1, "write": 1}
  ],
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,
