@@ -11,7 +11,7 @@ from frappe import _
 def get_student_summary(student):
     """
     Return full student dashboard payload for the HTML portal.
-    GET /api/method/skillshub_core.api.get_student_summary?student={id}
+    GET /api/method/skillshub_core.skillshub_core.api.get_student_summary?student={id}
     """
     if not frappe.has_permission("SH Student", "read", doc=student):
         frappe.throw(_("Not permitted"), frappe.PermissionError)
@@ -83,8 +83,8 @@ def get_student_summary(student):
 @frappe.whitelist()
 def mark_attendance(schedule, date, attendance_records):
     """
-    Atomically create an SH Attendance session header and all SH Student Attendance rows.
-    POST /api/method/skillshub_core.api.mark_attendance
+    Atomically create an SH Attendance session header + all SH Student Attendance rows.
+    POST /api/method/skillshub_core.skillshub_core.api.mark_attendance
     attendance_records: JSON list of {student, status, late_minutes?, notes?}
     """
     if isinstance(attendance_records, str):
@@ -100,14 +100,12 @@ def mark_attendance(schedule, date, attendance_records):
             )
         )
 
-    # Create session header
     session = frappe.new_doc("SH Attendance")
     session.sh_programme_schedule = schedule
     session.date = date
     session.attendance_recorded_by = frappe.session.user
     session.insert()
 
-    # Create per-student rows
     for record in attendance_records:
         row = frappe.new_doc("SH Student Attendance")
         row.sh_student = record.get("student")
@@ -120,16 +118,9 @@ def mark_attendance(schedule, date, attendance_records):
         row.marked_by = frappe.session.user
         row.insert()
 
-    # Recompute attendance stats on affected enrolments
+    # Recompute enrolment stats for all affected students
     for record in attendance_records:
-        enrolment_name = frappe.db.get_value(
-            "SH Student Enrolment",
-            {"student": record.get("student"), "programme_schedule": schedule},
-        )
-        if enrolment_name:
-            enrolment_doc = frappe.get_doc("SH Student Enrolment", enrolment_name)
-            enrolment_doc.compute_attendance_stats()
-            enrolment_doc.save(ignore_permissions=True)
+        _recompute_enrolment_for_student(record.get("student"), schedule)
 
     frappe.db.commit()
     return {"session": session.name, "records_created": len(attendance_records)}
@@ -139,10 +130,8 @@ def mark_attendance(schedule, date, attendance_records):
 def enrol_cohort(cohort, programme_schedule, enrolment_date=None):
     """
     Bulk-enrol all active students in a cohort into a Programme Schedule.
-    POST /api/method/skillshub_core.api.enrol_cohort
+    POST /api/method/skillshub_core.skillshub_core.api.enrol_cohort
     """
-    import frappe.utils
-
     enrolment_date = enrolment_date or frappe.utils.today()
 
     students = frappe.get_all(
@@ -178,3 +167,29 @@ def enrol_cohort(cohort, programme_schedule, enrolment_date=None):
         "enrolled": len(created),
         "skipped_duplicates": len(skipped),
     }
+
+
+# ---------------------------------------------------------------------------
+# Internal helpers (not whitelisted)
+# ---------------------------------------------------------------------------
+
+def _recompute_enrolment_for_student(student, schedule):
+    """Recompute attendance stats on the SH Student Enrolment for this student+schedule."""
+    enrolment_name = frappe.db.get_value(
+        "SH Student Enrolment",
+        {"student": student, "programme_schedule": schedule},
+    )
+    if enrolment_name:
+        doc = frappe.get_doc("SH Student Enrolment", enrolment_name)
+        doc.compute_attendance_stats()
+        doc.save(ignore_permissions=True)
+
+
+def _recompute_enrolment_on_attendance(doc, method=None):
+    """
+    doc_events hook: triggered after SH Student Attendance insert/update/trash.
+    Re-runs attendance stat computation on the linked SH Student Enrolment.
+    """
+    _recompute_enrolment_for_student(
+        doc.sh_student, doc.sh_programme_schedule
+    )
