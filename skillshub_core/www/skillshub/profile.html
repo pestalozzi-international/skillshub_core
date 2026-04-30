@@ -1,0 +1,130 @@
+<style>
+.sh-profile-wrapper {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #333;
+}
+.sh-profile-header {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.sh-header-info h1 { margin: 0 0 8px 0; font-size: 1.8rem; color: #111; }
+.sh-header-info p { margin: 0; color: #666; font-size: 1rem; }
+.sh-logout-btn {
+    padding: 10px 20px;
+    background: #f1f5f9;
+    color: #475569;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+.sh-logout-btn:hover { background: #e2e8f0; }
+
+.sh-profile-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+}
+@media (max-width: 768px) {
+    .sh-profile-grid { grid-template-columns: 1fr; }
+}
+
+.sh-sidebar {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    height: fit-content;
+}
+.sh-sidebar h3 { margin-top: 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; color: #1e293b; }
+.sh-detail-item { margin-bottom: 16px; }
+.sh-detail-label { font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.sh-detail-value { font-size: 1rem; color: #334155; margin-top: 4px; }
+
+.sh-main-content {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+.sh-main-content h3 { margin-top: 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; color: #1e293b; }
+
+.sh-timeline-item {
+    padding: 20px 0;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.sh-timeline-item:last-child { border-bottom: none; }
+.sh-programme-name { font-weight: 600; font-size: 1.1rem; color: #0f172a; margin-bottom: 6px; }
+.sh-programme-meta { font-size: 0.9rem; color: #64748b; }
+.sh-status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.sh-status-enrolled { background: #dbeafe; color: #1d4ed8; }
+.sh-status-completed { background: #dcfce7; color: #15803d; }
+.sh-status-dropped { background: #fee2e2; color: #b91c1c; }
+
+.sh-loading { text-align: center; padding: 50px; color: #64748b; font-size: 1.1rem; }
+</style>
+
+<div class="sh-profile-wrapper" id="sh-profile-app">
+    <div class="sh-loading" id="sh-loading">Loading profile...</div>
+    
+    <div id="sh-profile-content" style="display: none;">
+        <div class="sh-profile-header">
+            <div class="sh-header-info">
+                <h1 id="ph-name">Student Name</h1>
+                <p id="ph-cohort-path">Cohort • Path</p>
+            </div>
+            <button class="sh-logout-btn" id="sh-logout">Sign Out</button>
+        </div>
+
+        <div class="sh-profile-grid">
+            <div class="sh-sidebar">
+                <h3>Demographics & Contact</h3>
+                <div class="sh-detail-item">
+                    <div class="sh-detail-label">Student ID</div>
+                    <div class="sh-detail-value" id="ps-id">--</div>
+                </div>
+                <div class="sh-detail-item">
+                    <div class="sh-detail-label">Age</div>
+                    <div class="sh-detail-value" id="ps-age">--</div>
+                </div>
+                <div class="sh-detail-item">
+                    <div class="sh-detail-label">Gender</div>
+                    <div class="sh-detail-value" id="ps-gender">--</div>
+                </div>
+                <div class="sh-detail-item">
+                    <div class="sh-detail-label">Location</div>
+                    <div class="sh-detail-value" id="ps-location">--</div>
+                </div>
+                <div class="sh-detail-item">
+                    <div class="sh-detail-label">Status</div>
+                    <div class="sh-detail-value" id="ps-status">--</div>
+                </div>
+            </div>
+
+            <div class="sh-main-content">
+                <h3>Programme Timeline</h3>
+                <div id="sh-timeline-container">
+                    <!-- Dynamic enrolments will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
