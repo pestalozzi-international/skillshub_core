@@ -34,7 +34,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     return fetch(`/api/resource/SH Student?filters=[["portal_user_account","=","${emailVal}"]]&fields=["name"]`, {
                         headers: {
                             'Accept': 'application/json'
-                        }
+                        },
+                        credentials: 'include'
                     });
                 } else {
                     throw new Error(data.message || "Login failed");

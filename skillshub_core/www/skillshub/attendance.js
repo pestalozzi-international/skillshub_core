@@ -11,8 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('sh-logout').addEventListener('click', function() {
         fetch('/api/method/logout', { method: 'POST', credentials: 'include' })
         .then(() => {
-            localStorage.removeItem('sh_user');
-            localStorage.removeItem('sh_student_id');
+            localStorage.clear();
             window.location.href = '/skillshub/login';
         });
     });
@@ -65,15 +64,14 @@ document.addEventListener('DOMContentLoaded', function() {
         attendanceArea.style.display = 'block';
         submitBtn.disabled = true;
 
-        fetch(`/api/resource/SH Programme Schedule/${this.value}?fields=["enrolled_students"]`, {
+        fetch(`/api/resource/SH Student Enrolment?filters=[["programme_schedule","=", "${this.value}"],["status","=","Active"]]&fields=["student","student_name"]`, {
             headers: { 'Accept': 'application/json' },
             credentials: 'include'
         })
         .then(res => res.json())
         .then(data => {
-            const doc = data.data;
-            if(doc && doc.enrolled_students && doc.enrolled_students.length > 0) {
-                currentStudents = doc.enrolled_students;
+            if(data.data && data.data.length > 0) {
+                currentStudents = data.data;
                 renderRoster(currentStudents);
             } else {
                 studentList.innerHTML = '<p style="color: var(--color-slate-500);">No students enrolled in this schedule.</p>';

@@ -12,10 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Logout handler
     document.getElementById('sh-logout').addEventListener('click', function() {
-        fetch('/api/method/logout', { method: 'POST' })
+        fetch('/api/method/logout', { method: 'POST', credentials: 'include' })
         .then(() => {
-            localStorage.removeItem('sh_user');
-            localStorage.removeItem('sh_student_id');
+            localStorage.clear();
             window.location.href = '/skillshub/login';
         });
     });
@@ -61,7 +60,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const s = summary.student || {};
         
         // Header
-        document.getElementById('ph-name').textContent = s.student_name || (s.first_name + ' ' + s.last_name) || 'Unknown Student';
+        const fullName = s.first_name ? `${s.first_name} ${s.last_name || ''}`.trim() : s.student_name;
+        document.getElementById('ph-name').textContent = fullName || 'Student';
         const cohort = s.current_cohort || 'No Cohort';
         const path = s.programme_path || 'No Path Assigned';
         document.getElementById('ph-cohort-path').textContent = `${cohort} • ${path}`;
