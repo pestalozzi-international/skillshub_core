@@ -40,10 +40,11 @@ scheduler_events = {
 # Document Events
 # ---------------
 # Recompute enrolment attendance stats whenever a student attendance record changes.
+# on_update fires after both INSERT and UPDATE, so it covers all write operations.
+# on_trash fires before deletion so stats are recalculated after a record is removed.
 
 doc_events = {
     "SH Student Attendance": {
-        "after_insert": "skillshub_core.skillshub_core.api._recompute_enrolment_on_attendance",
         "on_update": "skillshub_core.skillshub_core.api._recompute_enrolment_on_attendance",
         "on_trash": "skillshub_core.skillshub_core.api._recompute_enrolment_on_attendance",
     }
