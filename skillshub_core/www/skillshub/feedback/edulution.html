@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkillsHub — Edulution Feedback</title>
-  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillsHub - Edulution Feedback</title>
+  <link rel="icon" href="/assets/skillshub_core/images/favicon.png">
   <link rel="stylesheet" href="/skillshub/theme.css">
   <style>
     .form-wrapper{max-width:760px;margin:2rem auto;padding:0 1rem}
     .back-link{color:var(--color-teal-700);text-decoration:none;font-size:.875rem;display:inline-block;margin-bottom:1rem}
-    .back-link:hover{text-decoration:underline}
     h1{font-size:1.875rem;margin:0 0 2rem}
     .context-card{background:var(--color-slate-50);border:1px solid var(--color-slate-200);border-radius:var(--border-radius-card);padding:1.5rem;margin-bottom:2rem;display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
     .detail-label{font-size:.75rem;font-weight:600;color:var(--color-slate-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.25rem}
@@ -21,9 +19,9 @@
     textarea.sh-input{padding:.75rem;border:1px solid var(--color-slate-200);border-radius:var(--border-radius-btn);font-size:1rem;font-family:inherit;resize:vertical}
     textarea.sh-input:focus{outline:none;border-color:var(--color-teal-700)}
     .rating-row{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
-    .rating-row label{flex:1;font-size:.9375rem;font-weight:500;color:var(--color-slate-800)}
+    .rating-row label{flex:1;font-size:.9375rem;font-weight:500}
     .rating-row input[type=range]{flex:2;accent-color:var(--color-teal-700)}
-    .rating-row .rating-val{width:2rem;text-align:right;font-weight:600;color:var(--color-teal-700)}
+    .rating-row .rv{width:2rem;text-align:right;font-weight:600;color:var(--color-teal-700)}
     .checkbox-item{display:flex;align-items:center;gap:.75rem;margin-top:.75rem}
     .checkbox-item input[type=checkbox]{width:1.25rem;height:1.25rem;accent-color:var(--color-teal-700)}
     .sh-success-msg{background:var(--color-emerald-50);color:var(--color-emerald-700);border:1px solid var(--color-emerald-200);padding:1rem;border-radius:var(--border-radius-card);margin-bottom:1.5rem}
@@ -32,39 +30,36 @@
 </head>
 <body>
 <div class="form-wrapper">
-  <a href="/skillshub/profile" class="back-link">← Back to Profile</a>
+  <a href="/skillshub/profile" class="back-link">Back to Profile</a>
   <h1>Edulution Feedback</h1>
-  <div id="sh-loading">Loading your details…</div>
+  <div id="sh-loading">Loading...</div>
   <div id="sh-error" class="sh-alert-error" style="display:none"></div>
-  <div id="sh-path-b-msg" style="display:none">
-    <strong>Edulution is a Path A module.</strong> This form is not available for your programme path.
-    <br><a href="/skillshub/profile" style="color:var(--color-amber-700)">Return to your profile</a>
-  </div>
+  <div id="sh-path-b-msg" style="display:none"><strong>Edulution is a Path A module.</strong> This form is not available for your programme path. <a href="/skillshub/profile" style="color:var(--color-amber-700)">Return to profile</a></div>
   <form id="sh-feedback-form" style="display:none">
     <div class="context-card">
-      <div><div class="detail-label">Student ID</div><div class="detail-value" id="ctx-id">—</div></div>
-      <div><div class="detail-label">Name</div><div class="detail-value" id="ctx-name">—</div></div>
-      <div><div class="detail-label">Schedule</div><div class="detail-value" id="ctx-schedule">—</div></div>
-      <div><div class="detail-label">Path</div><div class="detail-value" id="ctx-path">—</div></div>
+      <div><div class="detail-label">Student ID</div><div class="detail-value" id="ctx-id">-</div></div>
+      <div><div class="detail-label">Name</div><div class="detail-value" id="ctx-name">-</div></div>
+      <div><div class="detail-label">Schedule</div><div class="detail-value" id="ctx-schedule">-</div></div>
+      <div><div class="detail-label">Path</div><div class="detail-value" id="ctx-path">-</div></div>
     </div>
     <div class="form-section">
-      <div class="section-title">Self-Assessment Ratings (1 = Low, 5 = High)</div>
-      <div class="rating-row"><label>Confidence</label><input type="range" id="r-confidence" min="1" max="5" value="3" oninput="this.nextElementSibling.textContent=this.value"><span class="rating-val">3</span></div>
-      <div class="rating-row"><label>Literacy</label><input type="range" id="r-literacy" min="1" max="5" value="3" oninput="this.nextElementSibling.textContent=this.value"><span class="rating-val">3</span></div>
-      <div class="rating-row"><label>Numeracy</label><input type="range" id="r-numeracy" min="1" max="5" value="3" oninput="this.nextElementSibling.textContent=this.value"><span class="rating-val">3</span></div>
-      <div class="rating-row"><label>Resilience</label><input type="range" id="r-resilience" min="1" max="5" value="3" oninput="this.nextElementSibling.textContent=this.value"><span class="rating-val">3</span></div>
-      <div class="rating-row"><label>Problem Solving</label><input type="range" id="r-problem_solving" min="1" max="5" value="3" oninput="this.nextElementSibling.textContent=this.value"><span class="rating-val">3</span></div>
+      <div class="section-title">Self-Assessment (1=Low, 5=High)</div>
+      <div class="rating-row"><label>Confidence</label><input type="range" id="r-confidence" min="1" max="5" value="3" oninput="this.nextElementSibling.textContent=this.value"><span class="rv">3</span></div>
+      <div class="rating-row"><label>Literacy</label><input type="range" id="r-literacy" min="1" max="5" value="3" oninput="this.nextElementSibling.textContent=this.value"><span class="rv">3</span></div>
+      <div class="rating-row"><label>Numeracy</label><input type="range" id="r-numeracy" min="1" max="5" value="3" oninput="this.nextElementSibling.textContent=this.value"><span class="rv">3</span></div>
+      <div class="rating-row"><label>Resilience</label><input type="range" id="r-resilience" min="1" max="5" value="3" oninput="this.nextElementSibling.textContent=this.value"><span class="rv">3</span></div>
+      <div class="rating-row"><label>Problem Solving</label><input type="range" id="r-problem_solving" min="1" max="5" value="3" oninput="this.nextElementSibling.textContent=this.value"><span class="rv">3</span></div>
     </div>
     <div class="form-section">
-      <div class="form-group"><label class="sh-label">Goals achieved during Edulution</label><textarea class="sh-input" id="goals_achieved" rows="4" placeholder="Describe your goals and progress…"></textarea></div>
-      <div class="form-group"><label class="sh-label">Key skills learned</label><textarea class="sh-input" id="skills_learned" rows="4" placeholder="What specific skills did you develop?"></textarea></div>
-      <div class="form-group"><label class="sh-label">Impact statement</label><textarea class="sh-input" id="impact_statement" rows="4" placeholder="How has Edulution changed your outlook or abilities?"></textarea></div>
+      <div class="form-group"><label class="sh-label">Goals achieved during Edulution</label><textarea class="sh-input" id="goals_achieved" rows="4" placeholder="Describe your goals and progress..."></textarea></div>
+      <div class="form-group"><label class="sh-label">Key skills learned</label><textarea class="sh-input" id="skills_learned" rows="4"></textarea></div>
+      <div class="form-group"><label class="sh-label">Impact statement</label><textarea class="sh-input" id="impact_statement" rows="4"></textarea></div>
       <div class="checkbox-item"><input type="checkbox" id="coaching_opt_in"><label for="coaching_opt_in">I would like to opt in to continued coaching</label></div>
     </div>
-    <div id="sh-success" class="sh-success-msg" style="display:none">✓ Feedback submitted successfully</div>
+    <div id="sh-success" class="sh-success-msg" style="display:none">Feedback submitted successfully</div>
     <button type="submit" class="sh-btn-primary" style="width:100%" id="sh-submit-btn">Submit Feedback</button>
   </form>
 </div>
-<script type="module" src="/skillshub/feedback/edulution.js"></script>
-</body>
-</html>
+<script src="/assets/skillshub_core/js/skillshub/portal-settings.js"></script>
+<script src="/assets/skillshub_core/js/skillshub/feedback-edulution.js"></script>
+</body></html>

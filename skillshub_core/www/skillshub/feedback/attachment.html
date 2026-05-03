@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkillsHub — Attachment Feedback</title>
-  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillsHub - Attachment Feedback</title>
+  <link rel="icon" href="/assets/skillshub_core/images/favicon.png">
   <link rel="stylesheet" href="/skillshub/theme.css">
   <style>
     .form-wrapper{max-width:760px;margin:2rem auto;padding:0 1rem}
     .back-link{color:var(--color-teal-700);text-decoration:none;font-size:.875rem;display:inline-block;margin-bottom:1rem}
     h1{font-size:1.875rem;margin:0 0 2rem}
     .context-card{background:var(--color-slate-50);border:1px solid var(--color-slate-200);border-radius:var(--border-radius-card);padding:1.5rem;margin-bottom:2rem;display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-    .detail-label{font-size:.75rem;font-weight:600;color:var(--color-slate-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.25rem}
+    .detail-label{font-size:.75rem;font-weight:600;color:var(--color-slate-600);text-transform:uppercase;margin-bottom:.25rem}
     .detail-value{font-size:1rem;color:var(--color-slate-900);font-weight:500}
     .section-title{font-size:1.125rem;font-weight:600;margin-bottom:1rem;border-bottom:2px solid var(--color-emerald-200);padding-bottom:.5rem}
     .form-section{margin-bottom:2rem}
@@ -31,36 +30,34 @@
 </head>
 <body>
 <div class="form-wrapper">
-  <a href="/skillshub/profile" class="back-link">← Back to Profile</a>
+  <a href="/skillshub/profile" class="back-link">Back to Profile</a>
   <h1>Attachment Feedback</h1>
-  <div id="sh-loading">Loading…</div>
+  <div id="sh-loading">Loading...</div>
   <div id="sh-error" class="sh-alert-error" style="display:none"></div>
   <form id="sh-feedback-form" style="display:none">
     <div class="context-card">
-      <div><div class="detail-label">Student ID</div><div class="detail-value" id="ctx-id">—</div></div>
-      <div><div class="detail-label">Name</div><div class="detail-value" id="ctx-name">—</div></div>
-      <div><div class="detail-label">Schedule</div><div class="detail-value" id="ctx-schedule">—</div></div>
+      <div><div class="detail-label">Student ID</div><div class="detail-value" id="ctx-id">-</div></div>
+      <div><div class="detail-label">Name</div><div class="detail-value" id="ctx-name">-</div></div>
+      <div><div class="detail-label">Schedule</div><div class="detail-value" id="ctx-schedule">-</div></div>
       <div><div class="detail-label">Milestone</div><div class="detail-value">Attachment</div></div>
     </div>
-    <div class="form-section">
-      <div class="section-title">Preparation &amp; Readiness</div>
-      <div class="rating-row"><label>How prepared did you feel for attachment?</label><input type="range" id="r-preparation" min="1" max="5" value="3" oninput="this.nextElementSibling.textContent=this.value"><span class="rv">3</span></div>
+    <div class="form-section"><div class="section-title">Preparation</div>
+      <div class="rating-row"><label>How prepared did you feel?</label><input type="range" id="r-preparation" min="1" max="5" value="3" oninput="this.nextElementSibling.textContent=this.value"><span class="rv">3</span></div>
     </div>
     <div class="form-section">
-      <div class="form-group"><label class="sh-label">How did you use your skills during attachment?</label><textarea class="sh-input" id="skills_use" rows="4" placeholder="Give a specific example…"></textarea></div>
+      <div class="form-group"><label class="sh-label">How did you use your skills during attachment?</label><textarea class="sh-input" id="skills_use" rows="4" placeholder="Give a specific example..."></textarea></div>
+    </div>
+    <div class="form-section"><div class="section-title">Challenges Faced</div>
+      <div class="checkbox-group" id="challenges-group"><p style="color:var(--color-slate-500)">Loading...</p></div>
+      <div class="form-group" style="margin-top:1rem"><label class="sh-label">Additional challenges</label><textarea class="sh-input" id="challenges_text" rows="3"></textarea></div>
     </div>
     <div class="form-section">
-      <div class="section-title">Challenges Faced</div>
-      <div class="checkbox-group" id="challenges-group"><p style="color:var(--color-slate-500)">Loading…</p></div>
-      <div class="form-group" style="margin-top:1rem"><label class="sh-label">Describe any additional challenges</label><textarea class="sh-input" id="challenges_text" rows="3" placeholder="Additional context…"></textarea></div>
+      <div class="form-group"><label class="sh-label">Suggestions for improving the attachment programme</label><textarea class="sh-input" id="improvements" rows="4"></textarea></div>
     </div>
-    <div class="form-section">
-      <div class="form-group"><label class="sh-label">Suggestions for improving the attachment programme</label><textarea class="sh-input" id="improvements" rows="4" placeholder="Your ideas…"></textarea></div>
-    </div>
-    <div id="sh-success" class="sh-success-msg" style="display:none">✓ Feedback submitted successfully</div>
+    <div id="sh-success" class="sh-success-msg" style="display:none">Feedback submitted successfully</div>
     <button type="submit" class="sh-btn-primary" style="width:100%" id="sh-submit-btn">Submit Feedback</button>
   </form>
 </div>
-<script type="module" src="/skillshub/feedback/attachment.js"></script>
-</body>
-</html>
+<script src="/assets/skillshub_core/js/skillshub/portal-settings.js"></script>
+<script src="/assets/skillshub_core/js/skillshub/feedback-attachment.js"></script>
+</body></html>

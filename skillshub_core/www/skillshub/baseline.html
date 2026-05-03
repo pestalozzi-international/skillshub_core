@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkillsHub — Baseline Assessment</title>
+  <title>SkillsHub - Baseline Assessment</title>
   <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
   <link rel="stylesheet" href="/skillshub/theme.css">
   <style>
@@ -17,10 +17,8 @@
     .form-section{margin-bottom:2rem}
     .form-group{display:flex;flex-direction:column;margin-bottom:1.5rem}
     .sh-label{font-size:.9375rem;font-weight:600;color:var(--color-slate-900);margin-bottom:.5rem}
-    select.sh-input{padding:.75rem;border:1px solid var(--color-slate-200);border-radius:var(--border-radius-btn);font-size:1rem;font-family:inherit}
-    select.sh-input:focus{outline:none;border-color:var(--color-teal-700)}
-    textarea.sh-input{padding:.75rem;border:1px solid var(--color-slate-200);border-radius:var(--border-radius-btn);font-size:1rem;font-family:inherit;resize:vertical}
-    textarea.sh-input:focus{outline:none;border-color:var(--color-teal-700)}
+    select.sh-input,textarea.sh-input{padding:.75rem;border:1px solid var(--color-slate-200);border-radius:var(--border-radius-btn);font-size:1rem;font-family:inherit;resize:vertical}
+    select.sh-input:focus,textarea.sh-input:focus{outline:none;border-color:var(--color-teal-700)}
     .rating-row{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
     .rating-row label{flex:1;font-size:.9375rem;font-weight:500}
     .rating-row input[type=range]{flex:2;accent-color:var(--color-teal-700)}
@@ -30,21 +28,19 @@
 </head>
 <body>
 <div class="form-wrapper">
-  <a href="/skillshub/profile" class="back-link">← Back to Profile</a>
+  <a href="/skillshub/profile" class="back-link">Back to Profile</a>
   <h1>Baseline Assessment</h1>
-  <div id="sh-loading">Loading…</div>
+  <div id="sh-loading">Loading...</div>
   <div id="sh-error" class="sh-alert-error" style="display:none"></div>
   <form id="sh-baseline-form" style="display:none">
     <div class="context-card">
-      <div><div class="detail-label">Student ID</div><div class="detail-value" id="ctx-id">—</div></div>
-      <div><div class="detail-label">Name</div><div class="detail-value" id="ctx-name">—</div></div>
+      <div><div class="detail-label">Student ID</div><div class="detail-value" id="ctx-id">-</div></div>
+      <div><div class="detail-label">Name</div><div class="detail-value" id="ctx-name">-</div></div>
     </div>
     <div class="form-section">
       <div class="form-group">
-        <label class="sh-label">Current Milestone <span style="color:var(--color-red-700)">*</span></label>
-        <select class="sh-input" id="milestone" required>
-          <option value="">Select your current programme…</option>
-        </select>
+        <label class="sh-label">Current Milestone</label>
+        <select class="sh-input" id="milestone" required><option value="">Select your current programme...</option></select>
       </div>
     </div>
     <div class="form-section">
@@ -58,13 +54,14 @@
       <div class="rating-row"><label>Employment Readiness</label><input type="range" id="r-employment_readiness" min="1" max="5" value="3" oninput="this.nextElementSibling.textContent=this.value"><span class="rv">3</span></div>
     </div>
     <div class="form-section">
-      <div class="form-group"><label class="sh-label">What are your goals for this programme?</label><textarea class="sh-input" id="goals" rows="4" placeholder="Your goals…"></textarea></div>
-      <div class="form-group"><label class="sh-label">What challenges are you facing?</label><textarea class="sh-input" id="challenges" rows="4" placeholder="Your challenges…"></textarea></div>
+      <div class="form-group"><label class="sh-label">What are your goals for this programme?</label><textarea class="sh-input" id="goals" rows="4" placeholder="Your goals..."></textarea></div>
+      <div class="form-group"><label class="sh-label">What challenges are you facing?</label><textarea class="sh-input" id="challenges" rows="4" placeholder="Your challenges..."></textarea></div>
     </div>
-    <div id="sh-success" class="sh-success-msg" style="display:none">✓ Baseline submitted successfully</div>
+    <div id="sh-success" class="sh-success-msg" style="display:none">Baseline submitted successfully</div>
     <button type="submit" class="sh-btn-primary" style="width:100%" id="sh-submit-btn">Submit Baseline</button>
   </form>
 </div>
-<script type="module" src="/skillshub/baseline.js"></script>
+<script src="/assets/skillshub_core/js/skillshub/portal-settings.js"></script>
+<script src="/assets/skillshub_core/js/skillshub/baseline.js"></script>
 </body>
 </html>

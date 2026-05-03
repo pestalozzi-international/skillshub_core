@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkillsHub Admin — Student Detail</title>
+  <title>SkillsHub Admin - Student Detail</title>
   <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
   <link rel="stylesheet" href="/skillshub/theme.css">
   <style>
@@ -30,23 +30,20 @@
     .card-value{font-size:.9rem;color:var(--color-slate-900);font-weight:500;margin-bottom:.875rem}
     .right-col{display:flex;flex-direction:column;gap:1.5rem}
     .state-box{text-align:center;padding:3rem;color:var(--color-slate-500)}
-
-    /* ── Vertical timeline ── */
     .tl-container{position:relative;padding-left:2rem}
     .tl-container::before{content:'';position:absolute;left:.6875rem;top:0;bottom:0;width:2px;background:var(--color-slate-200)}
     .tl-item{position:relative;display:flex;gap:1rem;margin-bottom:1.5rem}
     .tl-item:last-child{margin-bottom:0}
     .tl-dot{width:.875rem;height:.875rem;border-radius:50%;flex-shrink:0;margin-top:.25rem;position:absolute;left:-.3125rem}
     .tl-dot-active{background:var(--color-teal-700);box-shadow:0 0 0 3px rgba(15,118,110,.2)}
-    .tl-dot-done{background:var(--color-emerald-700);box-shadow:0 0 0 3px rgba(4,120,87,.2)}
-    .tl-dot-drop{background:var(--color-red-700);box-shadow:0 0 0 3px rgba(185,28,28,.2)}
+    .tl-dot-done{background:var(--color-emerald-700)}
+    .tl-dot-drop{background:var(--color-red-700)}
     .tl-dot-future{background:var(--color-slate-200);border:2px solid var(--color-slate-300)}
     .tl-body{padding-left:1.5rem}
     .tl-title{font-weight:600;color:var(--color-slate-900);font-size:.9375rem}
     .tl-course{font-weight:400;color:var(--color-slate-500)}
     .tl-meta{font-size:.8125rem;color:var(--color-slate-500);margin:.25rem 0}
     .tl-item.tl-future .tl-title{color:var(--color-slate-400)}
-    .tl-item.tl-future .tl-meta{color:var(--color-slate-300)}
     .tl-pills{display:flex;gap:.375rem;flex-wrap:wrap;margin-top:.375rem}
     .pill{padding:.125rem .5rem;border-radius:9999px;font-size:.75rem;font-weight:600}
     .pill-att{background:var(--color-slate-100);color:var(--color-slate-700)}
@@ -55,11 +52,9 @@
     .pill-enrolled{background:var(--color-slate-100);color:var(--color-slate-700)}
     .pill-completed{background:var(--color-emerald-50);color:var(--color-emerald-700)}
     .pill-dropped{background:var(--color-red-50);color:var(--color-red-700)}
-
-    /* Employment table */
     .emp-table{width:100%;border-collapse:collapse;font-size:.875rem}
-    .emp-table th{padding:.625rem .875rem;text-align:left;font-size:.75rem;font-weight:600;text-transform:uppercase;color:var(--color-slate-600);letter-spacing:.05em;background:var(--color-slate-50);border-bottom:1px solid var(--color-slate-200)}
-    .emp-table td{padding:.625rem .875rem;border-bottom:1px solid var(--color-slate-100);color:var(--color-slate-900)}
+    .emp-table th{padding:.625rem .875rem;text-align:left;font-size:.75rem;font-weight:600;text-transform:uppercase;color:var(--color-slate-600);background:var(--color-slate-50);border-bottom:1px solid var(--color-slate-200)}
+    .emp-table td{padding:.625rem .875rem;border-bottom:1px solid var(--color-slate-100)}
   </style>
 </head>
 <body>
@@ -70,8 +65,9 @@
     </div>
   </div>
   <div class="container">
-    <div id="content"><div class="sh-card state-box">Loading student…</div></div>
+    <div id="content"><div class="sh-card state-box">Loading student...</div></div>
   </div>
-  <script type="module" src="/skillshub/admin/student.js"></script>
+  <script src="/assets/skillshub_core/js/skillshub/portal-settings.js"></script>
+  <script src="/assets/skillshub_core/js/skillshub/student-detail.js"></script>
 </body>
 </html>
