@@ -12,7 +12,13 @@
   "section_assets",
   "logo",
   "column_break_assets",
-  "favicon"
+  "favicon",
+  "section_defaults",
+  "current_cohort",
+  "default_academic_year",
+  "column_break_defaults",
+  "default_programme",
+  "default_term"
  ],
  "fields": [
   {
@@ -60,6 +66,39 @@
    "fieldname": "favicon",
    "fieldtype": "Attach Image",
    "label": "Favicon"
+  },
+  {
+   "fieldname": "section_defaults",
+   "fieldtype": "Section Break",
+   "label": "System Defaults"
+  },
+  {
+   "fieldname": "current_cohort",
+   "fieldtype": "Link",
+   "label": "Current Cohort",
+   "options": "SkillsHub Cohort"
+  },
+  {
+   "fieldname": "default_academic_year",
+   "fieldtype": "Link",
+   "label": "Default Academic Year",
+   "options": "SH Academic Year"
+  },
+  {
+   "fieldname": "column_break_defaults",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_programme",
+   "fieldtype": "Link",
+   "label": "Default Programme",
+   "options": "SkillsHub Programme"
+  },
+  {
+   "fieldname": "default_term",
+   "fieldtype": "Link",
+   "label": "Default Academic Term",
+   "options": "SH Academic Term"
   }
  ],
  "index_web_pages_for_search": 0,

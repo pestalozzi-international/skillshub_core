@@ -17,6 +17,10 @@ class SHAttendance(Document):
         self.name = f"ATT-{self.sh_programme_schedule}-{day}-{date_part}"
 
     def validate(self):
+        # Security: Prevent Students from creating or editing attendance records
+        if "Student" in frappe.get_roles() and not "System Manager" in frappe.get_roles():
+            frappe.throw("Students are not authorized to create or modify attendance records.", frappe.PermissionError)
+
         self.compute_day()
         self.validate_duplicate()
         self.validate_holiday()

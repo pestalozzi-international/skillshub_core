@@ -10,8 +10,7 @@
   }
 
   function clearAndRedirect() {
-    localStorage.removeItem('sh_student_id'); localStorage.removeItem('sh_role');
-    localStorage.removeItem('sh_user'); localStorage.removeItem('sh_display_user');
+    localStorage.clear();
     window.location.replace('/skillshub/login');
   }
 
@@ -27,28 +26,21 @@
       });
   }
 
-  /* ── Status Indicator (shared logic with students-admin.js) ────── */
-  function getIndicator(student, enrolments) {
-    if (student.status === 'Dropped')
-      return { label: 'Dropped', cssClass: 'badge-dropped' };
-    if (student.status === 'Alumni' && student.graduated)
-      return { label: 'Graduated', cssClass: 'badge-graduated' };
-    if (student.status === 'Alumni')
-      return { label: 'Alumni', cssClass: 'badge-alumni' };
-    var hasAttach = enrolments.some(function (e) {
-      return e.milestone === 'Attachment' && e.status === 'Enrolled';
-    });
-    if (hasAttach)
-      return { label: 'Attached', cssClass: 'badge-attached' };
-    return { label: 'Active', cssClass: 'badge-student' };
-  }
-
   document.addEventListener('DOMContentLoaded', function () {
+    if (!studentId) {
+      document.getElementById('content').innerHTML = '<div style="text-align:center; padding:5rem;">Student ID missing.</div>';
+      return;
+    }
+
     document.getElementById('logout-btn').addEventListener('click', function () {
       fetch('/api/method/logout', { method: 'POST', headers: getFrappeHeaders(), credentials: 'include' })
-        .finally(function () { localStorage.clear(); window.location.replace('/skillshub/login'); });
+        .finally(function () { clearAndRedirect(); });
     });
 
+    fetchData();
+  });
+
+  function fetchData() {
     Promise.all([
       sf('/api/resource/SH Student/' + encodeURIComponent(studentId)),
       sf('/api/resource/SH Student Enrolment?filters=' +
@@ -56,102 +48,90 @@
         '&fields=' + encodeURIComponent(JSON.stringify([
           'name','milestone','course','status','attendance_rate',
           'feedback_submitted','baseline_submitted',
-          'enrolment_date','completion_date','programme_path','programme_schedule'
-        ])) + '&order_by=enrolment_date+asc&limit=50')
+          'enrolment_date','completion_date'
+        ])) + '&order_by=enrolment_date+asc')
     ])
     .then(function (results) {
-      if (!results[0] || !results[1]) return;
+      if (!results[0]) return;
       render(results[0].data, results[1].data || []);
     })
-    .catch(function () {
+    .catch(function (err) {
       document.getElementById('content').innerHTML =
-        '<div class="sh-card state-box" style="color:var(--color-red-700)">Error loading student. Please try again.</div>';
+        '<div style="text-align:center; padding:5rem; color:var(--color-red-600)">Error loading student: ' + err.message + '</div>';
     });
-  });
+  }
 
   function fmt(d) {
-    if (!d) return '-';
+    if (!d) return '—';
     var dt = new Date(d);
     return isNaN(dt) ? d : dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   }
 
-  function calcAge(dob) {
-    if (!dob) return '-';
-    var d = new Date(dob), t = new Date();
-    var a = t.getFullYear() - d.getFullYear();
-    if (t.getMonth() < d.getMonth() || (t.getMonth() === d.getMonth() && t.getDate() < d.getDate())) a--;
-    return a;
-  }
-
   function render(s, enrolments) {
-    if (!s) { document.getElementById('content').innerHTML = '<div class="sh-card state-box">Student not found.</div>'; return; }
+    var content = document.getElementById('content');
+    
+    // Header Banner
+    var bannerHtml = '<div class="profile-banner sh-animate-fade"><div class="pb-container"><div class="pb-info">' +
+      '<h1>' + (s.student_name || '—') + '</h1>' +
+      '<p>' + (s.current_cohort || 'No Cohort') + ' • ' + (s.skillshub_programme || 'No Programme') + '</p>' +
+      '</div></div></div>';
 
-    var indicator = getIndicator(s, enrolments);
+    // Sidebar
+    var sidebarHtml = '<div class="sidebar-col">' +
+      '<div class="glass-card sh-animate-fade" style="margin-bottom: 1.5rem;">' +
+        '<div class="section-title">Demographics</div>' +
+        row('Student ID', s.name) +
+        row('Birth Date', fmt(s.date_of_birth)) +
+        row('Gender', s.gender) +
+        row('NRC Number', s.nrc_number) +
+        '<div class="data-row"><div class="data-label">Status</div><div class="data-value"><span class="sh-badge sh-badge-info">' + s.status + '</span></div></div>' +
+      '</div>' +
+      '<div class="glass-card sh-animate-fade" style="animation-delay: 0.1s;">' +
+        '<div class="section-title">Growth & Motivation</div>' +
+        pillsSection('Motivations', s.motivations || [], 'motivation') +
+        pillsSection('Resilience', s.resilience_links || [], 'resilience_statement') +
+      '</div></div>';
 
-    // ── Milestone Timeline ──────────────────────────────────────────
-    var ORDER = ['Mindset Camp','Soft Skills','Edulution','Vocational Training','Attachment'];
-    var enrolMap = {};
-    enrolments.forEach(function (e) { if (e.milestone) enrolMap[e.milestone] = e; });
-    var skipEd = (s.programme_path === 'Path B');
-
-    var tlItems = ORDER.filter(function (m) { return !(skipEd && m === 'Edulution'); }).map(function (m) {
-      var e = enrolMap[m];
-      if (!e) {
-        return '<div class="tl-item tl-future"><div class="tl-dot tl-dot-future"></div>' +
-          '<div class="tl-body"><div class="tl-title">' + m + '</div><div class="tl-meta">Not yet started</div></div></div>';
-      }
-      var att = e.attendance_rate != null ? Math.round(e.attendance_rate) : null;
-      var dcls = e.status === 'Completed' ? 'tl-dot-done' : e.status === 'Dropped' ? 'tl-dot-drop' : 'tl-dot-active';
-      var pills = '<span class="pill pill-' + (e.status||'enrolled').toLowerCase() + '">' + (e.status||'Enrolled') + '</span>';
-      if (att !== null) pills += '<span class="pill pill-att">' + att + '% att.</span>';
-      pills += '<span class="pill ' + (e.feedback_submitted ? 'pill-ok' : 'pill-pend') + '">' + (e.feedback_submitted ? 'Feedback' : 'Feedback pending') + '</span>';
-      if (e.baseline_submitted) pills += '<span class="pill pill-ok">Baseline</span>';
-      return '<div class="tl-item"><div class="tl-dot ' + dcls + '"></div><div class="tl-body">' +
-        '<div class="tl-title">' + m + (e.course ? ' <span class="tl-course">- ' + e.course + '</span>' : '') + '</div>' +
-        '<div class="tl-meta">' + fmt(e.enrolment_date) + (e.completion_date ? ' to ' + fmt(e.completion_date) : '') + '</div>' +
-        '<div class="tl-pills">' + pills + '</div></div></div>';
+    // Content
+    var timelineHtml = enrolments.map(function (e) {
+      return '<div class="tl-item ' + (e.status === 'Completed' ? 'completed' : '') + '">' +
+        '<div class="tl-date">' + fmt(e.enrolment_date) + (e.completion_date ? ' — ' + fmt(e.completion_date) : '') + '</div>' +
+        '<div class="tl-title">' + (e.milestone || 'Milestone') + (e.course ? ' · ' + e.course : '') + '</div>' +
+        '<div class="tl-meta">' +
+          '<span class="sh-badge ' + (e.status === 'Completed' ? 'sh-badge-success' : 'sh-badge-info') + '">' + e.status + '</span>' +
+          (e.attendance_rate ? '<span class="sh-badge sh-badge-info">' + Math.round(e.attendance_rate) + '% Att.</span>' : '') +
+          (e.feedback_submitted ? '<span class="sh-badge sh-badge-success">✓ Feedback</span>' : '') +
+        '</div></div>';
     }).join('');
 
-    // ── Build Profile ───────────────────────────────────────────────
-    var addr = [s.address_line_1, s.address_line_2, s.pincode].filter(Boolean).join(', ') || '-';
-
-    // Graduated badge (only shown for Alumni)
-    var gradHtml = '';
-    if (s.status === 'Alumni') {
-      gradHtml = '<div class="card-label">Graduated</div><div class="card-value">' + (s.graduated ? '✓ Yes' : '✗ No') + '</div>';
-    }
-
-    document.getElementById('content').innerHTML =
-      '<div class="detail-header"><div>' +
-        '<h2>' + (s.student_name||'-') + '</h2>' +
-        '<div class="sid">' + s.name + '</div>' +
-        '<div style="margin-top:.5rem"><span class="status-badge ' + indicator.cssClass + '">' + indicator.label + '</span>' +
-        (s.programme_path ? '<span class="status-badge badge-path" style="margin-left:.5rem">' + s.programme_path + '</span>' : '') +
-        '</div></div>' +
-        '<a href="/skillshub/admin/students" class="back-link">Back to Students</a>' +
-      '</div>' +
-      '<div class="detail-grid"><div class="sidebar">' +
-        '<div class="sh-card"><h3 class="card-section-title">Demographics</h3>' +
-          '<div class="card-label">Student ID</div><div class="card-value">' + s.name + '</div>' +
-          '<div class="card-label">Date of Birth</div><div class="card-value">' + fmt(s.date_of_birth) + '</div>' +
-          '<div class="card-label">Age</div><div class="card-value">' + calcAge(s.date_of_birth) + '</div>' +
-          '<div class="card-label">Gender</div><div class="card-value">' + (s.gender||'-') + '</div>' +
-          '<div class="card-label">NRC</div><div class="card-value">' + (s.nrc_number||'-') + '</div>' +
-          '<div class="card-label">Address</div><div class="card-value">' + addr + '</div>' +
-          '<div class="card-label">Guardian</div><div class="card-value">' + (s.guardian_name||'-') + '</div>' +
-          '<div class="card-label">Guardian Mobile</div><div class="card-value">' + (s.guardian_mobile_number||'-') + '</div>' +
-        '</div>' +
-        '<div class="sh-card"><h3 class="card-section-title">Enrolment Status</h3>' +
-          '<div class="card-label">Status</div><div class="card-value"><span class="status-badge ' + indicator.cssClass + '" style="font-size:.75rem">' + indicator.label + '</span></div>' +
-          gradHtml +
-          '<div class="card-label">Intake Year</div><div class="card-value">' + (s.intake_year||'-') + '</div>' +
-          '<div class="card-label">Path</div><div class="card-value">' + (s.programme_path||'-') + '</div>' +
-          '<div class="card-label">Enrolled</div><div class="card-value">' + fmt(s.enrolment_date) + '</div>' +
+    var mainHtml = '<div class="content-col">' +
+      '<div class="glass-card sh-animate-fade" style="margin-bottom: 2rem; animation-delay: 0.2s;">' +
+        '<div class="section-title">Contact Information</div>' +
+        '<div class="sh-grid sh-grid-2">' +
+          row('Address', [s.address_line_1, s.address_line_2, s.pincode].filter(Boolean).join(', ') || '—') +
+          row('Mobile', s.mobile || '—') +
+          row('Email', s.personal_email || '—') +
+          row('Guardian', s.guardian_name || '—') +
         '</div>' +
       '</div>' +
-      '<div class="right-col">' +
-        '<div class="sh-card"><h3 style="margin-top:0;border-bottom:1px solid var(--color-slate-200);padding-bottom:.75rem;margin-bottom:1.5rem">Milestone Timeline</h3>' +
-          '<div class="tl-container">' + tlItems + '</div></div>' +
+      '<div class="glass-card sh-animate-fade" style="animation-delay: 0.3s;">' +
+        '<div class="section-title">Enrolment Journey</div>' +
+        '<div class="timeline">' + (timelineHtml || '<div class="tl-item"><div class="tl-title">No history found</div></div>') + '</div>' +
       '</div></div>';
+
+    content.innerHTML = bannerHtml + '<div class="main-container">' + sidebarHtml + mainHtml + '</div>';
   }
+
+  function row(label, value) {
+    return '<div class="data-row"><div class="data-label">' + label + '</div><div class="data-value">' + (value || '—') + '</div></div>';
+  }
+
+  function pillsSection(label, data, field) {
+    var pills = data.map(function (item) {
+      return '<div class="sh-pill">' + item[field] + '</div>';
+    }).join('');
+    return '<div class="data-label" style="margin-top: 1rem; margin-bottom: 0.5rem;">' + label + '</div>' +
+      '<div class="sh-pill-container">' + (pills || '<span style="font-size:0.875rem; color:var(--color-slate-400)">None</span>') + '</div>';
+  }
+
 }());

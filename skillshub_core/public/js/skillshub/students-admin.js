@@ -31,17 +31,17 @@
 
   function getIndicator(student, enrolments) {
     if (student.status === 'Dropped')
-      return { color: '#dc2626', label: 'Dropped', cssClass: 'ind-red' };
+      return { label: 'Dropped', cssClass: 'sh-badge-dropped' };
     if (student.status === 'Alumni' && student.graduated)
-      return { color: '#2563eb', label: 'Graduated', cssClass: 'ind-blue' };
+      return { label: 'Graduated', cssClass: 'sh-badge-completed' };
     if (student.status === 'Alumni')
-      return { color: '#2563eb', label: 'Alumni', cssClass: 'ind-blue' };
+      return { label: 'Alumni', cssClass: 'sh-badge-info' };
     var hasAttach = enrolments.some(function (e) {
       return e.milestone === 'Attachment' && e.status === 'Enrolled';
     });
     if (hasAttach)
-      return { color: '#d97706', label: 'Attached', cssClass: 'ind-orange' };
-    return { color: '#059669', label: 'Active', cssClass: 'ind-green' };
+      return { label: 'Attached', cssClass: 'sh-badge-warning' };
+    return { label: 'Active', cssClass: 'sh-badge-success' };
   }
 
   function deriveContext(enrolments, schedMap) {
@@ -74,6 +74,20 @@
       });
     });
     loadData();
+
+    // Global toggle handler
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('.toggle-history')) {
+        var btn = e.target.closest('.toggle-history');
+        var studentId = btn.dataset.student;
+        var historyRow = document.getElementById('history-' + studentId);
+        if (historyRow) {
+          var isHidden = historyRow.style.display === 'none';
+          historyRow.style.display = isHidden ? 'table-row' : 'none';
+          btn.textContent = isHidden ? 'Hide History' : 'Show History';
+        }
+      }
+    });
   });
 
   function loadData() {
@@ -118,24 +132,68 @@
     var content = document.getElementById('content');
     var footer = document.getElementById('footer');
     if (!students.length) { content.innerHTML = '<div class="state-box">No students match the selected filters.</div>'; footer.style.display = 'none'; return; }
-    var html = '<div class="table-wrap"><table><thead><tr><th>Student ID</th><th>Full Name</th><th>Status</th><th>Cohort</th><th>Programme</th><th>Path</th><th>Attendance</th><th>Feedback</th><th></th></tr></thead><tbody>';
+    
+    var html = '<div class="table-wrap"><table class="student-table"><thead><tr><th>Student</th><th>Status</th><th>Latest Context</th><th>Path</th><th>Stats</th><th>Actions</th></tr></thead><tbody>';
+    
     students.forEach(function (s) {
       var enrols = allEnrolments.filter(function (e) { return e.student === s.name; });
       var ind = getIndicator(s, enrols);
       var ctx = deriveContext(enrols, scheduleMap);
+      
       var active = enrols.filter(function (e) { return e.status === 'Enrolled'; });
       if (!active.length) active = enrols;
-      var rates = active.map(function (e) { return e.attendance_rate || 0; });
-      var avgAtt = rates.length ? Math.round(rates.reduce(function (a,b) { return a+b; },0)/rates.length) : 0;
-      var attCls = avgAtt >= 80 ? 'att-high' : avgAtt >= 60 ? 'att-med' : 'att-low';
-      var fbOk = enrols.some(function (e) { return e.feedback_submitted; });
-      html += '<tr><td><span class="sid">' + esc(s.name) + '</span></td><td>' + esc(s.student_name||'—') + '</td>' +
-        '<td><span class="status-dot ' + ind.cssClass + '"></span>' + esc(ind.label) + '</td>' +
-        '<td>' + esc(ctx.cohort||'—') + '</td><td>' + esc(ctx.programme||'—') + '</td><td>' + esc(s.programme_path||'—') + '</td>' +
-        '<td><span class="' + attCls + '">' + avgAtt + '%</span></td>' +
-        '<td><span class="' + (fbOk?'fb-yes':'fb-no') + '">' + (fbOk?'✓ Done':'⚠ Pending') + '</span></td>' +
-        '<td><a href="/skillshub/admin/student?id=' + encodeURIComponent(s.name) + '" class="view-btn">View</a></td></tr>';
+      var avgAtt = active.length ? Math.round(active.reduce(function (a,b) { return a + (b.attendance_rate||0); }, 0) / active.length) : 0;
+      var fbCount = enrols.filter(function (e) { return e.feedback_submitted; }).length;
+
+      html += '<tr class="student-row">' +
+        '<td>' +
+          '<div style="font-weight:600;color:var(--color-slate-900)">' + esc(s.student_name||'—') + '</div>' +
+          '<div class="sid" style="font-size:0.75rem">' + esc(s.name) + '</div>' +
+        '</td>' +
+        '<td><span class="sh-badge ' + ind.cssClass + '">' + esc(ind.label) + '</span></td>' +
+        '<td>' +
+          '<div style="font-size:0.875rem">' + esc(ctx.programme||'No Milestone') + '</div>' +
+          '<div style="font-size:0.75rem;color:var(--color-slate-500)">' + esc(ctx.cohort||'No Cohort') + '</div>' +
+        '</td>' +
+        '<td><span class="sh-badge sh-badge-info">' + esc(s.programme_path||'—') + '</span></td>' +
+        '<td>' +
+          '<div style="font-size:0.875rem">' + avgAtt + '% Att.</div>' +
+          '<div style="font-size:0.75rem;color:' + (fbCount === enrols.length ? 'var(--color-emerald-700)' : 'var(--color-amber-700)') + '">' + fbCount + '/' + enrols.length + ' Feedback</div>' +
+        '</td>' +
+        '<td>' +
+          '<div style="display:flex;gap:0.5rem">' +
+            '<a href="/skillshub/admin/student?id=' + encodeURIComponent(s.name) + '" class="sh-btn-secondary" style="padding:0.4rem 0.8rem;font-size:0.875rem">Profile</a>' +
+            '<button class="sh-btn-secondary toggle-history" data-student="' + s.name + '" style="padding:0.4rem 0.8rem;font-size:0.875rem">History</button>' +
+          '</div>' +
+        '</td>' +
+      '</tr>';
+
+      // History Row (Hidden by default)
+      html += '<tr id="history-' + s.name + '" class="history-row" style="display:none;background:var(--color-slate-50)">' +
+        '<td colspan="6" style="padding:1.5rem">' +
+          '<div style="font-weight:600;margin-bottom:1rem;font-size:0.875rem;color:var(--color-slate-700)">Enrolment History</div>' +
+          '<table style="width:100%;background:white;border-radius:0.75rem;border-collapse:collapse;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">' +
+            '<thead style="background:var(--color-slate-100)">' +
+              '<tr><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Milestone</th><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Status</th><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Date</th><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Feedback</th></tr>' +
+            '</thead>' +
+            '<tbody>' +
+              enrols.map(function(e) {
+                return '<tr>' +
+                  '<td style="padding:0.75rem;border-top:1px solid var(--color-slate-100)">' + esc(e.milestone) + '</td>' +
+                  '<td style="padding:0.75rem;border-top:1px solid var(--color-slate-100)"><span class="sh-badge ' + (e.status === 'Completed' ? 'sh-badge-success' : e.status === 'Dropped' ? 'sh-badge-dropped' : 'sh-badge-enrolled') + '" style="font-size:0.7rem">' + (e.status||'Enrolled') + '</span></td>' +
+                  '<td style="padding:0.75rem;border-top:1px solid var(--color-slate-100);font-size:0.75rem">' + (e.enrolment_date||'—') + '</td>' +
+                  '<td style="padding:0.75rem;border-top:1px solid var(--color-slate-100)">' +
+                    (e.feedback_submitted ? '<span style="color:var(--color-emerald-700);font-size:0.75rem">✓ Submitted</span>' : '<span style="color:var(--color-amber-700);font-size:0.75rem">⚠ Pending</span>') +
+                  '</td>' +
+                '</tr>';
+              }).join('') +
+              (!enrols.length ? '<tr><td colspan="4" style="padding:1rem;text-align:center;color:var(--color-slate-500)">No enrolment history found.</td></tr>' : '') +
+            '</tbody>' +
+          '</table>' +
+        '</td>' +
+      '</tr>';
     });
+    
     html += '</tbody></table></div>';
     content.innerHTML = html;
     footer.textContent = students.length + ' student' + (students.length !== 1 ? 's' : '') + ' shown';

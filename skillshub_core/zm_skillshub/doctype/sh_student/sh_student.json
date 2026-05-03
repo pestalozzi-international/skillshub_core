@@ -66,6 +66,9 @@
   "section_break_bman",
   "has_history_of_medical_conditions",
   "details_of_medical_conditions",
+  "growth_section",
+  "motivations",
+  "resilience_links",
   "portal_access_section",
   "enabled",
   "portal_user_account",
@@ -220,6 +223,23 @@
    "fieldname": "details_of_medical_conditions",
    "fieldtype": "Small Text",
    "label": "Details of medical conditions"
+  },
+  {
+   "fieldname": "growth_section",
+   "fieldtype": "Section Break",
+   "label": "Growth & Motivation"
+  },
+  {
+   "fieldname": "motivations",
+   "fieldtype": "Table",
+   "label": "Motivations",
+   "options": "SH Student Motivation Link"
+  },
+  {
+   "fieldname": "resilience_links",
+   "fieldtype": "Table",
+   "label": "Resilience Links",
+   "options": "SH Student Resilience Link"
   },
   {
    "fieldname": "date_submitted_enrolment_form",

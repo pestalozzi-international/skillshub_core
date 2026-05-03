@@ -19,9 +19,13 @@ def get_portal_settings():
     """
     doc = frappe.get_single("SkillsHub Portal Settings")
     return {
-        "primary_color":    doc.primary_color    or "#0f766e",
-        "secondary_color":  doc.secondary_color  or "#115e59",
-        "header_gradient":  doc.header_gradient  or "linear-gradient(135deg, #0f766e 0%, #115e59 100%)",
-        "logo":             doc.logo             or "",
-        "favicon":          doc.favicon          or "",
+        "primary_color":           doc.primary_color           or "#0f766e",
+        "secondary_color":         doc.secondary_color         or "#115e59",
+        "header_gradient":         doc.header_gradient         or "linear-gradient(135deg, #0f766e 0%, #115e59 100%)",
+        "logo":                    doc.logo                    or "",
+        "favicon":                 doc.favicon                 or "",
+        "current_cohort":          doc.current_cohort          or "",
+        "default_academic_year":   doc.default_academic_year   or "",
+        "default_programme":       doc.default_programme       or "",
+        "default_term":            doc.default_term            or "",
     }
