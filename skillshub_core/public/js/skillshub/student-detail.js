@@ -41,7 +41,8 @@
   });
 
   function fetchData() {
-    Promise.all([
+    console.log('[SkillsHub] Loading student detail:', studentId);
+    Promise.allSettled([
       sf('/api/resource/SH Student/' + encodeURIComponent(studentId)),
       sf('/api/resource/SH Student Enrolment?filters=' +
         encodeURIComponent(JSON.stringify([['student', '=', studentId]])) +
@@ -52,13 +53,26 @@
         ])) + '&order_by=enrolment_date+asc')
     ])
     .then(function (results) {
-      if (!results[0] || !results[0].data) {
-        throw new Error('Student record not found or inaccessible.');
+      var studentRes = results[0];
+      var enrolmentRes = results[1];
+
+      if (studentRes.status === 'rejected') {
+        throw new Error('Failed to fetch student record: ' + (studentRes.reason.message || 'Unknown error'));
       }
-      render(results[0].data, results[1].data || []);
+
+      var s = studentRes.value;
+      // Handle both {"data": {...}} and direct object response
+      if (s && s.data) s = s.data;
+      
+      if (!s || !s.name) {
+        throw new Error('Student record not found or data is invalid.');
+      }
+
+      var enrolments = (enrolmentRes.status === 'fulfilled' && enrolmentRes.value) ? (enrolmentRes.value.data || []) : [];
+      render(s, enrolments);
     })
     .catch(function (err) {
-      console.error('[SkillsHub] Fetch error:', err);
+      console.error('[SkillsHub] Profile load error:', err);
       document.getElementById('content').innerHTML =
         '<div class="sh-container"><div class="glass-card sh-animate-fade" style="margin-top:2rem; text-align:center; padding:5rem; color:var(--color-red-700)">' +
         '<h2 style="color:var(--color-red-700)">Unable to load profile</h2>' +
