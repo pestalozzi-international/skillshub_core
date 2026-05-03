@@ -117,8 +117,15 @@ def run():
             if student_field and orphan.get(student_field):
                 student_id = orphan[student_field]
             else:
+                # Strategy 1: try owner email lookup
                 owner_email = (orphan.owner or "").strip().lower()
                 student_id = email_map.get(owner_email)
+
+                # Strategy 2: extract Student ID from record name (e.g. SH260361-SS3169 -> SH260361)
+                if not student_id and "-" in record_name:
+                    candidate = record_name.split("-")[0]
+                    if frappe.db.exists("SH Student", candidate):
+                        student_id = candidate
 
                 if not student_id:
                     stats["no_student"] += 1
