@@ -14,7 +14,7 @@ def run():
     from frappe.utils import now_datetime
 
     # ── Configuration ────────────────────────────────────────────────
-    DRY_RUN = True          # Set to False to actually commit changes
+    DRY_RUN = False          # Set to False to actually commit changes
     LOG_DETAILS = True      # Print per-record match details
 
     # ── Programme schedule prefix mapping ────────────────────────────
@@ -193,16 +193,15 @@ def run():
                     stats["error"] += 1
                     print(f"    WARNING {record_name}: Error updating - {e}")
 
-        total_linked = stats["matched"] + stats["ambiguous"]
         print(f"\n  Summary for {dt}:")
         print(f"    Total orphans:     {len(orphans)}")
-        print(f"    Exact matches:     {stats['matched']}")
-        print(f"    Ambiguous (linked):{stats['ambiguous']}")
+        print(f"    Exact matches:     {stats['matched'] - stats['ambiguous']}")
+        print(f"    Ambiguous/Fallback:{stats['ambiguous']}")
         print(f"    No student found:  {stats['no_student']}")
         print(f"    No enrolment:      {stats['no_enrolment']}")
         print(f"    Errors:            {stats['error']}")
         print(f"    ----------------------")
-        print(f"    Successfully linked: {total_linked}")
+        print(f"    Successfully linked: {stats['matched']}")
 
         return results, stats
 
