@@ -113,9 +113,23 @@
       sf('/api/resource/SH Student Enrolment?fields=["name","student","milestone","programme_schedule","feedback_submitted","attendance_rate","status","enrolment_date","academic_year","course"]&limit=5000').then(function (d) { if (d) allEnrolments = d.data || []; }),
       sf('/api/resource/SH Programme Schedule?fields=["name","cohort","skillshub_programme","academic_year","skillshub_course"]&limit=500').then(function (d) { if (d && d.data) d.data.forEach(function (s) { scheduleMap[s.name] = s; }); })
     ]).then(function (results) {
+      var errors = [];
       results.forEach(function(r, i) {
-        if (r.status === 'rejected') console.warn('[SkillsHub] Data fetch #' + i + ' failed:', r.reason);
+        if (r.status === 'rejected') {
+          console.warn('[SkillsHub] Data fetch #' + i + ' failed:', r.reason);
+          errors.push('Fetch #' + i + ': ' + (r.reason.message || 'Network error'));
+        }
       });
+      
+      if (errors.length > 2) { // Allow some minor failures (like empty years/courses) but not core data
+        document.getElementById('content').innerHTML = 
+          '<div class="sh-card" style="text-align:center; padding:4rem; color:var(--color-red-700)">' +
+          '<h2>Data Loading Error</h2><p>Multiple API requests failed. Please check your permissions.</p>' +
+          '<div style="font-size:0.75rem; margin-top:1rem; opacity:0.7">' + errors.join('<br>') + '</div>' +
+          '<button onclick="location.reload()" class="sh-btn-secondary" style="margin-top:1.5rem">Retry</button>' +
+          '</div>';
+        return;
+      }
       
       var ay = document.getElementById('f-academic-year');
       if (ay) allYears.forEach(function (y) { var o = document.createElement('option'); o.value = y.name; o.textContent = y.name; ay.appendChild(o); });

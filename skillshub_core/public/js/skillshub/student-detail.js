@@ -52,12 +52,19 @@
         ])) + '&order_by=enrolment_date+asc')
     ])
     .then(function (results) {
-      if (!results[0]) return;
+      if (!results[0] || !results[0].data) {
+        throw new Error('Student record not found or inaccessible.');
+      }
       render(results[0].data, results[1].data || []);
     })
     .catch(function (err) {
+      console.error('[SkillsHub] Fetch error:', err);
       document.getElementById('content').innerHTML =
-        '<div style="text-align:center; padding:5rem; color:var(--color-red-600)">Error loading student: ' + err.message + '</div>';
+        '<div class="sh-container"><div class="glass-card sh-animate-fade" style="margin-top:2rem; text-align:center; padding:5rem; color:var(--color-red-700)">' +
+        '<h2 style="color:var(--color-red-700)">Unable to load profile</h2>' +
+        '<p>' + err.message + '</p>' +
+        '<button onclick="location.reload()" class="sh-btn-secondary" style="margin-top:1rem">Try Again</button>' +
+        '</div></div>';
     });
   }
 
