@@ -13,18 +13,20 @@
     .sh-admin-nav a.active { opacity: 1; border-bottom: 2px solid white; }
     .sh-admin-nav a:hover { opacity: 1; }
     
-    .filter-card { margin-top: -2rem; padding: 1.5rem; background: white; border-radius: 1rem; box-shadow: var(--shadow-premium); display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; align-items: end; }
+    .filter-card { margin-top: -2rem; padding: 1.5rem; background: white; border-radius: 1rem; box-shadow: var(--shadow-premium); display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; align-items: end; }
     
     .student-card { cursor: pointer; }
     .student-card:hover { transform: translateY(-2px); box-shadow: 0 12px 30px -5px rgba(0,0,0,0.1); }
     
-    .path-toggle { display: flex; gap: 0.25rem; background: var(--color-slate-100); padding: 0.25rem; border-radius: 0.5rem; }
-    .path-btn { flex: 1; border: none; background: none; padding: 0.5rem; border-radius: 0.375rem; font-size: 0.8125rem; font-weight: 600; cursor: pointer; color: var(--color-slate-600); }
+    .path-toggle { display: flex; gap: 0.25rem; background: var(--color-slate-100); padding: 0.25rem; border-radius: 0.5rem; width: 100%; }
+    .path-btn { flex: 1; border: none; background: none; padding: 0.5rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; color: var(--color-slate-600); white-space: nowrap; }
     .path-btn.active { background: white; color: var(--color-teal-700); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     
-    .sh-table-compact { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
-    .sh-table-compact th { text-align: left; padding: 0.5rem; color: var(--color-slate-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em; border-bottom: 1px solid var(--color-slate-100); }
-    .sh-table-compact td { padding: 0.75rem 0.5rem; border-bottom: 1px solid var(--color-slate-50); }
+    .sh-table-compact { width: 100%; border-collapse: collapse; font-size: 0.8125rem; table-layout: fixed; min-width: 900px; }
+    .sh-table-compact th { text-align: left; padding: 1rem 0.75rem; color: var(--color-slate-500); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid var(--color-slate-100); font-size: 0.7rem; }
+    .sh-table-compact td { padding: 1rem 0.75rem; border-bottom: 1px solid var(--color-slate-50); vertical-align: top; }
+    
+    .table-wrap { background: white; border-radius: 1rem; padding: 1rem; box-shadow: var(--shadow-premium); overflow-x: auto; }
   </style>
   <script>
     window.frappe = {};

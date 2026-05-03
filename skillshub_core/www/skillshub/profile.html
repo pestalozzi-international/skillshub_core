@@ -10,6 +10,10 @@
   <style>
     body { background-color: var(--color-slate-50); font-family: var(--font-family); }
   </style>
+  <script>
+    window.frappe = {};
+    frappe.csrf_token = "{{ frappe.session.csrf_token }}";
+  </script>
 </head>
 <body>
   <div class="sh-page-header">

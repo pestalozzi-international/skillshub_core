@@ -63,7 +63,16 @@
 
   var allStudents = [], allEnrolments = [], allYears = [], allCourses = [], scheduleMap = {};
 
+  function checkAccess() {
+    var role = localStorage.getItem('sh_role');
+    if (role === 'student') { window.location.replace('/skillshub/profile'); return false; }
+    return true;
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    if (!checkAccess()) return;
+    window.addEventListener('sh-role-synced', checkAccess);
+
     document.getElementById('logout-btn').addEventListener('click', function () {
       fetch('/api/method/logout', { method: 'POST', headers: getFrappeHeaders(), credentials: 'include' })
         .finally(function () { localStorage.clear(); window.location.replace('/skillshub/login'); });
@@ -158,7 +167,7 @@
     var footer = document.getElementById('footer');
     if (!students.length) { content.innerHTML = '<div class="state-box">No students match the selected filters.</div>'; footer.style.display = 'none'; return; }
     
-    var html = '<div class="table-wrap"><table class="student-table"><thead><tr><th>Student</th><th>Status</th><th>Latest Context</th><th>Path</th><th>Stats</th><th>Actions</th></tr></thead><tbody>';
+    var html = '<div class="table-wrap"><table class="sh-table-compact"><thead><tr><th style="width:25%">Student</th><th style="width:12%">Status</th><th style="width:23%">Latest Context</th><th style="width:10%">Path</th><th style="width:15%">Stats</th><th style="width:15%">Actions</th></tr></thead><tbody>';
     
     students.forEach(function (s) {
       var enrols = allEnrolments.filter(function (e) { return e.student === s.name; });

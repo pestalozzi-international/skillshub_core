@@ -22,7 +22,7 @@
       link.rel = 'icon';
       document.head.appendChild(link);
     }
-    link.href = href;
+    link.href = href + (href.indexOf('?') > -1 ? '&' : '?') + 'v=' + Date.now();
   }
 
   function darken(hex, amount) {
@@ -63,23 +63,36 @@
     }
   }
 
-  console.log('[SkillsHub] Fetching Portal Settings...');
-  fetch(
-    '/api/method/skillshub_core.skillshub_portal.doctype.skillshub_portal_settings.skillshub_portal_settings.get_portal_settings',
-    { headers: getFrappeHeaders(), credentials: 'include' }
-  )
-  .then(function (r) { 
-    if (!r.ok) { console.error('[SkillsHub] Settings fetch failed:', r.status); return null; }
-    return r.json(); 
+  console.log('[SkillsHub] Fetching Portal Settings & Syncing Role...');
+  Promise.all([
+    fetch('/api/method/skillshub_core.skillshub_portal.doctype.skillshub_portal_settings.skillshub_portal_settings.get_portal_settings', { headers: getFrappeHeaders(), credentials: 'include' }),
+    fetch('/api/method/skillshub_core.skillshub_core.api.get_current_user_roles', { headers: getFrappeHeaders(), credentials: 'include' })
+  ])
+  .then(function (responses) {
+    return Promise.all(responses.map(function(r) { return r.ok ? r.json() : null; }));
   })
-  .then(function (data) {
-    if (data && data.message) {
-      applySettings(data.message);
-    } else {
-      console.warn('[SkillsHub] No portal settings found or empty response.');
+  .then(function (results) {
+    var settingsData = results[0];
+    var rolesData = results[1];
+
+    if (settingsData && settingsData.message) applySettings(settingsData.message);
+    
+    if (rolesData && rolesData.message) {
+      var roles = rolesData.message;
+      var role = 'student';
+      if (roles.indexOf('System Manager') > -1 || roles.indexOf('SkillsHub Admin') > -1) role = 'admin';
+      else if (roles.indexOf('SkillsHub Teacher') > -1) role = 'teacher';
+      
+      var oldRole = localStorage.getItem('sh_role');
+      if (oldRole !== role) {
+        console.log('[SkillsHub] Syncing role:', role);
+        localStorage.setItem('sh_role', role);
+        // Dispatch event so other scripts (like attendance.js) can react if they loaded early
+        window.dispatchEvent(new CustomEvent('sh-role-synced', { detail: { role: role } }));
+      }
     }
   })
   .catch(function (err) { 
-    console.error('[SkillsHub] Settings error:', err);
+    console.error('[SkillsHub] Init error:', err);
   });
 }());
