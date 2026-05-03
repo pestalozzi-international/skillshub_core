@@ -40,29 +40,40 @@
 
   function applySettings(s) {
     console.log('[SkillsHub] Applying Portal Settings:', s);
-    var root = document.documentElement;
-    if (s.primary_color) {
-      root.style.setProperty('--color-teal-700', s.primary_color);
-      root.style.setProperty('--color-teal-800', darken(s.primary_color, 15));
-    }
-    if (s.secondary_color) {
-      root.style.setProperty('--color-secondary', s.secondary_color);
-    }
-    if (s.header_gradient) {
-      root.style.setProperty('--header-gradient', s.header_gradient);
+    if (s.portal_name) {
+      var title = document.querySelector('.sh-login-card h2'); if (title) title.textContent = s.portal_name;
+      document.title = s.portal_name;
     }
     if (s.favicon) {
-      setFavicon(s.favicon);
+      var fav = document.getElementById('sh-favicon');
+      if (fav) fav.href = s.favicon + '?v=' + Date.now();
+    }
+    if (s.primary_color) {
+      console.log('[SkillsHub] Applying branding color:', s.primary_color);
+      var root = document.documentElement;
+      root.style.setProperty('--color-teal-700', s.primary_color);
+      root.style.setProperty('--color-teal-600', s.primary_color); // Also update 600 for buttons
+      // Generate a darker version for gradients if possible, or just use the same
+      root.style.setProperty('--color-teal-900', 'rgba(0,0,0,0.2)'); 
     }
     if (s.logo) {
-      root.style.setProperty('--portal-logo-url', "url('" + s.logo + "')");
-      window.__shLogoUrl = s.logo;
-      var img = document.getElementById('portal-logo');
-      var box = document.getElementById('logo-container');
-      if (img && box) { img.src = s.logo; box.style.display = 'block'; }
+      var logos = document.querySelectorAll('.sh-logo');
+      logos.forEach(function (l) { l.src = s.logo; l.style.display = 'block'; });
     }
   }
 
+  function syncNav() {
+    var role = localStorage.getItem('sh_role');
+    var isAdmin = (role === 'admin' || role === 'teacher');
+    ['nav-desk', 'nav-students', 'nav-attendance'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = isAdmin ? 'block' : 'none';
+    });
+    var profile = document.getElementById('nav-profile');
+    if (profile) profile.style.display = (role === 'student') ? 'block' : 'none';
+  }
+
+  syncNav();
   console.log('[SkillsHub] Fetching Portal Settings & Syncing Role...');
   Promise.all([
     fetch('/api/method/skillshub_core.skillshub_portal.doctype.skillshub_portal_settings.skillshub_portal_settings.get_portal_settings', { headers: getFrappeHeaders(), credentials: 'include' }),
@@ -91,6 +102,7 @@
         window.dispatchEvent(new CustomEvent('sh-role-synced', { detail: { role: role } }));
       }
     }
+    syncNav();
   })
   .catch(function (err) { 
     console.error('[SkillsHub] Init error:', err);

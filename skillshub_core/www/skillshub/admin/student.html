@@ -16,29 +16,17 @@
     window.frappe = {};
     frappe.csrf_token = "{{ frappe.session.csrf_token }}";
   </script>
-  <div class="sh-page-header">
-    <div class="sh-container">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <h1>Student Profile</h1>
-          <p id="student-header-subtitle">Administrative view</p>
-        </div>
-        <div class="sh-admin-nav" style="display:flex; gap:1.25rem; align-items:center;">
-          <a href="/app" id="nav-desk" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8;">Desk</a>
-          <a href="/skillshub/admin/students" id="nav-students" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8;">Students</a>
-          <a href="/skillshub/attendance" id="nav-attendance" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8;">Attendance</a>
-        </div>
+  <div id="page-layout">
+    <!-- Rendered by student-detail.js -->
+    <div id="content">
+      <div style="text-align:center; padding:10rem 2rem; opacity:0.5;">
+        <div class="sh-loader" style="margin: 0 auto 1rem;"></div>
+        Loading student profile...
       </div>
     </div>
   </div>
 
-  <div class="sh-container">
-    <div id="content" style="margin-top:-2rem;">
-      <div style="text-align:center; padding:5rem; color:var(--color-slate-400);">Loading student profile...</div>
-    </div>
-  </div>
-
-  <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=2.1"></script>
-  <script src="/assets/skillshub_core/js/skillshub/student-detail.js?v=2.1"></script>
+  <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=2.2"></script>
+  <script src="/assets/skillshub_core/js/skillshub/student-detail.js?v=2.2"></script>
 </body>
 </html>

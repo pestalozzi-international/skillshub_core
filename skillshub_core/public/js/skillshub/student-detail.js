@@ -91,10 +91,19 @@
   function render(s, enrolments) {
     var content = document.getElementById('content');
     
-    // Banner
-    var bannerHtml = '<div class="sh-page-header sh-animate-fade"><div class="sh-container"><div>' +
-      '<h1>' + (s.student_name || '—') + '</h1>' +
-      '<p>' + (s.current_cohort || 'No Cohort') + ' • ' + (s.skillshub_programme || 'No Programme') + '</p>' +
+    // Header with navigation
+    var headerHtml = '<div class="sh-page-header sh-animate-fade"><div class="sh-container">' +
+      '<div style="display:flex; justify-content:space-between; align-items:flex-end;">' +
+        '<div>' +
+          '<a href="/skillshub/admin/students" class="sh-back-link" style="color:rgba(255,255,255,0.7); text-decoration:none; font-size:0.875rem; display:block; margin-bottom:0.5rem;">← Back to Directory</a>' +
+          '<h1>' + (s.student_name || '—') + '</h1>' +
+          '<p>' + (s.current_cohort || 'No Cohort') + ' • ' + (s.skillshub_programme || 'No Programme') + '</p>' +
+        '</div>' +
+        '<div class="sh-admin-nav" style="display:flex; gap:1.25rem; align-items:center; margin-bottom:0.5rem;">' +
+          '<a href="/app" id="nav-desk" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8;">Desk</a>' +
+          '<a href="/skillshub/admin/students" id="nav-students" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8; font-weight:600;">Students</a>' +
+          '<a href="/skillshub/attendance" id="nav-attendance" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8;">Attendance</a>' +
+        '</div>' +
       '</div></div></div>';
 
     // Sidebar
@@ -105,15 +114,15 @@
         row('Birth Date', fmt(s.date_of_birth)) +
         row('Gender', s.gender) +
         row('NRC Number', s.nrc_number) +
-        '<div class="data-row"><div class="data-label">Status</div><div class="data-value"><span class="sh-badge sh-badge-info">' + s.status + '</span></div></div>' +
+        '<div class="data-row"><div class="data-label">Status</div><div class="data-value"><span class="sh-badge ' + (s.status === 'Active' ? 'sh-badge-success' : 'sh-badge-info') + '">' + (s.status || 'Unknown') + '</span></div></div>' +
       '</div>' +
       '<div class="glass-card sh-animate-fade" style="animation-delay: 0.1s;">' +
         '<div class="section-title">Growth & Motivation</div>' +
-        pillsSection('Motivations', s.motivations || [], 'motivation') +
-        pillsSection('Resilience', s.resilience_links || [], 'resilience_statement') +
+        pillsSection('Motivations', s.motivations, 'motivation') +
+        pillsSection('Resilience', s.resilience_links, 'resilience_statement') +
       '</div></div>';
 
-    // Content
+    // Main Content
     var mainHtml = '<div class="content-col">' +
       '<div class="glass-card sh-animate-fade" style="animation-delay: 0.2s;">' +
         '<div class="section-title">Contact Information</div>' +
@@ -129,7 +138,7 @@
         '<div class="timeline">' + (renderTimeline(enrolments) || '<div class="tl-item">No history found</div>') + '</div>' +
       '</div></div>';
 
-    content.innerHTML = bannerHtml + '<div class="sh-container"><div class="sh-main-container">' + sidebarHtml + mainHtml + '</div></div>';
+    content.parentElement.innerHTML = headerHtml + '<div class="sh-container" style="margin-top:-2.5rem;"><div class="sh-main-container">' + sidebarHtml + mainHtml + '</div></div>';
   }
 
   function renderTimeline(enrolments) {
@@ -150,9 +159,12 @@
   }
 
   function pillsSection(label, data, field) {
-    var pills = data.map(function (item) {
-      return '<div class="sh-pill">' + item[field] + '</div>';
-    }).join('');
+    var pills = '';
+    if (data && Array.isArray(data)) {
+      pills = data.map(function (item) {
+        return '<div class="sh-pill">' + (item[field] || '—') + '</div>';
+      }).join('');
+    }
     return '<div class="data-label" style="margin-top: 1rem; margin-bottom: 0.5rem;">' + label + '</div>' +
       '<div class="sh-pill-container">' + (pills || '<span style="font-size:0.875rem; color:var(--color-slate-400)">None</span>') + '</div>';
   }
