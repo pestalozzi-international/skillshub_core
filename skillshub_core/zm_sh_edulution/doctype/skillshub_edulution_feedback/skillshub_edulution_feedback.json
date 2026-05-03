@@ -8,16 +8,12 @@
  "engine": "InnoDB",
  "field_order": [
   "general_tab",
-  "portal_user_details_section",
   "section_break_vovo",
+  "enrolment_ticket",
   "student_column",
-  "student_name",
   "feedback_phase",
   "column_break_pppv",
-  "cohort",
   "program_schedule",
-  "academic_year",
-  "course",
   "feedback_form_tab",
   "goals_set",
   "section_break_syuq",
@@ -64,7 +60,7 @@
   {
    "fieldname": "general_tab",
    "fieldtype": "Tab Break",
-   "label": "General"
+   "label": "Feedback Details"
   },
   {
    "fieldname": "student_column",
@@ -82,13 +78,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "cohort",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Cohort",
-   "options": "SkillsHub Cohort"
-  },
-  {
    "fieldname": "program_schedule",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -96,20 +85,8 @@
    "options": "SH Programme Schedule"
   },
   {
-   "fieldname": "course",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Course",
-   "options": "SkillsHub Course"
-  },
-  {
-   "fieldname": "portal_user_details_section",
-   "fieldtype": "Section Break",
-   "label": "Portal User Details"
-  },
-  {
    "fieldname": "feedback_form_tab",
-   "fieldtype": "Tab Break",
+   "fieldtype": "Section Break",
    "label": "Feedback Form"
   },
   {
@@ -304,13 +281,6 @@
    "read_only": 1
   },
   {
-   "fetch_from": "program_schedule.academic_year",
-   "fieldname": "academic_year",
-   "fieldtype": "Read Only",
-   "in_list_view": 1,
-   "label": "Academic Year"
-  },
-  {
    "fetch_from": "programme_schedule.skillshub_programme",
    "fieldname": "milestone",
    "fieldtype": "Link",
@@ -318,13 +288,23 @@
    "label": "Milestone",
    "options": "SkillsHub Programme",
    "read_only": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "enrolment_ticket",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Enrolment Ticket",
+   "options": "SH Student Enrolment",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-03-31 22:27:38.043653",
+ "modified": "2026-05-03 19:49:29.604672",
  "modified_by": "Administrator",
  "module": "ZM SH Edulution",
  "name": "SkillsHub Edulution Feedback",

@@ -9,14 +9,12 @@
  "engine": "InnoDB",
  "field_order": [
   "general_tab",
-  "portal_user_details_section",
   "section_break_bcuw",
+  "enrolment_ticket",
   "student_column",
+  "feedback_phase",
   "column_break_pppv",
   "program_schedule",
-  "cohort",
-  "academic_year",
-  "course",
   "feedback_form_tab",
   "soft_skill",
   "section_break_rgss",
@@ -40,30 +38,67 @@
   "ss_beneficiaries_table",
   "section_break_abzv",
   "impact_example",
-  "milestone",
-  "student",
-  "programme_schedule",
-  "enrolment_ticket"
+  "milestone"
  ],
  "fields": [
-  {
-   "fieldname": "general_tab",
-   "fieldtype": "Tab Break",
-   "label": "General"
-  },
-  {
-   "fieldname": "portal_user_details_section",
-   "fieldtype": "Section Break",
-   "label": "Portal User Details"
-  },
-  {
-   "fieldname": "section_break_bcuw",
-   "fieldtype": "Section Break"
-  },
   {
    "fieldname": "student_column",
    "fieldtype": "Column Break",
    "label": "Student"
+  },
+  {
+   "fetch_from": "program_schedule.current_phase",
+   "fieldname": "feedback_phase",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Feedback Phase",
+   "options": "SkillsHub Phases"
+  },
+  {
+   "fieldname": "soft_skill",
+   "fieldtype": "Link",
+   "label": "Soft Skill",
+   "options": "SkillsHub Soft Skills"
+  },
+  {
+   "fieldname": "general_tab",
+   "fieldtype": "Tab Break",
+   "label": "Feedback Details"
+  },
+  {
+   "fieldname": "knowledge_usage",
+   "fieldtype": "Small Text",
+   "label": "How have you practically used the knowledge and skills from this course in your life?"
+  },
+  {
+   "fieldname": "improvement_suggestions",
+   "fieldtype": "Small Text",
+   "label": "Do you have any suggestions about how can we improve this course?"
+  },
+  {
+   "fieldname": "facilitator_skills",
+   "fieldtype": "Rating",
+   "label": "How would you rate the facilitator's communication skills?"
+  },
+  {
+   "fieldname": "content_rating",
+   "fieldtype": "Rating",
+   "label": "How would you rate the course content?"
+  },
+  {
+   "fieldname": "impact_example",
+   "fieldtype": "Small Text",
+   "label": "Please share an example of how your soft skills have had an impact on others"
+  },
+  {
+   "fieldname": "favourite_aspects",
+   "fieldtype": "Small Text",
+   "label": "What were your favourite aspects of this course?"
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "label": "Do you have any photos or videos you would be happy for us to share with donors or on social media?"
   },
   {
    "fieldname": "column_break_pppv",
@@ -76,35 +111,37 @@
    "options": "SH Programme Schedule"
   },
   {
-   "fetch_from": "program_schedule.cohort",
-   "fieldname": "cohort",
-   "fieldtype": "Link",
-   "label": "Cohort",
-   "options": "SkillsHub Cohort"
-  },
-  {
-   "fetch_from": "program_schedule.academic_year",
-   "fieldname": "academic_year",
-   "fieldtype": "Read Only",
-   "label": "Academic Year"
-  },
-  {
-   "fetch_from": "program_schedule.skillshub_course",
-   "fieldname": "course",
-   "fieldtype": "Link",
-   "label": "Course",
-   "options": "SkillsHub Course"
-  },
-  {
    "fieldname": "feedback_form_tab",
-   "fieldtype": "Tab Break",
+   "fieldtype": "Section Break",
    "label": "Feedback Form"
   },
   {
-   "fieldname": "soft_skill",
-   "fieldtype": "Link",
-   "label": "Soft Skill",
-   "options": "SkillsHub Soft Skills"
+   "fieldname": "section_break_vmwo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_vmzj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_vxus",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_bfcr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_kdik",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_abzv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_bcuw",
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "section_break_rgss",
@@ -128,56 +165,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "section_break_vmwo",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "favourite_aspects",
-   "fieldtype": "Small Text",
-   "label": "What were your favourite aspects of this course?"
-  },
-  {
-   "fieldname": "section_break_vmzj",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "improvement_suggestions",
-   "fieldtype": "Small Text",
-   "label": "Do you have any suggestions about how can we improve this course?"
-  },
-  {
-   "fieldname": "knowledge_usage",
-   "fieldtype": "Small Text",
-   "label": "How have you practically used the knowledge and skills from this course in your life?"
-  },
-  {
-   "fieldname": "section_break_vxus",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "content_rating",
-   "fieldtype": "Rating",
-   "label": "How would you rate the course content?"
-  },
-  {
-   "fieldname": "column_break_bfcr",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "facilitator_skills",
-   "fieldtype": "Rating",
-   "label": "How would you rate the facilitator's communication skills?"
-  },
-  {
-   "fieldname": "section_break_kdik",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "photo",
-   "fieldtype": "Attach Image",
-   "label": "Do you have any photos or videos you would be happy for us to share with donors or on social media?"
-  },
-  {
    "fieldname": "section_break_kkuc",
    "fieldtype": "Section Break"
   },
@@ -199,15 +186,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "section_break_abzv",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "impact_example",
-   "fieldtype": "Small Text",
-   "label": "Please share an example of how your soft skills have had an impact on others"
-  },
-  {
    "fetch_from": "programme_schedule.skillshub_programme",
    "fieldname": "milestone",
    "fieldtype": "Link",
@@ -217,29 +195,21 @@
    "read_only": 1
   },
   {
-   "fieldname": "student",
-   "fieldtype": "Link",
-   "label": "Student",
-   "options": "SH Student"
-  },
-  {
-   "fieldname": "programme_schedule",
-   "fieldtype": "Link",
-   "label": "Programme Schedule",
-   "options": "SH Programme Schedule"
-  },
-  {
+   "bold": 1,
    "fieldname": "enrolment_ticket",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Enrolment Ticket",
-   "options": "SH Student Enrolment"
+   "options": "SH Student Enrolment",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-04 14:09:35.580111",
+ "modified": "2026-05-03 19:49:29.892706",
  "modified_by": "Administrator",
  "module": "ZM SH Soft Skills",
  "name": "SH Soft Skills Feedback",

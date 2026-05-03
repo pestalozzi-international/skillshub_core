@@ -3,23 +3,19 @@
  "allow_import": 1,
  "allow_rename": 1,
  "autoname": "format:{sh_student}-BL{##}",
- "creation": "2026-01-28 10:37:16.220657",
+ "creation": "2026-05-03 11:40:36.686980",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "general_tab",
   "section_break_vkis",
+  "enrolment_ticket",
   "sh_student",
-  "student_full_name",
   "column_break_pppv",
   "programme_schedule",
   "milestone",
-  "section_break_context",
-  "academic_year",
-  "cohort",
   "column_break_context2",
-  "course",
   "section_break_javg",
   "date_submitted",
   "feedback_form_tab",
@@ -62,45 +58,41 @@
   "help_source",
   "expectations_section",
   "sh_goals",
-  "post_sh_contributions",
-  "student",
-  "enrolment_ticket"
+  "post_sh_contributions"
  ],
  "fields": [
   {
    "fieldname": "general_tab",
    "fieldtype": "Tab Break",
-   "label": "General"
+   "label": "Feedback Details"
   },
   {
    "fieldname": "section_break_vkis",
    "fieldtype": "Section Break"
   },
   {
+   "fetch_from": "enrolment_ticket.student",
    "fieldname": "sh_student",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Student",
    "options": "SH Student",
+   "read_only": 1,
    "reqd": 1,
    "search_index": 1
-  },
-  {
-   "fetch_from": "sh_student.student_name",
-   "fieldname": "student_full_name",
-   "fieldtype": "Data",
-   "label": "Student Name",
-   "read_only": 1
   },
   {
    "fieldname": "column_break_pppv",
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "enrolment_ticket.programme_schedule",
    "fieldname": "programme_schedule",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Programme Schedule",
-   "options": "SH Programme Schedule"
+   "options": "SH Programme Schedule",
+   "read_only": 1
   },
   {
    "fieldname": "milestone",
@@ -111,36 +103,8 @@
    "reqd": 1
   },
   {
-   "fieldname": "section_break_context",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fetch_from": "programme_schedule.academic_year",
-   "fieldname": "academic_year",
-   "fieldtype": "Link",
-   "label": "Academic Year",
-   "options": "SH Academic Year",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "programme_schedule.cohort",
-   "fieldname": "cohort",
-   "fieldtype": "Link",
-   "label": "Cohort",
-   "options": "SkillsHub Cohort",
-   "read_only": 1
-  },
-  {
    "fieldname": "column_break_context2",
    "fieldtype": "Column Break"
-  },
-  {
-   "fetch_from": "programme_schedule.skillshub_course",
-   "fieldname": "course",
-   "fieldtype": "Link",
-   "label": "Course",
-   "options": "SkillsHub Course",
-   "read_only": 1
   },
   {
    "fieldname": "section_break_javg",
@@ -154,28 +118,8 @@
   },
   {
    "fieldname": "feedback_form_tab",
-   "fieldtype": "Tab Break",
+   "fieldtype": "Section Break",
    "label": "Feedback Form"
-  },
-  {
-   "fieldname": "motivation_column",
-   "fieldtype": "Column Break",
-   "label": "Motivation"
-  },
-  {
-   "fieldname": "student_motivation_html",
-   "fieldtype": "Data",
-   "label": "Student Motivation"
-  },
-  {
-   "fieldname": "student_motivation_table",
-   "fieldtype": "Table",
-   "label": "Student Motivation Table",
-   "options": "SH Student Motivation Link"
-  },
-  {
-   "fieldname": "column_break_jvdl",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "motivation_statement",
@@ -197,26 +141,6 @@
    "label": "Confidence finding employment"
   },
   {
-   "fieldname": "section_break_kmnv",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "resilience_column",
-   "fieldtype": "Column Break",
-   "label": "Resilience"
-  },
-  {
-   "fieldname": "resilience_html",
-   "fieldtype": "Data",
-   "label": "Which of these statements describes you?"
-  },
-  {
-   "fieldname": "resilience_table",
-   "fieldtype": "Table",
-   "label": "Student Resilience Table",
-   "options": "SH Student Resilience Link"
-  },
-  {
    "fieldname": "column_break_hjyt",
    "fieldtype": "Column Break"
   },
@@ -226,8 +150,12 @@
    "label": "How resilient are you?"
   },
   {
+   "fieldname": "section_break_kmnv",
+   "fieldtype": "Section Break"
+  },
+  {
    "fieldname": "community_and_family_tab",
-   "fieldtype": "Tab Break",
+   "fieldtype": "Section Break",
    "label": "Community and Family"
   },
   {
@@ -294,26 +222,6 @@
    "label": "Community Environment"
   },
   {
-   "fieldname": "challenges_in_your_community_column",
-   "fieldtype": "Column Break",
-   "label": "Challenges in your community"
-  },
-  {
-   "fieldname": "community_challenge_html",
-   "fieldtype": "Data",
-   "label": "Challenges faced in your community"
-  },
-  {
-   "fieldname": "community_challenge_table",
-   "fieldtype": "Table",
-   "label": "Community Challenges Table",
-   "options": "SH Student Community Challenge Link"
-  },
-  {
-   "fieldname": "column_break_fzvy",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "community_safety",
    "fieldtype": "Select",
    "label": "Community safety description",
@@ -370,22 +278,76 @@
    "label": "How do you hope to contribute positively to your family or community after completing the programme?"
   },
   {
-   "fieldname": "student",
-   "fieldtype": "Link",
-   "label": "Student",
-   "options": "SH Student"
+   "fieldname": "column_break_fzvy",
+   "fieldtype": "Column Break"
   },
   {
+   "fieldname": "column_break_jvdl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "motivation_column",
+   "fieldtype": "Column Break",
+   "label": "Motivation"
+  },
+  {
+   "fieldname": "student_motivation_html",
+   "fieldtype": "Data",
+   "label": "Student Motivation"
+  },
+  {
+   "fieldname": "student_motivation_table",
+   "fieldtype": "Table",
+   "label": "Student Motivation Table",
+   "options": "SH Student Motivation Link"
+  },
+  {
+   "fieldname": "resilience_column",
+   "fieldtype": "Column Break",
+   "label": "Resilience"
+  },
+  {
+   "fieldname": "resilience_html",
+   "fieldtype": "Data",
+   "label": "Which of these statements describes you?"
+  },
+  {
+   "fieldname": "resilience_table",
+   "fieldtype": "Table",
+   "label": "Student Resilience Table",
+   "options": "SH Student Resilience Link"
+  },
+  {
+   "fieldname": "challenges_in_your_community_column",
+   "fieldtype": "Column Break",
+   "label": "Challenges in your community"
+  },
+  {
+   "fieldname": "community_challenge_html",
+   "fieldtype": "Data",
+   "label": "Challenges faced in your community"
+  },
+  {
+   "fieldname": "community_challenge_table",
+   "fieldtype": "Table",
+   "label": "Community Challenges Table",
+   "options": "SH Student Community Challenge Link"
+  },
+  {
+   "bold": 1,
    "fieldname": "enrolment_ticket",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Enrolment Ticket",
-   "options": "SH Student Enrolment"
+   "options": "SH Student Enrolment",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-04 14:09:36.193999",
+ "modified": "2026-05-03 19:49:31.083076",
  "modified_by": "Administrator",
  "module": "ZM SH Baseline",
  "name": "SH Student Baseline Form",

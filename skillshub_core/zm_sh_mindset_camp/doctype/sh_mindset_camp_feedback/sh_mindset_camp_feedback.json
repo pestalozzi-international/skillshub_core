@@ -1,27 +1,21 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{student_name}-MSC{##}",
- "creation": "2026-04-01 21:33:53.035354",
+ "autoname": "format:{sh_student}-MSC{##}",
+ "creation": "2026-05-03 11:40:37.668494",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "general_tab",
-  "portal_user_details_section",
-  "portal_user_account",
   "section_break_vovo",
-  "student_column",
-  "student_name",
+  "enrolment_ticket",
   "sh_student",
-  "pestalozzi_student_id",
-  "feedback_phase",
   "column_break_pppv",
-  "program_schedule",
-  "cohort",
-  "academic_year",
-  "course",
+  "programme_schedule",
+  "milestone",
+  "column_break_context2",
   "section_break_whmc",
   "date_submitted",
   "feedback_form_tab",
@@ -52,97 +46,49 @@
   {
    "fieldname": "general_tab",
    "fieldtype": "Tab Break",
-   "label": "General"
-  },
-  {
-   "fieldname": "portal_user_details_section",
-   "fieldtype": "Section Break",
-   "label": "Portal User Details"
-  },
-  {
-   "fetch_from": "student_name.portal_user_account",
-   "fieldname": "portal_user_account",
-   "fieldtype": "Link",
-   "label": "Portal User Account",
-   "options": "User"
+   "label": "Feedback Details"
   },
   {
    "fieldname": "section_break_vovo",
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "student_column",
-   "fieldtype": "Column Break",
-   "label": "Student"
-  },
-  {
-   "fetch_from": "portal_user_account.skillshub_record",
-   "fieldname": "student_name",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Student Name",
-   "options": "SH Student",
-   "search_index": 1
-  },
-  {
+   "fetch_from": "enrolment_ticket.student",
    "fieldname": "sh_student",
    "fieldtype": "Link",
-   "in_standard_filter": 1,
-   "label": "SH Student",
+   "in_list_view": 1,
+   "label": "Student",
    "options": "SH Student",
+   "read_only": 1,
+   "reqd": 1,
    "search_index": 1
-  },
-  {
-   "fetch_from": "portal_user_account.pestalozzi_id_sh",
-   "fieldname": "pestalozzi_student_id",
-   "fieldtype": "Data",
-   "label": "Pestalozzi Student ID"
-  },
-  {
-   "fetch_from": "program_schedule.current_phase",
-   "fieldname": "feedback_phase",
-   "fieldtype": "Link",
-   "label": "Feedback Phase",
-   "options": "SkillsHub Phases"
   },
   {
    "fieldname": "column_break_pppv",
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "program_schedule.cohort",
-   "fieldname": "cohort",
+   "fetch_from": "enrolment_ticket.programme_schedule",
+   "fieldname": "programme_schedule",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Cohort",
-   "options": "SkillsHub Cohort"
+   "label": "Programme Schedule",
+   "options": "SH Programme Schedule",
+   "read_only": 1,
+   "reqd": 1
   },
   {
-   "fieldname": "program_schedule",
+   "fetch_from": "programme_schedule.skillshub_programme",
+   "fieldname": "milestone",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Program Schedule",
-   "options": "SH Programme Schedule"
+   "label": "Milestone",
+   "options": "SkillsHub Programme",
+   "read_only": 1
   },
   {
-   "fetch_from": "program_schedule.academic_year",
-   "fieldname": "academic_year",
-   "fieldtype": "Read Only",
-   "in_list_view": 1,
-   "label": "Academic Year"
-  },
-  {
-   "fetch_from": "program_schedule.skillshub_course",
-   "fieldname": "course",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Course",
-   "options": "SkillsHub Course"
-  },
-  {
-   "fieldname": "feedback_form_tab",
-   "fieldtype": "Tab Break",
-   "label": "Feedback Form"
+   "fieldname": "column_break_context2",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "section_break_whmc",
@@ -153,6 +99,11 @@
    "fieldname": "date_submitted",
    "fieldtype": "Datetime",
    "label": "Date Submitted"
+  },
+  {
+   "fieldname": "feedback_form_tab",
+   "fieldtype": "Section Break",
+   "label": "Feedback Form"
   },
   {
    "fieldname": "form_timeline",
@@ -245,6 +196,12 @@
    "label": "Which aspects of the mindset camp have you enjoyed?"
   },
   {
+   "fieldname": "aspects_enjoyed_table",
+   "fieldtype": "Table",
+   "label": "Aspects Enjoyed Table",
+   "options": "SH Mindset Camp Aspect Link"
+  },
+  {
    "fieldname": "section_break_lija",
    "fieldtype": "Section Break"
   },
@@ -259,16 +216,20 @@
    "label": "How has the camp prepared you for the next stage of your journey at SkillsHub?"
   },
   {
-   "fieldname": "aspects_enjoyed_table",
-   "fieldtype": "Table",
-   "label": "Aspects Enjoyed Table",
-   "options": "SH Mindset Camp Aspect Link"
+   "bold": 1,
+   "fieldname": "enrolment_ticket",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Enrolment Ticket",
+   "options": "SH Student Enrolment",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-04-01 23:17:45.876046",
+ "modified": "2026-05-03 19:49:29.158286",
  "modified_by": "Administrator",
  "module": "ZM SH Mindset Camp",
  "name": "SH Mindset Camp Feedback",
@@ -308,15 +269,6 @@
    "role": "Administrator",
    "share": 1,
    "write": 1
-  },
-  {
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Guest",
-   "share": 1
   },
   {
    "create": 1,

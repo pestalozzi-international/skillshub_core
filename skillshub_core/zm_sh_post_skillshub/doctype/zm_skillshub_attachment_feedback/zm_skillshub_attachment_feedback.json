@@ -1,235 +1,210 @@
 {
-  "actions": [],
-  "allow_rename": 1,
-  "autoname": "format:{sh_student}-AF{##}",
-  "creation": "2026-02-05 18:47:16.289923",
-  "doctype": "DocType",
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": [
-    "general_tab",
-    "section_break_auxc",
-    "sh_student",
-    "student_full_name",
-    "column_break_pppv",
-    "programme_schedule",
-    "milestone",
-    "section_break_context",
-    "academic_year",
-    "cohort",
-    "column_break_context2",
-    "course",
-    "section_break_whmc",
-    "date_submitted",
-    "feedback_form_tab",
-    "section_break_ltky",
-    "attachment_preparation",
-    "knowledge_use_example",
-    "section_break_elvw",
-    "attachment_challenges_column",
-    "main_challenges_html",
-    "main_challenges_table",
-    "can_you_share_more_details_about_the_attachment_challenges",
-    "section_break_dsqn",
-    "improve_suggest",
-    "section_break_cazq"
-  ],
-  "fields": [
-    {
-      "fieldname": "general_tab",
-      "fieldtype": "Tab Break",
-      "label": "General"
-    },
-    {
-      "fieldname": "section_break_auxc",
-      "fieldtype": "Section Break"
-    },
-    {
-      "fieldname": "sh_student",
-      "fieldtype": "Link",
-      "in_list_view": 1,
-      "label": "Student",
-      "options": "SH Student",
-      "reqd": 1,
-      "search_index": 1
-    },
-    {
-      "fetch_from": "sh_student.student_name",
-      "fieldname": "student_full_name",
-      "fieldtype": "Data",
-      "label": "Student Name",
-      "read_only": 1
-    },
-    {
-      "fieldname": "column_break_pppv",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "programme_schedule",
-      "fieldtype": "Link",
-      "in_list_view": 1,
-      "label": "Programme Schedule",
-      "options": "SH Programme Schedule",
-      "reqd": 1
-    },
-    {
-      "fetch_from": "programme_schedule.skillshub_programme",
-      "fieldname": "milestone",
-      "fieldtype": "Link",
-      "in_list_view": 1,
-      "label": "Milestone",
-      "options": "SkillsHub Programme",
-      "read_only": 1
-    },
-    {
-      "fieldname": "section_break_context",
-      "fieldtype": "Section Break"
-    },
-    {
-      "fetch_from": "programme_schedule.academic_year",
-      "fieldname": "academic_year",
-      "fieldtype": "Link",
-      "label": "Academic Year",
-      "options": "SH Academic Year",
-      "read_only": 1
-    },
-    {
-      "fetch_from": "programme_schedule.cohort",
-      "fieldname": "cohort",
-      "fieldtype": "Link",
-      "label": "Cohort",
-      "options": "SkillsHub Cohort",
-      "read_only": 1
-    },
-    {
-      "fieldname": "column_break_context2",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fetch_from": "programme_schedule.skillshub_course",
-      "fieldname": "course",
-      "fieldtype": "Link",
-      "label": "Course",
-      "options": "SkillsHub Course",
-      "read_only": 1
-    },
-    {
-      "fieldname": "section_break_whmc",
-      "fieldtype": "Section Break"
-    },
-    {
-      "default": "Now",
-      "fieldname": "date_submitted",
-      "fieldtype": "Datetime",
-      "label": "Date Submitted"
-    },
-    {
-      "fieldname": "feedback_form_tab",
-      "fieldtype": "Tab Break",
-      "label": "Feedback Form"
-    },
-    {
-      "fieldname": "section_break_dsqn",
-      "fieldtype": "Section Break"
-    },
-    {
-      "fieldname": "improve_suggest",
-      "fieldtype": "Small Text",
-      "label": "Suggestions for improving attachment preparation"
-    },
-    {
-      "fieldname": "section_break_ltky",
-      "fieldtype": "Section Break"
-    },
-    {
-      "fieldname": "attachment_preparation",
-      "fieldtype": "Select",
-      "label": "How well did the course prepare you for your attachment?",
-      "options": "\nWell\nVery well\nVery\nSomewhat\nNot very\nNot at all\nNot very well"
-    },
-    {
-      "fieldname": "knowledge_use_example",
-      "fieldtype": "Small Text",
-      "label": "Can you share an example of how you used your skills and knowledge during your attachment?"
-    },
-    {
-      "fieldname": "section_break_elvw",
-      "fieldtype": "Section Break"
-    },
-    {
-      "fieldname": "attachment_challenges_column",
-      "fieldtype": "Column Break",
-      "label": "Attachment Challenges"
-    },
-    {
-      "fieldname": "can_you_share_more_details_about_the_attachment_challenges",
-      "fieldtype": "Text Editor",
-      "label": "Can you share more details about the attachment Challenges?"
-    },
-    {
-      "fieldname": "main_challenges_html",
-      "fieldtype": "Data",
-      "label": "What was the main challenge you faced during the attachment?"
-    },
-    {
-      "fieldname": "main_challenges_table",
-      "fieldtype": "Table",
-      "label": "Main Challenges Table",
-      "options": "SH Attachment Challenge Link"
-    },
-    {
-      "fieldname": "section_break_cazq",
-      "fieldtype": "Section Break"
-    }
-  ],
-  "grid_page_length": 50,
-  "index_web_pages_for_search": 1,
-  "links": [],
-  "modified": "2026-04-30 00:00:00.000000",
-  "modified_by": "Administrator",
-  "module": "ZM SH Post SkillsHub",
-  "name": "ZM SkillsHub Attachment Feedback",
-  "naming_rule": "Expression (old style)",
-  "owner": "Administrator",
-  "permissions": [
-    {
-      "create": 1,
-      "delete": 1,
-      "email": 1,
-      "export": 1,
-      "print": 1,
-      "read": 1,
-      "report": 1,
-      "role": "System Manager",
-      "share": 1,
-      "write": 1
-    },
-    {
-      "email": 1,
-      "export": 1,
-      "if_owner": 1,
-      "print": 1,
-      "read": 1,
-      "report": 1,
-      "role": "Student",
-      "share": 1
-    },
-    {
-      "create": 1,
-      "delete": 1,
-      "email": 1,
-      "export": 1,
-      "print": 1,
-      "read": 1,
-      "report": 1,
-      "role": "Administrator",
-      "share": 1,
-      "write": 1
-    }
-  ],
-  "row_format": "Dynamic",
-  "rows_threshold_for_grid_search": 20,
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "states": []
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{sh_student}-AF{##}",
+ "creation": "2026-05-03 11:40:37.016023",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "general_tab",
+  "section_break_auxc",
+  "enrolment_ticket",
+  "sh_student",
+  "column_break_pppv",
+  "programme_schedule",
+  "milestone",
+  "column_break_context2",
+  "section_break_whmc",
+  "date_submitted",
+  "feedback_form_tab",
+  "section_break_ltky",
+  "attachment_preparation",
+  "knowledge_use_example",
+  "section_break_elvw",
+  "attachment_challenges_column",
+  "main_challenges_html",
+  "main_challenges_table",
+  "can_you_share_more_details_about_the_attachment_challenges",
+  "section_break_dsqn",
+  "improve_suggest",
+  "section_break_cazq"
+ ],
+ "fields": [
+  {
+   "fieldname": "general_tab",
+   "fieldtype": "Tab Break",
+   "label": "Feedback Details"
+  },
+  {
+   "fieldname": "section_break_auxc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fetch_from": "enrolment_ticket.student",
+   "fieldname": "sh_student",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Student",
+   "options": "SH Student",
+   "read_only": 1,
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_pppv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "enrolment_ticket.programme_schedule",
+   "fieldname": "programme_schedule",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Programme Schedule",
+   "options": "SH Programme Schedule",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "programme_schedule.skillshub_programme",
+   "fieldname": "milestone",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Milestone",
+   "options": "SkillsHub Programme",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_context2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_whmc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "Now",
+   "fieldname": "date_submitted",
+   "fieldtype": "Datetime",
+   "label": "Date Submitted"
+  },
+  {
+   "fieldname": "feedback_form_tab",
+   "fieldtype": "Section Break",
+   "label": "Feedback Form"
+  },
+  {
+   "fieldname": "section_break_dsqn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "improve_suggest",
+   "fieldtype": "Small Text",
+   "label": "Suggestions for improving attachment preparation"
+  },
+  {
+   "fieldname": "section_break_ltky",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "attachment_preparation",
+   "fieldtype": "Select",
+   "label": "How well did the course prepare you for your attachment?",
+   "options": "\nWell\nVery well\nVery\nSomewhat\nNot very\nNot at all\nNot very well"
+  },
+  {
+   "fieldname": "knowledge_use_example",
+   "fieldtype": "Small Text",
+   "label": "Can you share an example of how you used your skills and knowledge during your attachment?"
+  },
+  {
+   "fieldname": "section_break_elvw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "attachment_challenges_column",
+   "fieldtype": "Column Break",
+   "label": "Attachment Challenges"
+  },
+  {
+   "fieldname": "can_you_share_more_details_about_the_attachment_challenges",
+   "fieldtype": "Text Editor",
+   "label": "Can you share more details about the attachment Challenges?"
+  },
+  {
+   "fieldname": "main_challenges_html",
+   "fieldtype": "Data",
+   "label": "What was the main challenge you faced during the attachment?"
+  },
+  {
+   "fieldname": "main_challenges_table",
+   "fieldtype": "Table",
+   "label": "Main Challenges Table",
+   "options": "SH Attachment Challenge Link"
+  },
+  {
+   "fieldname": "section_break_cazq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "enrolment_ticket",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Enrolment Ticket",
+   "options": "SH Student Enrolment",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-05-03 19:49:30.445553",
+ "modified_by": "Administrator",
+ "module": "ZM SH Post SkillsHub",
+ "name": "ZM SkillsHub Attachment Feedback",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Student",
+   "share": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Administrator",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
 }
