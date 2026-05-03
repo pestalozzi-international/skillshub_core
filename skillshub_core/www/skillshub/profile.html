@@ -9,107 +9,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body { background-color: var(--color-slate-50); font-family: var(--font-family); }
-    .profile-header { background: var(--header-gradient); padding: 3rem 2rem; color: white; }
-    .ph-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-    .ph-info h1 { font-size: 2.5rem; margin: 0 0 0.5rem; font-weight: 700; letter-spacing: -0.02em; }
-    .ph-info p { opacity: 0.9; font-size: 1.1rem; margin: 0; font-weight: 400; }
-    
-    .ph-actions { display: flex; gap: 1rem; }
-    .nav-btn { background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2); color: white; padding: 0.6rem 1.2rem; border-radius: 0.75rem; text-decoration: none; font-size: 0.875rem; font-weight: 600; transition: all 0.2s; backdrop-filter: blur(5px); }
-    .nav-btn:hover { background: rgba(255, 255, 255, 0.25); border-color: rgba(255, 255, 255, 0.4); }
-    .logout-btn { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); }
-    .logout-btn:hover { background: rgba(239, 68, 68, 0.3); }
-
-    .main-container { max-width: 1200px; margin: -2rem auto 4rem; padding: 0 1.5rem; display: grid; grid-template-columns: 320px 1fr; gap: 2rem; }
-    @media (max-width: 992px) { .main-container { grid-template-columns: 1fr; margin-top: 2rem; } }
-
-    .section-title { font-size: 0.875rem; font-weight: 700; color: var(--color-teal-700); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
-    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--color-slate-100); }
-
-    .data-row { margin-bottom: 1.25rem; }
-    .data-label { font-size: 0.75rem; font-weight: 600; color: var(--color-slate-500); text-transform: uppercase; margin-bottom: 0.25rem; }
-    .data-value { font-size: 1rem; color: var(--color-slate-900); font-weight: 500; }
-
-    .editable-card { position: relative; }
-    .edit-toggle { position: absolute; top: 1.25rem; right: 1.25rem; font-size: 0.75rem; color: var(--color-teal-700); cursor: pointer; font-weight: 600; border-bottom: 1px dashed var(--color-teal-700); transition: opacity 0.2s; }
-    .edit-toggle:hover { opacity: 0.7; }
-
-    .sh-form { display: none; margin-top: 1.5rem; animation: shFadeIn 0.3s ease; }
-    .sh-form.active { display: block; }
-    .sh-input-group { margin-bottom: 1rem; }
-    .sh-input-group label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--color-slate-600); margin-bottom: 0.4rem; }
-    .sh-input { width: 100%; padding: 0.75rem; border: 1px solid var(--color-slate-200); border-radius: 0.75rem; font-size: 0.9375rem; font-family: inherit; transition: border-color 0.2s; }
-    .sh-input:focus { outline: none; border-color: var(--color-teal-700); background: var(--color-slate-50); }
-    
-    .timeline { border-left: 2px solid var(--color-slate-100); padding-left: 2rem; margin-left: 0.5rem; }
-    .tl-item { position: relative; padding-bottom: 2.5rem; }
-    .tl-item::before { content: ''; position: absolute; left: -2.4rem; top: 0.25rem; width: 0.75rem; height: 0.75rem; border-radius: 50%; background: white; border: 2px solid var(--color-teal-700); box-shadow: 0 0 0 4px var(--color-slate-50); }
-    .tl-item.completed::before { background: var(--color-teal-700); }
-    .tl-date { font-size: 0.75rem; font-weight: 600; color: var(--color-slate-400); margin-bottom: 0.25rem; }
-    .tl-title { font-size: 1.1rem; font-weight: 600; color: var(--color-slate-900); margin-bottom: 0.5rem; }
-    .tl-meta { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  </style>
   </style>
 </head>
 <body>
   <div id="content">
     <div style="text-align:center; padding:5rem; color:var(--color-slate-400);">Loading student profile...</div>
-  </div>
-      <div class="glass-card sh-animate-fade" style="margin-bottom: 1.5rem;">
-        <div class="section-title">Demographics</div>
-        <div class="data-row"><div class="data-label">Student ID</div><div class="data-value" id="val-id">-</div></div>
-        <div class="data-row"><div class="data-label">Birth Date</div><div class="data-value" id="val-dob">-</div></div>
-        <div class="data-row"><div class="data-label">Gender</div><div class="data-value" id="val-gender">-</div></div>
-        <div class="data-row"><div class="data-label">Status</div><div class="data-value"><span id="val-status" class="sh-badge-info sh-badge">-</span></div></div>
-      </div>
-
-      <div class="glass-card sh-animate-fade" style="animation-delay: 0.1s;">
-        <div class="section-title">Growth &amp; Motivation</div>
-        <div class="data-label" style="margin-bottom: 0.5rem;">Core Motivations</div>
-        <div id="motivation-pills" class="sh-pill-container">
-          <!-- Pills will be injected here -->
-          <button class="sh-pill-add-btn" id="add-motivation-btn">+ Add</button>
-        </div>
-        
-        <div class="data-label" style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Resilience Links</div>
-        <div id="resilience-pills" class="sh-pill-container">
-          <!-- Pills will be injected here -->
-          <button class="sh-pill-add-btn" id="add-resilience-btn">+ Add</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="content-col">
-      <div class="glass-card sh-animate-fade editable-card" style="margin-bottom: 2rem; animation-delay: 0.2s;">
-        <div class="edit-toggle" data-form="contact-form">Edit Contact</div>
-        <div class="section-title">Contact &amp; Residence</div>
-        <div class="sh-grid sh-grid-2">
-          <div class="data-row"><div class="data-label">Address Line 1</div><div class="data-value" id="val-addr1">-</div></div>
-          <div class="data-row"><div class="data-label">Address Line 2</div><div class="data-value" id="val-addr2">-</div></div>
-          <div class="data-row"><div class="data-label">Postcode</div><div class="data-value" id="val-pincode">-</div></div>
-          <div class="data-row"><div class="data-label">Mobile</div><div class="data-value" id="val-mobile">-</div></div>
-        </div>
-        
-        <form id="contact-form" class="sh-form">
-          <div class="sh-form-grid">
-            <div class="sh-input-group"><label>Address Line 1</label><input type="text" name="address_line_1" class="sh-input"></div>
-            <div class="sh-input-group"><label>Address Line 2</label><input type="text" name="address_line_2" class="sh-input"></div>
-            <div class="sh-input-group"><label>Postcode</label><input type="text" name="pincode" class="sh-input"></div>
-            <div class="sh-input-group"><label>Mobile</label><input type="text" name="mobile" class="sh-input"></div>
-          </div>
-          <div class="form-actions" style="margin-top: 1rem; display: flex; gap: 0.75rem;">
-            <button type="submit" class="btn-small-primary">Save Changes</button>
-            <button type="button" class="btn-small-secondary cancel-edit">Cancel</button>
-          </div>
-        </form>
-      </div>
-
-      <div class="glass-card sh-animate-fade" style="animation-delay: 0.3s;">
-        <div class="section-title">Enrolment Journey</div>
-        <div id="timeline-container" class="timeline">
-          <!-- Timeline will be injected here -->
-        </div>
-      </div>
-    </div>
   </div>
 
   <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=1.1"></script>
