@@ -6,7 +6,7 @@
         'Accept': 'application/json',
         'Content-Type': 'application/json'
     };
-    if (window.frappe && frappe.csrf_token) {
+    if (window.frappe && frappe.csrf_token && frappe.csrf_token !== 'None' && !frappe.csrf_token.includes('{{')) {
         headers['X-Frappe-CSRF-Token'] = frappe.csrf_token;
     }
     return headers;
@@ -56,7 +56,7 @@
     fetch('/api/resource/SH Programme Schedule?filters=[["status","=","Active"]]&fields=["name","skillshub_programme","skillshub_course","cohort"]&limit=200',
       { headers: getFrappeHeaders(), credentials: 'include' })
     .then(function (r) {
-      if (r.status === 401 || r.status === 403) { clearAndRedirect(); return null; }
+      if (r.status === 401) { clearAndRedirect(); return null; }
       return r.json();
     })
     .then(function (data) {
@@ -82,7 +82,7 @@
           '&fields=' + encodeURIComponent(JSON.stringify(['student','student_name'])) + '&limit=300',
         { headers: getFrappeHeaders(), credentials: 'include' })
       .then(function (r) {
-        if (r.status === 401 || r.status === 403) { clearAndRedirect(); return null; }
+        if (r.status === 401) { clearAndRedirect(); return null; }
         return r.json();
       })
       .then(function (data) {
@@ -156,7 +156,7 @@
         credentials: 'include',
         body: JSON.stringify(payload)
       }).then(function (r) {
-        if (r.status === 401 || r.status === 403) { clearAndRedirect(); return null; }
+        if (r.status === 401) { clearAndRedirect(); return null; }
         if (!r.ok) throw new Error('API error');
         return r.json();
       });

@@ -9,7 +9,7 @@
         'Accept': 'application/json',
         'Content-Type': 'application/json'
     };
-    if (window.frappe && frappe.csrf_token) {
+    if (window.frappe && frappe.csrf_token && frappe.csrf_token !== 'None' && !frappe.csrf_token.includes('{{')) {
         headers['X-Frappe-CSRF-Token'] = frappe.csrf_token;
     }
     return headers;

@@ -6,7 +6,7 @@
         'Accept': 'application/json',
         'Content-Type': 'application/json'
     };
-    if (window.frappe && frappe.csrf_token) {
+    if (window.frappe && frappe.csrf_token && frappe.csrf_token !== 'None' && !frappe.csrf_token.includes('{{')) {
         headers['X-Frappe-CSRF-Token'] = frappe.csrf_token;
     }
     return headers;
@@ -27,7 +27,7 @@
   function sf(url) {
     return fetch(url, { headers: getFrappeHeaders(), credentials: 'include' })
       .then(function (r) {
-        if (r.status === 401 || r.status === 403) { clearAndRedirect(); return null; }
+        if (r.status === 401) { clearAndRedirect(); return null; }
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
       });
