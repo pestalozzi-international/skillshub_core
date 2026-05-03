@@ -96,19 +96,28 @@
   });
 
   function loadData() {
+    console.log('[SkillsHub] Loading admin directory data...');
     Promise.allSettled([
       sf('/api/resource/SH Academic Year?fields=["name"]&limit=50').then(function (d) { if (d) allYears = d.data || []; }),
       sf('/api/resource/SkillsHub Course?fields=["name"]&limit=100').then(function (d) { if (d) allCourses = d.data || []; }),
       sf('/api/resource/SH Student?fields=["name","student_name","programme_path","status","graduated"]&limit=1000').then(function (d) { if (d) allStudents = d.data || []; }),
       sf('/api/resource/SH Student Enrolment?fields=["name","student","milestone","programme_schedule","feedback_submitted","attendance_rate","status","enrolment_date","academic_year","course"]&limit=5000').then(function (d) { if (d) allEnrolments = d.data || []; }),
       sf('/api/resource/SH Programme Schedule?fields=["name","cohort","skillshub_programme","academic_year","skillshub_course"]&limit=500').then(function (d) { if (d && d.data) d.data.forEach(function (s) { scheduleMap[s.name] = s; }); })
-    ]).then(function () {
+    ]).then(function (results) {
+      results.forEach(function(r, i) {
+        if (r.status === 'rejected') console.warn('[SkillsHub] Data fetch #' + i + ' failed:', r.reason);
+      });
+      
       var ay = document.getElementById('f-academic-year');
       if (ay) allYears.forEach(function (y) { var o = document.createElement('option'); o.value = y.name; o.textContent = y.name; ay.appendChild(o); });
       var crs = document.getElementById('f-course');
       if (crs) allCourses.forEach(function (c) { var o = document.createElement('option'); o.value = c.name; o.textContent = c.name; crs.appendChild(o); });
       
-      if (!allStudents.length) { document.getElementById('content').innerHTML = '<div class="state-box">No student records found.</div>'; return; }
+      console.log('[SkillsHub] Data loaded. Students:', allStudents.length);
+      if (!allStudents.length) { 
+        document.getElementById('content').innerHTML = '<div class="state-box">No student records found.</div>'; 
+        return; 
+      }
       applyFilters();
     });
   }
@@ -118,10 +127,6 @@
     var courseEl = document.getElementById('f-course');
     var statusEl = document.getElementById('f-status');
     var searchEl = document.getElementById('f-search');
-    
-    // Multi-select values as arrays
-    var selectedYears = ayEl ? Array.from(ayEl.selectedOptions).map(function(o){ return o.value; }).filter(Boolean) : [];
-    var selectedCourses = courseEl ? Array.from(courseEl.selectedOptions).map(function(o){ return o.value; }).filter(Boolean) : [];
     
     var statusVal = statusEl ? statusEl.value : '';
     var search = searchEl ? searchEl.value.toLowerCase() : '';
@@ -136,8 +141,11 @@
       var enrols = allEnrolments.filter(function (e) { return e.student === s.name; });
       var ctx = deriveContext(enrols, scheduleMap);
       
-      if (selectedYears.length && !selectedYears.includes(ctx.academic_year)) return false;
-      if (selectedCourses.length && !selectedCourses.includes(ctx.course)) return false;
+      var yearVal = ayEl ? ayEl.value : '';
+      var courseVal = courseEl ? courseEl.value : '';
+
+      if (yearVal && ctx.academic_year !== yearVal) return false;
+      if (courseVal && ctx.course !== courseVal) return false;
       
       if (statusVal) { var ind = getIndicator(s, enrols); if (statusVal !== ind.label) return false; }
       return true;

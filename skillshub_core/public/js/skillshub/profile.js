@@ -36,15 +36,21 @@
 
   async function attemptRescue() {
     try {
-      // In Frappe, we can usually hit /api/method/frappe.auth.get_logged_user 
-      // but let's just try to fetch the student record using the session's 'user' if available
-      // Or better, just fetch /api/resource/SH Student with no filters to see if any matches our session
-      // (Frappe's REST API will respect session user permissions)
-      const res = await fetch('/api/resource/SH Student?limit=1', { headers: getFrappeHeaders(), credentials: 'include' });
-      const data = await res.json();
-      if (data && data.data && data.data.length > 0) {
-        localStorage.setItem('sh_student_id', data.data[0].name);
-        localStorage.setItem('sh_role', 'student');
+      const userRes = await fetch('/api/method/frappe.auth.get_logged_user', { credentials: 'include' });
+      const userData = await userRes.json();
+      const userEmail = userData.message;
+
+      if (userEmail && userEmail !== 'Guest') {
+        const filters = JSON.stringify([['portal_user_account', '=', userEmail]]);
+        const res = await fetch(`/api/resource/SH Student?filters=${encodeURIComponent(filters)}&fields=["name"]&limit=1`, { 
+          headers: getFrappeHeaders(), 
+          credentials: 'include' 
+        });
+        const data = await res.json();
+        if (data && data.data && data.data.length > 0) {
+          localStorage.setItem('sh_student_id', data.data[0].name);
+          localStorage.setItem('sh_role', 'student');
+        }
       }
     } catch (err) {
       console.error('Rescue failed:', err);
