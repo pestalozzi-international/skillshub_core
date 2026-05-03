@@ -8,12 +8,10 @@ Run in bench console:
 Set DRY_RUN = False inside run() to commit changes.
 """
 
-import frappe
-from frappe.utils import now_datetime
-
-
 def run():
-    """Main entry point — all config is inside this function to avoid exec() scoping issues."""
+    """Main entry point — all config and imports inside to avoid exec() scoping issues."""
+    import frappe
+    from frappe.utils import now_datetime
 
     # ── Configuration ────────────────────────────────────────────────
     DRY_RUN = True          # Set to False to actually commit changes
