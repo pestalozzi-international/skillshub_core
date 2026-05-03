@@ -1,9 +1,6 @@
 import { applyPortalSettings } from '/skillshub/portal-settings.js';
 applyPortalSettings();
 
-// ---------------------------------------------------------------------------
-// Session helpers
-// ---------------------------------------------------------------------------
 function clearAndRedirect() {
   localStorage.removeItem('sh_student_id');
   localStorage.removeItem('sh_role');
@@ -12,9 +9,6 @@ function clearAndRedirect() {
   window.location.replace('/skillshub/login');
 }
 
-// ---------------------------------------------------------------------------
-// Route guard
-// ---------------------------------------------------------------------------
 if (localStorage.getItem('sh_role') !== 'admin') {
   window.location.replace('/skillshub/login');
 }
@@ -51,34 +45,57 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function loadData() {
-  Promise.all([
-    sf('/api/resource/SkillsHub Cohort?fields=["name","cohort_name"]&limit=50').then(function (d) { if (d) allCohorts    = d.data || []; }),
-    sf('/api/resource/SkillsHub Programme?fields=["name"]&limit=20').then(function (d)            { if (d) allProgrammes = d.data || []; }),
-    sf('/api/resource/SH Student?fields=["name","student_name","current_cohort","skillshub_programme","programme_path","status"]&limit=500').then(function (d) { if (d) allStudents = d.data || []; }),
-    sf('/api/resource/SH Student Enrolment?fields=["student","milestone","feedback_submitted","attendance_rate","status"]&limit=2000').then(function (d) { if (d) allEnrolments = d.data || []; })
-  ])
-  .then(function () {
+  // Load each source independently — a permission error on one must not
+  // blank the entire page. Use Promise.allSettled so all 4 run to completion.
+  var sources = [
+    sf('/api/resource/SkillsHub Cohort?fields=["name","cohort_name"]&limit=50')
+      .then(function (d) { if (d) allCohorts = d.data || []; }),
+    sf('/api/resource/SkillsHub Programme?fields=["name"]&limit=20')
+      .then(function (d) { if (d) allProgrammes = d.data || []; }),
+    sf('/api/resource/SH Student?fields=["name","student_name","current_cohort","skillshub_programme","programme_path","status"]&limit=1000')
+      .then(function (d) { if (d) allStudents = d.data || []; }),
+    sf('/api/resource/SH Student Enrolment?fields=["student","milestone","feedback_submitted","attendance_rate","status"]&limit=5000')
+      .then(function (d) { if (d) allEnrolments = d.data || []; })
+  ];
+
+  Promise.allSettled(sources).then(function () {
+    // Populate cohort filter
     var cs = document.getElementById('f-cohort');
-    allCohorts.forEach(function (c) { var o = document.createElement('option'); o.value = c.name; o.textContent = c.cohort_name || c.name; cs.appendChild(o); });
+    allCohorts.forEach(function (c) {
+      var o = document.createElement('option');
+      o.value = c.name; o.textContent = c.cohort_name || c.name;
+      cs.appendChild(o);
+    });
+    // Populate programme filter
     var ps = document.getElementById('f-programme');
-    allProgrammes.forEach(function (p) { var o = document.createElement('option'); o.value = p.name; o.textContent = p.name; ps.appendChild(o); });
+    allProgrammes.forEach(function (p) {
+      var o = document.createElement('option');
+      o.value = p.name; o.textContent = p.name;
+      ps.appendChild(o);
+    });
+
+    if (allStudents.length === 0) {
+      document.getElementById('content').innerHTML =
+        '<div class="state-box">No student records found, or your account does not have read access to SH Student.</div>';
+      return;
+    }
     applyFilters();
-  })
-  .catch(function () {
-    document.getElementById('content').innerHTML = '<div class="state-box" style="color:var(--color-red-700)">Error loading data. Please refresh.</div>';
   });
 }
 
 function applyFilters() {
-  var cohort = document.getElementById('f-cohort').value;
-  var prog   = document.getElementById('f-programme').value;
-  var search = document.getElementById('f-search').value.toLowerCase();
-  var path   = document.querySelector('.path-btn.active').dataset.path;
+  var cohort  = document.getElementById('f-cohort').value;
+  var prog    = document.getElementById('f-programme').value;
+  var search  = document.getElementById('f-search').value.toLowerCase();
+  var pathBtn = document.querySelector('.path-btn.active');
+  var path    = pathBtn ? pathBtn.dataset.path : '';
+
   var filtered = allStudents.filter(function (s) {
     if (cohort && s.current_cohort      !== cohort) return false;
     if (prog   && s.skillshub_programme !== prog)   return false;
     if (path   && s.programme_path      !== path)   return false;
-    if (search && !s.name.toLowerCase().includes(search) && !(s.student_name || '').toLowerCase().includes(search)) return false;
+    if (search && !s.name.toLowerCase().includes(search) &&
+                  !(s.student_name || '').toLowerCase().includes(search)) return false;
     return true;
   });
   renderTable(filtered);
@@ -95,14 +112,18 @@ function renderTable(students) {
   var html = '<div class="table-wrap"><table><thead><tr>' +
     '<th>Student ID</th><th>Full Name</th><th>Cohort</th><th>Programme</th>' +
     '<th>Path</th><th>Attendance</th><th>Feedback</th><th></th></tr></thead><tbody>';
+
   students.forEach(function (s) {
     var enrols = allEnrolments.filter(function (e) { return e.student === s.name; });
     var active = enrols.filter(function (e) { return e.status === 'Enrolled'; });
+    // Fall back to all enrolments if none are explicitly 'Enrolled'
+    if (!active.length) active = enrols;
     var rates  = active.map(function (e) { return e.attendance_rate || 0; });
     var avgAtt = rates.length ? Math.round(rates.reduce(function (a, b) { return a + b; }, 0) / rates.length) : 0;
     var attCls = avgAtt >= 80 ? 'att-high' : avgAtt >= 60 ? 'att-med' : 'att-low';
     var fbOk   = enrols.some(function (e) { return e.feedback_submitted; });
-    html += '<tr>' +
+    html +=
+      '<tr>' +
       '<td><span class="sid">' + s.name + '</span></td>' +
       '<td>' + (s.student_name || '—') + '</td>' +
       '<td>' + (s.current_cohort || '—') + '</td>' +

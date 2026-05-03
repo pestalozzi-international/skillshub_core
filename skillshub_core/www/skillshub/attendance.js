@@ -1,9 +1,6 @@
 import { applyPortalSettings } from '/skillshub/portal-settings.js';
 applyPortalSettings();
 
-// ---------------------------------------------------------------------------
-// Session helpers
-// ---------------------------------------------------------------------------
 function clearAndRedirect() {
   localStorage.removeItem('sh_student_id');
   localStorage.removeItem('sh_role');
@@ -12,18 +9,12 @@ function clearAndRedirect() {
   window.location.replace('/skillshub/login');
 }
 
-// ---------------------------------------------------------------------------
-// Route guard — teacher needs sh_user OR sh_role=teacher set
-// ---------------------------------------------------------------------------
 var userEmail = localStorage.getItem('sh_user');
 var userRole  = localStorage.getItem('sh_role');
 if (!userEmail && userRole !== 'teacher') {
   window.location.replace('/skillshub/login');
 }
 
-// ---------------------------------------------------------------------------
-// Page logic
-// ---------------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById('sh-logout').addEventListener('click', function () {
@@ -40,13 +31,20 @@ document.addEventListener('DOMContentLoaded', function () {
   var syncCount      = document.getElementById('sync-count');
   var syncBtn        = document.getElementById('sync-btn');
 
-  dateInput.valueAsDate = new Date();
+  // Set today's date using local time (valueAsDate uses UTC which shows
+  // yesterday in UTC+2 timezones like Zambia)
+  var today = new Date();
+  var yyyy  = today.getFullYear();
+  var mm    = String(today.getMonth() + 1).padStart(2, '0');
+  var dd    = String(today.getDate()).padStart(2, '0');
+  dateInput.value = yyyy + '-' + mm + '-' + dd;
 
   var attendanceQueue = JSON.parse(localStorage.getItem('sh_attendance_queue') || '[]');
   updateSyncBanner();
 
   // 1. Load active schedules
-  fetch('/api/resource/SH Programme Schedule?filters=[["status","=","Active"]]&fields=["name","skillshub_programme","skillshub_course","cohort"]&limit=100',
+  fetch('/api/resource/SH Programme Schedule?filters=[["status","=","Active"]]' +
+        '&fields=["name","skillshub_programme","skillshub_course","cohort"]&limit=200',
     { headers: { 'Accept': 'application/json' }, credentials: 'include' })
   .then(function (r) {
     if (r.status === 401 || r.status === 403) { clearAndRedirect(); return null; }
@@ -54,25 +52,45 @@ document.addEventListener('DOMContentLoaded', function () {
   })
   .then(function (data) {
     if (!data) return;
-    (data.data || []).forEach(function (sch) {
+    var schedules = data.data || [];
+    if (schedules.length === 0) {
+      var opt = document.createElement('option');
+      opt.disabled = true;
+      opt.textContent = 'No active schedules found';
+      scheduleSelect.appendChild(opt);
+      return;
+    }
+    schedules.forEach(function (sch) {
       var opt = document.createElement('option');
       opt.value = sch.name;
-      opt.textContent = [sch.skillshub_programme, sch.skillshub_course ? '- ' + sch.skillshub_course : '', sch.cohort ? '(' + sch.cohort + ')' : ''].filter(Boolean).join(' ');
+      opt.textContent = [
+        sch.skillshub_programme,
+        sch.skillshub_course ? '- ' + sch.skillshub_course : '',
+        sch.cohort ? '(' + sch.cohort + ')' : ''
+      ].filter(Boolean).join(' ');
       scheduleSelect.appendChild(opt);
     });
   })
-  .catch(function () { console.warn('Could not load schedules'); });
+  .catch(function () {
+    var opt = document.createElement('option');
+    opt.disabled = true;
+    opt.textContent = 'Error loading schedules';
+    scheduleSelect.appendChild(opt);
+  });
 
   // 2. Load roster on schedule change
+  // Primary: SH Student Enrolment (status=Enrolled)
+  // Fallback: SH Schedule Student child table on the schedule doc
   scheduleSelect.addEventListener('change', function () {
-    if (!this.value) { attendanceArea.style.display = 'none'; return; }
+    var scheduleId = this.value;
+    if (!scheduleId) { attendanceArea.style.display = 'none'; return; }
     studentList.innerHTML = '<p style="color:var(--color-slate-500)">Loading students...</p>';
     attendanceArea.style.display = 'block';
     submitBtn.disabled = true;
 
     fetch('/api/resource/SH Student Enrolment?filters=' + encodeURIComponent(
-        JSON.stringify([['programme_schedule', '=', this.value], ['status', '=', 'Enrolled']])
-      ) + '&fields=' + encodeURIComponent(JSON.stringify(['student', 'student_name'])) + '&limit=200',
+        JSON.stringify([['programme_schedule', '=', scheduleId], ['status', '=', 'Enrolled']])
+      ) + '&fields=' + encodeURIComponent(JSON.stringify(['student', 'student_name'])) + '&limit=300',
       { headers: { 'Accept': 'application/json' }, credentials: 'include' })
     .then(function (r) {
       if (r.status === 401 || r.status === 403) { clearAndRedirect(); return null; }
@@ -80,14 +98,36 @@ document.addEventListener('DOMContentLoaded', function () {
     })
     .then(function (data) {
       if (!data) return;
-      if (data.data && data.data.length > 0) {
-        renderRoster(data.data);
-      } else {
-        studentList.innerHTML = '<p style="color:var(--color-slate-500)">No students enrolled in this schedule.</p>';
+      var students = data.data || [];
+
+      if (students.length > 0) {
+        renderRoster(students);
+        return;
       }
+
+      // Fallback: fetch the schedule doc and read its enrolled_students child table
+      return fetch('/api/resource/SH Programme Schedule/' + encodeURIComponent(scheduleId) +
+          '?fields=["enrolled_students"]',
+        { headers: { 'Accept': 'application/json' }, credentials: 'include' })
+        .then(function (r2) {
+          if (!r2.ok) return null;
+          return r2.json();
+        })
+        .then(function (sData) {
+          if (!sData || !sData.data) {
+            studentList.innerHTML = '<p style="color:var(--color-slate-500)">No students enrolled in this schedule.</p>';
+            return;
+          }
+          var roster = (sData.data.enrolled_students || []).filter(function (r) { return r.active !== 0; });
+          if (roster.length > 0) {
+            renderRoster(roster);
+          } else {
+            studentList.innerHTML = '<p style="color:var(--color-slate-500)">No students enrolled in this schedule.</p>';
+          }
+        });
     })
     .catch(function () {
-      studentList.innerHTML = '<p class="sh-alert-error">Error loading roster. Check connection.</p>';
+      studentList.innerHTML = '<p class="sh-alert-error">Error loading roster. Check your connection.</p>';
     });
   });
 
@@ -96,12 +136,14 @@ document.addEventListener('DOMContentLoaded', function () {
     studentList.innerHTML = '';
     submitBtn.disabled = false;
     students.forEach(function (s) {
+      var sid   = s.student || s.name;
+      var sname = s.student_name || sid;
       var row = document.createElement('div');
       row.className = 'student-row';
       row.innerHTML =
-        '<div><div class="student-info">' + s.student_name + '</div>' +
-        '<div class="student-id">' + s.student + '</div></div>' +
-        '<div class="toggle-group" data-student="' + s.student + '">' +
+        '<div><div class="student-info">' + sname + '</div>' +
+        '<div class="student-id">' + sid + '</div></div>' +
+        '<div class="toggle-group" data-student="' + sid + '">' +
         '<button class="toggle-btn" data-status="Present">Present</button>' +
         '<button class="toggle-btn" data-status="Absent">Absent</button>' +
         '<button class="toggle-btn" data-status="Late">Late</button>' +
@@ -117,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // 4. Submit
+  // 4. Submit attendance
   submitBtn.addEventListener('click', function () {
     var date     = dateInput.value;
     var schedule = scheduleSelect.value;
@@ -131,6 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
       records.push({ student: group.dataset.student, status: activeBtn ? activeBtn.dataset.status : 'Absent' });
     });
 
+    if (records.length === 0) { alert('No students to mark.'); return; }
     if (!allMarked && !confirm('Some students are unmarked and will default to Absent. Continue?')) return;
 
     var payload = { schedule: schedule, date: date, attendance_records: records };
@@ -150,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function () {
       body: JSON.stringify(payload)
     }).then(function (r) {
       if (r.status === 401 || r.status === 403) { clearAndRedirect(); return null; }
-      if (!r.ok) throw new Error('API error');
+      if (!r.ok) throw new Error('API error ' + r.status);
       return r.json();
     });
   }
@@ -190,16 +233,17 @@ document.addEventListener('DOMContentLoaded', function () {
     syncBtn.disabled    = true;
     Promise.allSettled(attendanceQueue.map(function (p) { return submitToAPI(p); }))
       .then(function (results) {
-        var ok = 0;
-        var remaining = [];
+        var ok = 0, remaining = [];
         results.forEach(function (r, i) {
-          if (r.status === 'fulfilled') { ok++; } else { remaining.push(attendanceQueue[i]); }
+          if (r.status === 'fulfilled' && r.value) { ok++; }
+          else { remaining.push(attendanceQueue[i]); }
         });
         attendanceQueue = remaining;
         localStorage.setItem('sh_attendance_queue', JSON.stringify(attendanceQueue));
         updateSyncBanner();
+        syncBtn.disabled = false;
         if (ok > 0) alert('Synced ' + ok + ' session' + (ok !== 1 ? 's' : '') + ' successfully.');
-        else alert('Sync failed. Still offline.');
+        else        alert('Sync failed. Still offline.');
       });
   }
 
