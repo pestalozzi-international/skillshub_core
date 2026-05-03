@@ -50,11 +50,12 @@
       var rawInput   = usrInput.value.trim();
       var loginEmail = resolveLoginEmail(rawInput);
 
-      var fd = new FormData();
-      fd.append('usr', loginEmail);
-      fd.append('pwd', pwdInput.value);
+      var payload = {
+        usr: loginEmail,
+        pwd: pwdInput.value
+      };
 
-      fetch('/api/method/login', { method: 'POST', headers: getFrappeHeaders(), body: fd, credentials: 'include' })
+      fetch('/api/method/login', { method: 'POST', headers: getFrappeHeaders(), body: JSON.stringify(payload), credentials: 'include' })
       .then(function (r) { return r.json(); })
       .then(function (loginData) {
         if (loginData.message !== 'Logged In' && loginData.message !== 'No App' && !loginData.full_name) {
