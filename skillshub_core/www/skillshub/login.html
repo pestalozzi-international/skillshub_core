@@ -18,6 +18,10 @@
     .sso-link{margin-top:1rem;text-align:center;font-size:.875rem}
     .sso-link a{color:var(--color-teal-700);text-decoration:none}
   </style>
+  <script>
+    window.frappe = {};
+    frappe.csrf_token = "{{ frappe.session.csrf_token }}";
+  </script>
 </head>
 <body>
 <div class="login-wrapper">

@@ -56,6 +56,10 @@
     .emp-table th{padding:.625rem .875rem;text-align:left;font-size:.75rem;font-weight:600;text-transform:uppercase;color:var(--color-slate-600);background:var(--color-slate-50);border-bottom:1px solid var(--color-slate-200)}
     .emp-table td{padding:.625rem .875rem;border-bottom:1px solid var(--color-slate-100)}
   </style>
+  <script>
+    window.frappe = {};
+    frappe.csrf_token = "{{ frappe.session.csrf_token }}";
+  </script>
 </head>
 <body>
   <div class="admin-header">

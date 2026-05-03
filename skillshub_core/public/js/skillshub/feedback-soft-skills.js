@@ -2,19 +2,15 @@
   'use strict';
 
   function getFrappeHeaders() {
-      let csrfToken = '';
-      if (window.frappe && frappe.csrf_token) {
-          csrfToken = frappe.csrf_token;
-      } else {
-          const match = document.cookie.match(new RegExp('(^| )system_user=([^;]+)'));
-          if (match) csrfToken = decodeURIComponent(match[2]);
-      }
-      return {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-Frappe-CSRF-Token': csrfToken
-      };
-  }
+    const headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    };
+    if (window.frappe && frappe.csrf_token) {
+        headers['X-Frappe-CSRF-Token'] = frappe.csrf_token;
+    }
+    return headers;
+}
   var studentId = localStorage.getItem('sh_student_id');
   if (!studentId) { window.location.replace('/skillshub/login'); return; }
   var ctx = {};

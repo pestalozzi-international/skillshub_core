@@ -29,6 +29,10 @@
     .submit-btn{width:100%;margin-top:1.5rem}
     #sh-attendance-area{display:none;margin-top:2rem}
   </style>
+  <script>
+    window.frappe = {};
+    frappe.csrf_token = "{{ frappe.session.csrf_token }}";
+  </script>
 </head>
 <body>
 <div class="att-wrapper">
