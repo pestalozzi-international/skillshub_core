@@ -2,7 +2,7 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
- "creation": "2026-01-26 17:30:10.094522",
+ "creation": "2026-05-03 11:40:33.559842",
  "default_view": "List",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -23,7 +23,6 @@
   "cohort_code",
   "section_break_smzk",
   "course_notes",
-  "class_id",
   "section_break_rkqu",
   "instructors",
   "teaching_partners",
@@ -40,12 +39,12 @@
  ],
  "fields": [
   {
+   "default": "Active",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "default": "Active",
    "options": "\nActive\nComplete\nCancelled"
   },
   {
@@ -186,11 +185,6 @@
    "label": "Course Code"
   },
   {
-   "fieldname": "class_id",
-   "fieldtype": "Data",
-   "label": "Class ID"
-  },
-  {
    "fieldname": "section_break_bksr",
    "fieldtype": "Section Break"
   },
@@ -217,7 +211,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-04-30 00:00:00.000000",
+ "modified": "2026-05-03 19:02:21.476751",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Programme Schedule",

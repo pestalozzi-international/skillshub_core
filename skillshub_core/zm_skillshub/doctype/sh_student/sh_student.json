@@ -47,7 +47,6 @@
   "column_break_dusj",
   "fullname_and_id",
   "naming_series",
-  "airtable_student_id",
   "applications_section",
   "date_submitted_enrolment_form",
   "applicant_record",
@@ -72,29 +71,28 @@
   "portal_access_section",
   "enabled",
   "portal_user_account",
-  "user_login_email",
   "enroled_programmes_and_history_tab",
   "status_section",
   "status",
   "graduated",
+  "column_break_lsvw",
+  "programme_path",
+  "intake_year",
   "enrolled_programmes_section",
   "programme_column",
+  "student_enrolment",
   "current_schedule",
-  "skillshub_programme",
-  "current_course",
-  "current_cohort",
-  "programme_path",
   "enrolment_column",
   "enrolment_date",
   "graduation_completion_date",
   "exit_reason",
-  "airtable_student_cohort_identifier",
   "family_tab",
   "section_break_yswd",
   "household_income",
   "household_receives_financial_aid",
   "housing_status",
   "guardian_details_section",
+  "guardian_column",
   "guardian_name",
   "guardian_email",
   "guardian_mobile_number",
@@ -102,8 +100,8 @@
   "guardian_occupation",
   "guardian_address",
   "relationship",
-  "column_break_kbph",
   "parents_marital_status",
+  "section_break_veyp",
   "sibling_details_column",
   "number_of_siblings",
   "discipline_tab",
@@ -119,207 +117,24 @@
   "attachment_completed",
   "end_date",
   "section_break_lzmy",
-  "employment_history"
+  "emp_start_date",
+  "emp_is_current",
+  "emp_end_date",
+  "emp_notes",
+  "column_break_flpz",
+  "emp_institution",
+  "emp_niche",
+  "emp_address",
+  "emp_employer_type",
+  "column_break_sahb",
+  "emp_occupation",
+  "emp_role",
+  "emp_currency",
+  "emp_salary",
+  "emp_income_level",
+  "current_enrolment"
  ],
  "fields": [
-  {
-   "fieldname": "core_record_section",
-   "fieldtype": "Section Break",
-   "label": "Student ID"
-  },
-  {
-   "fieldname": "enrolled_programmes_section",
-   "fieldtype": "Section Break",
-   "label": "Current Programme"
-  },
-  {
-   "fieldname": "current_schedule",
-   "fieldtype": "Link",
-   "label": "Current Schedule",
-   "mandatory_depends_on": "eval:doc.status == \"Student\"",
-   "options": "SH Programme Schedule"
-  },
-  {
-   "fieldname": "applications_section",
-   "fieldtype": "Section Break",
-   "label": "Applications"
-  },
-  {
-   "fieldname": "applicant_record",
-   "fieldtype": "Link",
-   "label": "Applicant Record",
-   "options": "SH Applicant"
-  },
-  {
-   "fieldname": "last_school_attended",
-   "fieldtype": "Data",
-   "label": "Last School Attended"
-  },
-  {
-   "fieldname": "students_occupation",
-   "fieldtype": "Data",
-   "label": "Student's Occupation at Selection"
-  },
-  {
-   "default": "0",
-   "fieldname": "can_read_and_write",
-   "fieldtype": "Check",
-   "label": "Can read and write?"
-  },
-  {
-   "default": "0",
-   "fieldname": "has_vocational_training_history",
-   "fieldtype": "Check",
-   "label": "Has Vocational Training History"
-  },
-  {
-   "depends_on": "has_vocational_training_history",
-   "fieldname": "vocational_training_received",
-   "fieldtype": "Small Text",
-   "label": "Vocational Training Received"
-  },
-  {
-   "default": "0",
-   "fieldname": "has_volunteering_history",
-   "fieldtype": "Check",
-   "label": "Has Volunteering History"
-  },
-  {
-   "depends_on": "has_volunteering_history",
-   "fieldname": "details_of_volunteering",
-   "fieldtype": "Small Text",
-   "label": "Details of Volunteering"
-  },
-  {
-   "fieldname": "highest_salary_in_zmw",
-   "fieldtype": "Data",
-   "label": "Highest Salary (in ZMW)"
-  },
-  {
-   "fieldname": "household_income",
-   "fieldtype": "Data",
-   "label": "Household Income"
-  },
-  {
-   "default": "0",
-   "fieldname": "household_receives_financial_aid",
-   "fieldtype": "Check",
-   "label": "Household Receives Financial Aid"
-  },
-  {
-   "fieldname": "housing_status",
-   "fieldtype": "Select",
-   "label": "Housing Status",
-   "options": "\nRented Home\nOwned Home\nGovernment"
-  },
-  {
-   "default": "0",
-   "fieldname": "has_history_of_medical_conditions",
-   "fieldtype": "Check",
-   "label": "Has history of medical conditions"
-  },
-  {
-   "depends_on": "has_history_of_medical_conditions",
-   "fieldname": "details_of_medical_conditions",
-   "fieldtype": "Small Text",
-   "label": "Details of medical conditions"
-  },
-  {
-   "fieldname": "growth_section",
-   "fieldtype": "Section Break",
-   "label": "Growth & Motivation"
-  },
-  {
-   "fieldname": "motivations",
-   "fieldtype": "Table",
-   "label": "Motivations",
-   "options": "SH Student Motivation Link"
-  },
-  {
-   "fieldname": "resilience_links",
-   "fieldtype": "Table",
-   "label": "Resilience Links",
-   "options": "SH Student Resilience Link"
-  },
-  {
-   "fieldname": "date_submitted_enrolment_form",
-   "fieldtype": "Date",
-   "label": "Date submitted Enrolment Form"
-  },
-  {
-   "fetch_from": "current_schedule.skillshub_course",
-   "fieldname": "current_course",
-   "fieldtype": "Read Only",
-   "label": "Current Course"
-  },
-  {
-   "fieldname": "last_year_of_schooling",
-   "fieldtype": "Select",
-   "label": "Last Year of Schooling",
-   "options": "\nPreschool\nPre-Kindergarten\nKindergarten\nGrade 1\nGrade 2\nGrade 3\nGrade 4\nGrade 5\nGrade 6\nGrade 7\nGrade 8\nGrade 9\nGrade 10\nGrade 11\nGrade 12\nUndergraduate/Bachelor's\nGraduate/Master's\nDoctoral/PhD"
-  },
-  {
-   "fieldname": "pestalozzi_student_id",
-   "fieldtype": "Read Only",
-   "label": "Pestalozzi Student ID",
-   "read_only": 1,
-   "set_only_once": 1,
-   "unique": 1
-  },
-  {
-   "fetch_from": "current_schedule.cohort",
-   "fieldname": "current_cohort",
-   "fieldtype": "Read Only",
-   "label": "Current Cohort"
-  },
-  {
-   "fieldname": "programme_path",
-   "fieldtype": "Select",
-   "label": "Programme Path",
-   "options": "\nPath A\nPath B",
-   "read_only": 0
-  },
-  {
-   "fieldname": "exit_reason",
-   "fieldtype": "Small Text",
-   "label": "Exit Reason",
-   "depends_on": "eval:doc.status == 'Alumni' || doc.status == 'Dropped'"
-  },
-  {
-   "fieldname": "misc_section",
-   "fieldtype": "Section Break",
-   "label": "NRC & Mobile Money"
-  },
-  {
-   "fieldname": "nrc_number",
-   "fieldtype": "Data",
-   "label": "NRC Number"
-  },
-  {
-   "fieldname": "airtel_money_name",
-   "fieldtype": "Data",
-   "label": "Airtel Money Name"
-  },
-  {
-   "fieldname": "section_break_ghqh",
-   "fieldtype": "Section Break",
-   "label": "Vocational Training and Volunteering"
-  },
-  {
-   "fieldname": "section_break_yswd",
-   "fieldtype": "Section Break",
-   "label": "Household"
-  },
-  {
-   "fieldname": "section_break_bman",
-   "fieldtype": "Section Break",
-   "label": "Health"
-  },
-  {
-   "fieldname": "section_break_lzmy",
-   "fieldtype": "Section Break",
-   "label": "Employment Post SkillsHub"
-  },
   {
    "fieldname": "details_tab",
    "fieldtype": "Tab Break",
@@ -348,6 +163,15 @@
   {
    "fieldname": "column_break_qfaw",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Student Full Name"
   },
   {
    "fieldname": "student_image",
@@ -392,9 +216,29 @@
    "options": "Gender"
   },
   {
+   "fieldname": "misc_section",
+   "fieldtype": "Section Break",
+   "label": "NRC & Mobile Money"
+  },
+  {
+   "fieldname": "nrc_number",
+   "fieldtype": "Data",
+   "label": "NRC Number"
+  },
+  {
+   "fieldname": "airtel_money_name",
+   "fieldtype": "Data",
+   "label": "Airtel Money Name"
+  },
+  {
    "fieldname": "language_section",
    "fieldtype": "Section Break",
    "label": "Language"
+  },
+  {
+   "fieldname": "english_language_proficiency",
+   "fieldtype": "Rating",
+   "label": "English Language Proficiency"
   },
   {
    "fieldname": "address_and_contact_tab",
@@ -448,44 +292,176 @@
    "label": "Contact"
   },
   {
-   "fieldname": "personal_email",
-   "fieldtype": "Data",
-   "label": "Personal Email",
-   "options": "Email"
-  },
-  {
    "fieldname": "mobile",
    "fieldtype": "Data",
    "label": "Mobile",
    "options": "Phone"
   },
   {
-   "fieldname": "family_tab",
-   "fieldtype": "Tab Break",
-   "label": "Family"
-  },
-  {
-   "fieldname": "guardian_details_section",
-   "fieldtype": "Section Break",
-   "label": "Guardian Details"
-  },
-  {
-   "fieldname": "parents_marital_status",
-   "fieldtype": "Select",
-   "label": "Parents Marital Status",
-   "options": "\nMarried\nDivorced\nWidowed\nSeparated\nSingle Parent"
-  },
-  {
-   "fieldname": "number_of_siblings",
+   "fieldname": "personal_email",
    "fieldtype": "Data",
-   "label": "Number of Siblings"
+   "label": "Personal Email",
+   "options": "Email"
   },
   {
-   "description": "<div class=\"alert alert-info\" style=\"margin-top: 10px; border: 1px dashed #3498db; background-color: #f7fbff; padding: 15px; border-radius: 4px;\">\n    <h5 style=\"margin-top: 0; color: #2980b9; font-weight: bold;\">\n        <i class=\"fa fa-info-circle\"></i> Provisioning Instructions\n    </h5>\n    <p style=\"margin-bottom: 10px; color: #2c3e50;\">To set up this student's digital identity, please follow these steps in order:</p>\n    <ol style=\"padding-left: 20px; color: #2c3e50;\">\n        <li><b>Generate Email:</b> Go to <b>Actions</b> &gt; <i>\"Generate Student Email\"</i>.</li>\n        <li><b>Save the Record:</b> Click <b>Save</b> to lock in the new email address.</li>\n    </ol>\n    \n    <div style=\"background-color: #e8f4fd; padding: 10px; border-radius: 4px; margin-top: 10px; border-left: 4px solid #3498db;\">\n        <p style=\"margin-bottom: 0; font-size: 0.95em; color: #2c3e50;\">\n            <strong>Account Credentials:</strong><br>\n            • <b>Username:</b> Use the generated Pestalozzi Student Email.<br>\n            • <b>Initial Password:</b> Use the Student's <b>Pestalozzi ID</b>.\n        </p>\n    </div>\n\n    <p style=\"font-size: 0.85em; color: #7f8c8d; margin-top: 10px; font-style: italic;\">\n        Note: The buttons will automatically disappear from the menu once each step is successfully completed.\n    </p>\n</div>",
+   "fieldname": "id_and_application_tab",
+   "fieldtype": "Tab Break",
+   "label": "ID and Application"
+  },
+  {
+   "fieldname": "core_record_section",
+   "fieldtype": "Section Break",
+   "label": "Student ID"
+  },
+  {
+   "fieldname": "pestalozzi_student_id",
+   "fieldtype": "Read Only",
+   "label": "Pestalozzi Student ID",
+   "read_only": 1,
+   "set_only_once": 1,
+   "unique": 1
+  },
+  {
+   "description": "<div class=\"alert alert-info\" style=\"margin-top: 10px; border: 1px dashed #3498db; background-color: #f7fbff; padding: 15px; border-radius: 4px;\">\n    <h5 style=\"margin-top: 0; color: #2980b9; font-weight: bold;\">\n        <i class=\"fa fa-info-circle\"></i> Provisioning Instructions\n    </h5>\n    <p style=\"margin-bottom: 10px; color: #2c3e50;\">To set up this student's digital identity, please follow these steps in order:</p>\n    <ol style=\"padding-left: 20px; color: #2c3e50;\">\n        <li><b>Generate Email:</b> Go to <b>Actions</b> &gt; <i>\"Generate Student Email\"</i>.</li>\n        <li><b>Save the Record:</b> Click <b>Save</b> to lock in the new email address.</li>\n    </ol>\n    \n    <div style=\"background-color: #e8f4fd; padding: 10px; border-radius: 4px; margin-top: 10px; border-left: 4px solid #3498db;\">\n        <p style=\"margin-bottom: 0; font-size: 0.95em; color: #2c3e50;\">\n            <strong>Account Credentials:</strong><br>\n            \u2022 <b>Username:</b> Use the generated Pestalozzi Student Email.<br>\n            \u2022 <b>Initial Password:</b> Use the Student's <b>Pestalozzi ID</b>.\n        </p>\n    </div>\n\n    <p style=\"font-size: 0.85em; color: #7f8c8d; margin-top: 10px; font-style: italic;\">\n        Note: The buttons will automatically disappear from the menu once each step is successfully completed.\n    </p>\n</div>",
    "fieldname": "pestalozzi_student_email",
    "fieldtype": "Data",
    "label": "Pestalozzi Student Email",
    "options": "Email"
+  },
+  {
+   "fieldname": "column_break_dusj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fullname_and_id",
+   "fieldtype": "Data",
+   "label": "Full Name and ID"
+  },
+  {
+   "default": "SH.YY.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "SH.YY.####",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "applications_section",
+   "fieldtype": "Section Break",
+   "label": "Applications"
+  },
+  {
+   "fieldname": "date_submitted_enrolment_form",
+   "fieldtype": "Date",
+   "label": "Date submitted Enrolment Form"
+  },
+  {
+   "fieldname": "applicant_record",
+   "fieldtype": "Link",
+   "label": "Applicant Record",
+   "options": "SH Applicant"
+  },
+  {
+   "default": "0",
+   "fieldname": "can_read_and_write",
+   "fieldtype": "Check",
+   "label": "Can read and write?"
+  },
+  {
+   "fieldname": "column_break_xzhi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_school_attended",
+   "fieldtype": "Data",
+   "label": "Last School Attended"
+  },
+  {
+   "fieldname": "last_year_of_schooling",
+   "fieldtype": "Select",
+   "label": "Last Year of Schooling",
+   "options": "\nPreschool\nPre-Kindergarten\nKindergarten\nGrade 1\nGrade 2\nGrade 3\nGrade 4\nGrade 5\nGrade 6\nGrade 7\nGrade 8\nGrade 9\nGrade 10\nGrade 11\nGrade 12\nUndergraduate/Bachelor's\nGraduate/Master's\nDoctoral/PhD"
+  },
+  {
+   "fieldname": "highest_level_of_schooling",
+   "fieldtype": "Select",
+   "label": "Highest Level of Schooling Range",
+   "options": "\nGrades 1 to 7\nGrades 8 to 9\nGrades 10 to 12\nUniversity or Diploma",
+   "read_only": 1
+  },
+  {
+   "fieldname": "students_occupation",
+   "fieldtype": "Data",
+   "label": "Student's Occupation at Selection"
+  },
+  {
+   "fieldname": "highest_salary_in_zmw",
+   "fieldtype": "Data",
+   "label": "Highest Salary (in ZMW)"
+  },
+  {
+   "fieldname": "section_break_ghqh",
+   "fieldtype": "Section Break",
+   "label": "Vocational Training and Volunteering"
+  },
+  {
+   "default": "0",
+   "fieldname": "has_vocational_training_history",
+   "fieldtype": "Check",
+   "label": "Has Vocational Training History"
+  },
+  {
+   "depends_on": "has_vocational_training_history",
+   "fieldname": "vocational_training_received",
+   "fieldtype": "Small Text",
+   "label": "Vocational Training Received"
+  },
+  {
+   "default": "0",
+   "fieldname": "has_volunteering_history",
+   "fieldtype": "Check",
+   "label": "Has Volunteering History"
+  },
+  {
+   "depends_on": "has_volunteering_history",
+   "fieldname": "details_of_volunteering",
+   "fieldtype": "Small Text",
+   "label": "Details of Volunteering"
+  },
+  {
+   "fieldname": "section_break_bman",
+   "fieldtype": "Section Break",
+   "label": "Health"
+  },
+  {
+   "default": "0",
+   "fieldname": "has_history_of_medical_conditions",
+   "fieldtype": "Check",
+   "label": "Has history of medical conditions"
+  },
+  {
+   "depends_on": "has_history_of_medical_conditions",
+   "fieldname": "details_of_medical_conditions",
+   "fieldtype": "Small Text",
+   "label": "Details of medical conditions"
+  },
+  {
+   "fieldname": "growth_section",
+   "fieldtype": "Section Break",
+   "label": "Growth & Motivation"
+  },
+  {
+   "fieldname": "motivations",
+   "fieldtype": "Table",
+   "label": "Motivations",
+   "options": "SH Student Motivation Link"
+  },
+  {
+   "fieldname": "resilience_links",
+   "fieldtype": "Table",
+   "label": "Resilience Links",
+   "options": "SH Student Resilience Link"
   },
   {
    "fieldname": "portal_access_section",
@@ -499,21 +475,20 @@
    "label": "Enabled"
   },
   {
-   "fetch_from": "user_account.email",
-   "fieldname": "user_login_email",
-   "fieldtype": "Read Only",
-   "label": "User Login Email"
+   "fieldname": "portal_user_account",
+   "fieldtype": "Link",
+   "label": "User Account",
+   "options": "User"
   },
   {
-   "fieldname": "discipline_tab",
+   "fieldname": "enroled_programmes_and_history_tab",
    "fieldtype": "Tab Break",
-   "label": "Discipline"
+   "label": "Enroled Programmes and History"
   },
   {
-   "fieldname": "discipline",
-   "fieldtype": "Table",
-   "label": "Discipline",
-   "options": "SH Discipline"
+   "fieldname": "status_section",
+   "fieldtype": "Section Break",
+   "label": "Status"
   },
   {
    "fieldname": "status",
@@ -523,23 +498,114 @@
    "reqd": 1
   },
   {
-   "fieldname": "column_break_dusj",
+   "default": "1",
+   "depends_on": "eval:doc.status == \"Alumni\"",
+   "fieldname": "graduated",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Graduated",
+   "mandatory_depends_on": "eval:doc.status == \"Alumni\""
+  },
+  {
+   "fieldname": "column_break_lsvw",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "column_break_xzhi",
-   "fieldtype": "Column Break"
+   "fieldname": "programme_path",
+   "fieldtype": "Select",
+   "label": "Programme Path",
+   "options": "\nPath A\nPath B"
   },
   {
-   "fieldname": "portal_user_account",
+   "fieldname": "intake_year",
    "fieldtype": "Link",
-   "label": "User Account",
-   "options": "User"
+   "label": "Intake Year",
+   "options": "SH Academic Year"
   },
   {
-   "fieldname": "english_language_proficiency",
-   "fieldtype": "Rating",
-   "label": "English Language Proficiency"
+   "fieldname": "enrolled_programmes_section",
+   "fieldtype": "Section Break",
+   "label": "Programme Schedule"
+  },
+  {
+   "fieldname": "programme_column",
+   "fieldtype": "Column Break",
+   "label": "Programme Timeline"
+  },
+  {
+   "fieldname": "student_enrolment",
+   "fieldtype": "Link",
+   "label": "Current Enrolment Record",
+   "options": "SH Student Enrolment"
+  },
+  {
+   "fetch_from": "student_enrolment.programme_schedule",
+   "fieldname": "current_schedule",
+   "fieldtype": "Link",
+   "label": "Current Schedule",
+   "mandatory_depends_on": "eval:doc.status == \"Student\"",
+   "options": "SH Programme Schedule"
+  },
+  {
+   "fieldname": "enrolment_column",
+   "fieldtype": "Column Break",
+   "label": "Enrolment & Graduation"
+  },
+  {
+   "fetch_from": "current_schedule.start_date",
+   "fieldname": "enrolment_date",
+   "fieldtype": "Date",
+   "label": "Enrolment Date",
+   "mandatory_depends_on": "eval:doc.status == \"Student\""
+  },
+  {
+   "fieldname": "graduation_completion_date",
+   "fieldtype": "Date",
+   "label": "Graduation/Completion Date",
+   "mandatory_depends_on": "eval:doc.status == \"Alumni\""
+  },
+  {
+   "depends_on": "eval:doc.status == 'Alumni' || doc.status == 'Dropped'",
+   "fieldname": "exit_reason",
+   "fieldtype": "Small Text",
+   "label": "Exit Reason"
+  },
+  {
+   "fieldname": "family_tab",
+   "fieldtype": "Tab Break",
+   "label": "Family"
+  },
+  {
+   "fieldname": "section_break_yswd",
+   "fieldtype": "Section Break",
+   "label": "Household"
+  },
+  {
+   "fieldname": "household_income",
+   "fieldtype": "Data",
+   "label": "Household Income"
+  },
+  {
+   "default": "0",
+   "fieldname": "household_receives_financial_aid",
+   "fieldtype": "Check",
+   "label": "Household Receives Financial Aid"
+  },
+  {
+   "fieldname": "housing_status",
+   "fieldtype": "Select",
+   "label": "Housing Status",
+   "options": "\nRented Home\nOwned Home\nGovernment"
+  },
+  {
+   "fieldname": "guardian_details_section",
+   "fieldtype": "Section Break",
+   "label": "Guardian Details"
+  },
+  {
+   "fieldname": "guardian_column",
+   "fieldtype": "Column Break",
+   "label": "Guardian"
   },
   {
    "fieldname": "guardian_name",
@@ -578,93 +644,14 @@
    "options": "\nMother\nFather\nStepmother\nStepfather\nGrandmother\nGrandfather\nGrandparent\nAunt\nUncle\nBrother\nSister\nCousin\nLegal Guardian\nFoster Parent\nAdoptive Parent\nDaughter\nHusband\nSelf\nWife"
   },
   {
-   "fieldname": "column_break_kbph",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "highest_level_of_schooling",
+   "fieldname": "parents_marital_status",
    "fieldtype": "Select",
-   "label": "Highest Level of Schooling Range",
-   "options": "\nGrades 1 to 7\nGrades 8 to 9\nGrades 10 to 12\nUniversity or Diploma",
-   "read_only": 1
+   "label": "Parents Marital Status",
+   "options": "\nMarried\nDivorced\nWidowed\nSeparated\nSingle Parent"
   },
   {
-   "fieldname": "airtable_student_id",
-   "fieldtype": "Data",
-   "label": "Airtable Student ID",
-   "read_only": 1
-  },
-  {
-   "fieldname": "student_name",
-   "fieldtype": "Data",
-   "in_filter": 1,
-   "in_global_search": 1,
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Student Full Name"
-  },
-  {
-   "default": "SH.YY.####",
-   "fieldname": "naming_series",
-   "fieldtype": "Select",
-   "label": "Naming Series",
-   "options": "SH.YY.####",
-   "read_only": 1,
-   "reqd": 1
-  },
-  {
-   "fieldname": "fullname_and_id",
-   "fieldtype": "Data",
-   "label": "Full Name and ID"
-  },
-  {
-   "fieldname": "status_section",
-   "fieldtype": "Section Break",
-   "label": "Status"
-  },
-  {
-   "fieldname": "enroled_programmes_and_history_tab",
-   "fieldtype": "Tab Break",
-   "label": "Enroled Programmes and History"
-  },
-  {
-   "fieldname": "programme_column",
-   "fieldtype": "Column Break",
-   "label": "Programme"
-  },
-  {
-   "fieldname": "enrolment_column",
-   "fieldtype": "Column Break",
-   "label": "Enrolment"
-  },
-  {
-   "fetch_from": "current_schedule.start_date",
-   "fieldname": "enrolment_date",
-   "fieldtype": "Date",
-   "label": "Enrolment Date",
-   "mandatory_depends_on": "eval:doc.status == \"Student\""
-  },
-  {
-   "fieldname": "graduation_completion_date",
-   "fieldtype": "Date",
-   "label": "Graduation/Completion Date",
-   "mandatory_depends_on": "eval:doc.status == \"Alumni\""
-  },
-  {
-   "fieldname": "airtable_student_cohort_identifier",
-   "fieldtype": "Data",
-   "label": "Airtable Student Cohort Identifier"
-  },
-  {
-   "fieldname": "id_and_application_tab",
-   "fieldtype": "Tab Break",
-   "label": "ID and Application"
-  },
-  {
-   "fetch_from": "current_schedule.skillshub_programme",
-   "fieldname": "skillshub_programme",
-   "fieldtype": "Read Only",
-   "label": "SkillsHub Programme"
+   "fieldname": "section_break_veyp",
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "sibling_details_column",
@@ -672,13 +659,20 @@
    "label": "Sibling Details"
   },
   {
-   "default": "1",
-   "depends_on": "eval:doc.status == \"Alumni\"",
-   "fieldname": "graduated",
-   "fieldtype": "Check",
-   "in_list_view": 1,
-   "label": "Graduated",
-   "mandatory_depends_on": "eval:doc.status == \"Alumni\""
+   "fieldname": "number_of_siblings",
+   "fieldtype": "Data",
+   "label": "Number of Siblings"
+  },
+  {
+   "fieldname": "discipline_tab",
+   "fieldtype": "Tab Break",
+   "label": "Discipline"
+  },
+  {
+   "fieldname": "discipline",
+   "fieldtype": "Table",
+   "label": "Discipline",
+   "options": "SH Discipline"
   },
   {
    "fieldname": "work_tab",
@@ -736,10 +730,97 @@
    "label": "End Date"
   },
   {
-   "fieldname": "employment_history",
-   "fieldtype": "Table",
-   "label": "Employment History",
-   "options": "SH Employment History"
+   "fieldname": "section_break_lzmy",
+   "fieldtype": "Section Break",
+   "label": "Employment Post SkillsHub"
+  },
+  {
+   "fieldname": "emp_start_date",
+   "fieldtype": "Date",
+   "label": "Start Date"
+  },
+  {
+   "default": "0",
+   "fieldname": "emp_is_current",
+   "fieldtype": "Check",
+   "label": "Is Current"
+  },
+  {
+   "fieldname": "emp_end_date",
+   "fieldtype": "Date",
+   "label": "End Date"
+  },
+  {
+   "fieldname": "emp_notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "column_break_flpz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "emp_institution",
+   "fieldtype": "Link",
+   "label": "Institution",
+   "options": "SH Employment Institution"
+  },
+  {
+   "fetch_from": "emp_institution.niche",
+   "fieldname": "emp_niche",
+   "fieldtype": "Data",
+   "label": "Niche"
+  },
+  {
+   "fetch_from": "emp_institution.address",
+   "fieldname": "emp_address",
+   "fieldtype": "Data",
+   "label": "Address"
+  },
+  {
+   "fieldname": "emp_employer_type",
+   "fieldtype": "Select",
+   "label": "Employer Type",
+   "options": "\nFormal\nInformal\nSelf-Employed"
+  },
+  {
+   "fieldname": "column_break_sahb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "emp_occupation",
+   "fieldtype": "Data",
+   "label": "Occupation"
+  },
+  {
+   "fieldname": "emp_role",
+   "fieldtype": "Data",
+   "label": "Role"
+  },
+  {
+   "fieldname": "emp_currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "emp_salary",
+   "fieldtype": "Currency",
+   "label": "Salary",
+   "options": "emp_currency"
+  },
+  {
+   "fieldname": "emp_income_level",
+   "fieldtype": "Select",
+   "label": "Income Level",
+   "options": "\nAbove\nBelow\nSame"
+  },
+  {
+   "fieldname": "current_enrolment",
+   "fieldtype": "Link",
+   "label": "Current Enrolment",
+   "options": "SH Student Enrolment"
   }
  ],
  "grid_page_length": 50,
@@ -787,7 +868,7 @@
    "link_fieldname": "student"
   }
  ],
- "modified": "2026-04-30 00:00:00.000000",
+ "modified": "2026-05-04 14:01:15.305402",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Student",

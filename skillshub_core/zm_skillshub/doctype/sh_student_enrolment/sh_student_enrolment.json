@@ -1,9 +1,8 @@
 {
  "actions": [],
  "allow_import": 1,
- "allow_rename": 0,
  "autoname": "format:{student}-{programme_schedule}",
- "creation": "2026-04-30 00:00:00.000000",
+ "creation": "2026-05-03 11:40:32.778960",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -108,10 +107,12 @@
    "read_only": 1
   },
   {
+   "fetch_from": "student.programme_path",
    "fieldname": "programme_path",
    "fieldtype": "Select",
    "label": "Path",
-   "options": "\nPath A\nPath B"
+   "options": "\nPath A\nPath B",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_status",
@@ -214,11 +215,11 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-03 00:00:00.000000",
+ "modified": "2026-05-03 19:09:28.104086",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Student Enrolment",
- "naming_rule": "Expression",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
