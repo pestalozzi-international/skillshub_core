@@ -4,6 +4,21 @@
 (function () {
   'use strict';
 
+  function getFrappeHeaders() {
+      let csrfToken = '';
+      if (window.frappe && frappe.csrf_token) {
+          csrfToken = frappe.csrf_token;
+      } else {
+          const match = document.cookie.match(new RegExp('(^| )system_user=([^;]+)'));
+          if (match) csrfToken = decodeURIComponent(match[2]);
+      }
+      return {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Frappe-CSRF-Token': csrfToken
+      };
+  }
+
   function setFavicon(href) {
     var link = document.querySelector("link[rel~='icon']");
     if (!link) {
@@ -53,7 +68,7 @@
 
   fetch(
     '/api/method/skillshub_core.skillshub_portal.doctype.skillshub_portal_settings.skillshub_portal_settings.get_portal_settings',
-    { headers: { 'Accept': 'application/json' }, credentials: 'include' }
+    { headers: getFrappeHeaders(), credentials: 'include' }
   )
   .then(function (r) { return r.ok ? r.json() : null; })
   .then(function (data) {

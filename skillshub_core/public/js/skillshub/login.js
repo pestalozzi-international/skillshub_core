@@ -1,6 +1,21 @@
 (function () {
   'use strict';
 
+  function getFrappeHeaders() {
+      let csrfToken = '';
+      if (window.frappe && frappe.csrf_token) {
+          csrfToken = frappe.csrf_token;
+      } else {
+          const match = document.cookie.match(new RegExp('(^| )system_user=([^;]+)'));
+          if (match) csrfToken = decodeURIComponent(match[2]);
+      }
+      return {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Frappe-CSRF-Token': csrfToken
+      };
+  }
+
   // Route guard
   var role      = localStorage.getItem('sh_role');
   var studentId = localStorage.getItem('sh_student_id');
@@ -43,7 +58,7 @@
       fd.append('usr', loginEmail);
       fd.append('pwd', pwdInput.value);
 
-      fetch('/api/method/login', { method: 'POST', body: fd, credentials: 'include' })
+      fetch('/api/method/login', { method: 'POST', headers: getFrappeHeaders(), body: fd, credentials: 'include' })
       .then(function (r) { return r.json(); })
       .then(function (loginData) {
         if (loginData.message !== 'Logged In' && loginData.message !== 'No App' && !loginData.full_name) {
@@ -57,7 +72,7 @@
         return fetch(
           '/api/resource/SH Student?filters=' + encodeURIComponent(JSON.stringify([['portal_user_account','=',loginEmail]])) +
           '&fields=' + encodeURIComponent(JSON.stringify(['name'])) + '&limit=1',
-          { headers: { 'Accept': 'application/json' }, credentials: 'include' }
+          { headers: getFrappeHeaders(), credentials: 'include' }
         );
       })
       .then(function (r) { return r.json(); })
@@ -74,7 +89,7 @@
             ['role','in',['System Manager','PI Admin','SH Admin','SH Teacher']]
           ])) +
           '&fields=' + encodeURIComponent(JSON.stringify(['role'])) + '&limit=10',
-          { headers: { 'Accept': 'application/json' }, credentials: 'include' }
+          { headers: getFrappeHeaders(), credentials: 'include' }
         ).then(function (r) { return r.json(); });
       })
       .then(function (roleData) {

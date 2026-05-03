@@ -1,5 +1,20 @@
 (function () {
   'use strict';
+
+  function getFrappeHeaders() {
+      let csrfToken = '';
+      if (window.frappe && frappe.csrf_token) {
+          csrfToken = frappe.csrf_token;
+      } else {
+          const match = document.cookie.match(new RegExp('(^| )system_user=([^;]+)'));
+          if (match) csrfToken = decodeURIComponent(match[2]);
+      }
+      return {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Frappe-CSRF-Token': csrfToken
+      };
+  }
   var studentId = localStorage.getItem('sh_student_id');
   if (!studentId) { window.location.replace('/skillshub/login'); return; }
   var ctx = {};
@@ -12,7 +27,7 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     fetch('/api/method/skillshub_core.skillshub_core.api.get_student_summary?student=' + encodeURIComponent(studentId),
-      { headers: { 'Accept': 'application/json' }, credentials: 'include' })
+      { headers: getFrappeHeaders(), credentials: 'include' })
     .then(function (r) { return r.json(); })
     .then(function (data) {
       var s = data.message.student; ctx = s;
@@ -20,7 +35,7 @@
       document.getElementById('ctx-name').textContent     = s.student_name || s.full_name || '-';
       document.getElementById('ctx-schedule').textContent = s.current_schedule || '-';
       return fetch('/api/resource/SkillsHub Soft Skills?fields=["name"]&limit=100',
-        { headers: { 'Accept': 'application/json' }, credentials: 'include' }).then(function (r) { return r.json(); });
+        { headers: getFrappeHeaders(), credentials: 'include' }).then(function (r) { return r.json(); });
     })
     .then(function (skills) {
       var group = document.getElementById('skills-group');
@@ -45,7 +60,7 @@
       var skills = [];
       document.querySelectorAll('.skill-cb:checked').forEach(function (cb) { skills.push({ skill: cb.value }); });
       fetch('/api/resource/SH Soft Skills Feedback', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, credentials: 'include',
+        method: 'POST', headers: getFrappeHeaders(), credentials: 'include',
         body: JSON.stringify({
           doctype: 'SH Soft Skills Feedback', sh_student: studentId,
           student_full_name: ctx.student_name || ctx.full_name,

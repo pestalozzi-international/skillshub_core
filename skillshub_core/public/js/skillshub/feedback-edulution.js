@@ -1,5 +1,20 @@
 (function () {
   'use strict';
+
+  function getFrappeHeaders() {
+      let csrfToken = '';
+      if (window.frappe && frappe.csrf_token) {
+          csrfToken = frappe.csrf_token;
+      } else {
+          const match = document.cookie.match(new RegExp('(^| )system_user=([^;]+)'));
+          if (match) csrfToken = decodeURIComponent(match[2]);
+      }
+      return {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Frappe-CSRF-Token': csrfToken
+      };
+  }
   var studentId = localStorage.getItem('sh_student_id');
   if (!studentId) { window.location.replace('/skillshub/login'); return; }
   var ctx = {};
@@ -12,7 +27,7 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     fetch('/api/method/skillshub_core.skillshub_core.api.get_student_summary?student=' + encodeURIComponent(studentId),
-      { headers: { 'Accept': 'application/json' }, credentials: 'include' })
+      { headers: getFrappeHeaders(), credentials: 'include' })
     .then(function (r) { return r.json(); })
     .then(function (data) {
       var s = data.message.student; ctx = s;
@@ -48,7 +63,7 @@
       };
       rFields.forEach(function (f) { var el = document.getElementById('r-'+f); payload[f] = el ? parseInt(el.value)||0 : 0; });
       fetch('/api/resource/SkillsHub Edulution Feedback', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, credentials: 'include',
+        method: 'POST', headers: getFrappeHeaders(), credentials: 'include',
         body: JSON.stringify(payload)
       })
       .then(function (r) {

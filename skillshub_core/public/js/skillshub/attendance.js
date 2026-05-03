@@ -1,6 +1,21 @@
 (function () {
   'use strict';
 
+  function getFrappeHeaders() {
+      let csrfToken = '';
+      if (window.frappe && frappe.csrf_token) {
+          csrfToken = frappe.csrf_token;
+      } else {
+          const match = document.cookie.match(new RegExp('(^| )system_user=([^;]+)'));
+          if (match) csrfToken = decodeURIComponent(match[2]);
+      }
+      return {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Frappe-CSRF-Token': csrfToken
+      };
+  }
+
   function clearAndRedirect() {
     localStorage.removeItem('sh_student_id');
     localStorage.removeItem('sh_role');
@@ -18,7 +33,7 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('sh-logout').addEventListener('click', function () {
-      fetch('/api/method/logout', { method: 'POST', credentials: 'include' })
+      fetch('/api/method/logout', { method: 'POST', headers: getFrappeHeaders(), credentials: 'include' })
         .finally(function () { localStorage.clear(); window.location.replace('/skillshub/login'); });
     });
 
@@ -43,7 +58,7 @@
 
     // Load schedules
     fetch('/api/resource/SH Programme Schedule?filters=[["status","=","Active"]]&fields=["name","skillshub_programme","skillshub_course","cohort"]&limit=200',
-      { headers: { 'Accept': 'application/json' }, credentials: 'include' })
+      { headers: getFrappeHeaders(), credentials: 'include' })
     .then(function (r) {
       if (r.status === 401 || r.status === 403) { clearAndRedirect(); return null; }
       return r.json();
@@ -69,7 +84,7 @@
       fetch('/api/resource/SH Student Enrolment?filters=' +
           encodeURIComponent(JSON.stringify([['programme_schedule','=',scheduleId],['status','=','Enrolled']])) +
           '&fields=' + encodeURIComponent(JSON.stringify(['student','student_name'])) + '&limit=300',
-        { headers: { 'Accept': 'application/json' }, credentials: 'include' })
+        { headers: getFrappeHeaders(), credentials: 'include' })
       .then(function (r) {
         if (r.status === 401 || r.status === 403) { clearAndRedirect(); return null; }
         return r.json();
@@ -80,7 +95,7 @@
         if (students.length > 0) { renderRoster(students); return; }
         // Fallback: schedule doc's enrolled_students child table
         return fetch('/api/resource/SH Programme Schedule/' + encodeURIComponent(scheduleId) + '?fields=["enrolled_students"]',
-          { headers: { 'Accept': 'application/json' }, credentials: 'include' })
+          { headers: getFrappeHeaders(), credentials: 'include' })
           .then(function (r2) { return r2.ok ? r2.json() : null; })
           .then(function (sData) {
             if (!sData || !sData.data) { studentList.innerHTML = '<p style="color:var(--color-slate-500)">No students enrolled.</p>'; return; }
@@ -141,7 +156,7 @@
     function submitToAPI(payload) {
       return fetch('/api/method/skillshub_core.skillshub_core.api.mark_attendance', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: getFrappeHeaders(),
         credentials: 'include',
         body: JSON.stringify(payload)
       }).then(function (r) {

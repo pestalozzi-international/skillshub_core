@@ -1,6 +1,21 @@
 (function () {
   'use strict';
 
+  function getFrappeHeaders() {
+      let csrfToken = '';
+      if (window.frappe && frappe.csrf_token) {
+          csrfToken = frappe.csrf_token;
+      } else {
+          const match = document.cookie.match(new RegExp('(^| )system_user=([^;]+)'));
+          if (match) csrfToken = decodeURIComponent(match[2]);
+      }
+      return {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Frappe-CSRF-Token': csrfToken
+      };
+  }
+
   function clearAndRedirect() {
     localStorage.removeItem('sh_student_id'); localStorage.removeItem('sh_role');
     localStorage.removeItem('sh_user'); localStorage.removeItem('sh_display_user');
@@ -12,7 +27,7 @@
   var allStudents = [], allEnrolments = [], allCohorts = [], allProgrammes = [];
 
   function sf(url) {
-    return fetch(url, { headers: { 'Accept': 'application/json' }, credentials: 'include' })
+    return fetch(url, { headers: getFrappeHeaders(), credentials: 'include' })
       .then(function (r) {
         if (r.status === 401 || r.status === 403) { clearAndRedirect(); return null; }
         if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -22,7 +37,7 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('logout-btn').addEventListener('click', function () {
-      fetch('/api/method/logout', { method: 'POST', credentials: 'include' })
+      fetch('/api/method/logout', { method: 'POST', headers: getFrappeHeaders(), credentials: 'include' })
         .finally(function () { localStorage.clear(); window.location.replace('/skillshub/login'); });
     });
     ['f-cohort','f-programme','f-search'].forEach(function (id) {
