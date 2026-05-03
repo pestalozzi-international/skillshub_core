@@ -20,12 +20,8 @@
     window.location.replace('/skillshub/login');
   }
 
-  var userEmail = localStorage.getItem('sh_user');
-  var userRole  = localStorage.getItem('sh_role');
-  if (!userEmail && userRole !== 'teacher') {
-    window.location.replace('/skillshub/login');
-    return;
-  }
+  // Session is validated server-side via Frappe cookies.
+  // No synchronous localStorage guard — SSO users won't have these keys.
 
   document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('sh-logout').addEventListener('click', function () {

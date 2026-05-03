@@ -62,7 +62,7 @@
         body: JSON.stringify(payload)
       })
       .then(function (res) {
-        if (res.status === 401 || res.status === 403) { clearAndRedirect(); return null; }
+        if (res.status === 401) { clearAndRedirect(); return null; }
         if (!res.ok) return res.json().then(function (d) { throw new Error(d.exception || d.message || 'Update failed'); });
         msgDiv.className     = 'contact-message success';
         msgDiv.textContent   = 'Address updated successfully.';

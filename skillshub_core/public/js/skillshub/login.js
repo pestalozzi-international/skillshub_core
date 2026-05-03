@@ -12,11 +12,8 @@
     return headers;
 }
 
-  // Route guard
-  var role      = localStorage.getItem('sh_role');
-  var studentId = localStorage.getItem('sh_student_id');
-  if (role === 'admin')   { window.location.replace('/skillshub/admin/students'); return; }
-  if (role === 'teacher') { window.location.replace('/skillshub/attendance');     return; }
+  // No synchronous localStorage redirect — users who navigate to /login
+  // should always see the login form. Stale localStorage keys are unreliable.
 
   function resolveLoginEmail(raw) {
     var trimmed = raw.trim();
