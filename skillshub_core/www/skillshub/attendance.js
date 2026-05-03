@@ -11,7 +11,6 @@ function clearAndRedirect() {
 
 var userEmail = localStorage.getItem('sh_user');
 var userRole  = localStorage.getItem('sh_role');
-if (!userEmail && userRole !== 'teacher') {
   window.location.replace('/skillshub/login');
 }
 

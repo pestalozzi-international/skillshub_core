@@ -2,7 +2,6 @@ import { applyPortalSettings } from '/skillshub/portal-settings.js';
 applyPortalSettings();
 
 const studentId = localStorage.getItem('sh_student_id');
-if (!studentId) window.location.href = '/skillshub/login';
 
 let ctx = {};
 

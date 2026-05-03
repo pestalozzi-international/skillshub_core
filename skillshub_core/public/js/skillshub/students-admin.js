@@ -18,7 +18,7 @@
     window.location.replace('/skillshub/login');
   }
 
-  if (localStorage.getItem('sh_role') !== 'admin') { window.location.replace('/skillshub/login'); return; }
+  
 
   var allStudents = [], allEnrolments = [], allCohorts = [], allProgrammes = [];
 

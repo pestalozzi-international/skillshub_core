@@ -24,7 +24,6 @@ applyPortalSettings().then(() => {
   var studentId = localStorage.getItem('sh_student_id');
   if (role === 'admin')   { window.location.replace('/skillshub/admin/students'); return; }
   if (role === 'teacher') { window.location.replace('/skillshub/attendance');     return; }
-  if (studentId)          { window.location.replace('/skillshub/profile');        return; }
 })();
 
 // ---------------------------------------------------------------------------

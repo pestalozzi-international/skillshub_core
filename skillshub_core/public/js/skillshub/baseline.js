@@ -13,7 +13,6 @@
 }
 
   var studentId = localStorage.getItem('sh_student_id');
-  if (!studentId) { window.location.replace('/skillshub/login'); return; }
 
   var ctx = {};
 

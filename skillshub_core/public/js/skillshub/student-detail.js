@@ -18,11 +18,11 @@
     window.location.replace('/skillshub/login');
   }
 
-  if (localStorage.getItem('sh_role') !== 'admin') { window.location.replace('/skillshub/login'); return; }
+  
 
   var params    = new URLSearchParams(window.location.search);
   var studentId = params.get('id');
-  if (!studentId) { window.location.replace('/skillshub/admin/students'); return; }
+  
 
   function sf(url) {
     return fetch(url, { headers: getFrappeHeaders(), credentials: 'include' })
