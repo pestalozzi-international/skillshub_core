@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting... - SkillsHub</title>
+    <script>
+        // Simple role-based router for SkillsHub Portal
+        fetch('/api/method/frappe.auth.get_logged_user', { credentials: 'include' })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.message || data.message === 'Guest') {
+                    window.location.replace('/skillshub/login');
+                    return;
+                }
+                // Fetch roles to decide where to go
+                return fetch('/api/method/skillshub_core.skillshub_core.api.get_current_user_roles', { credentials: 'include' })
+                    .then(r => r.json())
+                    .then(roleData => {
+                        const roles = roleData.message || [];
+                        if (roles.includes('System Manager') || roles.includes('PI Admin')) {
+                            window.location.replace('/skillshub/admin/students');
+                        } else if (roles.includes('SH Student')) {
+                            window.location.replace('/skillshub/profile');
+                        } else {
+                            // Default fallback
+                            window.location.replace('/skillshub/attendance');
+                        }
+                    });
+            })
+            .catch(() => {
+                window.location.replace('/skillshub/login');
+            });
+    </script>
+</head>
+<body>
+    <div style="text-align:center; padding:5rem; font-family:sans-serif; color:#64748b;">
+        Redirecting you to the right place...
+    </div>
+</body>
+</html>

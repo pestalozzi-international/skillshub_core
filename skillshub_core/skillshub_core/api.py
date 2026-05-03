@@ -184,6 +184,12 @@ def enrol_cohort(cohort, programme_schedule, enrolment_date=None):
     }
 
 
+@frappe.whitelist()
+def get_current_user_roles():
+    """Return a list of roles for the currently logged-in user."""
+    return frappe.get_roles(frappe.session.user)
+
+
 # ---------------------------------------------------------------------------
 # Internal helpers (not whitelisted)
 # ---------------------------------------------------------------------------
