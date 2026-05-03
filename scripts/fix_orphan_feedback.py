@@ -69,28 +69,43 @@ def run():
 
     # ── Helper: find best enrolment ──────────────────────────────────
     def find_enrolment(student_id, schedule_prefix):
-        filters = {"student": student_id}
+        # 1. Try specific prefix match first
         if schedule_prefix:
-            # Match by programme_schedule name prefix (e.g. SSP%, MSC%, EDU%)
-            filters["programme_schedule"] = ["like", f"{schedule_prefix}%"]
+            filters = {
+                "student": student_id,
+                "programme_schedule": ["like", f"{schedule_prefix}%"]
+            }
+            enrolments = frappe.get_all(
+                "SH Student Enrolment",
+                filters=filters,
+                fields=["name", "status", "enrolment_date"],
+                order_by="enrolment_date desc",
+                limit=1,
+            )
+            if enrolments:
+                return enrolments[0].name, "exact"
 
+        # 2. Fallback to ANY enrolment for this student (Logical Match)
         enrolments = frappe.get_all(
             "SH Student Enrolment",
-            filters=filters,
-            fields=["name", "status", "enrolment_date", "programme_schedule"],
+            filters={"student": student_id},
+            fields=["name", "status", "enrolment_date"],
             order_by="enrolment_date desc",
             limit=0,
         )
 
         if not enrolments:
             return None, "no_match"
+        
+        # If we reached here and had a prefix, it's a fallback match
+        match_label = "fallback" if schedule_prefix else "exact"
         if len(enrolments) == 1:
-            return enrolments[0].name, "exact"
+            return enrolments[0].name, match_label
 
         active = [e for e in enrolments if e.status in ("Enrolled", "Active")]
         if active:
-            return active[0].name, "active_pick"
-        return enrolments[0].name, "recent_pick"
+            return active[0].name, f"{match_label}_active"
+        return enrolments[0].name, f"{match_label}_recent"
 
     # ── Process one DocType ──────────────────────────────────────────
     def process_doctype(config, email_map):
@@ -154,12 +169,13 @@ def run():
                 })
                 continue
 
-            if match_type in ("active_pick", "recent_pick"):
+            if match_type != "exact":
                 stats["ambiguous"] += 1
-                qualifier = f" (ambiguous -> {match_type})"
+                qualifier = f" ({match_type})"
             else:
                 qualifier = ""
-                stats["matched"] += 1
+            
+            stats["matched"] += 1
 
             if LOG_DETAILS:
                 print(f"    OK {record_name}: -> {enrolment_name} (student={student_id}){qualifier}")
