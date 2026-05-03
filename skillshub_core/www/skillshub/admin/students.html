@@ -39,20 +39,42 @@
           <h1>Student Directory</h1>
           <p>Administrative management & overview</p>
         </div>
-        <div class="sh-admin-nav">
-          <a href="/skillshub/admin/students" class="active">Students</a>
-          <button id="logout-btn" style="background:none; border:none; color:white; opacity:0.8; font-weight:600; cursor:pointer;">Sign Out</button>
+        <div class="sh-admin-nav" style="display:flex; gap:1.25rem; align-items:center;">
+          <a href="/app" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8;">Desk</a>
+          <a href="/skillshub/admin/students" class="active" style="color:white; text-decoration:none; font-weight:600; border-bottom:2px solid white; padding-bottom:2px;">Students</a>
+          <a href="/skillshub/attendance" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8;">Mark Attendance</a>
+          <button id="logout-btn" style="background:none; border:none; color:white; opacity:0.8; font-weight:600; cursor:pointer; font-size:0.875rem; margin-left:0.5rem;">Sign Out</button>
         </div>
       </div>
     </div>
   </div>
 
   <div class="sh-container">
-    <div class="filter-card">
-      <div class="sh-form-group"><label class="sh-label">Cohort</label><select id="f-cohort" class="sh-input"><option value="">All Cohorts</option></select></div>
-      <div class="sh-form-group"><label class="sh-label">Programme</label><select id="f-programme" class="sh-input"><option value="">All Programmes</option></select></div>
+    <div class="filter-card" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+      <div class="sh-form-group">
+        <label class="sh-label">Academic Year</label>
+        <select id="f-academic-year" class="sh-input" multiple style="height: 100px;">
+        </select>
+        <div style="font-size: 0.7rem; color: var(--color-slate-400); margin-top: 0.25rem;">Cmd/Ctrl + click to multi-select</div>
+      </div>
+      <div class="sh-form-group">
+        <label class="sh-label">Course</label>
+        <select id="f-course" class="sh-input" multiple style="height: 100px;">
+        </select>
+      </div>
+      <div class="sh-form-group">
+        <label class="sh-label">Status</label>
+        <select id="f-status" class="sh-input">
+          <option value="">All Statuses</option>
+          <option value="Active">Active</option>
+          <option value="Attached">Attached</option>
+          <option value="Graduated">Graduated</option>
+          <option value="Dropped">Dropped</option>
+        </select>
+      </div>
       <div class="sh-form-group"><label class="sh-label">Search</label><input type="text" id="f-search" class="sh-input" placeholder="Name or ID..."></div>
-      <div class="sh-form-group"><label class="sh-label">Path</label>
+      <div class="sh-form-group">
+        <label class="sh-label">Path</label>
         <div class="path-toggle">
           <button class="path-btn active" data-path="">All</button>
           <button class="path-btn" data-path="Path A">Path A</button>
@@ -64,6 +86,7 @@
     <div id="content" style="margin-top:2rem;">
       <div style="text-align:center; padding:5rem; color:var(--color-slate-400);">Loading students...</div>
     </div>
+    <div id="footer" style="margin-top: 2rem; padding: 1rem; text-align: center; font-size: 0.875rem; color: var(--color-slate-500); border-top: 1px solid var(--color-slate-100); display: none;"></div>
   </div>
   <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=1.1"></script>
   <script src="/assets/skillshub_core/js/skillshub/students-admin.js?v=1.2"></script>

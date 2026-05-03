@@ -30,7 +30,17 @@
     localStorage.removeItem('sh_display_user');
   }
 
+  function autoRedirect() {
+    const role = localStorage.getItem('sh_role');
+    const sid = localStorage.getItem('sh_student_id');
+    if (role === 'admin') window.location.replace('/skillshub/admin/students');
+    else if (role === 'teacher') window.location.replace('/skillshub/attendance');
+    else if (sid) window.location.replace('/skillshub/profile');
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    autoRedirect(); // Attempt auto-redirect if session keys exist
+
     var form     = document.getElementById('sh-login-form');
     var usrInput = document.getElementById('usr');
     var pwdInput = document.getElementById('pwd');
@@ -79,7 +89,7 @@
         return fetch(
           '/api/resource/Has Role?filters=' + encodeURIComponent(JSON.stringify([
             ['parent','=',localStorage.getItem('sh_user')],
-            ['role','in',['System Manager','PI Admin','SH Admin','SH Teacher']]
+            ['role','in',['System Manager','PI Admin','SH Admin','SH Teacher','SH Student']]
           ])) +
           '&fields=' + encodeURIComponent(JSON.stringify(['role'])) + '&limit=10',
           { headers: getFrappeHeaders(), credentials: 'include' }

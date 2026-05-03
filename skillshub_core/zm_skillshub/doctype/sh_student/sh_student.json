@@ -277,7 +277,7 @@
    "fieldtype": "Select",
    "label": "Programme Path",
    "options": "\nPath A\nPath B",
-   "read_only": 1
+   "read_only": 0
   },
   {
    "fieldname": "exit_reason",

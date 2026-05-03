@@ -39,6 +39,7 @@
   }
 
   function applySettings(s) {
+    console.log('[SkillsHub] Applying Portal Settings:', s);
     var root = document.documentElement;
     if (s.primary_color) {
       root.style.setProperty('--color-teal-700', s.primary_color);
@@ -62,13 +63,23 @@
     }
   }
 
+  console.log('[SkillsHub] Fetching Portal Settings...');
   fetch(
     '/api/method/skillshub_core.skillshub_portal.doctype.skillshub_portal_settings.skillshub_portal_settings.get_portal_settings',
     { headers: getFrappeHeaders(), credentials: 'include' }
   )
-  .then(function (r) { return r.ok ? r.json() : null; })
-  .then(function (data) {
-    if (data && data.message) applySettings(data.message);
+  .then(function (r) { 
+    if (!r.ok) { console.error('[SkillsHub] Settings fetch failed:', r.status); return null; }
+    return r.json(); 
   })
-  .catch(function () { /* silently use CSS defaults */ });
+  .then(function (data) {
+    if (data && data.message) {
+      applySettings(data.message);
+    } else {
+      console.warn('[SkillsHub] No portal settings found or empty response.');
+    }
+  })
+  .catch(function (err) { 
+    console.error('[SkillsHub] Settings error:', err);
+  });
 }());

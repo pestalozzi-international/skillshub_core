@@ -45,7 +45,7 @@
   }
 
   function deriveContext(enrolments, schedMap) {
-    if (!enrolments.length) return { cohort: null, programme: null };
+    if (!enrolments.length) return { cohort: null, milestone: null, academic_year: null, course: null };
     var sorted = enrolments.slice().sort(function (a, b) {
       var aA = a.status === 'Enrolled' ? 0 : 1, bA = b.status === 'Enrolled' ? 0 : 1;
       if (aA !== bA) return aA - bA;
@@ -53,17 +53,22 @@
     });
     var latest = sorted[0];
     var sched = schedMap[latest.programme_schedule] || {};
-    return { cohort: sched.cohort || null, programme: latest.milestone || sched.skillshub_programme || null };
+    return { 
+      cohort: sched.cohort || latest.cohort || null, 
+      milestone: latest.milestone || null,
+      academic_year: latest.academic_year || sched.academic_year || null,
+      course: latest.course || sched.skillshub_course || null
+    };
   }
 
-  var allStudents = [], allEnrolments = [], allCohorts = [], allProgrammes = [], scheduleMap = {};
+  var allStudents = [], allEnrolments = [], allYears = [], allCourses = [], scheduleMap = {};
 
   document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('logout-btn').addEventListener('click', function () {
       fetch('/api/method/logout', { method: 'POST', headers: getFrappeHeaders(), credentials: 'include' })
         .finally(function () { localStorage.clear(); window.location.replace('/skillshub/login'); });
     });
-    ['f-cohort','f-programme','f-status','f-search'].forEach(function (id) {
+    ['f-academic-year','f-course','f-status','f-search'].forEach(function (id) {
       var el = document.getElementById(id);
       if (el) el.addEventListener(id === 'f-search' ? 'input' : 'change', applyFilters);
     });
@@ -92,36 +97,48 @@
 
   function loadData() {
     Promise.allSettled([
-      sf('/api/resource/SkillsHub Cohort?fields=["name","cohort_name"]&limit=50').then(function (d) { if (d) allCohorts = d.data || []; }),
-      sf('/api/resource/SkillsHub Programme?fields=["name"]&limit=20').then(function (d) { if (d) allProgrammes = d.data || []; }),
+      sf('/api/resource/SH Academic Year?fields=["name"]&limit=50').then(function (d) { if (d) allYears = d.data || []; }),
+      sf('/api/resource/SkillsHub Course?fields=["name"]&limit=100').then(function (d) { if (d) allCourses = d.data || []; }),
       sf('/api/resource/SH Student?fields=["name","student_name","programme_path","status","graduated"]&limit=1000').then(function (d) { if (d) allStudents = d.data || []; }),
-      sf('/api/resource/SH Student Enrolment?fields=["name","student","milestone","programme_schedule","feedback_submitted","attendance_rate","status","enrolment_date"]&limit=5000').then(function (d) { if (d) allEnrolments = d.data || []; }),
-      sf('/api/resource/SH Programme Schedule?fields=["name","cohort","skillshub_programme"]&limit=500').then(function (d) { if (d && d.data) d.data.forEach(function (s) { scheduleMap[s.name] = s; }); })
+      sf('/api/resource/SH Student Enrolment?fields=["name","student","milestone","programme_schedule","feedback_submitted","attendance_rate","status","enrolment_date","academic_year","course"]&limit=5000').then(function (d) { if (d) allEnrolments = d.data || []; }),
+      sf('/api/resource/SH Programme Schedule?fields=["name","cohort","skillshub_programme","academic_year","skillshub_course"]&limit=500').then(function (d) { if (d && d.data) d.data.forEach(function (s) { scheduleMap[s.name] = s; }); })
     ]).then(function () {
-      var cs = document.getElementById('f-cohort');
-      allCohorts.forEach(function (c) { var o = document.createElement('option'); o.value = c.name; o.textContent = c.cohort_name || c.name; cs.appendChild(o); });
-      var ps = document.getElementById('f-programme');
-      allProgrammes.forEach(function (p) { var o = document.createElement('option'); o.value = p.name; o.textContent = p.name; ps.appendChild(o); });
+      var ay = document.getElementById('f-academic-year');
+      if (ay) allYears.forEach(function (y) { var o = document.createElement('option'); o.value = y.name; o.textContent = y.name; ay.appendChild(o); });
+      var crs = document.getElementById('f-course');
+      if (crs) allCourses.forEach(function (c) { var o = document.createElement('option'); o.value = c.name; o.textContent = c.name; crs.appendChild(o); });
+      
       if (!allStudents.length) { document.getElementById('content').innerHTML = '<div class="state-box">No student records found.</div>'; return; }
       applyFilters();
     });
   }
 
   function applyFilters() {
-    var cohort = document.getElementById('f-cohort').value;
-    var prog = document.getElementById('f-programme').value;
-    var statusVal = document.getElementById('f-status').value;
-    var search = document.getElementById('f-search').value.toLowerCase();
+    var ayEl = document.getElementById('f-academic-year');
+    var courseEl = document.getElementById('f-course');
+    var statusEl = document.getElementById('f-status');
+    var searchEl = document.getElementById('f-search');
+    
+    // Multi-select values as arrays
+    var selectedYears = ayEl ? Array.from(ayEl.selectedOptions).map(function(o){ return o.value; }).filter(Boolean) : [];
+    var selectedCourses = courseEl ? Array.from(courseEl.selectedOptions).map(function(o){ return o.value; }).filter(Boolean) : [];
+    
+    var statusVal = statusEl ? statusEl.value : '';
+    var search = searchEl ? searchEl.value.toLowerCase() : '';
+    
     var pb = document.querySelector('.path-btn.active');
     var path = pb ? pb.dataset.path : '';
 
     var filtered = allStudents.filter(function (s) {
       if (path && s.programme_path !== path) return false;
       if (search && s.name.toLowerCase().indexOf(search) === -1 && (s.student_name||'').toLowerCase().indexOf(search) === -1) return false;
+      
       var enrols = allEnrolments.filter(function (e) { return e.student === s.name; });
       var ctx = deriveContext(enrols, scheduleMap);
-      if (cohort && ctx.cohort !== cohort) return false;
-      if (prog) { var hasProg = enrols.some(function (e) { return e.milestone === prog; }); if (!hasProg) return false; }
+      
+      if (selectedYears.length && !selectedYears.includes(ctx.academic_year)) return false;
+      if (selectedCourses.length && !selectedCourses.includes(ctx.course)) return false;
+      
       if (statusVal) { var ind = getIndicator(s, enrols); if (statusVal !== ind.label) return false; }
       return true;
     });
@@ -152,8 +169,8 @@
         '</td>' +
         '<td><span class="sh-badge ' + ind.cssClass + '">' + esc(ind.label) + '</span></td>' +
         '<td>' +
-          '<div style="font-size:0.875rem">' + esc(ctx.programme||'No Milestone') + '</div>' +
-          '<div style="font-size:0.75rem;color:var(--color-slate-500)">' + esc(ctx.cohort||'No Cohort') + '</div>' +
+          '<div style="font-size:0.875rem; font-weight:600; color:var(--color-teal-700)">' + esc(ctx.course||'No Course') + '</div>' +
+          '<div style="font-size:0.75rem; color:var(--color-slate-500)">' + esc(ctx.academic_year||'No Year') + '</div>' +
         '</td>' +
         '<td><span class="sh-badge sh-badge-info">' + esc(s.programme_path||'—') + '</span></td>' +
         '<td>' +
@@ -196,7 +213,9 @@
     
     html += '</tbody></table></div>';
     content.innerHTML = html;
-    footer.textContent = students.length + ' student' + (students.length !== 1 ? 's' : '') + ' shown';
-    footer.style.display = 'block';
+    if (footer) {
+      footer.textContent = students.length + ' student' + (students.length !== 1 ? 's' : '') + ' shown';
+      footer.style.display = 'block';
+    }
   }
 }());

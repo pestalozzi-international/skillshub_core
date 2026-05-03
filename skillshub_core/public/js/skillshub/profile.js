@@ -19,12 +19,37 @@
   }
 
   // --- Core Lifecycle ---
-  document.addEventListener('DOMContentLoaded', () => {
-    if (!studentId) { clearAndRedirect(); return; }
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Rescue: If studentId is missing but we're at /profile, try to fetch it from session
+    if (!studentId) {
+      await attemptRescue();
+    }
+    
+    if (!localStorage.getItem('sh_student_id')) { 
+      clearAndRedirect(); 
+      return; 
+    }
     
     fetchStudentSummary();
     setupEventListeners();
   });
+
+  async function attemptRescue() {
+    try {
+      // In Frappe, we can usually hit /api/method/frappe.auth.get_logged_user 
+      // but let's just try to fetch the student record using the session's 'user' if available
+      // Or better, just fetch /api/resource/SH Student with no filters to see if any matches our session
+      // (Frappe's REST API will respect session user permissions)
+      const res = await fetch('/api/resource/SH Student?limit=1', { headers: getFrappeHeaders(), credentials: 'include' });
+      const data = await res.json();
+      if (data && data.data && data.data.length > 0) {
+        localStorage.setItem('sh_student_id', data.data[0].name);
+        localStorage.setItem('sh_role', 'student');
+      }
+    } catch (err) {
+      console.error('Rescue failed:', err);
+    }
+  }
 
   function setupEventListeners() {
     // Logout

@@ -35,13 +35,24 @@
   </script>
 </head>
 <body>
-<div class="att-wrapper">
-  <div class="att-header">
-    <h1>Mark Attendance</h1>
-    <div style="display:flex;align-items:center;gap:.75rem">
-      <button class="sh-btn-secondary" id="sh-logout">Sign Out</button>
+  <div class="sh-page-header">
+    <div class="sh-container">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h1>Attendance</h1>
+          <p id="att-subtitle">Mark or view attendance sessions</p>
+        </div>
+        <div class="sh-admin-nav" style="display:flex; gap:1.25rem; align-items:center;">
+          <a href="/app" id="nav-desk" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8; display:none;">Desk</a>
+          <a href="/skillshub/admin/students" id="nav-students" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8; display:none;">Students</a>
+          <a href="/skillshub/profile" id="nav-profile" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8; display:none;">Profile</a>
+          <button class="sh-btn-secondary" id="sh-logout" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:white; padding:0.4rem 0.8rem; font-size:0.875rem;">Sign Out</button>
+        </div>
+      </div>
     </div>
   </div>
+
+  <div class="sh-container" style="margin-top:-2rem;">
   <div id="sync-banner"><div class="dot"></div><span id="sync-count">0 sessions pending</span><button id="sync-btn">Sync Now</button></div>
   <div class="sh-card" style="margin-bottom:2rem">
     <div class="form-group">

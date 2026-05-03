@@ -24,6 +24,21 @@
   // No synchronous localStorage guard — SSO users won't have these keys.
 
   document.addEventListener('DOMContentLoaded', function () {
+    // Navigation & Role UI
+    var role = localStorage.getItem('sh_role');
+    if (role === 'admin' || role === 'teacher') {
+      var desk = document.getElementById('nav-desk'); if (desk) desk.style.display = 'block';
+      var students = document.getElementById('nav-students'); if (students) students.style.display = 'block';
+    } else {
+      var profile = document.getElementById('nav-profile'); if (profile) profile.style.display = 'block';
+      // If student, change title/subtitle
+      var title = document.querySelector('.sh-page-header h1'); if (title) title.textContent = 'My Attendance';
+      var sub = document.getElementById('att-subtitle'); if (sub) sub.textContent = 'View your recent attendance history';
+      // Hide marking controls for students
+      var area = document.getElementById('sh-attendance-area'); if (area) area.style.display = 'none';
+      var markCard = document.querySelector('.sh-card:not(#sh-attendance-area)'); if (markCard) markCard.style.display = 'none';
+    }
+
     document.getElementById('sh-logout').addEventListener('click', function () {
       fetch('/api/method/logout', { method: 'POST', headers: getFrappeHeaders(), credentials: 'include' })
         .finally(function () { localStorage.clear(); window.location.replace('/skillshub/login'); });
