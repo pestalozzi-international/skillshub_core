@@ -2,15 +2,12 @@
   'use strict';
 
   function getFrappeHeaders() {
-    const headers = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-    };
+    var headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' };
     if (window.frappe && frappe.csrf_token && frappe.csrf_token !== 'None' && !frappe.csrf_token.includes('{{')) {
-        headers['X-Frappe-CSRF-Token'] = frappe.csrf_token;
+      headers['X-Frappe-CSRF-Token'] = frappe.csrf_token;
     }
     return headers;
-}
+  }
 
   function clearAndRedirect() {
     localStorage.removeItem('sh_student_id'); localStorage.removeItem('sh_role');
@@ -18,11 +15,8 @@
     window.location.replace('/skillshub/login');
   }
 
-  
-
-  var params    = new URLSearchParams(window.location.search);
+  var params = new URLSearchParams(window.location.search);
   var studentId = params.get('id');
-  
 
   function sf(url) {
     return fetch(url, { headers: getFrappeHeaders(), credentials: 'include' })
@@ -31,6 +25,22 @@
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
       });
+  }
+
+  /* ── Status Indicator (shared logic with students-admin.js) ────── */
+  function getIndicator(student, enrolments) {
+    if (student.status === 'Dropped')
+      return { label: 'Dropped', cssClass: 'badge-dropped' };
+    if (student.status === 'Alumni' && student.graduated)
+      return { label: 'Graduated', cssClass: 'badge-graduated' };
+    if (student.status === 'Alumni')
+      return { label: 'Alumni', cssClass: 'badge-alumni' };
+    var hasAttach = enrolments.some(function (e) {
+      return e.milestone === 'Attachment' && e.status === 'Enrolled';
+    });
+    if (hasAttach)
+      return { label: 'Attached', cssClass: 'badge-attached' };
+    return { label: 'Active', cssClass: 'badge-student' };
   }
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -64,6 +74,7 @@
     var dt = new Date(d);
     return isNaN(dt) ? d : dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   }
+
   function calcAge(dob) {
     if (!dob) return '-';
     var d = new Date(dob), t = new Date();
@@ -75,6 +86,9 @@
   function render(s, enrolments) {
     if (!s) { document.getElementById('content').innerHTML = '<div class="sh-card state-box">Student not found.</div>'; return; }
 
+    var indicator = getIndicator(s, enrolments);
+
+    // ── Milestone Timeline ──────────────────────────────────────────
     var ORDER = ['Mindset Camp','Soft Skills','Edulution','Vocational Training','Attachment'];
     var enrolMap = {};
     enrolments.forEach(function (e) { if (e.milestone) enrolMap[e.milestone] = e; });
@@ -86,7 +100,7 @@
         return '<div class="tl-item tl-future"><div class="tl-dot tl-dot-future"></div>' +
           '<div class="tl-body"><div class="tl-title">' + m + '</div><div class="tl-meta">Not yet started</div></div></div>';
       }
-      var att  = e.attendance_rate != null ? Math.round(e.attendance_rate) : null;
+      var att = e.attendance_rate != null ? Math.round(e.attendance_rate) : null;
       var dcls = e.status === 'Completed' ? 'tl-dot-done' : e.status === 'Dropped' ? 'tl-dot-drop' : 'tl-dot-active';
       var pills = '<span class="pill pill-' + (e.status||'enrolled').toLowerCase() + '">' + (e.status||'Enrolled') + '</span>';
       if (att !== null) pills += '<span class="pill pill-att">' + att + '% att.</span>';
@@ -98,24 +112,20 @@
         '<div class="tl-pills">' + pills + '</div></div></div>';
     }).join('');
 
-    var emp = s.employment_history || [];
-    var empHtml = emp.length === 0
-      ? '<p style="color:var(--color-slate-500)">No employment history recorded.</p>'
-      : '<table class="emp-table"><thead><tr><th>Employer</th><th>Role</th><th>Type</th><th>Start</th><th>End</th></tr></thead><tbody>' +
-        emp.map(function (r) {
-          return '<tr><td>' + (r.employer_name||r.institution||'-') + '</td><td>' + (r.role||r.occupation||'-') + '</td>' +
-            '<td>' + (r.employer_type||'-') + '</td><td>' + fmt(r.start_date) + '</td>' +
-            '<td>' + (r.end_date ? fmt(r.end_date) : 'Current') + '</td></tr>';
-        }).join('') + '</tbody></table>';
-
-    var badgeCls = s.status === 'Student' ? 'badge-student' : 'badge-alumni';
+    // ── Build Profile ───────────────────────────────────────────────
     var addr = [s.address_line_1, s.address_line_2, s.pincode].filter(Boolean).join(', ') || '-';
+
+    // Graduated badge (only shown for Alumni)
+    var gradHtml = '';
+    if (s.status === 'Alumni') {
+      gradHtml = '<div class="card-label">Graduated</div><div class="card-value">' + (s.graduated ? '✓ Yes' : '✗ No') + '</div>';
+    }
 
     document.getElementById('content').innerHTML =
       '<div class="detail-header"><div>' +
         '<h2>' + (s.student_name||'-') + '</h2>' +
         '<div class="sid">' + s.name + '</div>' +
-        '<div style="margin-top:.5rem"><span class="status-badge ' + badgeCls + '">' + (s.status||'-') + '</span>' +
+        '<div style="margin-top:.5rem"><span class="status-badge ' + indicator.cssClass + '">' + indicator.label + '</span>' +
         (s.programme_path ? '<span class="status-badge badge-path" style="margin-left:.5rem">' + s.programme_path + '</span>' : '') +
         '</div></div>' +
         '<a href="/skillshub/admin/students" class="back-link">Back to Students</a>' +
@@ -132,8 +142,9 @@
           '<div class="card-label">Guardian Mobile</div><div class="card-value">' + (s.guardian_mobile_number||'-') + '</div>' +
         '</div>' +
         '<div class="sh-card"><h3 class="card-section-title">Enrolment Status</h3>' +
-          '<div class="card-label">Cohort</div><div class="card-value">' + (s.current_cohort||'-') + '</div>' +
-          '<div class="card-label">Programme</div><div class="card-value">' + (s.skillshub_programme||'-') + '</div>' +
+          '<div class="card-label">Status</div><div class="card-value"><span class="status-badge ' + indicator.cssClass + '" style="font-size:.75rem">' + indicator.label + '</span></div>' +
+          gradHtml +
+          '<div class="card-label">Intake Year</div><div class="card-value">' + (s.intake_year||'-') + '</div>' +
           '<div class="card-label">Path</div><div class="card-value">' + (s.programme_path||'-') + '</div>' +
           '<div class="card-label">Enrolled</div><div class="card-value">' + fmt(s.enrolment_date) + '</div>' +
         '</div>' +
@@ -141,8 +152,6 @@
       '<div class="right-col">' +
         '<div class="sh-card"><h3 style="margin-top:0;border-bottom:1px solid var(--color-slate-200);padding-bottom:.75rem;margin-bottom:1.5rem">Milestone Timeline</h3>' +
           '<div class="tl-container">' + tlItems + '</div></div>' +
-        '<div class="sh-card"><h3 style="margin-top:0;border-bottom:1px solid var(--color-slate-200);padding-bottom:.75rem;margin-bottom:1.25rem">Employment History</h3>' +
-          empHtml + '</div>' +
       '</div></div>';
   }
 }());

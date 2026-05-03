@@ -36,6 +36,8 @@
     .view-btn{background:var(--color-slate-100);color:var(--color-slate-700);border:none;border-radius:.5rem;padding:.375rem .75rem;font-size:.8125rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
     .state-box{background:white;border-radius:var(--border-radius-card);padding:3rem 2rem;text-align:center;box-shadow:var(--shadow-soft);color:var(--color-slate-500)}
     .footer{text-align:center;padding:1rem;font-size:.875rem;color:var(--color-slate-500)}
+    .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+    .ind-green{background:#059669}.ind-blue{background:#2563eb}.ind-orange{background:#d97706}.ind-red{background:#dc2626}
   </style>
   <script>
     window.frappe = {};
@@ -57,6 +59,7 @@
       <div class="filter-group"><label>Cohort</label><select id="f-cohort"><option value="">All Cohorts</option></select></div>
       <div class="filter-group"><label>Programme</label><select id="f-programme"><option value="">All Programmes</option></select></div>
       <div class="filter-group"><label>Search</label><input type="text" id="f-search" placeholder="Name or ID..."></div>
+      <div class="filter-group"><label>Status</label><select id="f-status"><option value="">All Statuses</option><option value="Active">Active</option><option value="Alumni">Alumni</option><option value="Graduated">Graduated</option><option value="Attached">Attached</option><option value="Dropped">Dropped</option></select></div>
       <div class="filter-group"><label>Path</label>
         <div class="path-toggle">
           <button class="path-btn active" data-path="">All</button>
@@ -69,6 +72,6 @@
     <div id="footer" class="footer" style="display:none"></div>
   </div>
   <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=1.1"></script>
-  <script src="/assets/skillshub_core/js/skillshub/students-admin.js?v=1.1"></script>
+  <script src="/assets/skillshub_core/js/skillshub/students-admin.js?v=1.2"></script>
 </body>
 </html>
