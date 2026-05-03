@@ -1,7 +1,10 @@
+import { applyPortalSettings } from '/skillshub/portal-settings.js';
+applyPortalSettings();
+
 const studentId = localStorage.getItem('sh_student_id');
 if (!studentId) window.location.href = '/skillshub/login';
 
-let studentData = {};
+let ctx = {};
 
 async function sf(url) {
   const r = await fetch(url, { headers: { 'Accept': 'application/json' }, credentials: 'include' });
@@ -9,72 +12,78 @@ async function sf(url) {
   return r.json();
 }
 
+function showError(msg) {
+  document.getElementById('sh-error').textContent = msg;
+  document.getElementById('sh-error').style.display = 'block';
+  document.getElementById('sh-loading').style.display = 'none';
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    const summary = await sf(`/api/method/skillshub_core.skillshub_core.api.get_student_summary?student=${studentId}`);
-    const student = summary.message.student;
-    studentData = student;
-    document.getElementById('ctx-id').textContent = studentId;
-    document.getElementById('ctx-name').textContent = student.student_name || '—';
+    const [summary, programmes] = await Promise.all([
+      sf(`/api/method/skillshub_core.skillshub_core.api.get_student_summary?student=${encodeURIComponent(studentId)}`),
+      sf('/api/resource/SkillsHub Programme?fields=["name"]&limit=20'),
+    ]);
 
-    const progs = await sf('/api/resource/SkillsHub Programme?fields=["name"]&limit=20');
+    const s = summary.message.student;
+    ctx = s;
+    document.getElementById('ctx-id').textContent   = studentId;
+    document.getElementById('ctx-name').textContent = s.student_name || s.full_name || '—';
+
+    // Populate milestone dropdown (user must select)
     const sel = document.getElementById('milestone');
-    (progs.data || []).forEach(p => {
-      const o = document.createElement('option');
-      o.value = p.name; o.textContent = p.name;
-      sel.appendChild(o);
+    (programmes.data || []).forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.name;
+      opt.textContent = p.name;
+      if (p.name === s.skillshub_programme) opt.selected = true;
+      sel.appendChild(opt);
     });
 
     document.getElementById('sh-loading').style.display = 'none';
     document.getElementById('sh-baseline-form').style.display = 'block';
-  } catch (e) {
-    document.getElementById('sh-loading').style.display = 'none';
-    document.getElementById('sh-error').textContent = 'Error loading form. Please refresh.';
-    document.getElementById('sh-error').style.display = 'block';
+  } catch {
+    showError('Error loading form. Please try again.');
   }
 });
 
-['confidence','communication','teamwork','problem_solving','resilience','financial_literacy'].forEach(id => {
-  document.getElementById(id).addEventListener('input', e =>
-    document.getElementById(id + '_val').textContent = e.target.value);
-});
-
-document.getElementById('sh-baseline-form').addEventListener('submit', async e => {
+document.getElementById('sh-baseline-form')?.addEventListener('submit', async e => {
   e.preventDefault();
-  const milestone = document.getElementById('milestone').value;
-  if (!milestone) {
-    document.getElementById('sh-error').textContent = 'Please select a programme.';
-    document.getElementById('sh-error').style.display = 'block';
-    return;
-  }
   const btn = document.getElementById('sh-submit-btn');
-  btn.disabled = true;
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  document.getElementById('sh-error').style.display = 'none';
+
+  const ratingFields = [
+    'self_confidence','communication','teamwork','problem_solving',
+    'leadership','financial_literacy','employment_readiness'
+  ];
+  const ratings = {};
+  ratingFields.forEach(f => {
+    const el = document.getElementById('r-' + f);
+    ratings[f] = el ? parseInt(el.value) || 0 : 0;
+  });
+
   try {
     const res = await fetch('/api/resource/SH Student Baseline Form', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({
-        doctype: 'SH Student Baseline Form',
-        sh_student: studentId,
-        milestone,
-        confidence: +document.getElementById('confidence').value,
-        communication: +document.getElementById('communication').value,
-        teamwork: +document.getElementById('teamwork').value,
-        problem_solving: +document.getElementById('problem_solving').value,
-        resilience: +document.getElementById('resilience').value,
-        financial_literacy: +document.getElementById('financial_literacy').value,
-        current_challenges: document.getElementById('current_challenges').value,
-        goals_next_phase: document.getElementById('goals_next_phase').value,
-        additional_support: document.getElementById('additional_support').value
-      })
+        doctype:            'SH Student Baseline Form',
+        sh_student:         studentId,
+        student_full_name:  ctx.student_name || ctx.full_name,
+        programme_schedule: ctx.current_schedule,
+        milestone:          document.getElementById('milestone').value,
+        goals:              document.getElementById('goals').value,
+        challenges:         document.getElementById('challenges').value,
+        ...ratings,
+      }),
     });
-    if (!res.ok) throw new Error();
+    if (!res.ok) throw new Error(await res.text());
     document.getElementById('sh-success').style.display = 'block';
     btn.textContent = 'Submitted ✓';
   } catch {
-    document.getElementById('sh-error').textContent = 'Submission failed. Please try again.';
-    document.getElementById('sh-error').style.display = 'block';
-    btn.disabled = false;
+    showError('Submission failed. Please try again.');
+    btn.disabled = false; btn.textContent = 'Submit Baseline';
   }
 });

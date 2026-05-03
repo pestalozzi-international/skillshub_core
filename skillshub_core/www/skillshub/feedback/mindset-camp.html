@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillsHub — Mindset Camp Feedback</title>
+  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
   <link rel="stylesheet" href="/skillshub/theme.css">
   <style>
     .form-wrapper{max-width:760px;margin:2rem auto;padding:0 1rem}
@@ -17,24 +18,19 @@
     .form-section{margin-bottom:2rem}
     .form-group{display:flex;flex-direction:column;margin-bottom:1.5rem}
     .sh-label{font-size:.9375rem;font-weight:600;color:var(--color-slate-900);margin-bottom:.5rem}
-    .sh-input{padding:.75rem;border:1px solid var(--color-slate-200);border-radius:var(--border-radius-btn);font-size:1rem;font-family:inherit;color:var(--color-slate-900)}
-    .sh-input:focus{outline:none;border-color:var(--color-teal-700)}
+    textarea.sh-input{padding:.75rem;border:1px solid var(--color-slate-200);border-radius:var(--border-radius-btn);font-size:1rem;font-family:inherit;color:var(--color-slate-900);resize:vertical}
+    textarea.sh-input:focus{outline:none;border-color:var(--color-teal-700)}
     .checkbox-group{display:flex;flex-direction:column;gap:.75rem}
     .checkbox-item{display:flex;align-items:center;gap:.75rem}
     .checkbox-item input[type=checkbox]{width:1.25rem;height:1.25rem;accent-color:var(--color-teal-700)}
-    .checkbox-item label{cursor:pointer;color:var(--color-slate-800)}
-    .sh-alert-error{background:var(--color-red-50);color:var(--color-red-700);border:1px solid var(--color-red-200);padding:1rem;border-radius:var(--border-radius-card);margin-bottom:1.5rem}
     .sh-success-msg{background:var(--color-emerald-50);color:var(--color-emerald-700);border:1px solid var(--color-emerald-200);padding:1rem;border-radius:var(--border-radius-card);margin-bottom:1.5rem}
-    .sh-btn-primary{width:100%;padding:.875rem 1.5rem;background:var(--color-teal-700);color:white;border:none;border-radius:var(--border-radius-btn);font-size:1rem;font-weight:600;cursor:pointer;margin-top:1.5rem}
-    .sh-btn-primary:hover:not(:disabled){background:var(--color-teal-800)}
-    .sh-btn-primary:disabled{opacity:.6;cursor:not-allowed}
   </style>
 </head>
 <body>
 <div class="form-wrapper">
   <a href="/skillshub/profile" class="back-link">← Back to Profile</a>
   <h1>Mindset Camp Feedback</h1>
-  <div id="sh-loading">Loading your details...</div>
+  <div id="sh-loading">Loading your details…</div>
   <div id="sh-error" class="sh-alert-error" style="display:none"></div>
   <form id="sh-feedback-form" style="display:none">
     <div class="context-card">
@@ -44,19 +40,19 @@
       <div><div class="detail-label">Milestone</div><div class="detail-value">Mindset Camp</div></div>
     </div>
     <div class="form-section">
-      <div class="section-title">Programme Aspects Covered</div>
-      <div class="checkbox-group" id="aspects-group"><p style="color:var(--color-slate-500)">Loading aspects...</p></div>
+      <div class="section-title">Aspects Covered</div>
+      <div class="checkbox-group" id="aspects-group"><p style="color:var(--color-slate-500)">Loading…</p></div>
     </div>
     <div class="form-section">
-      <div class="form-group"><label class="sh-label">What did you enjoy most?</label><textarea class="sh-input" id="enjoyed_most" rows="4" placeholder="Share what resonated with you..."></textarea></div>
-      <div class="form-group"><label class="sh-label">What was your key learning?</label><textarea class="sh-input" id="key_learning" rows="4" placeholder="Your main takeaway..."></textarea></div>
-      <div class="form-group"><label class="sh-label">How will you apply what you learned?</label><textarea class="sh-input" id="apply_learning" rows="4" placeholder="Your action plan..."></textarea></div>
-      <div class="form-group"><label class="sh-label">Suggestions for improvement?</label><textarea class="sh-input" id="suggestions" rows="4" placeholder="Your feedback..."></textarea></div>
+      <div class="form-group"><label class="sh-label">What did you enjoy most?</label><textarea class="sh-input" id="enjoyed_most" rows="4" placeholder="Share what resonated with you…"></textarea></div>
+      <div class="form-group"><label class="sh-label">What was your key learning?</label><textarea class="sh-input" id="key_learning" rows="4" placeholder="Your main takeaway…"></textarea></div>
+      <div class="form-group"><label class="sh-label">How will you apply what you learned?</label><textarea class="sh-input" id="apply_learning" rows="4" placeholder="Your action plan…"></textarea></div>
+      <div class="form-group"><label class="sh-label">Suggestions for improvement?</label><textarea class="sh-input" id="suggestions" rows="4" placeholder="Your feedback…"></textarea></div>
     </div>
-    <div id="sh-success" class="sh-success-msg" style="display:none">Feedback submitted successfully ✓</div>
-    <button type="submit" class="sh-btn-primary" id="sh-submit-btn">Submit Feedback</button>
+    <div id="sh-success" class="sh-success-msg" style="display:none">✓ Feedback submitted successfully</div>
+    <button type="submit" class="sh-btn-primary" style="width:100%" id="sh-submit-btn">Submit Feedback</button>
   </form>
 </div>
-<script src="/skillshub/feedback/mindset-camp.js" type="module"></script>
+<script type="module" src="/skillshub/feedback/mindset-camp.js"></script>
 </body>
 </html>

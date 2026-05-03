@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillsHub Admin — Students</title>
+  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
   <link rel="stylesheet" href="/skillshub/theme.css">
   <style>
     body{background:var(--color-slate-50)}
@@ -13,7 +14,6 @@
     .admin-nav{display:flex;gap:1.5rem;align-items:center}
     .admin-nav a{font-size:.875rem;font-weight:600;color:var(--color-teal-700);text-decoration:none;border-bottom:2px solid var(--color-teal-700);padding-bottom:.125rem}
     .admin-nav button{background:none;border:none;font-size:.875rem;color:var(--color-slate-600);cursor:pointer;font-weight:500}
-    .admin-nav button:hover{color:var(--color-slate-900)}
     .container{max-width:1400px;margin:2rem auto;padding:0 1.5rem}
     .filter-row{background:white;border-radius:var(--border-radius-card);padding:1.25rem 1.5rem;margin-bottom:1.5rem;box-shadow:var(--shadow-soft);display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;align-items:end}
     .filter-group label{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;color:var(--color-slate-600);letter-spacing:.05em;margin-bottom:.4rem}
@@ -54,7 +54,7 @@
     <div class="filter-row">
       <div class="filter-group"><label>Cohort</label><select id="f-cohort"><option value="">All Cohorts</option></select></div>
       <div class="filter-group"><label>Programme</label><select id="f-programme"><option value="">All Programmes</option></select></div>
-      <div class="filter-group"><label>Search</label><input type="text" id="f-search" placeholder="Name or ID..."></div>
+      <div class="filter-group"><label>Search</label><input type="text" id="f-search" placeholder="Name or ID…"></div>
       <div class="filter-group"><label>Path</label>
         <div class="path-toggle">
           <button class="path-btn active" data-path="">All</button>
@@ -63,9 +63,9 @@
         </div>
       </div>
     </div>
-    <div id="content"><div class="state-box">Loading students...</div></div>
+    <div id="content"><div class="state-box">Loading students…</div></div>
     <div id="footer" class="footer" style="display:none"></div>
   </div>
-  <script src="/skillshub/admin/students.js"></script>
+  <script type="module" src="/skillshub/admin/students.js"></script>
 </body>
 </html>
