@@ -270,48 +270,89 @@
 
   // --- Rendering Helpers ---
   function renderProfile(s) {
-    setText('ph-name', s.student_name || s.full_name);
-    setText('ph-subtitle', `${s.current_cohort || '—'} • ${s.programme_path || '—'} • ${s.skillshub_programme || '—'}`);
-    setText('val-id', s.id || s.name);
-    setText('val-dob', formatDate(s.date_of_birth));
-    setText('val-gender', s.gender);
-    setText('val-status', s.status);
-    setText('val-addr1', s.address_line_1);
-    setText('val-addr2', s.address_line_2);
-    setText('val-pincode', s.pincode);
-    setText('val-mobile', s.mobile || '—');
+    var content = document.getElementById('content');
+    
+    // Banner
+    var bannerHtml = '<div class="sh-page-header sh-animate-fade"><div class="sh-container"><div style="display:flex; justify-content:space-between; align-items:center;">' +
+      '<div><h1>' + (s.student_name || '—') + '</h1><p>' + (s.current_cohort || '—') + ' • ' + (s.skillshub_programme || '—') + '</p></div>' +
+      '<div style="display:flex; gap:1rem;">' +
+        '<a href="/skillshub/baseline" class="nav-btn">Baseline</a>' +
+        '<a href="/skillshub/feedback/soft-skills" class="nav-btn">Feedback</a>' +
+        '<button id="logout-btn" class="nav-btn logout-btn">Sign Out</button>' +
+      '</div>' +
+      '</div></div></div>';
+
+    // Sidebar
+    var sidebarHtml = '<div class="sidebar-col">' +
+      '<div class="glass-card sh-animate-fade">' +
+        '<div class="section-title">Demographics</div>' +
+        row('Student ID', s.name) +
+        row('Birth Date', formatDate(s.date_of_birth)) +
+        row('Gender', s.gender) +
+        '<div class="data-row"><div class="data-label">Status</div><div class="data-value"><span class="sh-badge sh-badge-info">' + s.status + '</span></div></div>' +
+      '</div>' +
+      '<div class="glass-card sh-animate-fade" style="animation-delay: 0.1s;">' +
+        '<div class="section-title">Growth & Motivation</div>' +
+        '<div class="data-label" style="margin-bottom:0.5rem">Motivations</div>' +
+        '<div id="motivation-pills" class="sh-pill-container"><button class="sh-pill-add-btn" id="add-motivation-btn">+ Add</button></div>' +
+        '<div class="data-label" style="margin-top:1.5rem; margin-bottom:0.5rem">Resilience</div>' +
+        '<div id="resilience-pills" class="sh-pill-container"><button class="sh-pill-add-btn" id="add-resilience-btn">+ Add</button></div>' +
+      '</div></div>';
+
+    // Main Content
+    var mainHtml = '<div class="content-col">' +
+      '<div class="glass-card sh-animate-fade editable-card" style="animation-delay: 0.2s;">' +
+        '<div class="edit-toggle" data-form="contact-form">Edit Contact</div>' +
+        '<div class="section-title">Contact Information</div>' +
+        '<div class="sh-grid sh-grid-2" id="contact-display-grid">' +
+          row('Address', [s.address_line_1, s.address_line_2, s.pincode].filter(Boolean).join(', ') || '—') +
+          row('Mobile', s.mobile || '—') +
+        '</div>' +
+        '<form id="contact-form" class="sh-form">' +
+          '<div class="sh-form-grid">' +
+            '<div class="sh-input-group"><label>Address Line 1</label><input type="text" name="address_line_1" class="sh-input"></div>' +
+            '<div class="sh-input-group"><label>Address Line 2</label><input type="text" name="address_line_2" class="sh-input"></div>' +
+            '<div class="sh-input-group"><label>Postcode</label><input type="text" name="pincode" class="sh-input"></div>' +
+            '<div class="sh-input-group"><label>Mobile</label><input type="text" name="mobile" class="sh-input"></div>' +
+          '</div>' +
+          '<div style="margin-top:1.5rem; display:flex; gap:0.75rem;">' +
+            '<button type="submit" class="sh-btn-primary">Save</button>' +
+            '<button type="button" class="sh-btn-secondary cancel-edit">Cancel</button>' +
+          '</div>' +
+        '</form>' +
+      '</div>' +
+      '<div class="glass-card sh-animate-fade" style="animation-delay: 0.3s;">' +
+        '<div class="section-title">Enrolment Journey</div>' +
+        '<div id="timeline-container" class="timeline">Loading timeline...</div>' +
+      '</div></div>';
+
+    content.innerHTML = bannerHtml + '<div class="sh-container"><div class="sh-main-container">' + sidebarHtml + mainHtml + '</div></div>';
+    
+    // Re-bind events after render
+    setupEventListeners();
   }
 
-  function populateForms(doc) {
-    const form = document.getElementById('contact-form');
-    if (!form) return;
-    ['address_line_1', 'address_line_2', 'pincode', 'mobile'].forEach(field => {
-      const input = form.querySelector(`[name="${field}"]`);
-      if (input) input.value = doc[field] || '';
-    });
+  function row(label, value) {
+    return '<div class="data-row"><div class="data-label">' + label + '</div><div class="data-value">' + (value || '—') + '</div></div>';
   }
 
   function renderTimeline(enrolments, student) {
-    const container = document.getElementById('timeline-container');
+    var container = document.getElementById('timeline-container');
     if (!container) return;
-
-    if (enrolments.length === 0) {
-      container.innerHTML = `<div class="tl-item"><div class="tl-title">Journey Started</div><div class="tl-meta">Welcome to the ${student.skillshub_programme || 'programme'}! Your progress will be tracked here.</div></div>`;
+    if (!enrolments.length) {
+      container.innerHTML = '<div class="tl-item"><div class="tl-title">Started Journey</div></div>';
       return;
     }
-
-    container.innerHTML = enrolments.map(e => `
-      <div class="tl-item ${e.status === 'Completed' ? 'completed' : ''}">
-        <div class="tl-date">${formatDate(e.enrolment_date)} ${e.completion_date ? ' — ' + formatDate(e.completion_date) : ''}</div>
-        <div class="tl-title">${e.milestone || 'Milestone'}</div>
-        <div class="tl-meta">
-          <span class="sh-badge ${e.status === 'Completed' ? 'sh-badge-success' : 'sh-badge-info'}">${e.status}</span>
-          ${e.course ? `<span class="sh-badge sh-badge-info">${e.course}</span>` : ''}
-          ${e.attendance_rate ? `<span class="sh-badge sh-badge-info">${Math.round(e.attendance_rate)}% Att.</span>` : ''}
-          ${e.feedback_submitted ? '<span class="sh-badge sh-badge-success">✓ Feedback</span>' : ''}
-        </div>
-      </div>
-    `).join('');
+    container.innerHTML = enrolments.map(function (e) {
+      return '<div class="tl-item ' + (e.status === 'Completed' ? 'completed' : '') + '">' +
+        '<div class="tl-date">' + formatDate(e.enrolment_date) + (e.completion_date ? ' — ' + formatDate(e.completion_date) : '') + '</div>' +
+        '<div class="tl-title">' + (e.milestone || 'Milestone') + '</div>' +
+        '<div class="tl-meta">' +
+          '<span class="sh-badge ' + (e.status === 'Completed' ? 'sh-badge-success' : 'sh-badge-info') + '">' + e.status + '</span>' +
+          (e.attendance_rate ? '<span class="sh-badge sh-badge-info">' + Math.round(e.attendance_rate) + '% Att.</span>' : '') +
+          (e.feedback_submitted ? '<span class="sh-badge sh-badge-success">✓ Feedback</span>' : '') +
+        '</div></div>';
+    }).join('');
   }
 
   function setText(id, text) {

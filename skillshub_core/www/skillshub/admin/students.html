@@ -7,30 +7,24 @@
   <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png?v=1.1">
   <link rel="stylesheet" href="/skillshub/theme.css?v=1.1">
   <style>
-    body{background:var(--color-slate-50)}
-    .admin-header{background:white;border-bottom:1px solid var(--color-slate-200);padding:1rem 2rem;box-shadow:var(--shadow-soft)}
-    .admin-header-inner{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
-    .admin-header h1{font-size:1.5rem;color:var(--color-slate-900);margin:0}
-    .admin-nav{display:flex;gap:1.5rem;align-items:center}
-    .admin-nav a{font-size:.875rem;font-weight:600;color:var(--color-teal-700);text-decoration:none;border-bottom:2px solid var(--color-teal-700);padding-bottom:.125rem}
-    .admin-nav button{background:none;border:none;font-size:.875rem;color:var(--color-slate-600);cursor:pointer;font-weight:500}
-    .container{max-width:1400px;margin:2rem auto;padding:0 1.5rem}
-    .filter-row{background:white;border-radius:var(--border-radius-card);padding:1.25rem 1.5rem;margin-bottom:1.5rem;box-shadow:var(--shadow-soft);display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;align-items:end}
-    .filter-group label{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;color:var(--color-slate-600);letter-spacing:.05em;margin-bottom:.4rem}
-    .filter-group select,.filter-group input{width:100%;padding:.5rem .75rem;border:1px solid var(--color-slate-200);border-radius:.5rem;font-size:.875rem;box-sizing:border-box}
-    .path-toggle{display:flex;gap:.375rem}
-    .path-btn{flex:1;padding:.5rem;border:1px solid var(--color-slate-200);background:white;color:var(--color-slate-600);border-radius:.5rem;cursor:pointer;font-size:.8125rem;font-weight:600;transition:all .15s}
-    .path-btn.active{background:var(--color-teal-700);color:white;border-color:var(--color-teal-700)}
-    .table-wrap{background:white;border-radius:var(--border-radius-card);overflow:hidden;box-shadow:var(--shadow-soft)}
-    table{width:100%;border-collapse:collapse}
-    thead{background:var(--color-slate-50);border-bottom:1px solid var(--color-slate-200)}
-    th{padding:1rem;text-align:left;font-size:.75rem;font-weight:600;text-transform:uppercase;color:var(--color-slate-600);letter-spacing:.05em}
-    td{padding:1rem;font-size:.875rem;color:var(--color-slate-900);border-bottom:1px solid var(--color-slate-100)}
-    .student-row:hover{background:var(--color-slate-50)}
-    .sid{font-family:monospace;font-size:.8125rem;color:var(--color-teal-700);font-weight:600}
-    .history-row td{padding:0 !important}
-    .history-table th{background:var(--color-slate-50);color:var(--color-slate-600);font-weight:600;font-size:0.7rem}
-    .history-table td{padding:0.75rem;font-size:0.8125rem}
+    body { background: var(--color-slate-50); }
+    .sh-admin-nav { display: flex; gap: 1.5rem; }
+    .sh-admin-nav a { color: white; text-decoration: none; font-weight: 600; opacity: 0.8; transition: opacity 0.2s; }
+    .sh-admin-nav a.active { opacity: 1; border-bottom: 2px solid white; }
+    .sh-admin-nav a:hover { opacity: 1; }
+    
+    .filter-card { margin-top: -2rem; padding: 1.5rem; background: white; border-radius: 1rem; box-shadow: var(--shadow-premium); display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; align-items: end; }
+    
+    .student-card { cursor: pointer; }
+    .student-card:hover { transform: translateY(-2px); box-shadow: 0 12px 30px -5px rgba(0,0,0,0.1); }
+    
+    .path-toggle { display: flex; gap: 0.25rem; background: var(--color-slate-100); padding: 0.25rem; border-radius: 0.5rem; }
+    .path-btn { flex: 1; border: none; background: none; padding: 0.5rem; border-radius: 0.375rem; font-size: 0.8125rem; font-weight: 600; cursor: pointer; color: var(--color-slate-600); }
+    .path-btn.active { background: white; color: var(--color-teal-700); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    
+    .sh-table-compact { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+    .sh-table-compact th { text-align: left; padding: 0.5rem; color: var(--color-slate-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em; border-bottom: 1px solid var(--color-slate-100); }
+    .sh-table-compact td { padding: 0.75rem 0.5rem; border-bottom: 1px solid var(--color-slate-50); }
   </style>
   <script>
     window.frappe = {};
@@ -38,22 +32,27 @@
   </script>
 </head>
 <body>
-  <div class="admin-header">
-    <div class="admin-header-inner">
-      <h1>SkillsHub Admin</h1>
-      <div class="admin-nav">
-        <a href="/skillshub/admin/students">Students</a>
-        <button id="logout-btn">Sign Out</button>
+  <div class="sh-page-header">
+    <div class="sh-container">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h1>Student Directory</h1>
+          <p>Administrative management & overview</p>
+        </div>
+        <div class="sh-admin-nav">
+          <a href="/skillshub/admin/students" class="active">Students</a>
+          <button id="logout-btn" style="background:none; border:none; color:white; opacity:0.8; font-weight:600; cursor:pointer;">Sign Out</button>
+        </div>
       </div>
     </div>
   </div>
-  <div class="container">
-    <div class="filter-row">
-      <div class="filter-group"><label>Cohort</label><select id="f-cohort"><option value="">All Cohorts</option></select></div>
-      <div class="filter-group"><label>Programme</label><select id="f-programme"><option value="">All Programmes</option></select></div>
-      <div class="filter-group"><label>Search</label><input type="text" id="f-search" placeholder="Name or ID..."></div>
-      <div class="filter-group"><label>Status</label><select id="f-status"><option value="">All Statuses</option><option value="Active">Active</option><option value="Alumni">Alumni</option><option value="Graduated">Graduated</option><option value="Attached">Attached</option><option value="Dropped">Dropped</option></select></div>
-      <div class="filter-group"><label>Path</label>
+
+  <div class="sh-container">
+    <div class="filter-card">
+      <div class="sh-form-group"><label class="sh-label">Cohort</label><select id="f-cohort" class="sh-input"><option value="">All Cohorts</option></select></div>
+      <div class="sh-form-group"><label class="sh-label">Programme</label><select id="f-programme" class="sh-input"><option value="">All Programmes</option></select></div>
+      <div class="sh-form-group"><label class="sh-label">Search</label><input type="text" id="f-search" class="sh-input" placeholder="Name or ID..."></div>
+      <div class="sh-form-group"><label class="sh-label">Path</label>
         <div class="path-toggle">
           <button class="path-btn active" data-path="">All</button>
           <button class="path-btn" data-path="Path A">Path A</button>
@@ -61,8 +60,10 @@
         </div>
       </div>
     </div>
-    <div id="content"><div class="state-box">Loading students...</div></div>
-    <div id="footer" class="footer" style="display:none"></div>
+
+    <div id="content" style="margin-top:2rem;">
+      <div style="text-align:center; padding:5rem; color:var(--color-slate-400);">Loading students...</div>
+    </div>
   </div>
   <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=1.1"></script>
   <script src="/assets/skillshub_core/js/skillshub/students-admin.js?v=1.2"></script>

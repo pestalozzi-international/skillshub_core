@@ -40,12 +40,19 @@ h1, h2, h3 {
 }
 
 /* --- Layout & Grid System --- */
+.sh-container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+.sh-main-container { display: grid; grid-template-columns: 320px 1fr; gap: 2rem; margin-top: -2rem; }
+.sidebar-col { display: flex; flex-direction: column; gap: 1.5rem; }
+.content-col { display: flex; flex-direction: column; gap: 1.5rem; }
+@media (max-width: 992px) { 
+  .sh-main-container { grid-template-columns: 1fr; margin-top: 2rem; }
+  .sidebar-col, .content-col { order: 0; }
+}
+
 .sh-grid { display: grid; gap: 1.5rem; }
 .sh-grid-2 { grid-template-columns: repeat(2, 1fr); }
 .sh-grid-3 { grid-template-columns: repeat(3, 1fr); }
-@media (max-width: 768px) {
-  .sh-grid-2, .sh-grid-3 { grid-template-columns: 1fr; }
-}
+@media (max-width: 768px) { .sh-grid-2, .sh-grid-3 { grid-template-columns: 1fr; } }
 
 /* === Cards === */
 .sh-card {
@@ -56,11 +63,8 @@ h1, h2, h3 {
     padding: 1.5rem;
     transition: transform 0.2s, box-shadow 0.2s;
 }
-.sh-card:hover {
-    box-shadow: var(--shadow-premium);
-}
 
-/* --- Premium Components --- */
+/* === Premium Components === */
 .glass-card {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(12px);
@@ -70,12 +74,37 @@ h1, h2, h3 {
   box-shadow: var(--shadow-glass);
   padding: 1.5rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 1.5rem;
 }
 
 .glass-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.1);
 }
+
+.section-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-teal-700);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-slate-100);
+}
+
+/* --- Data Display --- */
+.data-row { margin-bottom: 1.25rem; }
+.data-label { font-size: 0.75rem; font-weight: 600; color: var(--color-slate-500); text-transform: uppercase; margin-bottom: 0.25rem; }
+.data-value { font-size: 1rem; color: var(--color-slate-900); font-weight: 500; }
 
 /* === Buttons === */
 .sh-btn-primary {

@@ -90,13 +90,14 @@
         var roles = (roleData.data || []).map(function (r) { return r.role; });
         if (roles.indexOf('SH Admin') !== -1 || roles.indexOf('PI Admin') !== -1 || roles.indexOf('System Manager') !== -1) {
           localStorage.setItem('sh_role', 'admin');
-          window.location.href = '/skillshub/admin/students';
+          window.location.replace('/skillshub/admin/students');
         } else if (roles.indexOf('SH Teacher') !== -1) {
           localStorage.setItem('sh_role', 'teacher');
-          window.location.href = '/skillshub/attendance';
+          window.location.replace('/skillshub/attendance');
         } else {
-          localStorage.setItem('sh_role', 'teacher');
-          window.location.href = '/skillshub/attendance';
+          // Fallback to profile for potential students
+          localStorage.setItem('sh_role', 'student');
+          window.location.replace('/skillshub/profile');
         }
       })
       .catch(function (err) {

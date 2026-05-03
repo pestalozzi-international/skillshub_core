@@ -70,15 +70,15 @@
   function render(s, enrolments) {
     var content = document.getElementById('content');
     
-    // Header Banner
-    var bannerHtml = '<div class="profile-banner sh-animate-fade"><div class="pb-container"><div class="pb-info">' +
+    // Banner
+    var bannerHtml = '<div class="sh-page-header sh-animate-fade"><div class="sh-container"><div>' +
       '<h1>' + (s.student_name || '—') + '</h1>' +
       '<p>' + (s.current_cohort || 'No Cohort') + ' • ' + (s.skillshub_programme || 'No Programme') + '</p>' +
       '</div></div></div>';
 
     // Sidebar
     var sidebarHtml = '<div class="sidebar-col">' +
-      '<div class="glass-card sh-animate-fade" style="margin-bottom: 1.5rem;">' +
+      '<div class="glass-card sh-animate-fade">' +
         '<div class="section-title">Demographics</div>' +
         row('Student ID', s.name) +
         row('Birth Date', fmt(s.date_of_birth)) +
@@ -93,19 +93,8 @@
       '</div></div>';
 
     // Content
-    var timelineHtml = enrolments.map(function (e) {
-      return '<div class="tl-item ' + (e.status === 'Completed' ? 'completed' : '') + '">' +
-        '<div class="tl-date">' + fmt(e.enrolment_date) + (e.completion_date ? ' — ' + fmt(e.completion_date) : '') + '</div>' +
-        '<div class="tl-title">' + (e.milestone || 'Milestone') + (e.course ? ' · ' + e.course : '') + '</div>' +
-        '<div class="tl-meta">' +
-          '<span class="sh-badge ' + (e.status === 'Completed' ? 'sh-badge-success' : 'sh-badge-info') + '">' + e.status + '</span>' +
-          (e.attendance_rate ? '<span class="sh-badge sh-badge-info">' + Math.round(e.attendance_rate) + '% Att.</span>' : '') +
-          (e.feedback_submitted ? '<span class="sh-badge sh-badge-success">✓ Feedback</span>' : '') +
-        '</div></div>';
-    }).join('');
-
     var mainHtml = '<div class="content-col">' +
-      '<div class="glass-card sh-animate-fade" style="margin-bottom: 2rem; animation-delay: 0.2s;">' +
+      '<div class="glass-card sh-animate-fade" style="animation-delay: 0.2s;">' +
         '<div class="section-title">Contact Information</div>' +
         '<div class="sh-grid sh-grid-2">' +
           row('Address', [s.address_line_1, s.address_line_2, s.pincode].filter(Boolean).join(', ') || '—') +
@@ -116,10 +105,23 @@
       '</div>' +
       '<div class="glass-card sh-animate-fade" style="animation-delay: 0.3s;">' +
         '<div class="section-title">Enrolment Journey</div>' +
-        '<div class="timeline">' + (timelineHtml || '<div class="tl-item"><div class="tl-title">No history found</div></div>') + '</div>' +
+        '<div class="timeline">' + (renderTimeline(enrolments) || '<div class="tl-item">No history found</div>') + '</div>' +
       '</div></div>';
 
-    content.innerHTML = bannerHtml + '<div class="main-container">' + sidebarHtml + mainHtml + '</div>';
+    content.innerHTML = bannerHtml + '<div class="sh-container"><div class="sh-main-container">' + sidebarHtml + mainHtml + '</div></div>';
+  }
+
+  function renderTimeline(enrolments) {
+    return enrolments.map(function (e) {
+      return '<div class="tl-item ' + (e.status === 'Completed' ? 'completed' : '') + '">' +
+        '<div class="tl-date">' + fmt(e.enrolment_date) + (e.completion_date ? ' — ' + fmt(e.completion_date) : '') + '</div>' +
+        '<div class="tl-title">' + (e.milestone || 'Milestone') + (e.course ? ' · ' + e.course : '') + '</div>' +
+        '<div class="tl-meta">' +
+          '<span class="sh-badge ' + (e.status === 'Completed' ? 'sh-badge-success' : 'sh-badge-info') + '">' + e.status + '</span>' +
+          (e.attendance_rate ? '<span class="sh-badge sh-badge-info">' + Math.round(e.attendance_rate) + '% Att.</span>' : '') +
+          (e.feedback_submitted ? '<span class="sh-badge sh-badge-success">✓ Feedback</span>' : '') +
+        '</div></div>';
+    }).join('');
   }
 
   function row(label, value) {
