@@ -17,29 +17,35 @@ def run():
     DRY_RUN = True          # Set to False to actually commit changes
     LOG_DETAILS = True      # Print per-record match details
 
-    # ── Milestone mapping ────────────────────────────────────────────
+    # ── Programme schedule prefix mapping ────────────────────────────
+    # The milestone field is often null on enrolments. Instead, we match
+    # by the programme_schedule name prefix (e.g. SSP111 -> Soft Skills).
     FEEDBACK_CONFIG = [
         {
             "doctype": "SH Soft Skills Feedback",
-            "milestone": "Soft Skills",
+            "schedule_prefix": "SSP",
+            "label": "Soft Skills",
             "student_field": None,
             "enrolment_field": "enrolment_ticket",
         },
         {
             "doctype": "SH Mindset Camp Feedback",
-            "milestone": "Mindset Camp",
+            "schedule_prefix": "MSC",
+            "label": "Mindset Camp",
             "student_field": "sh_student",
             "enrolment_field": "enrolment_ticket",
         },
         {
             "doctype": "SkillsHub Edulution Feedback",
-            "milestone": "Edulution",
+            "schedule_prefix": "EDU",
+            "label": "Edulution",
             "student_field": None,
             "enrolment_field": "enrolment_ticket",
         },
         {
             "doctype": "SH Student Baseline Form",
-            "milestone": None,
+            "schedule_prefix": None,
+            "label": "Baseline (any)",
             "student_field": "sh_student",
             "enrolment_field": "enrolment_ticket",
         },
@@ -62,15 +68,16 @@ def run():
         return mapping
 
     # ── Helper: find best enrolment ──────────────────────────────────
-    def find_enrolment(student_id, milestone):
+    def find_enrolment(student_id, schedule_prefix):
         filters = {"student": student_id}
-        if milestone:
-            filters["milestone"] = milestone
+        if schedule_prefix:
+            # Match by programme_schedule name prefix (e.g. SSP%, MSC%, EDU%)
+            filters["programme_schedule"] = ["like", f"{schedule_prefix}%"]
 
         enrolments = frappe.get_all(
             "SH Student Enrolment",
             filters=filters,
-            fields=["name", "status", "enrolment_date"],
+            fields=["name", "status", "enrolment_date", "programme_schedule"],
             order_by="enrolment_date desc",
             limit=0,
         )
@@ -88,14 +95,15 @@ def run():
     # ── Process one DocType ──────────────────────────────────────────
     def process_doctype(config, email_map):
         dt = config["doctype"]
-        milestone = config["milestone"]
+        schedule_prefix = config["schedule_prefix"]
+        label = config["label"]
         student_field = config["student_field"]
         enrolment_field = config["enrolment_field"]
 
         print(f"\n{'='*60}")
         print(f"Processing: {dt}")
-        print(f"  Expected milestone: {milestone or '(any)'}")
-        print(f"  Student field: {student_field or 'owner (email lookup)'}")
+        print(f"  Match by: programme_schedule prefix '{schedule_prefix or 'ANY'}'  ({label})")
+        print(f"  Student field: {student_field or 'owner (email lookup) + name fallback'}")
         print(f"{'='*60}")
 
         orphans = frappe.get_all(
@@ -134,15 +142,15 @@ def run():
                     results.append({"record": record_name, "status": "no_student", "owner": orphan.owner})
                     continue
 
-            enrolment_name, match_type = find_enrolment(student_id, milestone)
+            enrolment_name, match_type = find_enrolment(student_id, schedule_prefix)
 
             if not enrolment_name:
                 stats["no_enrolment"] += 1
                 if LOG_DETAILS:
-                    print(f"    x {record_name}: Student {student_id} has no '{milestone or 'any'}' enrolment")
+                    print(f"    x {record_name}: Student {student_id} has no '{label}' enrolment")
                 results.append({
                     "record": record_name, "status": "no_enrolment",
-                    "student": student_id, "milestone": milestone,
+                    "student": student_id, "label": label,
                 })
                 continue
 
