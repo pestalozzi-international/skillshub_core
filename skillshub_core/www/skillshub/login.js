@@ -1,8 +1,20 @@
 // ---------------------------------------------------------------------------
 // portal-settings: apply branding before the page is interactive
+// Logo injection is handled here (not in an inline script) to avoid
+// Frappe's Jinja renderer throwing a 417 on { } chars in login.html.
 // ---------------------------------------------------------------------------
 import { applyPortalSettings } from '/skillshub/portal-settings.js';
-applyPortalSettings();
+
+applyPortalSettings().then(() => {
+  if (window.__shLogoUrl) {
+    const img = document.getElementById('portal-logo');
+    const box = document.getElementById('logo-container');
+    if (img && box) {
+      img.src = window.__shLogoUrl;
+      box.style.display = 'block';
+    }
+  }
+});
 
 // ---------------------------------------------------------------------------
 // Route guard — redirect already-authenticated users immediately
@@ -45,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
     errorMsg.style.display = 'none';
-    loginBtn.textContent = 'Signing in…';
+    loginBtn.textContent = 'Signing in...';
     loginBtn.disabled    = true;
 
     const rawInput   = usrInput.value.trim();
@@ -77,9 +89,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // Step 2: Is this user linked to an SH Student record?
       const studentRes = await fetch(
-        `/api/resource/SH Student?filters=${encodeURIComponent(
+        '/api/resource/SH Student?filters=' + encodeURIComponent(
           JSON.stringify([['portal_user_account', '=', loginEmail]])
-        )}&fields=${encodeURIComponent(JSON.stringify(['name']))}&limit=1`,
+        ) + '&fields=' + encodeURIComponent(JSON.stringify(['name'])) + '&limit=1',
         { headers: { 'Accept': 'application/json' }, credentials: 'include' }
       );
       if (!studentRes.ok) throw new Error('Unable to verify student record.');
@@ -94,29 +106,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // Step 3: Check role for admin / teacher routing
       const roleRes = await fetch(
-        `/api/resource/Has Role?filters=${encodeURIComponent(
+        '/api/resource/Has Role?filters=' + encodeURIComponent(
           JSON.stringify([
             ['parent', '=', loginEmail],
             ['role', 'in', ['System Manager', 'PI Admin', 'SH Admin', 'SH Teacher']],
           ])
-        )}&fields=${encodeURIComponent(JSON.stringify(['role']))}&limit=10`,
+        ) + '&fields=' + encodeURIComponent(JSON.stringify(['role'])) + '&limit=10',
         { headers: { 'Accept': 'application/json' }, credentials: 'include' }
       );
       if (!roleRes.ok) throw new Error('Unable to verify user roles.');
       const roleData = await roleRes.json();
-      const roles    = (roleData.data || []).map(r => r.role);
+      const roles    = (roleData.data || []).map(function (r) { return r.role; });
 
       localStorage.removeItem('sh_student_id');
 
       // SH Admin → admin dashboard
-      if (roles.includes('SH Admin') || roles.includes('PI Admin') || roles.includes('System Manager')) {
+      if (roles.indexOf('SH Admin') !== -1 || roles.indexOf('PI Admin') !== -1 || roles.indexOf('System Manager') !== -1) {
         localStorage.setItem('sh_role', 'admin');
         window.location.href = '/skillshub/admin/students';
         return;
       }
 
       // SH Teacher → attendance
-      if (roles.includes('SH Teacher')) {
+      if (roles.indexOf('SH Teacher') !== -1) {
         localStorage.setItem('sh_role', 'teacher');
         window.location.href = '/skillshub/attendance';
         return;

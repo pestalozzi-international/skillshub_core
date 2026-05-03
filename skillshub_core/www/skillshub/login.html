@@ -54,15 +54,5 @@
   </div>
 </div>
 <script type="module" src="/skillshub/login.js"></script>
-<script type="module">
-  // Show logo if portal settings provides one
-  import { applyPortalSettings } from '/skillshub/portal-settings.js';
-  applyPortalSettings().then(() => {
-    if (window.__shLogoUrl) {
-      document.getElementById('portal-logo').src = window.__shLogoUrl;
-      document.getElementById('logo-container').style.display = 'block';
-    }
-  });
-</script>
 </body>
 </html>
