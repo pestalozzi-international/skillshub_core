@@ -1,0 +1,95 @@
+{
+ "actions": [],
+ "creation": "2026-05-03 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_branding",
+  "primary_color",
+  "secondary_color",
+  "column_break_colors",
+  "header_gradient",
+  "section_assets",
+  "logo",
+  "column_break_assets",
+  "favicon"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_branding",
+   "fieldtype": "Section Break",
+   "label": "Brand Colours"
+  },
+  {
+   "default": "#0f766e",
+   "fieldname": "primary_color",
+   "fieldtype": "Color",
+   "label": "Primary Colour"
+  },
+  {
+   "default": "#115e59",
+   "fieldname": "secondary_color",
+   "fieldtype": "Color",
+   "label": "Secondary Colour"
+  },
+  {
+   "fieldname": "column_break_colors",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "linear-gradient(135deg, #0f766e 0%, #115e59 100%)",
+   "fieldname": "header_gradient",
+   "fieldtype": "Data",
+   "label": "Header Gradient (CSS value)"
+  },
+  {
+   "fieldname": "section_assets",
+   "fieldtype": "Section Break",
+   "label": "Assets"
+  },
+  {
+   "fieldname": "logo",
+   "fieldtype": "Attach Image",
+   "label": "Portal Logo"
+  },
+  {
+   "fieldname": "column_break_assets",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "favicon",
+   "fieldtype": "Attach Image",
+   "label": "Favicon"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-05-03 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Skillshub Portal",
+ "name": "SkillsHub Portal Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 0,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "PI Admin",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Guest"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 0
+}

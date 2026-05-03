@@ -1,28 +1,40 @@
-/* Skillshub Unified Theme (Ported from Vue/Tailwind) */
+/* SkillsHub Unified Theme
+ * CSS custom properties are the single source of truth for all colours.
+ * portal-settings.js overrides these at runtime from SkillsHub Portal Settings.
+ */
 
 :root {
+    /* Brand — overridden at runtime by portal-settings.js */
     --color-teal-700: #0f766e;
     --color-teal-800: #115e59;
-    --color-slate-50: #f8fafc;
+    --header-gradient: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+    --color-secondary: #115e59;
+
+    /* Neutral palette */
+    --color-slate-50:  #f8fafc;
     --color-slate-100: #f1f5f9;
     --color-slate-200: #e2e8f0;
     --color-slate-500: #64748b;
     --color-slate-600: #475569;
     --color-slate-700: #334155;
     --color-slate-900: #0f172a;
-    --color-red-50: #fef2f2;
-    --color-red-200: #fecaca;
-    --color-red-700: #b91c1c;
-    --color-emerald-50: #ecfdf5;
+
+    /* Semantic colours */
+    --color-red-50:      #fef2f2;
+    --color-red-200:     #fecaca;
+    --color-red-700:     #b91c1c;
+    --color-emerald-50:  #ecfdf5;
     --color-emerald-200: #a7f3d0;
     --color-emerald-700: #047857;
-    --color-amber-50: #fffbeb;
-    --color-amber-200: #fde68a;
-    --color-amber-700: #b45309;
-    
+    --color-emerald-800: #065f46;
+    --color-amber-50:    #fffbeb;
+    --color-amber-200:   #fde68a;
+    --color-amber-700:   #b45309;
+
+    /* Shadows & radii */
     --shadow-soft: 0 20px 45px -25px rgba(15, 23, 42, 0.28);
-    --border-radius-card: 1.5rem; /* rounded-3xl */
-    --border-radius-btn: 1rem; /* rounded-2xl */
+    --border-radius-card: 1.5rem;
+    --border-radius-btn:  1rem;
     --font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -34,13 +46,12 @@ body {
     padding: 0;
 }
 
-/* Typography */
 h1, h2, h3 {
     color: var(--color-slate-900);
     font-weight: 600;
 }
 
-/* Cards & Panels */
+/* === Cards === */
 .sh-card {
     background: #ffffff;
     border: 1px solid var(--color-slate-200);
@@ -49,7 +60,7 @@ h1, h2, h3 {
     padding: 1.5rem;
 }
 
-/* Buttons */
+/* === Buttons === */
 .sh-btn-primary {
     background-color: var(--color-teal-700);
     color: white;
@@ -61,15 +72,8 @@ h1, h2, h3 {
     cursor: pointer;
     transition: background-color 0.2s, transform 0.1s;
 }
-
-.sh-btn-primary:hover:not(:disabled) {
-    background-color: var(--color-teal-800);
-}
-
-.sh-btn-primary:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
+.sh-btn-primary:hover:not(:disabled) { background-color: var(--color-teal-800); }
+.sh-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .sh-btn-secondary {
     background-color: var(--color-slate-100);
@@ -82,28 +86,21 @@ h1, h2, h3 {
     cursor: pointer;
     transition: background-color 0.2s;
 }
+.sh-btn-secondary:hover { background-color: var(--color-slate-200); }
 
-.sh-btn-secondary:hover {
-    background-color: var(--color-slate-200);
-}
-
-/* Inputs */
+/* === Inputs === */
 .sh-input {
     width: 100%;
     padding: 0.875rem;
     border: 1px solid var(--color-slate-200);
-    border-radius: 0.75rem; /* rounded-xl */
+    border-radius: 0.75rem;
     font-size: 1rem;
     color: var(--color-slate-900);
     transition: border-color 0.2s;
     background-color: #fff;
     box-sizing: border-box;
 }
-
-.sh-input:focus {
-    outline: none;
-    border-color: var(--color-teal-700);
-}
+.sh-input:focus { outline: none; border-color: var(--color-teal-700); }
 
 .sh-label {
     display: block;
@@ -113,41 +110,14 @@ h1, h2, h3 {
     margin-bottom: 0.5rem;
 }
 
-/* Status Badges */
-.sh-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: inline-block;
-}
+/* === Badges === */
+.sh-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; }
+.sh-badge-enrolled, .sh-badge-info  { background-color: var(--color-slate-100); color: var(--color-slate-700); }
+.sh-badge-completed, .sh-badge-success { background-color: var(--color-emerald-50); color: var(--color-emerald-700); border: 1px solid var(--color-emerald-200); }
+.sh-badge-dropped, .sh-badge-error    { background-color: var(--color-red-50); color: var(--color-red-700); border: 1px solid var(--color-red-200); }
+.sh-badge-warning { background-color: var(--color-amber-50); color: var(--color-amber-700); border: 1px solid var(--color-amber-200); }
 
-.sh-badge-enrolled, .sh-badge-info {
-    background-color: var(--color-slate-100);
-    color: var(--color-slate-700);
-}
-
-.sh-badge-completed, .sh-badge-success {
-    background-color: var(--color-emerald-50);
-    color: var(--color-emerald-700);
-    border: 1px solid var(--color-emerald-200);
-}
-
-.sh-badge-dropped, .sh-badge-error {
-    background-color: var(--color-red-50);
-    color: var(--color-red-700);
-    border: 1px solid var(--color-red-200);
-}
-
-.sh-badge-warning {
-    background-color: var(--color-amber-50);
-    color: var(--color-amber-700);
-    border: 1px solid var(--color-amber-200);
-}
-
-/* Alerts / States */
+/* === Alerts === */
 .sh-alert-error {
     background-color: var(--color-red-50);
     color: var(--color-red-700);
@@ -156,3 +126,21 @@ h1, h2, h3 {
     border-radius: 1rem;
     font-size: 0.875rem;
 }
+.sh-alert-success {
+    background-color: var(--color-emerald-50);
+    color: var(--color-emerald-700);
+    border: 1px solid var(--color-emerald-200);
+    padding: 1rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+}
+
+/* === Page headers that use the brand gradient === */
+.sh-page-header {
+    background: var(--header-gradient);
+    padding: 2rem 2.5rem;
+}
+.sh-page-header h1,
+.sh-page-header p  { color: white; margin: 0; }
+.sh-page-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+.sh-page-header p  { opacity: 0.85; }

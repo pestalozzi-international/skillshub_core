@@ -35,6 +35,7 @@ def get_student_summary(student):
             "sessions_absent",
             "feedback_submitted",
             "baseline_submitted",
+            "course",
         ],
         order_by="enrolment_date asc",
     )
@@ -65,18 +66,29 @@ def get_student_summary(student):
 
     return {
         "student": {
-            "id": student_doc.name,
-            "full_name": student_doc.student_name,
-            "image": student_doc.student_image,
-            "status": student_doc.status,
-            "programme_path": student_doc.programme_path,
+            "id":               student_doc.name,
+            "full_name":        student_doc.student_name,
+            "student_name":     student_doc.student_name,
+            "image":            student_doc.student_image,
+            "status":           student_doc.status,
+            "programme_path":   student_doc.programme_path,
             "current_schedule": student_doc.current_schedule,
-            "current_cohort": student_doc.current_cohort,
-            "portal_enabled": student_doc.enabled,
+            "current_cohort":   student_doc.current_cohort,
+            "portal_enabled":   getattr(student_doc, 'portal_enabled', False),
+            "date_of_birth":    str(student_doc.date_of_birth) if student_doc.date_of_birth else None,
+            "gender":           student_doc.gender,
+            "nrc_number":       student_doc.nrc_number,
+            "address_line_1":   student_doc.address_line_1,
+            "address_line_2":   student_doc.address_line_2,
+            "pincode":          student_doc.pincode,
+            "guardian_name":    student_doc.guardian_name,
+            "guardian_mobile_number": student_doc.guardian_mobile_number,
+            "enrolment_date":   str(student_doc.enrolment_date) if student_doc.enrolment_date else None,
+            "skillshub_programme": student_doc.skillshub_programme,
         },
-        "enrolments": enrolments,
+        "enrolments":        enrolments,
         "employment_history": employment,
-        "baselines": baselines,
+        "baselines":         baselines,
     }
 
 
@@ -118,7 +130,6 @@ def mark_attendance(schedule, date, attendance_records):
         row.marked_by = frappe.session.user
         row.insert()
 
-    # Recompute enrolment stats for all affected students
     for record in attendance_records:
         _recompute_enrolment_for_student(record.get("student"), schedule)
 

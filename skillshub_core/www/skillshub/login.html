@@ -1,63 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkillsHub Login</title>
-    <link rel="stylesheet" href="/skillshub/theme.css">
-    <style>
-        .login-wrapper {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-        .login-card {
-            width: 100%;
-            max-width: 400px;
-        }
-        .login-card h2 {
-            text-align: center;
-            margin-bottom: 2rem;
-            color: var(--color-teal-700);
-        }
-        .login-form-group {
-            margin-bottom: 1.5rem;
-        }
-        .login-btn {
-            width: 100%;
-            margin-top: 1rem;
-        }
-        .login-error {
-            display: none;
-            margin-top: 1rem;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillsHub Login</title>
+  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
+  <link rel="stylesheet" href="/skillshub/theme.css">
+  <style>
+    .login-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background: var(--header-gradient);
+    }
+    .login-card   { width: 100%; max-width: 420px; }
+    .login-logo   { text-align: center; margin-bottom: 1.5rem; }
+    .login-logo img { max-height: 60px; }
+    .login-card h2 { text-align: center; margin: 0 0 2rem; color: var(--color-teal-700); }
+    .login-form-group { margin-bottom: 1.5rem; }
+    .login-btn    { width: 100%; margin-top: 1rem; }
+    .login-error  { display: none; margin-top: 1rem; }
+    .sso-link     { margin-top: 1rem; text-align: center; font-size: 0.875rem; }
+    .sso-link a   { color: var(--color-teal-700); text-decoration: none; }
+    .sso-link a:hover { text-decoration: underline; }
+  </style>
 </head>
 <body>
-
 <div class="login-wrapper">
-    <div class="sh-card login-card">
-        <h2>SkillsHub Portal</h2>
-        <form id="sh-login-form">
-            <div class="login-form-group">
-                <label for="usr" class="sh-label">Student ID or Email</label>
-                <input type="text" id="usr" name="usr" class="sh-input" placeholder="e.g. SH260043" required autocomplete="username">
-            </div>
-            <div class="login-form-group">
-                <label for="pwd" class="sh-label">Password</label>
-                <input type="password" id="pwd" name="pwd" class="sh-input" placeholder="Enter your password" required autocomplete="current-password">
-            </div>
-            <button type="submit" class="sh-btn-primary login-btn" id="login-btn">Sign In</button>
-            <div id="login-error" class="sh-alert-error login-error">Invalid credentials. Please try again.</div>
-            <div class="mt-4 text-center" style="margin-top: 1rem; text-align: center;">
-                <a href="/login" class="text-sm text-teal-700 hover:underline" style="font-size: 0.875rem; color: var(--color-teal-700); text-decoration: none;">Staff / Admin Login (SSO)</a>
-            </div>
-        </form>
+  <div class="sh-card login-card">
+    <div class="login-logo" id="logo-container" style="display:none">
+      <img id="portal-logo" src="" alt="SkillsHub">
     </div>
+    <h2>SkillsHub Portal</h2>
+    <form id="sh-login-form">
+      <div class="login-form-group">
+        <label for="usr" class="sh-label">Student ID or Email</label>
+        <input type="text" id="usr" name="usr" class="sh-input"
+               placeholder="e.g. SH260043" required autocomplete="username">
+      </div>
+      <div class="login-form-group">
+        <label for="pwd" class="sh-label">Password</label>
+        <input type="password" id="pwd" name="pwd" class="sh-input"
+               placeholder="Enter your password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="sh-btn-primary login-btn" id="login-btn">Sign In</button>
+      <div id="login-error" class="sh-alert-error login-error"></div>
+    </form>
+    <div class="sso-link">
+      <a href="/login">Staff / Admin SSO Login</a>
+    </div>
+  </div>
 </div>
-
-<script src="/skillshub/login.js" type="module"></script>
+<script type="module" src="/skillshub/login.js"></script>
+<script type="module">
+  // Show logo if portal settings provides one
+  import { applyPortalSettings } from '/skillshub/portal-settings.js';
+  applyPortalSettings().then(() => {
+    if (window.__shLogoUrl) {
+      document.getElementById('portal-logo').src = window.__shLogoUrl;
+      document.getElementById('logo-container').style.display = 'block';
+    }
+  });
+</script>
 </body>
 </html>
