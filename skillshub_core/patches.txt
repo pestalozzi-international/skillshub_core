@@ -3,5 +3,5 @@
 # Read docs to understand patches: https://frappeframework.com/docs/v14/user/en/database-migrations
 
 [post_model_sync]
-# Patches added in this section will be executed after doctypes are migrated
-skillshub_core.patches.v1_0.flatten_attendance_to_student_attendance
+## Patches added in this section will be executed after doctypes are migrated
+#skillshub_core.patches.v1_0.flatten_attendance_to_student_attendance
