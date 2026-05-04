@@ -49,7 +49,6 @@ def _feedback_forms_for_path(programme_path):
         {"doctype": "SkillsHub Vocational Training Feedback", "label": "Vocational Training Feedback", "route": FEEDBACK_ROUTE_MAP["SkillsHub Vocational Training Feedback"]},
         {"doctype": "ZM SkillsHub Attachment Feedback", "label": "Attachment Feedback", "route": FEEDBACK_ROUTE_MAP["ZM SkillsHub Attachment Feedback"]},
     ]
-    # Path A includes Edulution (normal path in this portal model).
     if path == "Path A" or not path:
         forms.insert(
             3,
@@ -153,7 +152,6 @@ def get_student_summary(student):
         ["intake_year", "student_intake_year", "intake_academic_year", "year_of_intake", "intake"],
     )
 
-    # Determine current enrolment (prefer active 'Enrolled' ticket, otherwise latest)
     current_enrolment = None
     try:
         enrolled = [e for e in enrolments if e.get('status') == 'Enrolled']
@@ -400,6 +398,30 @@ def get_current_user_roles():
     return frappe.get_roles(frappe.session.user)
 
 
+@frappe.whitelist()
+def get_user_roles():
+    """Securely returns the roles of the currently logged-in user for the portal frontend."""
+    return frappe.get_roles(frappe.session.user)
+
+
+@frappe.whitelist(allow_guest=True)
+def find_student_by_email(email):
+    """
+    Return student name for a given login email (safe server-side lookup).
+    Use this from the frontend instead of calling client.get_list with filters
+    that Frappe rejects (user_login_email is not a permitted client filter field).
+    """
+    if not email:
+        return None
+    found = frappe.get_all(
+        "SH Student",
+        filters=[["user_login_email", "=", email]],
+        fields=["name"],
+        limit=1,
+    )
+    return found[0]["name"] if found else None
+
+
 # ---------------------------------------------------------------------------
 # Internal helpers (not whitelisted)
 # ---------------------------------------------------------------------------
@@ -442,27 +464,22 @@ def update_student_admin(student, payload):
 
     student_doc = frappe.get_doc("SH Student", student)
 
-    # Set scalar fields
     for key, val in payload.items():
         try:
-            # handle child tables separately
             meta = student_doc.meta.get_field(key) if hasattr(student_doc, 'meta') else None
         except Exception:
             meta = None
         if meta and meta.fieldtype == 'Table' and isinstance(val, list):
-            # replace table rows
             student_doc.set(key, [])
             for row in val:
                 if isinstance(row, dict):
                     student_doc.append(key, row)
         else:
-            # don't set unknown internal keys like name
             if key in ('name', 'doctype'):
                 continue
             try:
                 student_doc.set(key, val)
             except Exception:
-                # best-effort: ignore non-existing fields
                 pass
 
     student_doc.save(ignore_permissions=True)
@@ -502,16 +519,3 @@ def delete_student_admin(student):
     frappe.delete_doc('SH Student', student, force=True)
     frappe.db.commit()
     return {"ok": True}
-@frappe.whitelist()
-def get_user_roles():
-    """Securely returns the roles of the currently logged-in user for the portal frontend."""
-    return frappe.get_roles(frappe.session.user)@frappe.whitelist(allow_guest=True)
-def find_student_by_email(email):
-    """
-    Return student name for a given login email (safe server-side lookup).
-    Use this from frontend instead of calling client.get_list with filters that may be rejected.
-    """
-    if not email:
-        return None
-    found = frappe.get_all('SH Student', filters=[['user_login_email', '=', email]], fields=['name'], limit=1)
-    return found[0]['name'] if found else None
