@@ -65,9 +65,30 @@
   var allStudents = [], allEnrolments = [], allYears = [], allCourses = [], scheduleMap = {};
 
   function checkAccess() {
-    var role = localStorage.getItem('sh_role');
-    if (role === 'student') { window.location.replace('/skillshub/profile'); return false; }
-    return true;
+    // Ensure current user has admin/teacher roles; otherwise redirect to appropriate portal.
+    return fetch('/api/method/frappe.auth.get_logged_user', { headers: getFrappeHeaders(), credentials: 'include' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data || !data.message || data.message === 'Guest') {
+          window.location.replace('/skillshub/login');
+          return false;
+        }
+        // Check roles
+        return fetch('/api/resource/Has Role?filters=' + encodeURIComponent(JSON.stringify([
+          ['parent','=',data.message],
+          ['role','in',['System Manager','PI Admin','SH Admin','SH Teacher','SH Student']]
+        ])) + '&fields=' + encodeURIComponent(JSON.stringify(['role'])) + '&limit=10', { headers: getFrappeHeaders(), credentials: 'include' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (roleData) {
+            var roles = (roleData && roleData.data || []).map(function (r) { return r.role; });
+            if (roles.indexOf('SH Student') !== -1 && roles.indexOf('SH Admin') === -1 && roles.indexOf('PI Admin') === -1 && roles.indexOf('System Manager') === -1) {
+              // Student user without admin privileges
+              window.location.replace('/skillshub/profile');
+              return false;
+            }
+            return true;
+          });
+      });
   }
 
   document.addEventListener('DOMContentLoaded', function () {
