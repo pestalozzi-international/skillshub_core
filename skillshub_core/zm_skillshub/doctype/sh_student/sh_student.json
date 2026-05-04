@@ -71,17 +71,16 @@
   "portal_access_section",
   "enabled",
   "portal_user_account",
-  "user_login_email",
   "enroled_programmes_and_history_tab",
   "status_section",
   "status",
   "graduated",
-  "column_break_iixj",
+  "column_break_lsvw",
   "programme_path",
   "intake_year",
   "enrolled_programmes_section",
   "programme_column",
-  "current_enrolment",
+  "student_enrolment",
   "current_schedule",
   "enrolment_column",
   "enrolment_date",
@@ -93,6 +92,7 @@
   "household_receives_financial_aid",
   "housing_status",
   "guardian_details_section",
+  "guardian_column",
   "guardian_name",
   "guardian_email",
   "guardian_mobile_number",
@@ -100,8 +100,8 @@
   "guardian_occupation",
   "guardian_address",
   "relationship",
-  "column_break_kbph",
   "parents_marital_status",
+  "section_break_veyp",
   "sibling_details_column",
   "number_of_siblings",
   "discipline_tab",
@@ -117,20 +117,22 @@
   "attachment_completed",
   "end_date",
   "section_break_lzmy",
-  "employment_start_date",
-  "is_currently_employed",
-  "employment_end_date",
-  "employment_notes",
-  "column_break_cimb",
-  "employment_institution",
-  "employment_niche",
-  "employer_address",
-  "employer_type",
-  "column_break_xqke",
-  "income_level",
-  "employment_role",
-  "currency",
-  "employment_monthly_salary"
+  "emp_start_date",
+  "emp_is_current",
+  "emp_end_date",
+  "emp_notes",
+  "column_break_flpz",
+  "emp_institution",
+  "emp_niche",
+  "emp_address",
+  "emp_employer_type",
+  "column_break_sahb",
+  "emp_occupation",
+  "emp_role",
+  "emp_currency",
+  "emp_salary",
+  "emp_income_level",
+  "current_enrolment"
  ],
  "fields": [
   {
@@ -141,13 +143,14 @@
   {
    "fieldname": "enrolled_programmes_section",
    "fieldtype": "Section Break",
-   "label": "Current Programme"
+   "label": "Programme Schedule"
   },
   {
-   "fetch_from": "current_enrolment.programme_schedule",
+   "fetch_from": "student_enrolment.programme_schedule",
    "fieldname": "current_schedule",
    "fieldtype": "Link",
    "label": "Current Schedule",
+   "mandatory_depends_on": "eval:doc.status == \"Student\"",
    "options": "SH Programme Schedule"
   },
   {
@@ -159,8 +162,7 @@
    "fieldname": "applicant_record",
    "fieldtype": "Link",
    "label": "Applicant Record",
-   "options": "SH Applicant",
-   "search_index": 1
+   "options": "SH Applicant"
   },
   {
    "fieldname": "last_school_attended",
@@ -498,12 +500,6 @@
    "label": "Enabled"
   },
   {
-   "fetch_from": "user_account.email",
-   "fieldname": "user_login_email",
-   "fieldtype": "Read Only",
-   "label": "User Login Email"
-  },
-  {
    "fieldname": "discipline_tab",
    "fieldtype": "Tab Break",
    "label": "Discipline"
@@ -577,10 +573,6 @@
    "options": "\nMother\nFather\nStepmother\nStepfather\nGrandmother\nGrandfather\nGrandparent\nAunt\nUncle\nBrother\nSister\nCousin\nLegal Guardian\nFoster Parent\nAdoptive Parent\nDaughter\nHusband\nSelf\nWife"
   },
   {
-   "fieldname": "column_break_kbph",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "highest_level_of_schooling",
    "fieldtype": "Select",
    "label": "Highest Level of Schooling Range",
@@ -623,14 +615,15 @@
   {
    "fieldname": "programme_column",
    "fieldtype": "Column Break",
-   "label": "Programme"
+   "label": "Programme Timeline"
   },
   {
    "fieldname": "enrolment_column",
    "fieldtype": "Column Break",
-   "label": "Enrolment"
+   "label": "Enrolment & Graduation"
   },
   {
+   "fetch_from": "current_schedule.start_date",
    "fieldname": "enrolment_date",
    "fieldtype": "Date",
    "label": "Enrolment Date",
@@ -717,73 +710,110 @@
    "label": "End Date"
   },
   {
-   "fieldname": "employment_institution",
+   "fieldname": "intake_year",
    "fieldtype": "Link",
-   "label": "Employment Institution",
-   "link_filters": "[[\"SH Employment Institution\", \"students_eligible_for\", \"in\", [\"Employment\", \"Both\"]]]",
-   "options": "SH Employment Institution",
-   "search_index": 1
+   "label": "Intake Year",
+   "options": "SH Academic Year"
   },
   {
-   "fieldname": "employment_role",
+   "fieldname": "column_break_lsvw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "student_enrolment",
+   "fieldtype": "Link",
+   "label": "Current Enrolment Record",
+   "options": "SH Student Enrolment"
+  },
+  {
+   "fieldname": "guardian_column",
+   "fieldtype": "Column Break",
+   "label": "Guardian"
+  },
+  {
+   "fieldname": "section_break_veyp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "emp_institution",
+   "fieldtype": "Link",
+   "label": "Institution",
+   "options": "SH Employment Institution"
+  },
+  {
+   "fetch_from": "emp_institution.niche",
+   "fieldname": "emp_niche",
    "fieldtype": "Data",
-   "label": "Employment Role"
+   "label": "Niche"
   },
   {
-   "fieldname": "employer_type",
+   "fetch_from": "emp_institution.address",
+   "fieldname": "emp_address",
+   "fieldtype": "Data",
+   "label": "Address"
+  },
+  {
+   "fieldname": "emp_employer_type",
    "fieldtype": "Select",
    "label": "Employer Type",
-   "options": "\nPrivate\nGovernment\nNGO\nSelf Employed"
+   "options": "\nFormal\nInformal\nSelf-Employed"
   },
   {
-   "fieldname": "income_level",
-   "fieldtype": "Select",
-   "label": "Income Level",
-   "options": "Low\nMedium\nHigh"
-  },
-  {
-   "fetch_from": "attachment_institution.niche",
-   "fieldname": "employment_niche",
+   "fieldname": "emp_occupation",
    "fieldtype": "Data",
-   "label": "Employment Niche"
+   "label": "Occupation"
   },
   {
-   "default": "0",
-   "fieldname": "is_currently_employed",
-   "fieldtype": "Check",
-   "label": "Currently Employed"
+   "fieldname": "emp_role",
+   "fieldtype": "Data",
+   "label": "Role"
   },
   {
-   "fieldname": "employment_start_date",
-   "fieldtype": "Date",
-   "label": "Employment Start Date"
-  },
-  {
-   "fieldname": "employment_end_date",
-   "fieldtype": "Date",
-   "label": "Employment End Date"
-  },
-  {
-   "fieldname": "employment_notes",
-   "fieldtype": "Small Text",
-   "label": "Employment Notes"
-  },
-  {
-   "default": "ZMW",
-   "fieldname": "currency",
+   "fieldname": "emp_currency",
    "fieldtype": "Link",
    "label": "Currency",
    "options": "Currency",
    "read_only": 1
   },
   {
-   "fieldname": "employment_monthly_salary",
+   "fieldname": "emp_salary",
    "fieldtype": "Currency",
-   "label": "Monthly Salary",
-   "precision": "2"
+   "label": "Salary",
+   "options": "emp_currency"
   },
   {
-   "fieldname": "column_break_iixj",
+   "fieldname": "emp_income_level",
+   "fieldtype": "Select",
+   "label": "Income Level",
+   "options": "\nAbove\nBelow\nSame"
+  },
+  {
+   "fieldname": "emp_start_date",
+   "fieldtype": "Date",
+   "label": "Start Date"
+  },
+  {
+   "fieldname": "emp_end_date",
+   "fieldtype": "Date",
+   "label": "End Date"
+  },
+  {
+   "default": "0",
+   "fieldname": "emp_is_current",
+   "fieldtype": "Check",
+   "label": "Is Current"
+  },
+  {
+   "fieldname": "emp_notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "column_break_flpz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_sahb",
    "fieldtype": "Column Break"
   },
   {
@@ -791,26 +821,6 @@
    "fieldtype": "Link",
    "label": "Current Enrolment",
    "options": "SH Student Enrolment"
-  },
-  {
-   "fieldname": "column_break_cimb",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "column_break_xqke",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fetch_from": "attachment_institution.address",
-   "fieldname": "employer_address",
-   "fieldtype": "Data",
-   "label": "Employer Address"
-  },
-  {
-   "fieldname": "intake_year",
-   "fieldtype": "Link",
-   "label": "Intake Year",
-   "options": "SH Academic Year"
   }
  ],
  "grid_page_length": 50,
@@ -858,7 +868,7 @@
    "link_fieldname": "student"
   }
  ],
- "modified": "2026-05-04 09:15:49.987711",
+ "modified": "2026-05-04 13:55:19.874074",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Student",
