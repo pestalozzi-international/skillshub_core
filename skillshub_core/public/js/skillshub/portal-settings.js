@@ -39,6 +39,10 @@
   }
 
   function applySettings(s) {
+    if (!s || typeof s !== 'object') {
+      console.error('[SkillsHub] Invalid portal settings payload:', s);
+      return;
+    }
     console.log('[SkillsHub] Applying Portal Settings:', s);
     if (s.portal_name) {
       var title = document.querySelector('.sh-login-card h2'); if (title) title.textContent = s.portal_name;
@@ -51,10 +55,13 @@
     if (s.primary_color) {
       console.log('[SkillsHub] Applying branding color:', s.primary_color);
       var root = document.documentElement;
-      root.style.setProperty('--color-teal-700', s.primary_color);
-      root.style.setProperty('--color-teal-600', s.primary_color); // Also update 600 for buttons
+      root.style.setProperty('--color-teal-700', s.primary_color, 'important');
+      root.style.setProperty('--color-teal-600', s.primary_color, 'important'); // Also update 600 for buttons
+      root.style.setProperty('--color-teal-800', darken(s.primary_color, 18), 'important');
+      root.style.setProperty('--header-gradient', 'linear-gradient(135deg, ' + s.primary_color + ' 0%, ' + darken(s.primary_color, 18) + ' 100%)', 'important');
+      root.style.setProperty('--sh-glass-border', 'rgba(255,255,255,0.32)', 'important');
       // Generate a darker version for gradients if possible, or just use the same
-      root.style.setProperty('--color-teal-900', 'rgba(0,0,0,0.2)'); 
+      root.style.setProperty('--color-teal-900', 'rgba(0,0,0,0.2)', 'important');
     }
     if (s.logo) {
       var logos = document.querySelectorAll('.sh-logo');
@@ -80,13 +87,23 @@
     fetch('/api/method/skillshub_core.skillshub_core.api.get_current_user_roles', { headers: getFrappeHeaders(), credentials: 'include' })
   ])
   .then(function (responses) {
+    if (!responses[0] || !responses[0].ok) {
+      console.error('[SkillsHub] Failed to load portal branding settings. HTTP status:', responses[0] ? responses[0].status : 'No response');
+    }
+    if (!responses[1] || !responses[1].ok) {
+      console.error('[SkillsHub] Failed to load user roles. HTTP status:', responses[1] ? responses[1].status : 'No response');
+    }
     return Promise.all(responses.map(function(r) { return r.ok ? r.json() : null; }));
   })
   .then(function (results) {
     var settingsData = results[0];
     var rolesData = results[1];
 
-    if (settingsData && settingsData.message) applySettings(settingsData.message);
+    if (settingsData && settingsData.message) {
+      applySettings(settingsData.message);
+    } else {
+      console.error('[SkillsHub] Branding settings response is empty or malformed:', settingsData);
+    }
     
     if (rolesData && rolesData.message) {
       var roles = rolesData.message;

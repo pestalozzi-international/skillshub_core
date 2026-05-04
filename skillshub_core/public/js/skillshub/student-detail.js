@@ -22,8 +22,36 @@
       .then(function (r) {
         if (r.status === 401) { clearAndRedirect(); return null; }
         if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
+        return r.text().then(function (text) {
+          if (!text) return {};
+          try {
+            return JSON.parse(text);
+          } catch (parseErr) {
+            console.error('[SkillsHub] Malformed JSON response from:', url, parseErr);
+            return { data: null, _parse_error: true };
+          }
+        });
       });
+  }
+
+  function getSafeArray(value) {
+    if (Array.isArray(value)) return value.filter(Boolean);
+    if (!value) return [];
+    if (typeof value === 'string') {
+      try {
+        var parsed = JSON.parse(value);
+        return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+      } catch (e) {
+        console.error('[SkillsHub] Invalid child-table JSON:', e);
+        return [];
+      }
+    }
+    return [];
+  }
+
+  function getSafeText(value) {
+    if (value === null || value === undefined) return '';
+    return String(value).trim();
   }
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -31,11 +59,6 @@
       document.getElementById('content').innerHTML = '<div style="text-align:center; padding:5rem;">Student ID missing.</div>';
       return;
     }
-
-    document.getElementById('logout-btn').addEventListener('click', function () {
-      fetch('/api/method/logout', { method: 'POST', headers: getFrappeHeaders(), credentials: 'include' })
-        .finally(function () { clearAndRedirect(); });
-    });
 
     fetchData();
   });
@@ -90,6 +113,8 @@
 
   function render(s, enrolments) {
     var content = document.getElementById('content');
+    var motivations = getSafeArray(s && s.motivations);
+    var resilienceLinks = getSafeArray(s && s.resilience_links);
     
     // Header with navigation
     var headerHtml = '<div class="sh-page-header sh-animate-fade"><div class="sh-container">' +
@@ -103,6 +128,7 @@
           '<a href="/app" id="nav-desk" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8;">Desk</a>' +
           '<a href="/skillshub/admin/students" id="nav-students" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8; font-weight:600;">Students</a>' +
           '<a href="/skillshub/attendance" id="nav-attendance" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8;">Attendance</a>' +
+          '<button id="logout-btn" style="background:none; border:none; color:white; opacity:0.8; font-weight:600; cursor:pointer; font-size:0.875rem;">Sign Out</button>' +
         '</div>' +
       '</div></div></div>';
 
@@ -118,8 +144,8 @@
       '</div>' +
       '<div class="glass-card sh-animate-fade" style="animation-delay: 0.1s;">' +
         '<div class="section-title">Growth & Motivation</div>' +
-        pillsSection('Motivations', s.motivations, 'motivation') +
-        pillsSection('Resilience', s.resilience_links, 'resilience_statement') +
+        pillsSection('Motivations', motivations, 'motivation') +
+        pillsSection('Resilience', resilienceLinks, 'resilience_statement') +
       '</div></div>';
 
     // Main Content
@@ -139,6 +165,14 @@
       '</div></div>';
 
     content.parentElement.innerHTML = headerHtml + '<div class="sh-container" style="margin-top:-2.5rem;"><div class="sh-main-container">' + sidebarHtml + mainHtml + '</div></div>';
+
+    var logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function () {
+        fetch('/api/method/logout', { method: 'POST', headers: getFrappeHeaders(), credentials: 'include' })
+          .finally(function () { clearAndRedirect(); });
+      });
+    }
   }
 
   function renderTimeline(enrolments) {
@@ -160,9 +194,11 @@
 
   function pillsSection(label, data, field) {
     var pills = '';
-    if (data && Array.isArray(data)) {
+    if (Array.isArray(data)) {
       pills = data.map(function (item) {
-        return '<div class="sh-pill">' + (item[field] || '—') + '</div>';
+        var safeItem = (item && typeof item === 'object') ? item : {};
+        var text = getSafeText(safeItem[field]);
+        return '<div class="sh-pill">' + (text || '—') + '</div>';
       }).join('');
     }
     return '<div class="data-label" style="margin-top: 1rem; margin-bottom: 0.5rem;">' + label + '</div>' +
