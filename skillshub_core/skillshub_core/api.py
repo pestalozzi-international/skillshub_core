@@ -26,7 +26,9 @@ def _has_student_access(student_doc):
         return True
     portal_user = getattr(student_doc, "portal_user_account", None)
     login_email = getattr(student_doc, "user_login_email", None)
-    return user in {portal_user, login_email}
+    user_norm = (user or "").strip().lower()
+    allowed = {(portal_user or "").strip().lower(), (login_email or "").strip().lower()}
+    return user_norm in allowed
 
 
 @frappe.whitelist()
@@ -87,6 +89,7 @@ def get_student_summary(student):
 
     return {
         "student": {
+            "name":             student_doc.name,
             "id":               student_doc.name,
             "full_name":        student_doc.student_name,
             "student_name":     student_doc.student_name,
