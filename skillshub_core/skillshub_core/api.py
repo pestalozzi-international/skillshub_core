@@ -58,6 +58,17 @@ def _feedback_forms_for_path(programme_path):
     return forms
 
 
+def _pick_first(student_doc, fieldnames):
+    for fieldname in fieldnames:
+        try:
+            value = student_doc.get(fieldname)
+        except Exception:
+            value = None
+        if value not in (None, ""):
+            return value
+    return None
+
+
 @frappe.whitelist()
 def get_student_summary(student):
     """
@@ -122,6 +133,25 @@ def get_student_summary(student):
                 {"sh_student": student_doc.name},
             )
         )
+    schedule_feedback = {}
+    for enrolment in enrolments:
+        schedule_name = enrolment.get("programme_schedule")
+        if not schedule_name:
+            continue
+        submitted = []
+        for form in feedback_forms:
+            if frappe.db.exists(
+                form["doctype"],
+                {"sh_student": student_doc.name, "programme_schedule": schedule_name},
+            ):
+                submitted.append(form["label"])
+        enrolment["feedback_forms_submitted"] = submitted
+        schedule_feedback[schedule_name] = submitted
+
+    intake_year = _pick_first(
+        student_doc,
+        ["intake_year", "student_intake_year", "intake_academic_year", "year_of_intake", "intake"],
+    )
 
     return {
         "student": {
@@ -134,6 +164,7 @@ def get_student_summary(student):
             "programme_path":   student_doc.programme_path,
             "current_schedule": student_doc.current_schedule,
             "current_cohort":   student_doc.current_cohort,
+            "intake_year":      intake_year,
             "portal_enabled":   getattr(student_doc, 'portal_enabled', False),
             "date_of_birth":    str(student_doc.date_of_birth) if student_doc.date_of_birth else None,
             "gender":           student_doc.gender,
@@ -160,6 +191,7 @@ def get_student_summary(student):
         "baselines":         baselines,
         "feedback_forms":    feedback_forms,
         "feedback_status":   feedback_status,
+        "schedule_feedback": schedule_feedback,
     }
 
 

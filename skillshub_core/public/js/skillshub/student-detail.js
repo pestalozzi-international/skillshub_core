@@ -109,14 +109,14 @@
     
     // Header with navigation
     var headerHtml = '<div class="sh-page-header sh-animate-fade"><div class="sh-container">' +
-      '<div style="display:flex; justify-content:space-between; align-items:flex-end;">' +
+      '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">' +
         '<div>' +
           '<a href="/skillshub/admin/students" class="sh-back-link" style="color:rgba(255,255,255,0.7); text-decoration:none; font-size:0.875rem; display:block; margin-bottom:0.5rem;">← Back to Directory</a>' +
           '<h1>' + (s.student_name || '—') + '</h1>' +
-          '<p>' + (s.current_cohort || 'No Cohort') + ' • ' + (s.skillshub_programme || 'No Programme') + '</p>' +
-          '<p style="font-size:0.875rem; opacity:0.85; margin-top:0.4rem;">' + (s.path_definition || '') + '</p>' +
+          '<p>' + (s.intake_year || 'No Intake Year') + ' • ' + (s.skillshub_programme || 'No Programme') + '</p>' +
+          '<p style="font-size:0.875rem; opacity:0.85; margin-top:0.35rem; max-width:36rem;">' + (s.path_definition || '') + '</p>' +
         '</div>' +
-        '<div class="sh-admin-nav" style="display:flex; gap:1.25rem; align-items:center; margin-bottom:0.5rem;">' +
+        '<div class="sh-admin-nav" style="display:flex; gap:1.25rem; align-items:center; margin-top:0.75rem;">' +
           '<a href="/app" id="nav-desk" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8;">Desk</a>' +
           '<a href="/skillshub/admin/students" id="nav-students" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8; font-weight:600;">Students</a>' +
           '<a href="/skillshub/attendance" id="nav-attendance" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8;">Attendance</a>' +
@@ -156,7 +156,7 @@
         '<div class="timeline">' + (renderTimeline(enrolments) || '<div class="tl-item">No history found</div>') + '</div>' +
       '</div></div>';
 
-    content.parentElement.innerHTML = headerHtml + '<div class="sh-container" style="margin-top:-2.5rem;"><div class="sh-main-container">' + sidebarHtml + mainHtml + '</div></div>';
+    content.parentElement.innerHTML = headerHtml + '<div class="sh-container" style="margin-top:-1.75rem;"><div class="sh-main-container">' + sidebarHtml + mainHtml + '</div></div>';
 
     var logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
@@ -169,6 +169,12 @@
 
   function renderTimeline(enrolments) {
     return enrolments.map(function (e) {
+      var submittedForms = Array.isArray(e.feedback_forms_submitted) ? e.feedback_forms_submitted : [];
+      var formsHtml = submittedForms.length
+        ? '<div style="margin-top:0.5rem; display:flex; flex-wrap:wrap; gap:0.4rem;">' + submittedForms.map(function (name) {
+            return '<span class="sh-badge sh-badge-success" style="text-transform:none; letter-spacing:0;">✓ ' + name + '</span>';
+          }).join('') + '</div>'
+        : '<div style="margin-top:0.5rem; font-size:0.78rem; color:var(--color-slate-500)">No submitted feedback for this schedule yet.</div>';
       return '<div class="tl-item ' + (e.status === 'Completed' ? 'completed' : '') + '">' +
         '<div class="tl-date">' + fmt(e.enrolment_date) + (e.completion_date ? ' — ' + fmt(e.completion_date) : '') + '</div>' +
         '<div class="tl-title">' + (e.milestone || e.course || e.programme_schedule || 'Programme Milestone') + (e.course && e.milestone ? ' · ' + e.course : '') + '</div>' +
@@ -176,7 +182,7 @@
           '<span class="sh-badge ' + (e.status === 'Completed' ? 'sh-badge-success' : 'sh-badge-info') + '">' + e.status + '</span>' +
           (e.attendance_rate ? '<span class="sh-badge sh-badge-info">' + Math.round(e.attendance_rate) + '% Att.</span>' : '') +
           (e.feedback_submitted ? '<span class="sh-badge sh-badge-success">✓ Feedback</span>' : '') +
-        '</div></div>';
+        '</div>' + formsHtml + '</div>';
     }).join('');
   }
 

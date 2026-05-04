@@ -45,7 +45,7 @@
   }
 
   function deriveContext(enrolments, schedMap) {
-    if (!enrolments.length) return { cohort: null, milestone: null, academic_year: null, course: null };
+    if (!enrolments.length) return { cohort: null, milestone: null, programme_schedule: null, academic_year: null, course: null };
     var sorted = enrolments.slice().sort(function (a, b) {
       var aA = a.status === 'Enrolled' ? 0 : 1, bA = b.status === 'Enrolled' ? 0 : 1;
       if (aA !== bA) return aA - bA;
@@ -56,6 +56,7 @@
     return {
       cohort: sched.cohort || latest.cohort || null, 
       milestone: latest.milestone || null,
+      programme_schedule: latest.programme_schedule || null,
       academic_year: latest.academic_year || sched.academic_year || null,
       course: latest.course || sched.skillshub_course || null
     };
@@ -109,7 +110,11 @@
     Promise.allSettled([
       sf('/api/resource/SH Academic Year?fields=["name"]&limit=50').then(function (d) { if (d) allYears = d.data || []; }),
       sf('/api/resource/SkillsHub Course?fields=["name"]&limit=100').then(function (d) { if (d) allCourses = d.data || []; }),
-      sf('/api/resource/SH Student?fields=["name","student_name","programme_path","status","graduated"]&limit=1000').then(function (d) { if (d) allStudents = d.data || []; }),
+      sf('/api/resource/SH Student?fields=["name","student_name","programme_path","status","graduated","intake_year"]&limit=1000')
+        .catch(function () {
+          return sf('/api/resource/SH Student?fields=["name","student_name","programme_path","status","graduated"]&limit=1000');
+        })
+        .then(function (d) { if (d) allStudents = d.data || []; }),
       sf('/api/resource/SH Student Enrolment?fields=["name","student","milestone","programme_schedule","feedback_submitted","attendance_rate","status","enrolment_date","academic_year","course"]&limit=5000').then(function (d) { if (d) allEnrolments = d.data || []; }),
       sf('/api/resource/SH Programme Schedule?fields=["name","cohort","skillshub_programme","academic_year","skillshub_course"]&limit=500').then(function (d) { if (d && d.data) d.data.forEach(function (s) { scheduleMap[s.name] = s; }); })
     ]).then(function (results) {
@@ -200,10 +205,10 @@
         '</td>' +
         '<td><span class="sh-badge ' + ind.cssClass + '">' + esc(ind.label) + '</span></td>' +
         '<td>' +
-          '<div style="font-size:0.75rem; color:var(--color-slate-500); text-transform:uppercase; letter-spacing:0.04em;">Milestone</div>' +
-          '<div style="font-size:0.8rem; font-weight:600; color:var(--color-slate-700); margin-bottom:0.25rem;">' + esc(ctx.milestone || '—') + '</div>' +
+          '<div style="font-size:0.75rem; color:var(--color-slate-500); text-transform:uppercase; letter-spacing:0.04em;">Programme Schedule</div>' +
+          '<div style="font-size:0.8rem; font-weight:600; color:var(--color-slate-700); margin-bottom:0.25rem;">' + esc(ctx.programme_schedule || '—') + '</div>' +
           '<div style="font-size:0.875rem; font-weight:600; color:var(--color-teal-700)">' + esc(ctx.course||'No Course') + '</div>' +
-          '<div style="font-size:0.75rem; color:var(--color-slate-500)">' + esc(ctx.academic_year||'No Year') + '</div>' +
+          '<div style="font-size:0.75rem; color:var(--color-slate-500)">Intake: ' + esc(s.intake_year || '—') + '</div>' +
         '</td>' +
         '<td><span class="sh-badge sh-badge-info">' + esc(s.programme_path||'—') + '</span>' +
           '<div style="font-size:0.68rem;color:var(--color-slate-500); margin-top:0.35rem;">' + (s.programme_path === 'Path B' ? 'Standard (No Remedial)' : 'Standard Progression') + '</div>' +
@@ -226,12 +231,12 @@
           '<div style="font-weight:600;margin-bottom:1rem;font-size:0.875rem;color:var(--color-slate-700)">Enrolment History</div>' +
           '<table style="width:100%;background:white;border-radius:0.75rem;border-collapse:collapse;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">' +
             '<thead style="background:var(--color-slate-100)">' +
-              '<tr><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Milestone</th><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Status</th><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Date</th><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Feedback</th></tr>' +
+              '<tr><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Programme Schedule</th><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Status</th><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Date</th><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Feedback</th></tr>' +
             '</thead>' +
             '<tbody>' +
               enrols.map(function(e) {
                 return '<tr>' +
-                  '<td style="padding:0.75rem;border-top:1px solid var(--color-slate-100)">' + esc(e.milestone) + '</td>' +
+                  '<td style="padding:0.75rem;border-top:1px solid var(--color-slate-100)">' + esc(e.programme_schedule || e.milestone || '—') + '</td>' +
                   '<td style="padding:0.75rem;border-top:1px solid var(--color-slate-100)"><span class="sh-badge ' + (e.status === 'Completed' ? 'sh-badge-success' : e.status === 'Dropped' ? 'sh-badge-dropped' : 'sh-badge-enrolled') + '" style="font-size:0.7rem">' + (e.status||'Enrolled') + '</span></td>' +
                   '<td style="padding:0.75rem;border-top:1px solid var(--color-slate-100);font-size:0.75rem">' + (e.enrolment_date||'—') + '</td>' +
                   '<td style="padding:0.75rem;border-top:1px solid var(--color-slate-100)">' +

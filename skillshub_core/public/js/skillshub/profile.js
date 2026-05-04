@@ -25,12 +25,7 @@
       await attemptRescue();
       studentId = localStorage.getItem('sh_student_id');
     }
-    
-    if (!localStorage.getItem('sh_student_id')) { 
-      clearAndRedirect(); 
-      return; 
-    }
-    
+
     fetchStudentSummary();
     setupEventListeners();
   });
@@ -48,8 +43,18 @@
           credentials: 'include' 
         });
         const data = await res.json();
-        if (data && data.data && data.data.length > 0) {
-          localStorage.setItem('sh_student_id', data.data[0].name);
+        var sid = (data && data.data && data.data.length > 0) ? data.data[0].name : null;
+        if (!sid) {
+          const filters2 = JSON.stringify([['user_login_email', '=', userEmail]]);
+          const res2 = await fetch(`/api/resource/SH Student?filters=${encodeURIComponent(filters2)}&fields=["name"]&limit=1`, {
+            headers: getFrappeHeaders(),
+            credentials: 'include'
+          });
+          const data2 = await res2.json();
+          sid = (data2 && data2.data && data2.data.length > 0) ? data2.data[0].name : null;
+        }
+        if (sid) {
+          localStorage.setItem('sh_student_id', sid);
           localStorage.setItem('sh_role', 'student');
         }
       }
@@ -116,7 +121,7 @@
         headers: getFrappeHeaders(),
         credentials: 'include'
       });
-      if (res.status === 401) { clearAndRedirect(); return; }
+      if (res.status === 401 || res.status === 403) { clearAndRedirect(); return; }
       if (!res.ok) throw new Error('Unable to fetch student summary (HTTP ' + res.status + ')');
       const data = await res.json();
       if (data && data.message && data.message.student) {
@@ -330,7 +335,7 @@
     
     // Banner
     var bannerHtml = '<div class="sh-page-header sh-animate-fade"><div class="sh-container"><div style="display:flex; justify-content:space-between; align-items:center;">' +
-      '<div><h1>' + (s.student_name || '—') + '</h1><p>' + (s.current_cohort || '—') + ' • ' + (s.skillshub_programme || '—') + '</p></div>' +
+      '<div><h1>' + (s.student_name || '—') + '</h1><p>' + (s.intake_year || '—') + ' • ' + (s.skillshub_programme || '—') + '</p></div>' +
       '<div style="display:flex; gap:1rem;">' +
         '<a href="/skillshub/baseline" class="nav-btn">Baseline</a>' +
         '<a href="/skillshub/feedback/soft-skills" class="nav-btn">Feedback</a>' +
