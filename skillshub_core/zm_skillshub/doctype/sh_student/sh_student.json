@@ -131,8 +131,7 @@
   "emp_role",
   "emp_currency",
   "emp_salary",
-  "emp_income_level",
-  "current_enrolment"
+  "emp_income_level"
  ],
  "fields": [
   {
@@ -815,12 +814,6 @@
   {
    "fieldname": "column_break_sahb",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "current_enrolment",
-   "fieldtype": "Link",
-   "label": "Current Enrolment",
-   "options": "SH Student Enrolment"
   }
  ],
  "grid_page_length": 50,
@@ -868,7 +861,7 @@
    "link_fieldname": "student"
   }
  ],
- "modified": "2026-05-04 13:55:19.874074",
+ "modified": "2026-05-04 14:22:06.851268",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Student",
