@@ -9,12 +9,14 @@
  "engine": "InnoDB",
  "field_order": [
   "general_tab",
+  "portal_user_details_section",
   "section_break_bcuw",
-  "enrolment_ticket",
   "student_column",
-  "feedback_phase",
   "column_break_pppv",
   "program_schedule",
+  "cohort",
+  "academic_year",
+  "course",
   "feedback_form_tab",
   "soft_skill",
   "section_break_rgss",
@@ -38,21 +40,16 @@
   "ss_beneficiaries_table",
   "section_break_abzv",
   "impact_example",
-  "milestone"
+  "milestone",
+  "student",
+  "programme_schedule",
+  "enrolment_ticket"
  ],
  "fields": [
   {
    "fieldname": "student_column",
    "fieldtype": "Column Break",
    "label": "Student"
-  },
-  {
-   "fetch_from": "program_schedule.current_phase",
-   "fieldname": "feedback_phase",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Feedback Phase",
-   "options": "SkillsHub Phases"
   },
   {
    "fieldname": "soft_skill",
@@ -63,7 +60,7 @@
   {
    "fieldname": "general_tab",
    "fieldtype": "Tab Break",
-   "label": "Feedback Details"
+   "label": "General"
   },
   {
    "fieldname": "knowledge_usage",
@@ -112,7 +109,7 @@
   },
   {
    "fieldname": "feedback_form_tab",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Feedback Form"
   },
   {
@@ -195,21 +192,54 @@
    "read_only": 1
   },
   {
-   "bold": 1,
    "fieldname": "enrolment_ticket",
    "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "Enrolment Ticket",
-   "options": "SH Student Enrolment",
-   "reqd": 1
+   "options": "SH Student Enrolment"
+  },
+  {
+   "fetch_from": "program_schedule.cohort",
+   "fieldname": "cohort",
+   "fieldtype": "Link",
+   "label": "Cohort",
+   "options": "SkillsHub Cohort"
+  },
+  {
+   "fetch_from": "program_schedule.skillshub_course",
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "label": "Course",
+   "options": "SkillsHub Course"
+  },
+  {
+   "fetch_from": "program_schedule.academic_year",
+   "fieldname": "academic_year",
+   "fieldtype": "Read Only",
+   "label": "Academic Year"
+  },
+  {
+   "fieldname": "portal_user_details_section",
+   "fieldtype": "Section Break",
+   "label": "Portal User Details"
+  },
+  {
+   "fieldname": "student",
+   "fieldtype": "Link",
+   "label": "Student",
+   "options": "SH Student"
+  },
+  {
+   "fieldname": "programme_schedule",
+   "fieldtype": "Link",
+   "label": "Programme Schedule",
+   "options": "SH Programme Schedule"
   }
  ],
  "grid_page_length": 50,
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-03 19:49:29.892706",
+ "modified": "2026-05-04 14:16:15.314499",
  "modified_by": "Administrator",
  "module": "ZM SH Soft Skills",
  "name": "SH Soft Skills Feedback",

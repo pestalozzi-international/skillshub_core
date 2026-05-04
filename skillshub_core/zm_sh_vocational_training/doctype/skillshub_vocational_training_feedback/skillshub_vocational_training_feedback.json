@@ -48,7 +48,11 @@
   "section_break_arte",
   "volunteer",
   "vol_details",
-  "section_break_ilfx"
+  "section_break_ilfx",
+  "cohort",
+  "course",
+  "academic_year",
+  "portal_user_account"
  ],
  "fields": [
   {
@@ -279,12 +283,40 @@
    "label": "Enrolment Ticket",
    "options": "SH Student Enrolment",
    "reqd": 1
+  },
+  {
+   "fieldname": "cohort",
+   "fieldtype": "Link",
+   "label": "Old Cohort",
+   "options": "SkillsHub Cohort",
+   "read_only": 1
+  },
+  {
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "label": "Old Course",
+   "options": "SkillsHub Course",
+   "read_only": 1
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "label": "Old Academic Year",
+   "options": "SH Academic Year",
+   "read_only": 1
+  },
+  {
+   "fieldname": "portal_user_account",
+   "fieldtype": "Link",
+   "label": "Old Portal Link",
+   "options": "User",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-03 19:49:30.150454",
+ "modified": "2026-05-03 20:18:24.906665",
  "modified_by": "Administrator",
  "module": "ZM SH Vocational Training",
  "name": "SkillsHub Vocational Training Feedback",

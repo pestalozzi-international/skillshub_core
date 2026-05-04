@@ -54,7 +54,11 @@
   "would_you_recommend_this_course",
   "section_break_lbyc",
   "photo",
-  "milestone"
+  "milestone",
+  "cohort",
+  "course",
+  "academic_year",
+  "portal_user_account"
  ],
  "fields": [
   {
@@ -298,13 +302,41 @@
    "label": "Enrolment Ticket",
    "options": "SH Student Enrolment",
    "reqd": 1
+  },
+  {
+   "fieldname": "cohort",
+   "fieldtype": "Link",
+   "label": "Old Cohort",
+   "options": "SkillsHub Cohort",
+   "read_only": 1
+  },
+  {
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "label": "Old Course",
+   "options": "SkillsHub Course",
+   "read_only": 1
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "label": "Old Academic Year",
+   "options": "SH Academic Year",
+   "read_only": 1
+  },
+  {
+   "fieldname": "portal_user_account",
+   "fieldtype": "Link",
+   "label": "Old Portal Link",
+   "options": "User",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-03 19:49:29.604672",
+ "modified": "2026-05-03 20:18:24.436373",
  "modified_by": "Administrator",
  "module": "ZM SH Edulution",
  "name": "SkillsHub Edulution Feedback",

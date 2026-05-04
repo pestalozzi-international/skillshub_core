@@ -3,19 +3,23 @@
  "allow_import": 1,
  "allow_rename": 1,
  "autoname": "format:{sh_student}-BL{##}",
- "creation": "2026-05-03 11:40:36.686980",
+ "creation": "2026-01-28 10:37:16.220657",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "general_tab",
   "section_break_vkis",
-  "enrolment_ticket",
   "sh_student",
+  "student_full_name",
   "column_break_pppv",
   "programme_schedule",
   "milestone",
+  "section_break_context",
+  "academic_year",
+  "cohort",
   "column_break_context2",
+  "course",
   "section_break_javg",
   "date_submitted",
   "feedback_form_tab",
@@ -58,26 +62,26 @@
   "help_source",
   "expectations_section",
   "sh_goals",
-  "post_sh_contributions"
+  "post_sh_contributions",
+  "student",
+  "enrolment_ticket"
  ],
  "fields": [
   {
    "fieldname": "general_tab",
    "fieldtype": "Tab Break",
-   "label": "Feedback Details"
+   "label": "General"
   },
   {
    "fieldname": "section_break_vkis",
    "fieldtype": "Section Break"
   },
   {
-   "fetch_from": "enrolment_ticket.student",
    "fieldname": "sh_student",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Student",
    "options": "SH Student",
-   "read_only": 1,
    "reqd": 1,
    "search_index": 1
   },
@@ -86,13 +90,10 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "enrolment_ticket.programme_schedule",
    "fieldname": "programme_schedule",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Programme Schedule",
-   "options": "SH Programme Schedule",
-   "read_only": 1
+   "options": "SH Programme Schedule"
   },
   {
    "fieldname": "milestone",
@@ -118,7 +119,7 @@
   },
   {
    "fieldname": "feedback_form_tab",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Feedback Form"
   },
   {
@@ -155,7 +156,7 @@
   },
   {
    "fieldname": "community_and_family_tab",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Community and Family"
   },
   {
@@ -334,20 +335,57 @@
    "options": "SH Student Community Challenge Link"
   },
   {
-   "bold": 1,
    "fieldname": "enrolment_ticket",
    "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "Enrolment Ticket",
-   "options": "SH Student Enrolment",
-   "reqd": 1
+   "options": "SH Student Enrolment"
+  },
+  {
+   "fetch_from": "programme_schedule.cohort",
+   "fieldname": "cohort",
+   "fieldtype": "Link",
+   "label": "Cohort",
+   "options": "SkillsHub Cohort",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "programme_schedule.skillshub_course",
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "label": "Course",
+   "options": "SkillsHub Course",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "programme_schedule.academic_year",
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "label": "Academic Year",
+   "options": "SH Academic Year",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "sh_student.student_name",
+   "fieldname": "student_full_name",
+   "fieldtype": "Data",
+   "label": "Student Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_context",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "student",
+   "fieldtype": "Link",
+   "label": "Student",
+   "options": "SH Student"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-03 19:49:31.083076",
+ "modified": "2026-05-04 14:16:15.758130",
  "modified_by": "Administrator",
  "module": "ZM SH Baseline",
  "name": "SH Student Baseline Form",
