@@ -108,8 +108,13 @@
     if (rolesData && rolesData.message) {
       var roles = rolesData.message;
       var role = 'student';
-      if (roles.indexOf('System Manager') > -1 || roles.indexOf('SkillsHub Admin') > -1) role = 'admin';
-      else if (roles.indexOf('SkillsHub Teacher') > -1) role = 'teacher';
+      if (
+        roles.indexOf('System Manager') > -1 ||
+        roles.indexOf('PI Admin') > -1 ||
+        roles.indexOf('SH Admin') > -1 ||
+        roles.indexOf('SkillsHub Admin') > -1
+      ) role = 'admin';
+      else if (roles.indexOf('SH Teacher') > -1 || roles.indexOf('SkillsHub Teacher') > -1) role = 'teacher';
       
       var oldRole = localStorage.getItem('sh_role');
       if (oldRole !== role) {

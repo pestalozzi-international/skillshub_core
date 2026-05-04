@@ -6,6 +6,28 @@ import json
 import frappe
 from frappe import _
 
+ADMIN_ROLES = {
+    "System Manager",
+    "Administrator",
+    "PI Admin",
+    "SH Admin",
+    "SkillsHub Admin",
+    "SH Teacher",
+    "SkillsHub Teacher",
+}
+
+
+def _has_student_access(student_doc):
+    user = frappe.session.user
+    if not user or user == "Guest":
+        return False
+    roles = set(frappe.get_roles(user))
+    if roles.intersection(ADMIN_ROLES):
+        return True
+    portal_user = getattr(student_doc, "portal_user_account", None)
+    login_email = getattr(student_doc, "user_login_email", None)
+    return user in {portal_user, login_email}
+
 
 @frappe.whitelist()
 def get_student_summary(student):
@@ -13,10 +35,9 @@ def get_student_summary(student):
     Return full student dashboard payload for the HTML portal.
     GET /api/method/skillshub_core.skillshub_core.api.get_student_summary?student={id}
     """
-    if not frappe.has_permission("SH Student", "read", doc=student):
-        frappe.throw(_("Not permitted"), frappe.PermissionError)
-
     student_doc = frappe.get_doc("SH Student", student)
+    if not _has_student_access(student_doc):
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
 
     enrolments = frappe.get_all(
         "SH Student Enrolment",
@@ -88,12 +109,75 @@ def get_student_summary(student):
             "enrolment_date":   str(student_doc.enrolment_date) if student_doc.enrolment_date else None,
             "skillshub_programme": student_doc.skillshub_programme,
             "motivations":      [{"name": m.name, "motivation": m.motivation} for m in student_doc.motivations],
-            "resilience_links": [{"name": r.name, "statement": r.resilience_statement} for r in student_doc.resilience_links],
+            "resilience_links": [{"name": r.name, "resilience_statement": r.resilience_statement} for r in student_doc.resilience_links],
         },
         "enrolments":        enrolments,
         "employment_history": employment,
         "baselines":         baselines,
     }
+
+
+@frappe.whitelist()
+def get_student_editable(student):
+    student_doc = frappe.get_doc("SH Student", student)
+    if not _has_student_access(student_doc):
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    return {
+        "name": student_doc.name,
+        "address_line_1": student_doc.address_line_1,
+        "address_line_2": student_doc.address_line_2,
+        "pincode": student_doc.pincode,
+        "mobile": student_doc.mobile,
+        "motivations": [
+            {"name": m.name, "motivation": m.motivation}
+            for m in (student_doc.motivations or [])
+            if m and m.motivation
+        ],
+        "resilience_links": [
+            {"name": r.name, "resilience_statement": r.resilience_statement}
+            for r in (student_doc.resilience_links or [])
+            if r and r.resilience_statement
+        ],
+    }
+
+
+@frappe.whitelist()
+def update_student_profile(student, payload):
+    if isinstance(payload, str):
+        payload = json.loads(payload or "{}")
+    payload = payload or {}
+
+    student_doc = frappe.get_doc("SH Student", student)
+    if not _has_student_access(student_doc):
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    allowed_fields = {"address_line_1", "address_line_2", "pincode", "mobile"}
+    for fieldname in allowed_fields:
+        if fieldname in payload:
+            student_doc.set(fieldname, payload.get(fieldname) or "")
+
+    if "motivations" in payload and isinstance(payload.get("motivations"), list):
+        student_doc.set("motivations", [])
+        for row in payload.get("motivations") or []:
+            if not isinstance(row, dict):
+                continue
+            motivation = (row.get("motivation") or "").strip()
+            if motivation:
+                student_doc.append("motivations", {"motivation": motivation})
+
+    if "resilience_links" in payload and isinstance(payload.get("resilience_links"), list):
+        student_doc.set("resilience_links", [])
+        for row in payload.get("resilience_links") or []:
+            if not isinstance(row, dict):
+                continue
+            statement = (row.get("resilience_statement") or "").strip()
+            if statement:
+                student_doc.append("resilience_links", {"resilience_statement": statement})
+
+    student_doc.save(ignore_permissions=True)
+    frappe.db.commit()
+    return {"ok": True, "name": student_doc.name}
 
 
 @frappe.whitelist()

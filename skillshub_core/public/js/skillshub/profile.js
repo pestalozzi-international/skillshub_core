@@ -2,7 +2,7 @@
   'use strict';
 
   // --- Constants & State ---
-  const studentId = localStorage.getItem('sh_student_id');
+  let studentId = localStorage.getItem('sh_student_id');
   let currentStudentDoc = null;
 
   function getFrappeHeaders() {
@@ -23,6 +23,7 @@
     // Rescue: If studentId is missing but we're at /profile, try to fetch it from session
     if (!studentId) {
       await attemptRescue();
+      studentId = localStorage.getItem('sh_student_id');
     }
     
     if (!localStorage.getItem('sh_student_id')) { 
@@ -116,27 +117,37 @@
         credentials: 'include'
       });
       if (res.status === 401) { clearAndRedirect(); return; }
+      if (!res.ok) throw new Error('Unable to fetch student summary (HTTP ' + res.status + ')');
       const data = await res.json();
-      if (data && data.message) {
+      if (data && data.message && data.message.student) {
         renderProfile(data.message.student);
         renderTimeline(data.message.enrolments || [], data.message.student);
         // Also fetch the full doc for CRUD/Tables
         fetchFullStudentDoc();
+      } else {
+        throw new Error('Summary response was empty.');
       }
     } catch (err) {
       console.error('Failed to fetch summary:', err);
+      const content = document.getElementById('content');
+      if (content) {
+        content.innerHTML = '<div class="glass-card sh-animate-fade" style="margin-top:2rem; text-align:center; padding:4rem; color:var(--color-red-700)">' +
+          '<h2 style="color:var(--color-red-700)">Unable to load profile</h2><p>' + (err.message || 'Unknown error') + '</p>' +
+          '<button onclick="location.reload()" class="sh-btn-secondary" style="margin-top:1rem">Try Again</button></div>';
+      }
     }
   }
 
   async function fetchFullStudentDoc() {
     try {
-      const res = await fetch(`/api/resource/SH Student/${encodeURIComponent(studentId)}`, {
+      const res = await fetch(`/api/method/skillshub_core.skillshub_core.api.get_student_editable?student=${encodeURIComponent(studentId)}`, {
         headers: getFrappeHeaders(),
         credentials: 'include'
       });
+      if (!res.ok) throw new Error('Unable to fetch editable profile (HTTP ' + res.status + ')');
       const data = await res.json();
-      if (data && data.data) {
-        currentStudentDoc = data.data;
+      if (data && data.message) {
+        currentStudentDoc = data.message;
         populateForms(currentStudentDoc);
         renderGrowthPills(currentStudentDoc);
       }
@@ -159,11 +170,11 @@
     formData.forEach((value, key) => { payload[key] = value.trim(); });
 
     try {
-      const res = await fetch(`/api/resource/SH Student/${encodeURIComponent(studentId)}`, {
-        method: 'PUT',
+      const res = await fetch('/api/method/skillshub_core.skillshub_core.api.update_student_profile', {
+        method: 'POST',
         headers: getFrappeHeaders(),
         credentials: 'include',
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ student: studentId, payload: payload })
       });
       if (!res.ok) throw new Error('Update failed');
       
@@ -184,6 +195,16 @@
   function renderGrowthPills(doc) {
     renderPills('motivation-pills', doc.motivations || [], 'motivation', 'motivations');
     renderPills('resilience-pills', doc.resilience_links || [], 'resilience_statement', 'resilience_links');
+  }
+
+  function populateForms(doc) {
+    var contactForm = document.getElementById('contact-form');
+    if (!contactForm || !doc) return;
+    var fields = ['address_line_1', 'address_line_2', 'pincode', 'mobile'];
+    fields.forEach(function (fieldname) {
+      var input = contactForm.querySelector('[name="' + fieldname + '"]');
+      if (input) input.value = doc[fieldname] || '';
+    });
   }
 
   function renderPills(containerId, data, fieldname, tableField) {
@@ -214,14 +235,15 @@
 
   async function removePill(tableField, rowName) {
     if (!currentStudentDoc) return;
-    const updatedTable = currentStudentDoc[tableField].filter(row => row.name !== rowName);
+    const existing = Array.isArray(currentStudentDoc[tableField]) ? currentStudentDoc[tableField] : [];
+    const updatedTable = existing.filter(row => row.name !== rowName);
     
     try {
-      const res = await fetch(`/api/resource/SH Student/${encodeURIComponent(studentId)}`, {
-        method: 'PUT',
+      const res = await fetch('/api/method/skillshub_core.skillshub_core.api.update_student_profile', {
+        method: 'POST',
         headers: getFrappeHeaders(),
         credentials: 'include',
-        body: JSON.stringify({ [tableField]: updatedTable })
+        body: JSON.stringify({ student: studentId, payload: { [tableField]: updatedTable } })
       });
       if (res.ok) fetchFullStudentDoc();
     } catch (err) {
@@ -235,11 +257,11 @@
     const updatedTable = [...(currentStudentDoc[tableField] || []), newRow];
     
     try {
-      const res = await fetch(`/api/resource/SH Student/${encodeURIComponent(studentId)}`, {
-        method: 'PUT',
+      const res = await fetch('/api/method/skillshub_core.skillshub_core.api.update_student_profile', {
+        method: 'POST',
         headers: getFrappeHeaders(),
         credentials: 'include',
-        body: JSON.stringify({ [tableField]: updatedTable })
+        body: JSON.stringify({ student: studentId, payload: { [tableField]: updatedTable } })
       });
       if (res.ok) {
         hideModal();

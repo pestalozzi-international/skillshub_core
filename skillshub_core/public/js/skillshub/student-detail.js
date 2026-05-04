@@ -66,32 +66,23 @@
   function fetchData() {
     console.log('[SkillsHub] Loading student detail:', studentId);
     Promise.allSettled([
-      sf('/api/resource/SH Student/' + encodeURIComponent(studentId)),
-      sf('/api/resource/SH Student Enrolment?filters=' +
-        encodeURIComponent(JSON.stringify([['student', '=', studentId]])) +
-        '&fields=' + encodeURIComponent(JSON.stringify([
-          'name','milestone','course','status','attendance_rate',
-          'feedback_submitted','baseline_submitted',
-          'enrolment_date','completion_date'
-        ])) + '&order_by=enrolment_date+asc')
+      sf('/api/method/skillshub_core.skillshub_core.api.get_student_summary?student=' + encodeURIComponent(studentId))
     ])
     .then(function (results) {
-      var studentRes = results[0];
-      var enrolmentRes = results[1];
+      var summaryRes = results[0];
 
-      if (studentRes.status === 'rejected') {
-        throw new Error('Failed to fetch student record: ' + (studentRes.reason.message || 'Unknown error'));
+      if (summaryRes.status === 'rejected') {
+        throw new Error('Failed to fetch student record: ' + (summaryRes.reason.message || 'Unknown error'));
       }
 
-      var s = studentRes.value;
-      // Handle both {"data": {...}} and direct object response
-      if (s && s.data) s = s.data;
+      var payload = summaryRes.value && summaryRes.value.message ? summaryRes.value.message : null;
+      var s = payload && payload.student ? payload.student : null;
       
       if (!s || !s.name) {
         throw new Error('Student record not found or data is invalid.');
       }
 
-      var enrolments = (enrolmentRes.status === 'fulfilled' && enrolmentRes.value) ? (enrolmentRes.value.data || []) : [];
+      var enrolments = payload && Array.isArray(payload.enrolments) ? payload.enrolments : [];
       render(s, enrolments);
     })
     .catch(function (err) {
