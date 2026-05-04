@@ -36,28 +36,28 @@
       const userData = await userRes.json();
       const userEmail = userData.message;
 
-      if (userEmail && userEmail !== 'Guest') {
-        const filters = JSON.stringify([['portal_user_account', '=', userEmail]]);
-        const res = await fetch(`/api/resource/SH Student?filters=${encodeURIComponent(filters)}&fields=["name"]&limit=1`, { 
-          headers: getFrappeHeaders(), 
-          credentials: 'include' 
-        });
-        const data = await res.json();
-        var sid = (data && data.data && data.data.length > 0) ? data.data[0].name : null;
-        if (!sid) {
-          
-const studentName = await fetch("/api/method/skillshub_core.skillshub_core.api.find_student_by_email?email="+encodeURIComponent(userEmail), {credentials:"include"}).then(r=>r.json()).then(j=>j.message || null);
-          const res2 = await fetch(`/api/resource/SH Student?filters=${encodeURIComponent(filters2)}&fields=["name"]&limit=1`, {
-            headers: getFrappeHeaders(),
-            credentials: 'include'
-          });
-          const data2 = await res2.json();
-          sid = (data2 && data2.data && data2.data.length > 0) ? data2.data[0].name : null;
-        }
-        if (sid) {
-          localStorage.setItem('sh_student_id', sid);
-          localStorage.setItem('sh_role', 'student');
-        }
+      if (!userEmail || userEmail === 'Guest') return;
+
+      // First try portal_user_account (standard field, allowed in client filters)
+      const filters1 = JSON.stringify([['portal_user_account', '=', userEmail]]);
+      const res = await fetch(`/api/resource/SH Student?filters=${encodeURIComponent(filters1)}&fields=["name"]&limit=1`, {
+        headers: getFrappeHeaders(),
+        credentials: 'include'
+      });
+      const data = await res.json();
+      let sid = (data && data.data && data.data.length > 0) ? data.data[0].name : null;
+
+      // Fall back: look up by login email via safe server-side method
+      if (!sid) {
+        sid = await fetch(
+          '/api/method/skillshub_core.skillshub_core.api.find_student_by_email?email=' + encodeURIComponent(userEmail),
+          { credentials: 'include' }
+        ).then(r => r.json()).then(j => j.message || null);
+      }
+
+      if (sid) {
+        localStorage.setItem('sh_student_id', sid);
+        localStorage.setItem('sh_role', 'student');
       }
     } catch (err) {
       console.error('Rescue failed:', err);
@@ -435,11 +435,6 @@ const studentName = await fetch("/api/method/skillshub_core.skillshub_core.api.f
           (e.feedback_submitted ? '<span class="sh-badge sh-badge-success">✓ Feedback</span>' : '') +
         '</div></div>';
     }).join('');
-  }
-
-  function setText(id, text) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = text || '—';
   }
 
   function formatDate(d) {
