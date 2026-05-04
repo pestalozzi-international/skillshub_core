@@ -424,3 +424,81 @@ def _recompute_enrolment_on_attendance(doc, method=None):
     _recompute_enrolment_for_student(
         doc.sh_student, doc.sh_programme_schedule
     )
+
+
+@frappe.whitelist()
+def update_student_admin(student, payload):
+    """Admin-level update for SH Student: accepts a JSON payload and updates fields and child tables.
+    Must be an admin role (System Manager / PI Admin / PI Admin variants).
+    """
+    if isinstance(payload, str):
+        payload = json.loads(payload or "{}")
+    payload = payload or {}
+
+    user = frappe.session.user
+    roles = set(frappe.get_roles(user))
+    if not roles.intersection(ADMIN_ROLES):
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    student_doc = frappe.get_doc("SH Student", student)
+
+    # Set scalar fields
+    for key, val in payload.items():
+        try:
+            # handle child tables separately
+            meta = student_doc.meta.get_field(key) if hasattr(student_doc, 'meta') else None
+        except Exception:
+            meta = None
+        if meta and meta.fieldtype == 'Table' and isinstance(val, list):
+            # replace table rows
+            student_doc.set(key, [])
+            for row in val:
+                if isinstance(row, dict):
+                    student_doc.append(key, row)
+        else:
+            # don't set unknown internal keys like name
+            if key in ('name', 'doctype'):
+                continue
+            try:
+                student_doc.set(key, val)
+            except Exception:
+                # best-effort: ignore non-existing fields
+                pass
+
+    student_doc.save(ignore_permissions=True)
+    frappe.db.commit()
+    return {"ok": True, "name": student_doc.name}
+
+
+@frappe.whitelist()
+def create_student_admin(payload):
+    """Admin-level create for SH Student. Accepts JSON payload and returns created name."""
+    if isinstance(payload, str):
+        payload = json.loads(payload or "{}")
+    payload = payload or {}
+
+    user = frappe.session.user
+    roles = set(frappe.get_roles(user))
+    if not roles.intersection(ADMIN_ROLES):
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    doc = frappe.new_doc('SH Student')
+    for k, v in payload.items():
+        try:
+            doc.set(k, v)
+        except Exception:
+            pass
+    doc.insert(ignore_permissions=True)
+    frappe.db.commit()
+    return {"ok": True, "name": doc.name}
+
+
+@frappe.whitelist()
+def delete_student_admin(student):
+    user = frappe.session.user
+    roles = set(frappe.get_roles(user))
+    if not roles.intersection(ADMIN_ROLES):
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+    frappe.delete_doc('SH Student', student, force=True)
+    frappe.db.commit()
+    return {"ok": True}
