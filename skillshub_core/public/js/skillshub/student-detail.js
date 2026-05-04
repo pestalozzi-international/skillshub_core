@@ -114,6 +114,7 @@
           '<a href="/skillshub/admin/students" class="sh-back-link" style="color:rgba(255,255,255,0.7); text-decoration:none; font-size:0.875rem; display:block; margin-bottom:0.5rem;">← Back to Directory</a>' +
           '<h1>' + (s.student_name || '—') + '</h1>' +
           '<p>' + (s.current_cohort || 'No Cohort') + ' • ' + (s.skillshub_programme || 'No Programme') + '</p>' +
+          '<p style="font-size:0.875rem; opacity:0.85; margin-top:0.4rem;">' + (s.path_definition || '') + '</p>' +
         '</div>' +
         '<div class="sh-admin-nav" style="display:flex; gap:1.25rem; align-items:center; margin-bottom:0.5rem;">' +
           '<a href="/app" id="nav-desk" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8;">Desk</a>' +
@@ -170,7 +171,7 @@
     return enrolments.map(function (e) {
       return '<div class="tl-item ' + (e.status === 'Completed' ? 'completed' : '') + '">' +
         '<div class="tl-date">' + fmt(e.enrolment_date) + (e.completion_date ? ' — ' + fmt(e.completion_date) : '') + '</div>' +
-        '<div class="tl-title">' + (e.milestone || 'Milestone') + (e.course ? ' · ' + e.course : '') + '</div>' +
+        '<div class="tl-title">' + (e.milestone || e.course || e.programme_schedule || 'Programme Milestone') + (e.course && e.milestone ? ' · ' + e.course : '') + '</div>' +
         '<div class="tl-meta">' +
           '<span class="sh-badge ' + (e.status === 'Completed' ? 'sh-badge-success' : 'sh-badge-info') + '">' + e.status + '</span>' +
           (e.attendance_rate ? '<span class="sh-badge sh-badge-info">' + Math.round(e.attendance_rate) + '% Att.</span>' : '') +

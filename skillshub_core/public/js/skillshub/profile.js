@@ -112,7 +112,7 @@
   // --- API Methods ---
   async function fetchStudentSummary() {
     try {
-      const res = await fetch(`/api/method/skillshub_core.skillshub_core.api.get_student_summary?student=${encodeURIComponent(studentId)}`, {
+      const res = await fetch('/api/method/skillshub_core.skillshub_core.api.get_portal_student_context', {
         headers: getFrappeHeaders(),
         credentials: 'include'
       });
@@ -120,8 +120,11 @@
       if (!res.ok) throw new Error('Unable to fetch student summary (HTTP ' + res.status + ')');
       const data = await res.json();
       if (data && data.message && data.message.student) {
+        studentId = data.message.student.name || data.message.student.id || studentId;
+        if (studentId) localStorage.setItem('sh_student_id', studentId);
         renderProfile(data.message.student);
         renderTimeline(data.message.enrolments || [], data.message.student);
+        renderFeedbackLinks(data.message.feedback_forms || [], data.message.feedback_status || {});
         // Also fetch the full doc for CRUD/Tables
         fetchFullStudentDoc();
       } else {
@@ -377,6 +380,10 @@
       '<div class="glass-card sh-animate-fade" style="animation-delay: 0.3s;">' +
         '<div class="section-title">Enrolment Journey</div>' +
         '<div id="timeline-container" class="timeline">Loading timeline...</div>' +
+      '</div>' +
+      '<div class="glass-card sh-animate-fade" style="animation-delay: 0.35s;">' +
+        '<div class="section-title">Feedback Forms</div>' +
+        '<div id="feedback-links" class="sh-grid sh-grid-2"></div>' +
       '</div></div>';
 
     content.innerHTML = bannerHtml + '<div class="sh-container"><div class="sh-main-container">' + sidebarHtml + mainHtml + '</div></div>';
@@ -387,6 +394,22 @@
 
   function row(label, value) {
     return '<div class="data-row"><div class="data-label">' + label + '</div><div class="data-value">' + (value || '—') + '</div></div>';
+  }
+
+  function renderFeedbackLinks(forms, statusMap) {
+    var container = document.getElementById('feedback-links');
+    if (!container) return;
+    if (!Array.isArray(forms) || !forms.length) {
+      container.innerHTML = '<div class="data-value">No feedback forms configured.</div>';
+      return;
+    }
+    container.innerHTML = forms.map(function (f) {
+      var submitted = !!statusMap[f.doctype];
+      return '<a href="' + f.route + '" class="sh-btn-secondary" style="display:flex; align-items:center; justify-content:space-between; text-decoration:none;">' +
+        '<span style="font-weight:600;color:var(--color-slate-800)">' + f.label + '</span>' +
+        '<span class="sh-badge ' + (submitted ? 'sh-badge-success' : 'sh-badge-info') + '">' + (submitted ? 'Submitted' : 'Pending') + '</span>' +
+      '</a>';
+    }).join('');
   }
 
   function renderTimeline(enrolments, student) {

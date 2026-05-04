@@ -58,6 +58,21 @@
       <div class="rating-row"><label>Employment Readiness</label><input type="range" id="r-employment_readiness" min="1" max="5" value="3" oninput="this.nextElementSibling.textContent=this.value"><span class="rv">3</span></div>
     </div>
     <div class="form-section">
+      <div class="section-title">Growth Mapping</div>
+      <div class="form-group">
+        <label class="sh-label">Motivations (multi-select)</label>
+        <select id="motivation-multi" class="sh-input" multiple></select>
+      </div>
+      <div class="form-group">
+        <label class="sh-label">Resilience Statements (multi-select)</label>
+        <select id="resilience-multi" class="sh-input" multiple></select>
+      </div>
+      <div class="form-group">
+        <label class="sh-label">Community Challenges (multi-select)</label>
+        <select id="challenge-multi" class="sh-input" multiple></select>
+      </div>
+    </div>
+    <div class="form-section">
       <div class="form-group"><label class="sh-label">What are your goals for this programme?</label><textarea class="sh-input" id="goals" rows="4" placeholder="Your goals..."></textarea></div>
       <div class="form-group"><label class="sh-label">What challenges are you facing?</label><textarea class="sh-input" id="challenges" rows="4" placeholder="Your challenges..."></textarea></div>
     </div>
@@ -65,7 +80,7 @@
     <button type="submit" class="sh-btn-primary" style="width:100%" id="sh-submit-btn">Submit Baseline</button>
   </form>
 </div>
-<script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=1.1"></script>
-<script src="/assets/skillshub_core/js/skillshub/baseline.js?v=1.1"></script>
+<script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=2.4"></script>
+<script src="/assets/skillshub_core/js/skillshub/baseline.js?v=2.4"></script>
 </body>
 </html>

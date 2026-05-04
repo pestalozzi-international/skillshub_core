@@ -16,6 +16,15 @@ ADMIN_ROLES = {
     "SkillsHub Teacher",
 }
 
+FEEDBACK_ROUTE_MAP = {
+    "SH Student Baseline Form": "/skillshub/baseline",
+    "SH Soft Skills Feedback": "/skillshub/feedback/soft-skills",
+    "SH Mindset Camp Feedback": "/skillshub/feedback/mindset-camp",
+    "SkillsHub Edulution Feedback": "/skillshub/feedback/edulution",
+    "SkillsHub Vocational Training Feedback": "/skillshub/feedback/vocational-training",
+    "ZM SkillsHub Attachment Feedback": "/skillshub/feedback/attachment",
+}
+
 
 def _has_student_access(student_doc):
     user = frappe.session.user
@@ -29,6 +38,24 @@ def _has_student_access(student_doc):
     user_norm = (user or "").strip().lower()
     allowed = {(portal_user or "").strip().lower(), (login_email or "").strip().lower()}
     return user_norm in allowed
+
+
+def _feedback_forms_for_path(programme_path):
+    path = (programme_path or "").strip()
+    forms = [
+        {"doctype": "SH Student Baseline Form", "label": "Baseline Assessment", "route": FEEDBACK_ROUTE_MAP["SH Student Baseline Form"]},
+        {"doctype": "SH Soft Skills Feedback", "label": "Soft Skills Feedback", "route": FEEDBACK_ROUTE_MAP["SH Soft Skills Feedback"]},
+        {"doctype": "SH Mindset Camp Feedback", "label": "Mindset Camp Feedback", "route": FEEDBACK_ROUTE_MAP["SH Mindset Camp Feedback"]},
+        {"doctype": "SkillsHub Vocational Training Feedback", "label": "Vocational Training Feedback", "route": FEEDBACK_ROUTE_MAP["SkillsHub Vocational Training Feedback"]},
+        {"doctype": "ZM SkillsHub Attachment Feedback", "label": "Attachment Feedback", "route": FEEDBACK_ROUTE_MAP["ZM SkillsHub Attachment Feedback"]},
+    ]
+    # Path A includes Edulution (normal path in this portal model).
+    if path == "Path A" or not path:
+        forms.insert(
+            3,
+            {"doctype": "SkillsHub Edulution Feedback", "label": "Edulution Feedback", "route": FEEDBACK_ROUTE_MAP["SkillsHub Edulution Feedback"]},
+        )
+    return forms
 
 
 @frappe.whitelist()
@@ -86,6 +113,15 @@ def get_student_summary(student):
         fields=["name", "milestone", "date_submitted", "programme_schedule"],
         order_by="date_submitted desc",
     )
+    feedback_forms = _feedback_forms_for_path(student_doc.programme_path)
+    feedback_status = {}
+    for form in feedback_forms:
+        feedback_status[form["doctype"]] = bool(
+            frappe.db.exists(
+                form["doctype"],
+                {"sh_student": student_doc.name},
+            )
+        )
 
     return {
         "student": {
@@ -111,12 +147,19 @@ def get_student_summary(student):
             "guardian_mobile_number": student_doc.guardian_mobile_number,
             "enrolment_date":   str(student_doc.enrolment_date) if student_doc.enrolment_date else None,
             "skillshub_programme": student_doc.skillshub_programme,
+            "path_definition": (
+                "Path A is the standard progression path."
+                if (student_doc.programme_path or "") == "Path A"
+                else "Path B is the standard path without remedial modules."
+            ),
             "motivations":      [{"name": m.name, "motivation": m.motivation} for m in student_doc.motivations],
             "resilience_links": [{"name": r.name, "resilience_statement": r.resilience_statement} for r in student_doc.resilience_links],
         },
         "enrolments":        enrolments,
         "employment_history": employment,
         "baselines":         baselines,
+        "feedback_forms":    feedback_forms,
+        "feedback_status":   feedback_status,
     }
 
 
@@ -181,6 +224,40 @@ def update_student_profile(student, payload):
     student_doc.save(ignore_permissions=True)
     frappe.db.commit()
     return {"ok": True, "name": student_doc.name}
+
+
+@frappe.whitelist()
+def get_portal_student_context(student=None):
+    """Unified student portal context from SH Student master + enrolments + feedback availability."""
+    student_doc = None
+    if student:
+        student_doc = frappe.get_doc("SH Student", student)
+    else:
+        user = frappe.session.user
+        if not user or user == "Guest":
+            frappe.throw(_("Not permitted"), frappe.PermissionError)
+        found = frappe.get_all(
+            "SH Student",
+            filters=[["portal_user_account", "=", user]],
+            fields=["name"],
+            limit=1,
+        )
+        if not found:
+            found = frappe.get_all(
+                "SH Student",
+                filters=[["user_login_email", "=", user]],
+                fields=["name"],
+                limit=1,
+            )
+        if not found:
+            frappe.throw(_("Student profile not linked to current login."), frappe.PermissionError)
+        student_doc = frappe.get_doc("SH Student", found[0].name)
+
+    if not _has_student_access(student_doc):
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    summary = get_student_summary(student_doc.name)
+    return summary
 
 
 @frappe.whitelist()

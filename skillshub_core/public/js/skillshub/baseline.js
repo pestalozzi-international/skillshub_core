@@ -24,13 +24,20 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     Promise.all([
-      fetch('/api/method/skillshub_core.skillshub_core.api.get_student_summary?student=' + encodeURIComponent(studentId),
+      fetch('/api/method/skillshub_core.skillshub_core.api.get_portal_student_context',
         { headers: getFrappeHeaders(), credentials: 'include' }).then(function (r) { return r.json(); }),
       fetch('/api/resource/SkillsHub Programme?fields=["name"]&limit=20',
+        { headers: getFrappeHeaders(), credentials: 'include' }).then(function (r) { return r.json(); }),
+      fetch('/api/resource/SH Student Motivation?fields=["name"]&limit=200',
+        { headers: getFrappeHeaders(), credentials: 'include' }).then(function (r) { return r.json(); }),
+      fetch('/api/resource/SH Student Resilience?fields=["name"]&limit=200',
+        { headers: getFrappeHeaders(), credentials: 'include' }).then(function (r) { return r.json(); }),
+      fetch('/api/resource/SH Student Community Challenge?fields=["name"]&limit=200',
         { headers: getFrappeHeaders(), credentials: 'include' }).then(function (r) { return r.json(); })
     ])
     .then(function (results) {
       var s = results[0].message.student;
+      studentId = s.name || s.id || studentId;
       ctx = s;
       document.getElementById('ctx-id').textContent   = studentId;
       document.getElementById('ctx-name').textContent = s.student_name || s.full_name || '-';
@@ -41,6 +48,11 @@
         if (p.name === s.skillshub_programme) opt.selected = true;
         sel.appendChild(opt);
       });
+
+      populateMulti('motivation-multi', results[2].data || []);
+      populateMulti('resilience-multi', results[3].data || []);
+      populateMulti('challenge-multi', results[4].data || []);
+
       document.getElementById('sh-loading').style.display = 'none';
       document.getElementById('sh-baseline-form').style.display = 'block';
     })
@@ -60,7 +72,10 @@
         programme_schedule: ctx.current_schedule,
         milestone: document.getElementById('milestone').value,
         goals: document.getElementById('goals').value,
-        challenges: document.getElementById('challenges').value
+        challenges: document.getElementById('challenges').value,
+        student_motivation_table: selectedValues('motivation-multi').map(function (name) { return { motivation: name }; }),
+        resilience_table: selectedValues('resilience-multi').map(function (name) { return { resilience_statement: name }; }),
+        community_challenge_table: selectedValues('challenge-multi').map(function (name) { return { challenge: name, milestone: document.getElementById('milestone').value }; })
       };
       fields.forEach(function (f) {
         var el = document.getElementById('r-' + f);
@@ -83,4 +98,22 @@
       });
     });
   });
+
+  function populateMulti(id, rows) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = '';
+    rows.forEach(function (row) {
+      var opt = document.createElement('option');
+      opt.value = row.name;
+      opt.textContent = row.name;
+      el.appendChild(opt);
+    });
+  }
+
+  function selectedValues(id) {
+    var el = document.getElementById(id);
+    if (!el) return [];
+    return Array.from(el.selectedOptions || []).map(function (o) { return o.value; }).filter(Boolean);
+  }
 }());

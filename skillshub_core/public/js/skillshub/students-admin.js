@@ -53,7 +53,7 @@
     });
     var latest = sorted[0];
     var sched = schedMap[latest.programme_schedule] || {};
-    return { 
+    return {
       cohort: sched.cohort || latest.cohort || null, 
       milestone: latest.milestone || null,
       academic_year: latest.academic_year || sched.academic_year || null,
@@ -200,10 +200,14 @@
         '</td>' +
         '<td><span class="sh-badge ' + ind.cssClass + '">' + esc(ind.label) + '</span></td>' +
         '<td>' +
+          '<div style="font-size:0.75rem; color:var(--color-slate-500); text-transform:uppercase; letter-spacing:0.04em;">Milestone</div>' +
+          '<div style="font-size:0.8rem; font-weight:600; color:var(--color-slate-700); margin-bottom:0.25rem;">' + esc(ctx.milestone || '—') + '</div>' +
           '<div style="font-size:0.875rem; font-weight:600; color:var(--color-teal-700)">' + esc(ctx.course||'No Course') + '</div>' +
           '<div style="font-size:0.75rem; color:var(--color-slate-500)">' + esc(ctx.academic_year||'No Year') + '</div>' +
         '</td>' +
-        '<td><span class="sh-badge sh-badge-info">' + esc(s.programme_path||'—') + '</span></td>' +
+        '<td><span class="sh-badge sh-badge-info">' + esc(s.programme_path||'—') + '</span>' +
+          '<div style="font-size:0.68rem;color:var(--color-slate-500); margin-top:0.35rem;">' + (s.programme_path === 'Path B' ? 'Standard (No Remedial)' : 'Standard Progression') + '</div>' +
+        '</td>' +
         '<td>' +
           '<div style="font-size:0.875rem">' + avgAtt + '% Att.</div>' +
           '<div style="font-size:0.75rem;color:' + (fbCount === enrols.length ? 'var(--color-emerald-700)' : 'var(--color-amber-700)') + '">' + fbCount + '/' + enrols.length + ' Feedback</div>' +

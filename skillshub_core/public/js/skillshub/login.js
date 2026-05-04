@@ -38,8 +38,23 @@
     else if (sid) window.location.replace('/skillshub/profile');
   }
 
+  function validateSessionAndRedirect() {
+    fetch('/api/method/frappe.auth.get_logged_user', { headers: getFrappeHeaders(), credentials: 'include' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data || !data.message || data.message === 'Guest') {
+          clearSession();
+          return;
+        }
+        autoRedirect();
+      })
+      .catch(function () {
+        clearSession();
+      });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
-    autoRedirect(); // Attempt auto-redirect if session keys exist
+    validateSessionAndRedirect(); // Redirect only for real active sessions.
 
     var form     = document.getElementById('sh-login-form');
     var usrInput = document.getElementById('usr');

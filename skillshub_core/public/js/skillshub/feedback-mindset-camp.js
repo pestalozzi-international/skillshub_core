@@ -21,11 +21,11 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    fetch('/api/method/skillshub_core.skillshub_core.api.get_student_summary?student=' + encodeURIComponent(studentId),
+    fetch('/api/method/skillshub_core.skillshub_core.api.get_portal_student_context',
       { headers: getFrappeHeaders(), credentials: 'include' })
     .then(function (r) { return r.json(); })
     .then(function (data) {
-      var s = data.message.student; ctx = s;
+      var s = data.message.student; ctx = s; studentId = s.name || s.id || studentId;
       document.getElementById('ctx-id').textContent       = studentId;
       document.getElementById('ctx-name').textContent     = s.student_name || s.full_name || '-';
       document.getElementById('ctx-schedule').textContent = s.current_schedule || '-';
