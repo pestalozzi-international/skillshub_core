@@ -153,6 +153,19 @@ def get_student_summary(student):
         ["intake_year", "student_intake_year", "intake_academic_year", "year_of_intake", "intake"],
     )
 
+    # Determine current enrolment (prefer active 'Enrolled' ticket, otherwise latest)
+    current_enrolment = None
+    try:
+        enrolled = [e for e in enrolments if e.get('status') == 'Enrolled']
+        if enrolled:
+            enrolled_sorted = sorted(enrolled, key=lambda x: x.get('enrolment_date') or '', reverse=True)
+            current_enrolment = enrolled_sorted[0].get('name')
+        elif enrolments:
+            enrolments_sorted = sorted(enrolments, key=lambda x: x.get('enrolment_date') or '', reverse=True)
+            current_enrolment = enrolments_sorted[0].get('name')
+    except Exception:
+        current_enrolment = None
+
     return {
         "student": {
             "name":             student_doc.name,
@@ -185,6 +198,7 @@ def get_student_summary(student):
             ),
             "motivations":      [{"name": m.name, "motivation": m.motivation} for m in student_doc.motivations],
             "resilience_links": [{"name": r.name, "resilience_statement": r.resilience_statement} for r in student_doc.resilience_links],
+            "current_enrolment": current_enrolment,
         },
         "enrolments":        enrolments,
         "employment_history": employment,
