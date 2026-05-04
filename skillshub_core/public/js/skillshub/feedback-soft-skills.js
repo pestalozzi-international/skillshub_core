@@ -11,7 +11,7 @@
     }
     return headers;
 }
-  var studentId = localStorage.getItem('sh_student_id');
+  var studentId = null;
   var ctx = {};
 
   function showError(msg) {
@@ -23,12 +23,16 @@
   document.addEventListener('DOMContentLoaded', function () {
     fetch('/api/method/skillshub_core.skillshub_core.api.get_portal_student_context',
       { headers: getFrappeHeaders(), credentials: 'include' })
-    .then(function (r) { return r.json(); })
+    .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (data) {
-      var s = data.message.student; ctx = s; studentId = s.name || s.id || studentId;
+      var s = data && data.message && data.message.student ? data.message.student : null;
+      if (!s) throw new Error('Unable to fetch student context');
+      ctx = s; studentId = s.name || s.id || studentId;
       document.getElementById('ctx-id').textContent       = studentId;
       document.getElementById('ctx-name').textContent     = s.student_name || s.full_name || '-';
       document.getElementById('ctx-schedule').textContent = s.current_schedule || '-';
+      // prefer enrolment-level linking when available
+      try { document.getElementById('ctx-enrolment').textContent = s.current_enrolment || '-'; } catch (e) {}
       return fetch('/api/resource/SkillsHub Soft Skills?fields=["name"]&limit=100',
         { headers: getFrappeHeaders(), credentials: 'include' }).then(function (r) { return r.json(); });
     })
@@ -58,6 +62,7 @@
         method: 'POST', headers: getFrappeHeaders(), credentials: 'include',
         body: JSON.stringify({
           doctype: 'SH Soft Skills Feedback', sh_student: studentId,
+          student_enrolment: ctx.current_enrolment || null,
           student_full_name: ctx.student_name || ctx.full_name,
           programme_schedule: ctx.current_schedule, skills_covered: skills,
           enjoyed_most:    document.getElementById('enjoyed_most').value,
