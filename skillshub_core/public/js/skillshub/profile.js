@@ -45,7 +45,8 @@
         const data = await res.json();
         var sid = (data && data.data && data.data.length > 0) ? data.data[0].name : null;
         if (!sid) {
-          const filters2 = JSON.stringify([['user_login_email', '=', userEmail]]);
+          
+const studentName = await fetch("/api/method/skillshub_core.skillshub_core.api.find_student_by_email?email="+encodeURIComponent(userEmail), {credentials:"include"}).then(r=>r.json()).then(j=>j.message || null);
           const res2 = await fetch(`/api/resource/SH Student?filters=${encodeURIComponent(filters2)}&fields=["name"]&limit=1`, {
             headers: getFrappeHeaders(),
             credentials: 'include'
