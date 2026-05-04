@@ -502,3 +502,7 @@ def delete_student_admin(student):
     frappe.delete_doc('SH Student', student, force=True)
     frappe.db.commit()
     return {"ok": True}
+@frappe.whitelist()
+def get_user_roles():
+    """Securely returns the roles of the currently logged-in user for the portal frontend."""
+    return frappe.get_roles(frappe.session.user)
