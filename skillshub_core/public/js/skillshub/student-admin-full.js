@@ -34,13 +34,17 @@
   }
 
   async function getUserRoles() {
-      try {
-        var r = await fetch('/api/method/skillshub_core.skillshub_core.api.get_user_roles', { headers: getFrappeHeaders(), credentials: 'include' });
-        if (!r.ok) return [];
-        var jd = await r.json();
-        return jd.message || [];
-      } catch (e) {
-        return [];
+    try {
+      var u = await fetch('/api/method/frappe.auth.get_logged_user', { headers: getFrappeHeaders(), credentials: 'include' });
+      var ud = await u.json();
+      if (!ud || !ud.message || ud.message === 'Guest') return [];
+      var user = ud.message;
+      var q = '/api/resource/Has Role?filters=' + encodeURIComponent(JSON.stringify([['parent', '=', user]])) + '&fields=' + encodeURIComponent(JSON.stringify(['role'])) + '&limit=50';
+      var r = await fetch(q, { headers: getFrappeHeaders(), credentials: 'include' });
+      var rd = await r.json();
+      return (rd.data || []).map(function (x) { return x.role; });
+    } catch (e) {
+      return [];
     }
   }
 
@@ -63,7 +67,8 @@
     var key = (field.options || '') + '::' + field.fieldname;
     if (optionCache[key]) return optionCache[key];
     if (field.fieldtype === 'Select') {
-      var opts = (field.options || '').split('\n').filter(Boolean);
+      var opts = (field.options || '').split('
+').filter(Boolean);
       optionCache[key] = opts;
       return opts;
     }
@@ -108,7 +113,8 @@
       case 'Datetime': html = '<input id="' + id + '" class="sh-input" type="datetime-local" value="' + esc(v) + '" ' + ro + '>'; break;
       case 'Text': case 'Small Text': html = '<textarea id="' + id + '" class="sh-input" rows="3" ' + ro + '>' + esc(v) + '</textarea>'; break;
       case 'Select':
-        var opts = (field.options || '').split('\n').filter(Boolean);
+        var opts = (field.options || '').split('
+').filter(Boolean);
         html = '<select id="' + id + '" class="sh-input" ' + ro + '>';
         html += '<option value=""></option>';
         opts.forEach(function (opt) { html += '<option' + (opt === v ? ' selected' : '') + '>' + esc(opt) + '</option>'; });
