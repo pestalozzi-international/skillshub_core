@@ -1,0 +1,446 @@
+(function () {
+  'use strict';
+
+  // --- Constants & State ---
+  let studentId = localStorage.getItem('sh_student_id');
+  let currentStudentDoc = null;
+
+  function getFrappeHeaders() {
+    const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' };
+    if (window.frappe && frappe.csrf_token && frappe.csrf_token !== 'None' && !frappe.csrf_token.includes('{{')) {
+      headers['X-Frappe-CSRF-Token'] = frappe.csrf_token;
+    }
+    return headers;
+  }
+
+  function clearAndRedirect() {
+    localStorage.clear();
+    window.location.replace('/skillshub/login');
+  }
+
+  // --- Core Lifecycle ---
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Rescue: If studentId is missing but we're at /profile, try to fetch it from session
+    if (!studentId) {
+      await attemptRescue();
+      studentId = localStorage.getItem('sh_student_id');
+    }
+
+    fetchStudentSummary();
+    setupEventListeners();
+  });
+
+  async function attemptRescue() {
+    try {
+      const userRes = await fetch('/api/method/frappe.auth.get_logged_user', { credentials: 'include' });
+      const userData = await userRes.json();
+      const userEmail = userData.message;
+
+      if (!userEmail || userEmail === 'Guest') return;
+
+      // First try portal_user_account (standard field, allowed in client filters)
+      const filters1 = JSON.stringify([['portal_user_account', '=', userEmail]]);
+      const res = await fetch(`/api/resource/SH Student?filters=${encodeURIComponent(filters1)}&fields=["name"]&limit=1`, {
+        headers: getFrappeHeaders(),
+        credentials: 'include'
+      });
+      const data = await res.json();
+      let sid = (data && data.data && data.data.length > 0) ? data.data[0].name : null;
+
+      // Fall back: look up by login email via safe server-side method
+      if (!sid) {
+        sid = await fetch(
+          '/api/method/skillshub_core.skillshub_core.api.find_student_by_email?email=' + encodeURIComponent(userEmail),
+          { credentials: 'include' }
+        ).then(r => r.json()).then(j => j.message || null);
+      }
+
+      if (sid) {
+        localStorage.setItem('sh_student_id', sid);
+        localStorage.setItem('sh_role', 'student');
+      }
+    } catch (err) {
+      console.error('Rescue failed:', err);
+    }
+  }
+
+  function setupEventListeners() {
+    // Logout
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        fetch('/api/method/logout', { method: 'POST', headers: getFrappeHeaders(), credentials: 'include' })
+          .finally(() => clearAndRedirect());
+      });
+    }
+
+    // Form Toggles
+    document.querySelectorAll('.edit-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const formId = btn.getAttribute('data-form');
+        const form = document.getElementById(formId);
+        if (form) {
+          form.classList.toggle('active');
+          btn.textContent = form.classList.contains('active') ? 'Cancel' : 'Edit Contact';
+        }
+      });
+    });
+
+    document.querySelectorAll('.cancel-edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const form = btn.closest('form');
+        if (form) {
+          form.classList.remove('active');
+          const toggle = document.querySelector(`.edit-toggle[data-form="${form.id}"]`);
+          if (toggle) toggle.textContent = 'Edit Contact';
+        }
+      });
+    });
+
+    // Contact Form Submit
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+      contactForm.addEventListener('submit', handleProfileUpdate);
+    }
+
+    // Pill Add Buttons
+    const addMotivationBtn = document.getElementById('add-motivation-btn');
+    if (addMotivationBtn) {
+      addMotivationBtn.addEventListener('click', () => showOptionsModal('SH Student Motivation', 'motivation', 'motivations'));
+    }
+
+    const addResilienceBtn = document.getElementById('add-resilience-btn');
+    if (addResilienceBtn) {
+      addResilienceBtn.addEventListener('click', () => showOptionsModal('SH Student Resilience', 'resilience_statement', 'resilience_links'));
+    }
+  }
+
+  // --- API Methods ---
+  async function fetchStudentSummary() {
+    try {
+      const res = await fetch('/api/method/skillshub_core.skillshub_core.api.get_portal_student_context', {
+        headers: getFrappeHeaders(),
+        credentials: 'include'
+      });
+      if (res.status === 401 || res.status === 403) { clearAndRedirect(); return; }
+      if (!res.ok) throw new Error('Unable to fetch student summary (HTTP ' + res.status + ')');
+      const data = await res.json();
+      if (data && data.message && data.message.student) {
+        studentId = data.message.student.name || data.message.student.id || studentId;
+        if (studentId) localStorage.setItem('sh_student_id', studentId);
+        renderProfile(data.message.student);
+        renderTimeline(data.message.enrolments || [], data.message.student);
+        renderFeedbackLinks(data.message.feedback_forms || [], data.message.feedback_status || {});
+        // Also fetch the full doc for CRUD/Tables
+        fetchFullStudentDoc();
+      } else {
+        throw new Error('Summary response was empty.');
+      }
+    } catch (err) {
+      console.error('Failed to fetch summary:', err);
+      const content = document.getElementById('content');
+      if (content) {
+        content.innerHTML = '<div class="glass-card sh-animate-fade" style="margin-top:2rem; text-align:center; padding:4rem; color:var(--color-red-700)">' +
+          '<h2 style="color:var(--color-red-700)">Unable to load profile</h2><p>' + (err.message || 'Unknown error') + '</p>' +
+          '<button onclick="location.reload()" class="sh-btn-secondary" style="margin-top:1rem">Try Again</button></div>';
+      }
+    }
+  }
+
+  async function fetchFullStudentDoc() {
+    try {
+      const res = await fetch(`/api/method/skillshub_core.skillshub_core.api.get_student_editable?student=${encodeURIComponent(studentId)}`, {
+        headers: getFrappeHeaders(),
+        credentials: 'include'
+      });
+      if (!res.ok) throw new Error('Unable to fetch editable profile (HTTP ' + res.status + ')');
+      const data = await res.json();
+      if (data && data.message) {
+        currentStudentDoc = data.message;
+        populateForms(currentStudentDoc);
+        renderGrowthPills(currentStudentDoc);
+      }
+    } catch (err) {
+      console.error('Failed to fetch full doc:', err);
+    }
+  }
+
+  async function handleProfileUpdate(e) {
+    e.preventDefault();
+    const form = e.target;
+    const saveBtn = form.querySelector('button[type="submit"]');
+    const originalText = saveBtn.textContent;
+    
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving...';
+
+    const formData = new FormData(form);
+    const payload = {};
+    formData.forEach((value, key) => { payload[key] = value.trim(); });
+
+    try {
+      const res = await fetch('/api/method/skillshub_core.skillshub_core.api.update_student_profile', {
+        method: 'POST',
+        headers: getFrappeHeaders(),
+        credentials: 'include',
+        body: JSON.stringify({ student: studentId, payload: payload })
+      });
+      if (!res.ok) throw new Error('Update failed');
+      
+      form.classList.remove('active');
+      const toggle = document.querySelector(`.edit-toggle[data-form="${form.id}"]`);
+      if (toggle) toggle.textContent = 'Edit Contact';
+      
+      fetchStudentSummary();
+    } catch (err) {
+      alert('Error updating profile: ' + err.message);
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = originalText;
+    }
+  }
+
+  // --- Growth/Pill Management ---
+  function renderGrowthPills(doc) {
+    renderPills('motivation-pills', doc.motivations || [], 'motivation', 'motivations');
+    renderPills('resilience-pills', doc.resilience_links || [], 'resilience_statement', 'resilience_links');
+  }
+
+  function populateForms(doc) {
+    var contactForm = document.getElementById('contact-form');
+    if (!contactForm || !doc) return;
+    var fields = ['address_line_1', 'address_line_2', 'pincode', 'mobile'];
+    fields.forEach(function (fieldname) {
+      var input = contactForm.querySelector('[name="' + fieldname + '"]');
+      if (input) input.value = doc[fieldname] || '';
+    });
+  }
+
+  function renderPills(containerId, data, fieldname, tableField) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    const addBtn = container.querySelector('.sh-pill-add-btn');
+    container.innerHTML = '';
+    
+    data.forEach(item => {
+      const pill = document.createElement('div');
+      pill.className = 'sh-pill';
+      pill.innerHTML = `${item[fieldname]} <span class="sh-pill-remove" data-name="${item.name}" data-table="${tableField}">&times;</span>`;
+      container.appendChild(pill);
+    });
+    
+    if (addBtn) container.appendChild(addBtn);
+
+    // Listen for removes
+    container.querySelectorAll('.sh-pill-remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const name = btn.getAttribute('data-name');
+        const table = btn.getAttribute('data-table');
+        removePill(table, name);
+      });
+    });
+  }
+
+  async function removePill(tableField, rowName) {
+    if (!currentStudentDoc) return;
+    const existing = Array.isArray(currentStudentDoc[tableField]) ? currentStudentDoc[tableField] : [];
+    const updatedTable = existing.filter(row => row.name !== rowName);
+    
+    try {
+      const res = await fetch('/api/method/skillshub_core.skillshub_core.api.update_student_profile', {
+        method: 'POST',
+        headers: getFrappeHeaders(),
+        credentials: 'include',
+        body: JSON.stringify({ student: studentId, payload: { [tableField]: updatedTable } })
+      });
+      if (res.ok) fetchFullStudentDoc();
+    } catch (err) {
+      console.error('Failed to remove pill:', err);
+    }
+  }
+
+  async function addPill(tableField, valueField, value) {
+    if (!currentStudentDoc) return;
+    const newRow = { [valueField]: value };
+    const updatedTable = [...(currentStudentDoc[tableField] || []), newRow];
+    
+    try {
+      const res = await fetch('/api/method/skillshub_core.skillshub_core.api.update_student_profile', {
+        method: 'POST',
+        headers: getFrappeHeaders(),
+        credentials: 'include',
+        body: JSON.stringify({ student: studentId, payload: { [tableField]: updatedTable } })
+      });
+      if (res.ok) {
+        hideModal();
+        fetchFullStudentDoc();
+      }
+    } catch (err) {
+      console.error('Failed to add pill:', err);
+    }
+  }
+
+  // --- Options Modal ---
+  async function showOptionsModal(doctype, valueField, tableField) {
+    let overlay = document.querySelector('.sh-modal-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.className = 'sh-modal-overlay';
+      overlay.innerHTML = `
+        <div class="sh-modal">
+          <div class="sh-modal-header">
+            <div class="sh-modal-title">Select Option</div>
+            <button class="sh-modal-close" style="background:none; border:none; cursor:pointer; font-size:1.5rem;">&times;</button>
+          </div>
+          <div class="sh-modal-body" id="modal-list">Loading...</div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      overlay.querySelector('.sh-modal-close').addEventListener('click', hideModal);
+    }
+    
+    overlay.classList.add('active');
+    const listContainer = document.getElementById('modal-list');
+    listContainer.innerHTML = 'Loading...';
+
+    try {
+      const res = await fetch(`/api/resource/${doctype}?fields=["name"]&limit_page_length=100`, {
+        headers: getFrappeHeaders(),
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (data && data.data) {
+        listContainer.innerHTML = '';
+        data.data.forEach(opt => {
+          const item = document.createElement('div');
+          item.className = 'sh-list-item';
+          item.textContent = opt.name;
+          item.addEventListener('click', () => addPill(tableField, valueField, opt.name));
+          listContainer.appendChild(item);
+        });
+      }
+    } catch (err) {
+      listContainer.innerHTML = 'Error loading options.';
+    }
+  }
+
+  function hideModal() {
+    const overlay = document.querySelector('.sh-modal-overlay');
+    if (overlay) overlay.classList.remove('active');
+  }
+
+  // --- Rendering Helpers ---
+  function renderProfile(s) {
+    var content = document.getElementById('content');
+    
+    // Banner
+    var bannerHtml = '<div class="sh-page-header sh-animate-fade"><div class="sh-container"><div style="display:flex; justify-content:space-between; align-items:center;">' +
+      '<div><h1>' + (s.student_name || '—') + '</h1><p>' + (s.intake_year || '—') + ' • ' + (s.skillshub_programme || '—') + '</p></div>' +
+      '<div style="display:flex; gap:1rem;">' +
+        '<a href="/skillshub/baseline" class="nav-btn">Baseline</a>' +
+        '<a href="/skillshub/feedback/soft-skills" class="nav-btn">Feedback</a>' +
+        '<button id="logout-btn" class="nav-btn logout-btn">Sign Out</button>' +
+      '</div>' +
+      '</div></div></div>';
+
+    // Sidebar
+    var sidebarHtml = '<div class="sidebar-col">' +
+      '<div class="glass-card sh-animate-fade">' +
+        '<div class="section-title">Demographics</div>' +
+        row('Student ID', s.name) +
+        row('Birth Date', formatDate(s.date_of_birth)) +
+        row('Gender', s.gender) +
+        '<div class="data-row"><div class="data-label">Status</div><div class="data-value"><span class="sh-badge sh-badge-info">' + s.status + '</span></div></div>' +
+      '</div>' +
+      '<div class="glass-card sh-animate-fade" style="animation-delay: 0.1s;">' +
+        '<div class="section-title">Growth & Motivation</div>' +
+        '<div class="data-label" style="margin-bottom:0.5rem">Motivations</div>' +
+        '<div id="motivation-pills" class="sh-pill-container"><button class="sh-pill-add-btn" id="add-motivation-btn">+ Add</button></div>' +
+        '<div class="data-label" style="margin-top:1.5rem; margin-bottom:0.5rem">Resilience</div>' +
+        '<div id="resilience-pills" class="sh-pill-container"><button class="sh-pill-add-btn" id="add-resilience-btn">+ Add</button></div>' +
+      '</div></div>';
+
+    // Main Content
+    var mainHtml = '<div class="content-col">' +
+      '<div class="glass-card sh-animate-fade editable-card" style="animation-delay: 0.2s;">' +
+        '<div class="edit-toggle" data-form="contact-form">Edit Contact</div>' +
+        '<div class="section-title">Contact Information</div>' +
+        '<div class="sh-grid sh-grid-2" id="contact-display-grid">' +
+          row('Address', [s.address_line_1, s.address_line_2, s.pincode].filter(Boolean).join(', ') || '—') +
+          row('Mobile', s.mobile || '—') +
+        '</div>' +
+        '<form id="contact-form" class="sh-form">' +
+          '<div class="sh-form-grid">' +
+            '<div class="sh-input-group"><label>Address Line 1</label><input type="text" name="address_line_1" class="sh-input"></div>' +
+            '<div class="sh-input-group"><label>Address Line 2</label><input type="text" name="address_line_2" class="sh-input"></div>' +
+            '<div class="sh-input-group"><label>Postcode</label><input type="text" name="pincode" class="sh-input"></div>' +
+            '<div class="sh-input-group"><label>Mobile</label><input type="text" name="mobile" class="sh-input"></div>' +
+          '</div>' +
+          '<div style="margin-top:1.5rem; display:flex; gap:0.75rem;">' +
+            '<button type="submit" class="sh-btn-primary">Save</button>' +
+            '<button type="button" class="sh-btn-secondary cancel-edit">Cancel</button>' +
+          '</div>' +
+        '</form>' +
+      '</div>' +
+      '<div class="glass-card sh-animate-fade" style="animation-delay: 0.3s;">' +
+        '<div class="section-title">Enrolment Journey</div>' +
+        '<div id="timeline-container" class="timeline">Loading timeline...</div>' +
+      '</div>' +
+      '<div class="glass-card sh-animate-fade" style="animation-delay: 0.35s;">' +
+        '<div class="section-title">Feedback Forms</div>' +
+        '<div id="feedback-links" class="sh-grid sh-grid-2"></div>' +
+      '</div></div>';
+
+    content.innerHTML = bannerHtml + '<div class="sh-container"><div class="sh-main-container">' + sidebarHtml + mainHtml + '</div></div>';
+    
+    // Re-bind events after render
+    setupEventListeners();
+  }
+
+  function row(label, value) {
+    return '<div class="data-row"><div class="data-label">' + label + '</div><div class="data-value">' + (value || '—') + '</div></div>';
+  }
+
+  function renderFeedbackLinks(forms, statusMap) {
+    var container = document.getElementById('feedback-links');
+    if (!container) return;
+    if (!Array.isArray(forms) || !forms.length) {
+      container.innerHTML = '<div class="data-value">No feedback forms configured.</div>';
+      return;
+    }
+    container.innerHTML = forms.map(function (f) {
+      var submitted = !!statusMap[f.doctype];
+      return '<a href="' + f.route + '" class="sh-btn-secondary" style="display:flex; align-items:center; justify-content:space-between; text-decoration:none;">' +
+        '<span style="font-weight:600;color:var(--color-slate-800)">' + f.label + '</span>' +
+        '<span class="sh-badge ' + (submitted ? 'sh-badge-success' : 'sh-badge-info') + '">' + (submitted ? 'Submitted' : 'Pending') + '</span>' +
+      '</a>';
+    }).join('');
+  }
+
+  function renderTimeline(enrolments, student) {
+    var container = document.getElementById('timeline-container');
+    if (!container) return;
+    if (!enrolments.length) {
+      container.innerHTML = '<div class="tl-item"><div class="tl-title">Started Journey</div></div>';
+      return;
+    }
+    container.innerHTML = enrolments.map(function (e) {
+      return '<div class="tl-item ' + (e.status === 'Completed' ? 'completed' : '') + '">' +
+        '<div class="tl-date">' + formatDate(e.enrolment_date) + (e.completion_date ? ' — ' + formatDate(e.completion_date) : '') + '</div>' +
+        '<div class="tl-title">' + (e.milestone || 'Milestone') + '</div>' +
+        '<div class="tl-meta">' +
+          '<span class="sh-badge ' + (e.status === 'Completed' ? 'sh-badge-success' : 'sh-badge-info') + '">' + e.status + '</span>' +
+          (e.attendance_rate ? '<span class="sh-badge sh-badge-info">' + Math.round(e.attendance_rate) + '% Att.</span>' : '') +
+          (e.feedback_submitted ? '<span class="sh-badge sh-badge-success">✓ Feedback</span>' : '') +
+        '</div></div>';
+    }).join('');
+  }
+
+  function formatDate(d) {
+    if (!d) return '—';
+    const dt = new Date(d);
+    return isNaN(dt) ? d : dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+})();
