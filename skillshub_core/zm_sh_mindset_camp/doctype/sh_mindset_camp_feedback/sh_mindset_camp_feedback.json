@@ -1,109 +1,323 @@
 {
- "actions": [],
- "allow_rename": 1,
- "autoname": "format:{sh_student}-MSC{##}",
- "creation": "2026-04-01 21:33:53.035354",
- "default_view": "List",
- "doctype": "DocType",
- "editable_grid": 1,
- "engine": "InnoDB",
- "field_order": [
-  "general_tab",
-  "section_break_vovo",
-  "sh_student",
-  "student_full_name",
-  "column_break_pppv",
-  "programme_schedule",
-  "milestone",
-  "section_break_context",
-  "academic_year",
-  "cohort",
-  "column_break_context2",
-  "course",
-  "section_break_whmc",
-  "date_submitted",
-  "feedback_form_tab",
-  "form_timeline",
-  "section_break_tsja",
-  "before_camp_column",
-  "confidence_levels_before_camp",
-  "problem_solving_skills_before_camp",
-  "team_building_skills_before_camp",
-  "communication_skills_before_camp",
-  "sense_of_hope_about_the_future_before_camp",
-  "section_break_dicf",
-  "after_camp_column",
-  "confidence_levels_after_camp",
-  "problem_solving_skills_after_camp",
-  "team_building_skills_after_camp",
-  "communication_skills_after_camp",
-  "sense_of_hope_about_the_future_after_camp",
-  "feedback_section",
-  "met_expectations",
-  "aspects_enjoyed_html",
-  "aspects_enjoyed_table",
-  "section_break_lija",
-  "most_valuable_aspect",
-  "prepared_for_next_stage"
- ],
- "fields": [
-  {"fieldname": "general_tab", "fieldtype": "Tab Break", "label": "General"},
-  {"fieldname": "section_break_vovo", "fieldtype": "Section Break"},
-  {"fieldname": "sh_student", "fieldtype": "Link", "in_list_view": 1, "label": "Student", "options": "SH Student", "reqd": 1, "search_index": 1},
-  {"fetch_from": "sh_student.student_name", "fieldname": "student_full_name", "fieldtype": "Data", "label": "Student Name", "read_only": 1},
-  {"fieldname": "column_break_pppv", "fieldtype": "Column Break"},
-  {"fieldname": "programme_schedule", "fieldtype": "Link", "in_list_view": 1, "label": "Programme Schedule", "options": "SH Programme Schedule", "reqd": 1},
-  {"fetch_from": "programme_schedule.skillshub_programme", "fieldname": "milestone", "fieldtype": "Link", "in_list_view": 1, "label": "Milestone", "options": "SkillsHub Programme", "read_only": 1},
-  {"fieldname": "section_break_context", "fieldtype": "Section Break"},
-  {"fetch_from": "programme_schedule.academic_year", "fieldname": "academic_year", "fieldtype": "Read Only", "in_list_view": 1, "label": "Academic Year"},
-  {"fetch_from": "programme_schedule.cohort", "fieldname": "cohort", "fieldtype": "Link", "in_list_view": 1, "label": "Cohort", "options": "SkillsHub Cohort"},
-  {"fieldname": "column_break_context2", "fieldtype": "Column Break"},
-  {"fetch_from": "programme_schedule.skillshub_course", "fieldname": "course", "fieldtype": "Link", "label": "Course", "options": "SkillsHub Course"},
-  {"fieldname": "section_break_whmc", "fieldtype": "Section Break"},
-  {"default": "Now", "fieldname": "date_submitted", "fieldtype": "Datetime", "label": "Date Submitted"},
-  {"fieldname": "feedback_form_tab", "fieldtype": "Tab Break", "label": "Feedback Form"},
-  {"fieldname": "form_timeline", "fieldtype": "Select", "label": "Form Timeline", "options": "\nBefore Camp\nAfter Camp"},
-  {"fieldname": "section_break_tsja", "fieldtype": "Section Break"},
-  {"fieldname": "before_camp_column", "fieldtype": "Column Break", "label": "Before Camp"},
-  {"fieldname": "confidence_levels_before_camp", "fieldtype": "Rating", "label": "Confidence levels before Camp"},
-  {"fieldname": "problem_solving_skills_before_camp", "fieldtype": "Rating", "label": "Problem Solving Skills before Camp"},
-  {"fieldname": "team_building_skills_before_camp", "fieldtype": "Rating", "label": "Team-building Skills before Camp"},
-  {"fieldname": "communication_skills_before_camp", "fieldtype": "Rating", "label": "Communication Skills before Camp"},
-  {"fieldname": "sense_of_hope_about_the_future_before_camp", "fieldtype": "Rating", "label": "Sense of hope about the future before Camp"},
-  {"fieldname": "section_break_dicf", "fieldtype": "Section Break"},
-  {"fieldname": "after_camp_column", "fieldtype": "Column Break", "label": "After Camp"},
-  {"fieldname": "confidence_levels_after_camp", "fieldtype": "Rating", "label": "Confidence levels after Camp"},
-  {"fieldname": "problem_solving_skills_after_camp", "fieldtype": "Rating", "label": "Problem Solving Skills after Camp"},
-  {"fieldname": "team_building_skills_after_camp", "fieldtype": "Rating", "label": "Team-building Skills after Camp"},
-  {"fieldname": "communication_skills_after_camp", "fieldtype": "Rating", "label": "Communication Skills after Camp"},
-  {"fieldname": "sense_of_hope_about_the_future_after_camp", "fieldtype": "Rating", "label": "Sense of hope about the future after Camp"},
-  {"fieldname": "feedback_section", "fieldtype": "Section Break", "label": "Feedback"},
-  {"fieldname": "met_expectations", "fieldtype": "Select", "label": "Did the camp meet your expectations?", "options": "\nYes\nPartially\nNo"},
-  {"fieldname": "aspects_enjoyed_html", "fieldtype": "Data", "label": "Which aspects of the mindset camp have you enjoyed?"},
-  {"fieldname": "aspects_enjoyed_table", "fieldtype": "Table", "label": "Aspects Enjoyed Table", "options": "SH Mindset Camp Aspect Link"},
-  {"fieldname": "section_break_lija", "fieldtype": "Section Break"},
-  {"fieldname": "most_valuable_aspect", "fieldtype": "Small Text", "label": "Which of those options above has been the most valuable for you and why?"},
-  {"fieldname": "prepared_for_next_stage", "fieldtype": "Small Text", "label": "How has the camp prepared you for the next stage of your journey at SkillsHub?"}
- ],
- "grid_page_length": 50,
- "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-04-30 00:00:00.000000",
- "modified_by": "Administrator",
- "module": "ZM SH Mindset Camp",
- "name": "SH Mindset Camp Feedback",
- "naming_rule": "Expression (old style)",
- "owner": "Administrator",
- "permissions": [
-  {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "System Manager", "share": 1, "write": 1},
-  {"email": 1, "export": 1, "if_owner": 1, "print": 1, "read": 1, "report": 1, "role": "Student", "share": 1},
-  {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "Administrator", "share": 1, "write": 1},
-  {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "PI Admin", "share": 1, "write": 1}
- ],
- "row_format": "Dynamic",
- "rows_threshold_for_grid_search": 20,
- "sort_field": "modified",
- "sort_order": "DESC",
- "states": [],
- "track_changes": 1
+  "actions": [],
+  "allow_rename": 1,
+  "autoname": "format:{sh_student}-MSC{##}",
+  "creation": "2026-04-01 21:33:53.035354",
+  "default_view": "List",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "general_tab",
+    "section_break_vovo",
+    "sh_student",
+    "student_full_name",
+    "column_break_pppv",
+    "programme_schedule",
+    "milestone",
+    "section_break_context",
+    "academic_year",
+    "cohort",
+    "column_break_context2",
+    "course",
+    "section_break_whmc",
+    "date_submitted",
+    "feedback_form_tab",
+    "form_timeline",
+    "section_break_tsja",
+    "before_camp_column",
+    "confidence_levels_before_camp",
+    "problem_solving_skills_before_camp",
+    "team_building_skills_before_camp",
+    "communication_skills_before_camp",
+    "sense_of_hope_about_the_future_before_camp",
+    "section_break_dicf",
+    "after_camp_column",
+    "confidence_levels_after_camp",
+    "problem_solving_skills_after_camp",
+    "team_building_skills_after_camp",
+    "communication_skills_after_camp",
+    "sense_of_hope_about_the_future_after_camp",
+    "feedback_section",
+    "met_expectations",
+    "aspects_enjoyed_html",
+    "aspects_enjoyed_table",
+    "section_break_lija",
+    "most_valuable_aspect",
+    "prepared_for_next_stage"
+  ],
+  "fields": [
+    {
+      "fieldname": "general_tab",
+      "fieldtype": "Tab Break",
+      "label": "General"
+    },
+    {
+      "fieldname": "section_break_vovo",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "sh_student",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Student",
+      "options": "SH Student",
+      "reqd": 1,
+      "search_index": 1
+    },
+    {
+      "fieldname": "student_enrolment",
+      "fieldtype": "Link",
+      "label": "Student Enrolment",
+      "options": "SH Student Enrolment",
+      "reqd": 0,
+      "in_list_view": 1
+    },
+    {
+      "fetch_from": "sh_student.student_name",
+      "fieldname": "student_full_name",
+      "fieldtype": "Data",
+      "label": "Student Name",
+      "read_only": 1
+    },
+    {
+      "fieldname": "column_break_pppv",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "programme_schedule",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Programme Schedule",
+      "options": "SH Programme Schedule",
+      "reqd": 1
+    },
+    {
+      "fetch_from": "programme_schedule.skillshub_programme",
+      "fieldname": "milestone",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Milestone",
+      "options": "SkillsHub Programme",
+      "read_only": 1
+    },
+    {
+      "fieldname": "section_break_context",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fetch_from": "programme_schedule.academic_year",
+      "fieldname": "academic_year",
+      "fieldtype": "Read Only",
+      "in_list_view": 1,
+      "label": "Academic Year"
+    },
+    {
+      "fetch_from": "programme_schedule.cohort",
+      "fieldname": "cohort",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Cohort",
+      "options": "SkillsHub Cohort"
+    },
+    {
+      "fieldname": "column_break_context2",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fetch_from": "programme_schedule.skillshub_course",
+      "fieldname": "course",
+      "fieldtype": "Link",
+      "label": "Course",
+      "options": "SkillsHub Course"
+    },
+    {
+      "fieldname": "section_break_whmc",
+      "fieldtype": "Section Break"
+    },
+    {
+      "default": "Now",
+      "fieldname": "date_submitted",
+      "fieldtype": "Datetime",
+      "label": "Date Submitted"
+    },
+    {
+      "fieldname": "feedback_form_tab",
+      "fieldtype": "Tab Break",
+      "label": "Feedback Form"
+    },
+    {
+      "fieldname": "form_timeline",
+      "fieldtype": "Select",
+      "label": "Form Timeline",
+      "options": "\nBefore Camp\nAfter Camp"
+    },
+    {
+      "fieldname": "section_break_tsja",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "before_camp_column",
+      "fieldtype": "Column Break",
+      "label": "Before Camp"
+    },
+    {
+      "fieldname": "confidence_levels_before_camp",
+      "fieldtype": "Rating",
+      "label": "Confidence levels before Camp"
+    },
+    {
+      "fieldname": "problem_solving_skills_before_camp",
+      "fieldtype": "Rating",
+      "label": "Problem Solving Skills before Camp"
+    },
+    {
+      "fieldname": "team_building_skills_before_camp",
+      "fieldtype": "Rating",
+      "label": "Team-building Skills before Camp"
+    },
+    {
+      "fieldname": "communication_skills_before_camp",
+      "fieldtype": "Rating",
+      "label": "Communication Skills before Camp"
+    },
+    {
+      "fieldname": "sense_of_hope_about_the_future_before_camp",
+      "fieldtype": "Rating",
+      "label": "Sense of hope about the future before Camp"
+    },
+    {
+      "fieldname": "section_break_dicf",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "after_camp_column",
+      "fieldtype": "Column Break",
+      "label": "After Camp"
+    },
+    {
+      "fieldname": "confidence_levels_after_camp",
+      "fieldtype": "Rating",
+      "label": "Confidence levels after Camp"
+    },
+    {
+      "fieldname": "problem_solving_skills_after_camp",
+      "fieldtype": "Rating",
+      "label": "Problem Solving Skills after Camp"
+    },
+    {
+      "fieldname": "team_building_skills_after_camp",
+      "fieldtype": "Rating",
+      "label": "Team-building Skills after Camp"
+    },
+    {
+      "fieldname": "communication_skills_after_camp",
+      "fieldtype": "Rating",
+      "label": "Communication Skills after Camp"
+    },
+    {
+      "fieldname": "sense_of_hope_about_the_future_after_camp",
+      "fieldtype": "Rating",
+      "label": "Sense of hope about the future after Camp"
+    },
+    {
+      "fieldname": "feedback_section",
+      "fieldtype": "Section Break",
+      "label": "Feedback"
+    },
+    {
+      "fieldname": "met_expectations",
+      "fieldtype": "Select",
+      "label": "Did the camp meet your expectations?",
+      "options": "\nYes\nPartially\nNo"
+    },
+    {
+      "fieldname": "aspects_enjoyed_html",
+      "fieldtype": "Data",
+      "label": "Which aspects of the mindset camp have you enjoyed?"
+    },
+    {
+      "fieldname": "aspects_enjoyed_table",
+      "fieldtype": "Table",
+      "label": "Aspects Enjoyed Table",
+      "options": "SH Mindset Camp Aspect Link"
+    },
+    {
+      "fieldname": "section_break_lija",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "most_valuable_aspect",
+      "fieldtype": "Small Text",
+      "label": "Which of those options above has been the most valuable for you and why?"
+    },
+    {
+      "fieldname": "prepared_for_next_stage",
+      "fieldtype": "Small Text",
+      "label": "How has the camp prepared you for the next stage of your journey at SkillsHub?"
+    }
+  ],
+  "grid_page_length": 50,
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-04-30 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "ZM SH Mindset Camp",
+  "name": "SH Mindset Camp Feedback",
+  "naming_rule": "Expression (old style)",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "email": 1,
+      "export": 1,
+      "if_owner": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Student",
+      "share": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Administrator",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "PI Admin",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "row_format": "Dynamic",
+  "rows_threshold_for_grid_search": 20,
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": [],
+  "track_changes": 1
 }
