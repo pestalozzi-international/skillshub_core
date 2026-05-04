@@ -49,8 +49,8 @@
       var rFields = ['confidence','literacy','numeracy','resilience','problem_solving'];
       var payload = {
         doctype: 'SkillsHub Edulution Feedback', sh_student: studentId,
-          student_enrolment: ctx.current_enrolment || null,
-          student_enrolment: ctx.current_enrolment || null,
+          enrolment_ticket: ctx.current_enrolment || null,
+          enrolment_ticket: ctx.current_enrolment || null,
         student_full_name: ctx.student_name || ctx.full_name,
         programme_schedule: ctx.current_schedule,
         goals_achieved:   document.getElementById('goals_achieved').value,

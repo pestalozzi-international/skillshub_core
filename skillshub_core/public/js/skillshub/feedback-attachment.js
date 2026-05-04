@@ -63,7 +63,7 @@
         method: 'POST', headers: getFrappeHeaders(), credentials: 'include',
         body: JSON.stringify({
           doctype: 'ZM SkillsHub Attachment Feedback', sh_student: studentId,
-          student_enrolment: ctx.current_enrolment || null,
+          enrolment_ticket: ctx.current_enrolment || null,
           student_full_name: ctx.student_name || ctx.full_name,
           programme_schedule: ctx.current_schedule, challenges: chs,
           preparation_rating:      parseInt(document.getElementById('r-preparation').value)||3,

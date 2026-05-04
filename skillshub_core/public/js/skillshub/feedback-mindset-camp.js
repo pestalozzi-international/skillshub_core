@@ -66,7 +66,7 @@
         credentials: 'include',
         body: JSON.stringify({
           doctype: 'SH Mindset Camp Feedback', sh_student: studentId,
-          student_enrolment: ctx.current_enrolment || null,
+          enrolment_ticket: ctx.current_enrolment || null,
           student_full_name: ctx.student_name || ctx.full_name,
           programme_schedule: ctx.current_schedule, aspects: aspects,
           enjoyed_most:   document.getElementById('enjoyed_most').value,

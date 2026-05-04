@@ -68,7 +68,7 @@
       var payload = {
         doctype: 'SH Student Baseline Form',
         sh_student: studentId,
-          student_enrolment: ctx.current_enrolment || null,
+          enrolment_ticket: ctx.current_enrolment || null,
         student_full_name: ctx.student_name || ctx.full_name,
         programme_schedule: ctx.current_schedule,
         milestone: document.getElementById('milestone').value,
