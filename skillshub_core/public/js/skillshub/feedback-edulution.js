@@ -11,7 +11,7 @@
     }
     return headers;
 }
-  var studentId = localStorage.getItem('sh_student_id');
+  var studentId = null;
   var ctx = {};
 
   function showError(msg) {
@@ -49,6 +49,8 @@
       var rFields = ['confidence','literacy','numeracy','resilience','problem_solving'];
       var payload = {
         doctype: 'SkillsHub Edulution Feedback', sh_student: studentId,
+          student_enrolment: ctx.current_enrolment || null,
+          student_enrolment: ctx.current_enrolment || null,
         student_full_name: ctx.student_name || ctx.full_name,
         programme_schedule: ctx.current_schedule,
         goals_achieved:   document.getElementById('goals_achieved').value,

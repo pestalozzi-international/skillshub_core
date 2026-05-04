@@ -11,7 +11,7 @@
     }
     return headers;
 }
-  var studentId = localStorage.getItem('sh_student_id');
+  var studentId = null;
   var ctx = {};
 
   function showError(msg) {
@@ -23,12 +23,15 @@
   document.addEventListener('DOMContentLoaded', function () {
     fetch('/api/method/skillshub_core.skillshub_core.api.get_portal_student_context',
       { headers: getFrappeHeaders(), credentials: 'include' })
-    .then(function (r) { return r.json(); })
+    .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (data) {
-      var s = data.message.student; ctx = s; studentId = s.name || s.id || studentId;
-      document.getElementById('ctx-id').textContent       = studentId;
-      document.getElementById('ctx-name').textContent     = s.student_name || s.full_name || '-';
-      document.getElementById('ctx-schedule').textContent = s.current_schedule || '-';
+      var s = data && data.message && data.message.student ? data.message.student : null;
+      if (!s) throw new Error('Unable to fetch student context');
+      ctx = s; studentId = s.name || s.id || studentId;
+      try { document.getElementById('ctx-id').textContent       = studentId; } catch(e){}
+      try { document.getElementById('ctx-name').textContent     = s.student_name || s.full_name || '-'; } catch(e){}
+      try { document.getElementById('ctx-schedule').textContent = s.current_schedule || '-'; } catch(e){}
+      try { document.getElementById('ctx-enrolment').textContent = s.current_enrolment || '-'; } catch(e){}
       document.getElementById('ctx-path').textContent     = s.programme_path || '-';
       return fetch('/api/resource/SH VT Course Expectation?fields=["name"]&limit=50',
         { headers: getFrappeHeaders(), credentials: 'include' }).then(function (r) { return r.json(); });
@@ -60,6 +63,8 @@
       var sFields = ['problem_solving','time_management','teamwork','mental_resilience'];
       var payload = {
         doctype: 'SkillsHub Vocational Training Feedback', sh_student: studentId,
+          student_enrolment: ctx.current_enrolment || null,
+          student_enrolment: ctx.current_enrolment || null,
         student_full_name: ctx.student_name || ctx.full_name,
         programme_schedule: ctx.current_schedule, course_expectations: exps,
         course_met_expectations: document.getElementById('met_expectations').value,
