@@ -3,11 +3,9 @@
 
 import frappe
 from frappe.website.website_generator import WebsiteGenerator
-from frappe.model.document import Document
 
 
-
-class SHStudent(Document):
+class SHStudent(WebsiteGenerator):
     def before_save(self):
         self.update_programme_path_from_enrolment()
 
