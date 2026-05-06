@@ -47,6 +47,8 @@
   "column_break_dusj",
   "fullname_and_id",
   "naming_series",
+  "route",
+  "published",
   "applications_section",
   "date_submitted_enrolment_form",
   "applicant_record",
@@ -622,11 +624,9 @@
    "label": "Enrolment & Graduation"
   },
   {
-   "fetch_from": "current_schedule.start_date",
    "fieldname": "enrolment_date",
    "fieldtype": "Date",
-   "label": "Enrolment Date",
-   "mandatory_depends_on": "eval:doc.status == \"Student\""
+   "label": "Enrolment Date"
   },
   {
    "fieldname": "graduation_completion_date",
@@ -768,6 +768,7 @@
    "label": "Role"
   },
   {
+   "default": "ZMW",
    "fieldname": "emp_currency",
    "fieldtype": "Link",
    "label": "Currency",
@@ -814,11 +815,24 @@
   {
    "fieldname": "column_break_sahb",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route"
+  },
+  {
+   "default": "0",
+   "fieldname": "published",
+   "fieldtype": "Check",
+   "label": "Published"
   }
  ],
  "grid_page_length": 50,
+ "has_web_view": 1,
  "image_field": "student_image",
  "index_web_pages_for_search": 1,
+ "is_published_field": "published",
  "links": [
   {
    "group": "Baseline",
@@ -861,7 +875,7 @@
    "link_fieldname": "student"
   }
  ],
- "modified": "2026-05-04 14:22:06.851268",
+ "modified": "2026-05-04 17:37:37.739197",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Student",
@@ -921,6 +935,7 @@
    "write": 1
   }
  ],
+ "route": "skillshub-student",
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,
  "search_fields": "student_name",

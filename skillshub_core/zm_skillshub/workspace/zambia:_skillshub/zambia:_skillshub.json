@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"GT9u3mKvXT\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">SkillsHub Data</span>\",\"col\":12}},{\"id\":\"B4zJiaDoqc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Students\",\"col\":4}},{\"id\":\"aSSeyUVobr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Alumni\",\"col\":4}},{\"id\":\"7OGhxqZVSs\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"rn0VIJRaVM\",\"type\":\"card\",\"data\":{\"card_name\":\"Programme Design\",\"col\":4}},{\"id\":\"zCEDYKxuNK\",\"type\":\"card\",\"data\":{\"card_name\":\"Faculty\",\"col\":4}},{\"id\":\"SKkaE9TVdd\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}},{\"id\":\"gaEa9Bbw18\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"7dj3pDOBzP\",\"type\":\"card\",\"data\":{\"card_name\":\"Baseline Building Blocks\",\"col\":4}},{\"id\":\"YxWip5M53x\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Student Baseline Assessment\",\"col\":4}},{\"id\":\"a6urO1Q_E-\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Jpt1yuCRl1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Enrolment Forms\",\"col\":3}},{\"id\":\"9cz_09gR9T\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SH Student Enrolment\",\"col\":3}},{\"id\":\"6K_PoA2_uK\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"NkY8yZProk\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"SkillsHub Architecture Guide\",\"col\":12}}]",
+ "content": "[{\"id\":\"GT9u3mKvXT\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">SkillsHub Data</span>\",\"col\":12}},{\"id\":\"B4zJiaDoqc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Students\",\"col\":4}},{\"id\":\"aSSeyUVobr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Alumni\",\"col\":4}},{\"id\":\"7OGhxqZVSs\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"rn0VIJRaVM\",\"type\":\"card\",\"data\":{\"card_name\":\"Programme Design\",\"col\":4}},{\"id\":\"zCEDYKxuNK\",\"type\":\"card\",\"data\":{\"card_name\":\"Faculty\",\"col\":4}},{\"id\":\"SKkaE9TVdd\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}},{\"id\":\"gaEa9Bbw18\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"7dj3pDOBzP\",\"type\":\"card\",\"data\":{\"card_name\":\"Baseline Building Blocks\",\"col\":4}},{\"id\":\"YxWip5M53x\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Student Baseline Assessment\",\"col\":4}},{\"id\":\"a6urO1Q_E-\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"OuOmJrpZlk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Cohort Analysis\",\"col\":3}},{\"id\":\"z2qSFPsHxE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Employment & Outcomes\",\"col\":3}},{\"id\":\"rBAjfHTSz_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Programme Overview\",\"col\":3}},{\"id\":\"6K_PoA2_uK\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"NkY8yZProk\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"SkillsHub Architecture Guide\",\"col\":12}}]",
  "creation": "2026-05-03 11:40:35.225496",
  "custom_blocks": [
   {
@@ -175,7 +175,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-05-04 07:07:40.888815",
+ "modified": "2026-05-05 10:52:37.761353",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "Zambia: SkillsHub",
@@ -197,10 +197,16 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "SH Student Enrolment",
-   "link_to": "SH Student Enrolment",
-   "stats_filter": "[]",
-   "type": "DocType"
+   "label": "SkillsHub Cohort Analysis",
+   "link_to": "SkillsHub Cohort Analysis",
+   "type": "Dashboard"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "SkillsHub Employment & Outcomes",
+   "link_to": "SkillsHub Employment & Outcomes",
+   "type": "Dashboard"
   },
   {
    "color": "Green",
@@ -213,10 +219,9 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Enrolment Forms",
-   "link_to": "Web Form",
-   "stats_filter": "[[\"Web Form\",\"module\",\"=\",\"ZM SkillsHub\",false]]",
-   "type": "DocType"
+   "label": "SkillsHub Programme Overview",
+   "link_to": "SkillsHub Programme Overview",
+   "type": "Dashboard"
   },
   {
    "color": "Green",
