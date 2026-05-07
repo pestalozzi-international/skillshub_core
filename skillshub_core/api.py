@@ -18,33 +18,32 @@ def get_programme_overview():
     Returns data for the Programme Overview page.
 
     Correct hierarchy:
-      Intake Year → Path → Programme (milestone) → Course → Cohort → Schedule → Enrolments
+      Intake Year → Path → Programme → Course → Cohort → Schedule → Enrolments
 
-    Path is derived from the student record.
-    All counts are aggregated server-side.
+    Key rules:
+    - Path always comes from SH Student.programme_path (reliable)
+    - Programme/Course/Cohort always come from SH Programme Schedule (reliable)
+      NOT from the enrolment fields — those are often null (e.g. SSP enrolments)
+    - When course == programme name, collapse to avoid redundant level (e.g. Mindset Camp / Mindset Camp)
     """
 
-    # ── 1. All enrolments with full student + schedule context ──────────────
+    # ── 1. All enrolments — resolve everything from schedule, not enrolment ─
     enrolments = frappe.db.sql("""
         SELECT
-            e.name        AS enrolment,
+            e.name                  AS enrolment,
             e.student,
             e.programme_schedule,
-            e.milestone,
-            e.cohort,
-            e.course,
             e.status,
             s.intake_year,
             s.programme_path,
-            s.status      AS student_status,
             CONCAT(IFNULL(s.first_name,''), ' ', IFNULL(s.last_name,'')) AS student_name,
-            sc.skillshub_programme  AS sched_programme,
-            sc.skillshub_course     AS sched_course,
-            sc.cohort               AS sched_cohort,
+            sc.skillshub_programme  AS programme,
+            sc.skillshub_course     AS course,
+            sc.cohort               AS cohort,
             sc.academic_year        AS sched_year,
             sc.complete             AS sched_complete
         FROM `tabSH Student Enrolment` e
-        LEFT JOIN `tabSH Student`           s  ON s.name  = e.student
+        JOIN  `tabSH Student`            s  ON s.name  = e.student
         LEFT JOIN `tabSH Programme Schedule` sc ON sc.name = e.programme_schedule
         ORDER BY s.intake_year DESC, sc.skillshub_programme, sc.skillshub_course, sc.cohort, e.programme_schedule
     """, as_dict=True)
@@ -79,17 +78,21 @@ def get_programme_overview():
         except Exception:
             feedback_maps[key] = {}
 
-    # ── 4. Build nested tree: year→path→programme→course→cohort→schedule ────
-    tree = {}
-    flat_rows = []   # for the table view
+    # ── 4. Build nested tree ─────────────────────────────────────────────────
+    tree      = {}
+    flat_rows = []
 
     for e in enrolments:
-        year      = e.intake_year      or 'Unknown'
-        path      = e.programme_path   or 'Unknown'
-        programme = e.sched_programme  or e.milestone or 'Unknown'
-        course    = e.sched_course     or e.course    or 'Unknown'
-        cohort    = e.sched_cohort     or e.cohort    or 'Unknown'
-        sched     = e.programme_schedule              or 'Unknown'
+        year      = e.intake_year    or 'Unknown'
+        path      = e.programme_path or 'Unknown'
+        programme = e.programme      or 'Unknown'
+        cohort    = e.cohort         or 'Unknown'
+        sched     = e.programme_schedule or 'Unknown'
+
+        # Collapse course level when it is identical to the programme name
+        # (e.g. Mindset Camp programme / Mindset Camp course → just show once)
+        raw_course = e.course or programme
+        course = raw_course if raw_course != programme else programme
 
         (tree
             .setdefault(year,      {})
@@ -114,15 +117,13 @@ def get_programme_overview():
         for key in feedback_tables:
             node['feedback'][key] += feedback_maps[key].get(e.enrolment, 0)
 
-        student_data = {
+        node['enrolments'].append({
             'id':      e.enrolment,
             'student': e.student,
             'name':    (e.student_name or '').strip(),
             'status':  e.status,
-        }
-        node['enrolments'].append(student_data)
+        })
 
-        # Flat row for table view
         flat_rows.append({
             'enrolment':  e.enrolment,
             'student':    e.student,
@@ -142,7 +143,7 @@ def get_programme_overview():
             'fb_att':     feedback_maps['attachment'].get(e.enrolment, 0),
         })
 
-    # ── 5. Summary stats ────────────────────────────────────────────────────
+    # ── 5. Summary ───────────────────────────────────────────────────────────
     summary = frappe.db.sql("""
         SELECT status, intake_year, COUNT(*) as cnt
         FROM `tabSH Student`
@@ -150,9 +151,9 @@ def get_programme_overview():
     """, as_dict=True)
 
     return {
-        'tree':      tree,
-        'flat':      flat_rows,
-        'summary':   summary,
+        'tree':    tree,
+        'flat':    flat_rows,
+        'summary': summary,
         'feedback_labels': {
             'soft_skills':  'Soft Skills',
             'mindset_camp': 'Mindset Camp',
