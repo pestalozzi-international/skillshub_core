@@ -39,6 +39,7 @@
       background-repeat:no-repeat; background-position:right 0.5rem center; background-size:0.875rem; }
     .filter-bar input { background-image:none; padding-right:0.75rem; }
 
+    /* Tree */
     .t-node { margin-bottom:3px; }
     .t-row  { display:flex; align-items:center; gap:0.625rem; padding:0.625rem 0.875rem;
               border-radius:0.75rem; cursor:pointer; user-select:none; }
@@ -88,23 +89,43 @@
     .es-co { background:#d1fae5; color:#065f46; }
     .es-dr { background:#fee2e2; color:#991b1b; }
 
-    .tbl-wrap { background:white; border:1px solid var(--color-slate-200); border-radius:1rem;
-                box-shadow:var(--shadow-premium); overflow-x:auto; }
-    table.ov { width:100%; border-collapse:collapse; font-size:0.78rem; }
-    table.ov th { background:var(--color-slate-50); padding:0.625rem 0.75rem; text-align:left;
-                  font-weight:700; color:var(--color-slate-500); font-size:0.68rem;
-                  text-transform:uppercase; letter-spacing:0.05em;
-                  border-bottom:2px solid var(--color-slate-100); white-space:nowrap; }
-    table.ov td { padding:0.5rem 0.75rem; border-bottom:1px solid var(--color-slate-50); vertical-align:middle; }
-    table.ov tr:last-child td { border-bottom:none; }
-    table.ov tr:hover td { background:var(--color-slate-50); }
+    /* Report table */
+    .report-wrap { background:white; border:1px solid var(--color-slate-200); border-radius:1rem;
+                   box-shadow:var(--shadow-premium); overflow-x:auto; }
+    .legend { display:flex; gap:0.75rem; flex-wrap:wrap; padding:0.875rem 1.25rem;
+              border-bottom:2px solid var(--color-slate-100); align-items:center; }
+    .legend-title { font-size:0.7rem; font-weight:700; text-transform:uppercase;
+                    letter-spacing:0.05em; color:var(--color-slate-500); margin-right:0.25rem; }
+    .leg-chip { display:inline-flex; align-items:center; gap:5px; font-size:0.72rem;
+                padding:2px 10px; border-radius:9999px; font-weight:600; border:1px solid; }
+
+    table.rpt { width:100%; border-collapse:collapse; font-size:0.78rem; min-width:900px; }
+    table.rpt th { background:var(--color-slate-50); padding:0.625rem 0.75rem; text-align:left;
+                   font-weight:700; color:var(--color-slate-500); font-size:0.68rem;
+                   text-transform:uppercase; letter-spacing:0.05em;
+                   border-bottom:2px solid var(--color-slate-100); white-space:nowrap;
+                   cursor:pointer; user-select:none; }
+    table.rpt th:hover { color:var(--color-teal-700); }
+    table.rpt th.sorted-asc::after  { content:' ↑'; }
+    table.rpt th.sorted-desc::after { content:' ↓'; }
+    table.rpt td { padding:0.5rem 0.75rem; border-bottom:1px solid var(--color-slate-50); vertical-align:middle; }
+    table.rpt tbody tr:last-child td { border-bottom:none; }
+    table.rpt tbody tr:hover td { background:var(--color-slate-50); }
     .td-mono { font-family:monospace; font-size:0.7rem; color:var(--color-slate-500); }
-    .td-num  { text-align:center; font-weight:700; }
+    .td-num  { text-align:center; font-weight:700; font-size:0.82rem; }
     .td-good { color:#059669; }
     .td-part { color:#d97706; }
-    .td-zero { color:#cbd5e1; }
-    .tbl-footer { padding:0.75rem 1rem; font-size:0.75rem; color:var(--color-slate-400);
-                  border-top:1px solid var(--color-slate-100); }
+    .td-zero { color:#cbd5e1; font-weight:400; }
+    .td-na   { color:#e2e8f0; font-size:0.65rem; text-align:center; }
+    .prog-badge { display:inline-block; padding:1px 8px; border-radius:9999px; font-size:0.7rem; font-weight:700; }
+    .pg-ss  { background:#fdf4ff; color:#7e22ce; }
+    .pg-msc { background:#fffbeb; color:#b45309; }
+    .pg-vt  { background:#fff7ed; color:#c2410c; }
+    .pg-edu { background:#f0fdfa; color:#0f766e; }
+    .pg-unk { background:#f1f5f9; color:#64748b; }
+    .rpt-footer { padding:0.75rem 1.25rem; font-size:0.75rem; color:var(--color-slate-400);
+                  border-top:1px solid var(--color-slate-100);
+                  display:flex; justify-content:space-between; align-items:center; }
 
     .loading { text-align:center; padding:4rem; color:var(--color-slate-400); font-size:0.9rem; }
     .btn-sm  { background:var(--color-slate-100); border:none; border-radius:0.5rem;
@@ -153,7 +174,7 @@
 
   <div class="view-tabs">
     <button class="view-tab active" id="tab-tree"  onclick="switchView('tree')">🌳 Tree View</button>
-    <button class="view-tab"        id="tab-table" onclick="switchView('table')">📋 Table View</button>
+    <button class="view-tab"        id="tab-table" onclick="switchView('table')">📊 Report View</button>
   </div>
 
   <div class="filter-bar">
@@ -178,15 +199,16 @@
 
 <script>
 let DATA=null, allExp=false, currentView='tree';
+let sortCol='year', sortDir=1;
 const expanded=new Set();
 const PROG_ORDER=['Soft Skills Programme','Mindset Camp','Remedial Programme: Literacy and Numeracy','Vocational Training'];
 const PROG_ICON={'Soft Skills Programme':'🧠','Mindset Camp':'⛺','Vocational Training':'🔧','Remedial Programme: Literacy and Numeracy':'📖'};
+const PROG_SHORT={'Soft Skills Programme':'SS','Mindset Camp':'MSC','Vocational Training':'VT','Remedial Programme: Literacy and Numeracy':'Edu'};
+const PROG_CLS={'Soft Skills Programme':'pg-ss','Mindset Camp':'pg-msc','Vocational Training':'pg-vt','Remedial Programme: Literacy and Numeracy':'pg-edu'};
 
 async function api(method){
   const r=await fetch('/api/method/'+method,{
-    method:'POST',
-    headers:{'Content-Type':'application/json','X-Frappe-CSRF-Token':frappe.csrf_token},
-    body:'{}'
+    method:'POST',headers:{'Content-Type':'application/json','X-Frappe-CSRF-Token':frappe.csrf_token},body:'{}'
   });
   const j=await r.json();
   if(j.exc) throw new Error(j.exc);
@@ -194,14 +216,10 @@ async function api(method){
 }
 
 async function loadData(){
-  ['panel-tree','panel-table'].forEach(id=>{
-    document.getElementById(id).innerHTML='<div class="loading">Fetching live data…</div>';
-  });
+  ['panel-tree','panel-table'].forEach(id=>{document.getElementById(id).innerHTML='<div class="loading">Fetching live data…</div>';});
   try{
     DATA=await api('skillshub_core.api.get_programme_overview');
-    populateFilters();
-    updateSummary();
-    render();
+    populateFilters(); updateSummary(); render();
     document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString();
   }catch(e){
     const msg='<div class="sh-alert-error" style="margin:2rem 0;">Error: '+e.message+'</div>';
@@ -212,48 +230,31 @@ async function loadData(){
 
 function updateSummary(){
   let ac=0,al=0; const yr=new Set();
-  DATA.summary.forEach(r=>{
-    if(r.status==='Student') ac+=r.cnt;
-    if(r.status==='Alumni')  al+=r.cnt;
-    if(r.intake_year) yr.add(r.intake_year);
-  });
+  DATA.summary.forEach(r=>{if(r.status==='Student')ac+=r.cnt;if(r.status==='Alumni')al+=r.cnt;if(r.intake_year)yr.add(r.intake_year);});
   const blMap={};
-  DATA.flat.forEach(r=>{ blMap[r.schedule]=r.baselines||0; });
+  DATA.flat.forEach(r=>{blMap[r.schedule]=r.baselines||0;});
   const bl=Object.values(blMap).reduce((s,v)=>s+v,0);
-  sid('s-yr',yr.size); sid('s-ac',ac); sid('s-al',al);
-  sid('s-en',DATA.flat.length); sid('s-bl',bl);
+  sid('s-yr',yr.size);sid('s-ac',ac);sid('s-al',al);sid('s-en',DATA.flat.length);sid('s-bl',bl);
 }
-function sid(id,v){ document.getElementById(id).textContent=v; }
-
-function gf(){ return {yr:gv('f-yr'),pa:gv('f-pa'),pr:gv('f-pr'),co:gv('f-co'),ch:gv('f-ch'),st:gv('f-st'),sq:gv('f-sq').toLowerCase()}; }
-function gv(id){ return document.getElementById(id).value||''; }
-
+function sid(id,v){document.getElementById(id).textContent=v;}
+function gf(){return{yr:gv('f-yr'),pa:gv('f-pa'),pr:gv('f-pr'),co:gv('f-co'),ch:gv('f-ch'),st:gv('f-st'),sq:gv('f-sq').toLowerCase()};}
+function gv(id){return document.getElementById(id).value||'';}
 function match(r,f){
-  if(f.yr && r.year!==f.yr) return false;
-  if(f.pa && r.path!==f.pa) return false;
-  if(f.pr && r.programme!==f.pr) return false;
-  if(f.co && r.course!==f.co) return false;
-  if(f.ch && r.cohort!==f.ch) return false;
-  if(f.st && r.status!==f.st) return false;
-  if(f.sq && !r.name.toLowerCase().includes(f.sq) &&
-             !r.student.toLowerCase().includes(f.sq) &&
-             !r.enrolment.toLowerCase().includes(f.sq)) return false;
+  if(f.yr&&r.year!==f.yr)return false;if(f.pa&&r.path!==f.pa)return false;
+  if(f.pr&&r.programme!==f.pr)return false;if(f.co&&r.course!==f.co)return false;
+  if(f.ch&&r.cohort!==f.ch)return false;if(f.st&&r.status!==f.st)return false;
+  if(f.sq&&!r.name.toLowerCase().includes(f.sq)&&!r.student.toLowerCase().includes(f.sq)&&!r.enrolment.toLowerCase().includes(f.sq))return false;
   return true;
 }
-
 function populateFilters(){
   const yr=new Set(),pa=new Set(),pr=new Set(),co=new Set(),ch=new Set();
   DATA.flat.forEach(r=>{yr.add(r.year);pa.add(r.path);pr.add(r.programme);co.add(r.course);ch.add(r.cohort);});
-  fillSel('f-yr',[...yr].sort().reverse(),'All Years');
-  fillSel('f-pa',[...pa].sort(),'All Paths');
-  fillSel('f-pr',[...pr].sort(),'All Programmes');
-  fillSel('f-co',[...co].sort(),'All Courses');
-  fillSel('f-ch',[...ch].sort(),'All Cohorts');
+  fillSel('f-yr',[...yr].sort().reverse(),'All Years');fillSel('f-pa',[...pa].sort(),'All Paths');
+  fillSel('f-pr',[...pr].sort(),'All Programmes');fillSel('f-co',[...co].sort(),'All Courses');fillSel('f-ch',[...ch].sort(),'All Cohorts');
 }
 function fillSel(id,items,ph){
   const el=document.getElementById(id),cur=el.value;
-  el.innerHTML='<option value="">'+ph+'</option>'+
-    items.map(i=>'<option value="'+esc(i)+'"'+(i===cur?' selected':'')+'>'+i+'</option>').join('');
+  el.innerHTML='<option value="">'+ph+'</option>'+items.map(i=>'<option value="'+esc(i)+'"'+(i===cur?' selected':'')+'>'+i+'</option>').join('');
 }
 
 function switchView(v){
@@ -262,137 +263,80 @@ function switchView(v){
   document.getElementById('panel-table').style.display=v==='table'?'':'none';
   document.getElementById('tab-tree').classList.toggle('active',v==='tree');
   document.getElementById('tab-table').classList.toggle('active',v==='table');
+  document.getElementById('exp-btn').style.display=v==='tree'?'':'none';
   render();
 }
-function onFilter(){ render(); }
-function render(){ currentView==='tree'?renderTree():renderTable(); }
+function onFilter(){render();}
+function render(){currentView==='tree'?renderTree():renderReport();}
 
 /* ── TREE ── */
 function renderTree(){
-  if(!DATA) return;
-  const f=gf();
-  const rows=DATA.flat.filter(r=>match(r,f));
-  const panel=document.getElementById('panel-tree');
-  if(!rows.length){ panel.innerHTML='<div class="loading">No data matches filters.</div>'; return; }
-
-  /* Build nested lookup from filtered rows */
+  if(!DATA)return;
+  const f=gf(), rows=DATA.flat.filter(r=>match(r,f)), panel=document.getElementById('panel-tree');
+  if(!rows.length){panel.innerHTML='<div class="loading">No data matches filters.</div>';return;}
   const T={};
   rows.forEach(r=>{
-    if(!T[r.year]) T[r.year]={};
-    if(!T[r.year][r.path]) T[r.year][r.path]={};
-    if(!T[r.year][r.path][r.programme]) T[r.year][r.path][r.programme]={};
-    if(!T[r.year][r.path][r.programme][r.course]) T[r.year][r.path][r.programme][r.course]={};
-    if(!T[r.year][r.path][r.programme][r.course][r.cohort]) T[r.year][r.path][r.programme][r.course][r.cohort]={};
+    if(!T[r.year])T[r.year]={};if(!T[r.year][r.path])T[r.year][r.path]={};
+    if(!T[r.year][r.path][r.programme])T[r.year][r.path][r.programme]={};
+    if(!T[r.year][r.path][r.programme][r.course])T[r.year][r.path][r.programme][r.course]={};
+    if(!T[r.year][r.path][r.programme][r.course][r.cohort])T[r.year][r.path][r.programme][r.course][r.cohort]={};
     const sc=r.schedule;
     if(!T[r.year][r.path][r.programme][r.course][r.cohort][sc]){
       const orig=DATA.tree[r.year]?.[r.path]?.[r.programme]?.[r.course]?.[r.cohort]?.[sc]||{};
       T[r.year][r.path][r.programme][r.course][r.cohort][sc]={...orig,enrolments:[],programme:r.programme};
     }
-    T[r.year][r.path][r.programme][r.course][r.cohort][sc].enrolments.push(
-      {id:r.enrolment,student:r.student,name:r.name,status:r.status}
-    );
+    T[r.year][r.path][r.programme][r.course][r.cohort][sc].enrolments.push({id:r.enrolment,student:r.student,name:r.name,status:r.status});
   });
-
-  const wrap=document.createElement('div');
-  wrap.className='tree-wrap';
-  Object.keys(T).sort().reverse().forEach(yr=>{
-    wrap.appendChild(buildLevel(T[yr],0,yr,null,null,null,null));
-  });
-  panel.innerHTML='';
-  panel.appendChild(wrap);
+  const wrap=document.createElement('div'); wrap.className='tree-wrap';
+  Object.keys(T).sort().reverse().forEach(yr=>{wrap.appendChild(buildLevel(T[yr],0,yr,null,null,null,null));});
+  panel.innerHTML=''; panel.appendChild(wrap);
 }
 
-/* Recursive DOM builder — each call returns a DocumentFragment of siblings */
 function buildLevel(obj,level,yr,pa,pr,co,ch){
   const frag=document.createDocumentFragment();
   const keys=Object.keys(obj).sort((a,b)=>{
-    if(level===2){ const ai=PROG_ORDER.indexOf(a),bi=PROG_ORDER.indexOf(b); return (ai<0?99:ai)-(bi<0?99:bi); }
-    if(level===4) return a.localeCompare(b,undefined,{numeric:true});
+    if(level===2){const ai=PROG_ORDER.indexOf(a),bi=PROG_ORDER.indexOf(b);return(ai<0?99:ai)-(bi<0?99:bi);}
+    if(level===4)return a.localeCompare(b,undefined,{numeric:true});
     return a.localeCompare(b);
   });
-
   keys.forEach(key=>{
-    const val=obj[key];
-    const node=document.createElement('div');
+    const val=obj[key], node=document.createElement('div');
     node.className='t-node lv'+level;
-
     if(level===5){
-      /* ── Schedule leaf ── */
-      const enrols=val.enrolments||[];
-      const bl=val.baseline_count||0;
-      const fb=val.feedback||{};
-      const prog=val.programme||'';
-
-      const row=document.createElement('div');
-      row.className='t-row';
-      row.innerHTML=
-        '<span class="t-tog'+(expanded.has(key)?' open':'')+'\" id="tg-'+key+'">▶</span>'+
+      const enrols=val.enrolments||[],bl=val.baseline_count||0,fb=val.feedback||{},prog=val.programme||'';
+      const row=document.createElement('div'); row.className='t-row';
+      row.innerHTML='<span class="t-tog'+(expanded.has(key)?' open':'')+'\" id="tg-'+key+'">▶</span>'+
         '<span class="t-lbl">'+key+(val.complete?' <span style="opacity:0.45;font-size:0.7rem;font-weight:400"> ✓</span>':'')+
         '</span><span class="t-cnt">'+enrols.length+'</span>';
-      row.addEventListener('click',()=>togNode(key));
-      node.appendChild(row);
-
-      const strip=document.createElement('div');
-      strip.className='h-strip';
-      strip.innerHTML=
-        chip('hc-e','📋 Enrolments',enrols.length,null)+
-        chip('hc-b','📝 Baselines',bl,enrols.length)+
-        (prog==='Soft Skills Programme'?chip('hc-s','🧠 SS',fb.soft_skills||0,enrols.length):'')+
-        (prog==='Mindset Camp'?chip('hc-m','⛺ MSC',fb.mindset_camp||0,enrols.length):'')+
-        (prog==='Vocational Training'?chip('hc-v','🔧 VT',fb.vocational||0,enrols.length):'')+
-        (prog==='Remedial Programme: Literacy and Numeracy'?chip('hc-d','📖 Edu',fb.edulution||0,enrols.length):'')+
-        chip('hc-a','🏢 Att',fb.attachment||0,enrols.length);
+      row.addEventListener('click',()=>togNode(key)); node.appendChild(row);
+      const strip=document.createElement('div'); strip.className='h-strip';
+      strip.innerHTML=chip('hc-e','📋 Enrolments',enrols.length,null)+chip('hc-b','📝 Baselines',bl,enrols.length)+
+        (prog==='Soft Skills Programme'?chip('hc-s','🧠 Soft Skills Feedback',fb.soft_skills||0,enrols.length):'')+
+        (prog==='Mindset Camp'?chip('hc-m','⛺ Mindset Camp Feedback',fb.mindset_camp||0,enrols.length):'')+
+        (prog==='Vocational Training'?chip('hc-v','🔧 VT Feedback',fb.vocational||0,enrols.length):'')+
+        (prog==='Remedial Programme: Literacy and Numeracy'?chip('hc-d','📖 Edulution Feedback',fb.edulution||0,enrols.length):'')+
+        chip('hc-a','🏢 Attachment Feedback',fb.attachment||0,enrols.length);
       node.appendChild(strip);
-
-      const kids=document.createElement('div');
-      kids.className='t-kids'+(expanded.has(key)?' open':'');
-      kids.id='ch-'+key;
-      const list=document.createElement('div');
-      list.className='e-list';
+      const kids=document.createElement('div'); kids.className='t-kids'+(expanded.has(key)?' open':''); kids.id='ch-'+key;
+      const list=document.createElement('div'); list.className='e-list';
       enrols.forEach(e=>{
         const sc=e.status==='Enrolled'?'es-en':e.status==='Completed'?'es-co':'es-dr';
-        const er=document.createElement('div');
-        er.className='e-row';
+        const er=document.createElement('div'); er.className='e-row';
         er.innerHTML='<span class="e-id">'+e.id+'</span><span class="e-nm">'+(e.name||e.student)+'</span><span class="e-st '+sc+'">'+e.status+'</span>';
         list.appendChild(er);
       });
-      kids.appendChild(list);
-      node.appendChild(kids);
-
-    } else {
-      /* ── Branch level ── */
-      const count=deepCount(val);
-      const nid=nodeId([yr,pa,pr,co,ch,key]);
-      const label=[
-        'Intake '+key, key,
-        (PROG_ICON[key]||'📋')+' '+key,
-        key, key
-      ][level];
-      const sub=[
-        Object.keys(val).length+' path(s)',
-        Object.keys(val).length+' programme(s)',
-        Object.keys(val).length+' course(s)',
-        Object.keys(val).length+' cohort(s)',
-        Object.keys(val).length+' schedule(s)'
-      ][level];
-
-      const row=document.createElement('div');
-      row.className='t-row';
-      row.innerHTML=
-        '<span class="t-tog'+(expanded.has(nid)?' open':'')+'\" id="tg-'+nid+'">▶</span>'+
-        '<span class="t-lbl">'+label+'</span>'+
-        '<span class="t-sub">'+sub+'</span>'+
-        '<span class="t-cnt">'+count+'</span>';
-      row.addEventListener('click',()=>togNode(nid));
-      node.appendChild(row);
-
-      const kids=document.createElement('div');
-      kids.className='t-kids'+(expanded.has(nid)?' open':'');
-      kids.id='ch-'+nid;
-      kids.appendChild(buildLevel(val,level+1,
-        level===0?key:yr, level===1?key:pa,
-        level===2?key:pr, level===3?key:co,
-        level===4?key:ch));
+      kids.appendChild(list); node.appendChild(kids);
+    }else{
+      const count=deepCount(val),nid=nodeId([yr,pa,pr,co,ch,key]);
+      const label=['Intake '+key,key,(PROG_ICON[key]||'📋')+' '+key,key,key][level];
+      const sub=[Object.keys(val).length+' path(s)',Object.keys(val).length+' programme(s)',
+        Object.keys(val).length+' course(s)',Object.keys(val).length+' cohort(s)',Object.keys(val).length+' schedule(s)'][level];
+      const row=document.createElement('div'); row.className='t-row';
+      row.innerHTML='<span class="t-tog'+(expanded.has(nid)?' open':'')+'\" id="tg-'+nid+'">▶</span>'+
+        '<span class="t-lbl">'+label+'</span><span class="t-sub">'+sub+'</span><span class="t-cnt">'+count+'</span>';
+      row.addEventListener('click',()=>togNode(nid)); node.appendChild(row);
+      const kids=document.createElement('div'); kids.className='t-kids'+(expanded.has(nid)?' open':''); kids.id='ch-'+nid;
+      kids.appendChild(buildLevel(val,level+1,level===0?key:yr,level===1?key:pa,level===2?key:pr,level===3?key:co,level===4?key:ch));
       node.appendChild(kids);
     }
     frag.appendChild(node);
@@ -400,19 +344,14 @@ function buildLevel(obj,level,yr,pa,pr,co,ch){
   return frag;
 }
 
-function nodeId(parts){ return btoa(parts.filter(Boolean).join('|')).replace(/[^a-zA-Z0-9]/g,'').slice(0,24); }
-function deepCount(o){ if(!o||typeof o!=='object') return 0; if(o.enrolments) return o.enrolments.length; return Object.values(o).reduce((s,v)=>s+deepCount(v),0); }
-function chip(cls,lbl,n,tot){ return '<span class="h-chip '+cls+'">'+lbl+': <strong>'+n+'</strong>'+(tot!=null?' <span class="h-rat">('+n+'/'+tot+')</span>':'')+' </span>'; }
-
+function nodeId(parts){return btoa(parts.filter(Boolean).join('|')).replace(/[^a-zA-Z0-9]/g,'').slice(0,24);}
+function deepCount(o){if(!o||typeof o!=='object')return 0;if(o.enrolments)return o.enrolments.length;return Object.values(o).reduce((s,v)=>s+deepCount(v),0);}
+function chip(cls,lbl,n,tot){return'<span class="h-chip '+cls+'">'+lbl+': <strong>'+n+'</strong>'+(tot!=null?' <span class="h-rat">('+n+'/'+tot+')</span>':'')+' </span>';}
 function togNode(id){
-  const ch=document.getElementById('ch-'+id);
-  const tg=document.getElementById('tg-'+id);
-  if(!ch) return;
-  const open=ch.classList.toggle('open');
-  if(tg) tg.classList.toggle('open',open);
-  open?expanded.add(id):expanded.delete(id);
+  const ch=document.getElementById('ch-'+id),tg=document.getElementById('tg-'+id);
+  if(!ch)return; const open=ch.classList.toggle('open');
+  if(tg)tg.classList.toggle('open',open); open?expanded.add(id):expanded.delete(id);
 }
-
 function expandAll(){
   allExp=!allExp;
   document.querySelectorAll('.t-kids').forEach(el=>el.classList.toggle('open',allExp));
@@ -420,36 +359,158 @@ function expandAll(){
   document.getElementById('exp-btn').textContent=allExp?'Collapse All':'Expand All';
 }
 
-/* ── TABLE ── */
-function renderTable(){
-  if(!DATA) return;
-  const f=gf();
-  const rows=DATA.flat.filter(r=>match(r,f));
-  if(!rows.length){ document.getElementById('panel-table').innerHTML='<div class="loading">No data.</div>'; return; }
-  const n=(v,tot)=>!v?'<td class="td-num td-zero">—</td>':'<td class="td-num '+(tot&&v>=tot?'td-good':'td-part')+'">'+v+'</td>';
-  let html='<div class="tbl-wrap"><table class="ov"><thead><tr>'+
-    '<th>Enrolment</th><th>Student</th><th>Year</th><th>Path</th>'+
-    '<th>Programme</th><th>Course</th><th>Cohort</th><th>Schedule</th><th>Status</th>'+
-    '<th title="Baselines">📝</th><th title="SS">🧠</th><th title="MSC">⛺</th>'+
-    '<th title="VT">🔧</th><th title="Edu">📖</th><th title="Att">🏢</th>'+
-    '</tr></thead><tbody>';
+/* ── REPORT VIEW — one row per schedule, aggregated counts ── */
+function renderReport(){
+  if(!DATA)return;
+  const f=gf(), rows=DATA.flat.filter(r=>match(r,f));
+  if(!rows.length){document.getElementById('panel-table').innerHTML='<div class="loading">No data matches filters.</div>';return;}
+
+  /* Aggregate flat enrolment rows → one row per schedule */
+  const schedMap={};
   rows.forEach(r=>{
-    const sc=r.status==='Enrolled'?'es-en':r.status==='Completed'?'es-co':'es-dr';
+    if(!schedMap[r.schedule]){
+      schedMap[r.schedule]={
+        year:r.year, path:r.path, programme:r.programme, course:r.course,
+        cohort:r.cohort, schedule:r.schedule,
+        enrolments:0, enrolled:0, completed:0, dropped:0,
+        baselines:r.baselines||0,
+        fb_ss:0, fb_msc:0, fb_vt:0, fb_edu:0, fb_att:0
+      };
+    }
+    const s=schedMap[r.schedule];
+    s.enrolments++;
+    if(r.status==='Enrolled')s.enrolled++;
+    else if(r.status==='Completed')s.completed++;
+    else if(r.status==='Dropped')s.dropped++;
+    s.fb_ss  +=r.fb_ss||0;
+    s.fb_msc +=r.fb_msc||0;
+    s.fb_vt  +=r.fb_vt||0;
+    s.fb_edu +=r.fb_edu||0;
+    s.fb_att +=r.fb_att||0;
+  });
+
+  let schedRows=Object.values(schedMap);
+
+  /* Sort */
+  const COLS=['year','path','programme','course','cohort','schedule','enrolments','enrolled','completed','baselines','feedback'];
+  schedRows.sort((a,b)=>{
+    const va=a[sortCol]||'', vb=b[sortCol]||'';
+    if(typeof va==='number') return sortDir*(va-vb);
+    return sortDir*String(va).localeCompare(String(vb));
+  });
+
+  /* Determine which feedback columns are relevant */
+  const hasVT  = schedRows.some(r=>r.programme==='Vocational Training');
+  const hasSS  = schedRows.some(r=>r.programme==='Soft Skills Programme');
+  const hasMSC = schedRows.some(r=>r.programme==='Mindset Camp');
+  const hasEdu = schedRows.some(r=>r.programme==='Remedial Programme: Literacy and Numeracy');
+
+  const n=(v,tot,show)=>{
+    if(!show) return '<td class="td-na">—</td>';
+    if(!v)    return '<td class="td-num td-zero">0</td>';
+    const cls=tot&&v>=tot?'td-good':'td-part';
+    return '<td class="td-num '+cls+'">'+v+'</td>';
+  };
+  const sortTh=(col,label)=>{
+    const cls=sortCol===col?(sortDir===1?' sorted-asc':' sorted-desc'):'';
+    return '<th class="'+cls+'" onclick="setSort(\''+col+'\')">'+label+'</th>';
+  };
+
+  let html='<div class="report-wrap">';
+
+  /* Legend */
+  html+='<div class="legend">'+
+    '<span class="legend-title">Legend:</span>'+
+    '<span class="leg-chip hc-e">📋 Enrolments — total in this schedule</span>'+
+    '<span class="leg-chip hc-b">📝 Baselines — submitted at enrolment</span>'+
+    (hasSS ?'<span class="leg-chip hc-s">🧠 Soft Skills Feedback</span>':'')+
+    (hasMSC?'<span class="leg-chip hc-m">⛺ Mindset Camp Feedback</span>':'')+
+    (hasVT ?'<span class="leg-chip hc-v">🔧 Vocational Training Feedback</span>':'')+
+    (hasEdu?'<span class="leg-chip hc-d">📖 Edulution Feedback</span>':'')+
+    '<span class="leg-chip hc-a">🏢 Attachment Feedback</span>'+
+    '<span style="font-size:0.7rem;color:var(--color-slate-400);margin-left:auto;">— = not applicable for this programme</span>'+
+    '</div>';
+
+  html+='<table class="rpt"><thead><tr>'+
+    sortTh('year','Year')+sortTh('path','Path')+sortTh('programme','Programme')+
+    sortTh('course','Course')+sortTh('cohort','Cohort')+sortTh('schedule','Schedule')+
+    sortTh('enrolments','📋 Enrol.')+
+    '<th>Enrolled</th><th>Completed</th><th>Dropped</th>'+
+    sortTh('baselines','📝 Baselines')+
+    (hasSS ?'<th>🧠 SS Feedback</th>':'')+
+    (hasMSC?'<th>⛺ MSC Feedback</th>':'')+
+    (hasVT ?'<th>🔧 VT Feedback</th>':'')+
+    (hasEdu?'<th>📖 Edu Feedback</th>':'')+
+    '<th>🏢 Att. Feedback</th>'+
+    '</tr></thead><tbody>';
+
+  schedRows.forEach(r=>{
+    const pCls=PROG_CLS[r.programme]||'pg-unk';
+    const pShort=PROG_SHORT[r.programme]||r.programme;
+    const isSS=r.programme==='Soft Skills Programme';
+    const isMSC=r.programme==='Mindset Camp';
+    const isVT=r.programme==='Vocational Training';
+    const isEdu=r.programme==='Remedial Programme: Literacy and Numeracy';
+    const fbTotal=isSS?r.fb_ss:isMSC?r.fb_msc:isVT?r.fb_vt:isEdu?r.fb_edu:0;
+
     html+='<tr>'+
-      '<td class="td-mono">'+r.enrolment+'</td>'+
-      '<td><strong>'+(r.name||r.student)+'</strong> <span class="td-mono">'+r.student+'</span></td>'+
-      '<td>'+r.year+'</td><td><span class="sh-badge">'+r.path+'</span></td>'+
-      '<td>'+r.programme+'</td><td>'+r.course+'</td><td>'+r.cohort+'</td>'+
+      '<td>'+r.year+'</td>'+
+      '<td><span class="sh-badge" style="font-size:0.7rem">'+r.path+'</span></td>'+
+      '<td><span class="prog-badge '+pCls+'">'+pShort+'</span></td>'+
+      '<td>'+r.course+'</td>'+
+      '<td>'+r.cohort+'</td>'+
       '<td class="td-mono">'+r.schedule+'</td>'+
-      '<td><span class="e-st '+sc+'">'+r.status+'</span></td>'+
-      n(r.baselines,1)+n(r.fb_ss,1)+n(r.fb_msc,1)+n(r.fb_vt,1)+n(r.fb_edu,1)+n(r.fb_att,1)+
+      '<td class="td-num" style="color:#1d4ed8;font-weight:800">'+r.enrolments+'</td>'+
+      '<td class="td-num '+(r.enrolled?'td-part':'td-zero')+'">'+r.enrolled+'</td>'+
+      '<td class="td-num '+(r.completed?'td-good':'td-zero')+'">'+r.completed+'</td>'+
+      '<td class="td-num '+(r.dropped?'td-zero':'td-zero')+'">'+r.dropped+'</td>'+
+      n(r.baselines, r.enrolments, true)+
+      (hasSS ?n(r.fb_ss,  r.enrolments, isSS):'')+
+      (hasMSC?n(r.fb_msc, r.enrolments, isMSC):'')+
+      (hasVT ?n(r.fb_vt,  r.enrolments, isVT):'')+
+      (hasEdu?n(r.fb_edu, r.enrolments, isEdu):'')+
+      n(r.fb_att, r.enrolments, true)+
       '</tr>';
   });
-  html+='</tbody></table><div class="tbl-footer">'+rows.length+' enrolment'+(rows.length!==1?'s':'')+' shown</div></div>';
+
+  /* Totals row */
+  const tot=schedRows.reduce((acc,r)=>{
+    acc.enrolments+=r.enrolments; acc.enrolled+=r.enrolled;
+    acc.completed+=r.completed; acc.dropped+=r.dropped;
+    acc.baselines+=r.baselines;
+    acc.fb_ss+=r.fb_ss; acc.fb_msc+=r.fb_msc; acc.fb_vt+=r.fb_vt;
+    acc.fb_edu+=r.fb_edu; acc.fb_att+=r.fb_att;
+    return acc;
+  },{enrolments:0,enrolled:0,completed:0,dropped:0,baselines:0,fb_ss:0,fb_msc:0,fb_vt:0,fb_edu:0,fb_att:0});
+
+  html+='<tr style="background:var(--color-slate-50);font-weight:700;border-top:2px solid var(--color-slate-200);">'+
+    '<td colspan="6" style="font-size:0.75rem;color:var(--color-slate-500);padding:0.625rem 0.75rem;">TOTALS ('+schedRows.length+' schedules)</td>'+
+    '<td class="td-num" style="color:#1d4ed8">'+tot.enrolments+'</td>'+
+    '<td class="td-num td-part">'+tot.enrolled+'</td>'+
+    '<td class="td-num td-good">'+tot.completed+'</td>'+
+    '<td class="td-num td-zero">'+tot.dropped+'</td>'+
+    '<td class="td-num">'+tot.baselines+'</td>'+
+    (hasSS ?'<td class="td-num">'+tot.fb_ss+'</td>':'')+
+    (hasMSC?'<td class="td-num">'+tot.fb_msc+'</td>':'')+
+    (hasVT ?'<td class="td-num">'+tot.fb_vt+'</td>':'')+
+    (hasEdu?'<td class="td-num">'+tot.fb_edu+'</td>':'')+
+    '<td class="td-num">'+tot.fb_att+'</td>'+
+    '</tr>';
+
+  html+='</tbody></table>'+
+    '<div class="rpt-footer"><span>'+schedRows.length+' schedule'+(schedRows.length!==1?'s':'')+' · '+rows.length+' enrolment'+(rows.length!==1?'s':'')+' shown</span>'+
+    '<span style="color:var(--color-slate-300)">Click column headers to sort</span></div>'+
+    '</div>';
+
   document.getElementById('panel-table').innerHTML=html;
 }
 
-function esc(s){ return String(s).replace(/"/g,'&quot;'); }
+function setSort(col){
+  if(sortCol===col) sortDir*=-1; else{sortCol=col;sortDir=1;}
+  renderReport();
+}
+
+function esc(s){return String(s).replace(/"/g,'&quot;');}
 
 loadData();
 </script>
