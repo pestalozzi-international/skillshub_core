@@ -15,34 +15,41 @@ def find_student_by_email(email):
 @frappe.whitelist()
 def get_programme_overview():
     """
-    Returns a nested structure for the Programme Overview page:
-    intake_year -> programme_path -> milestone -> cohort -> schedule -> {
-        enrolments, baselines, feedback counts per type
-    }
-    All counts are aggregated server-side for performance.
+    Returns data for the Programme Overview page.
+
+    Correct hierarchy:
+      Intake Year → Path → Programme (milestone) → Course → Cohort → Schedule → Enrolments
+
+    Path is derived from the student record.
+    All counts are aggregated server-side.
     """
 
-    # --- 1. All enrolments with student context ---
+    # ── 1. All enrolments with full student + schedule context ──────────────
     enrolments = frappe.db.sql("""
         SELECT
-            e.name AS enrolment,
+            e.name        AS enrolment,
             e.student,
             e.programme_schedule,
             e.milestone,
             e.cohort,
             e.course,
             e.status,
-            e.programme_path,
             s.intake_year,
-            s.programme_path AS student_path,
-            s.status AS student_status,
-            CONCAT(IFNULL(s.first_name,''), ' ', IFNULL(s.last_name,'')) AS student_name
+            s.programme_path,
+            s.status      AS student_status,
+            CONCAT(IFNULL(s.first_name,''), ' ', IFNULL(s.last_name,'')) AS student_name,
+            sc.skillshub_programme  AS sched_programme,
+            sc.skillshub_course     AS sched_course,
+            sc.cohort               AS sched_cohort,
+            sc.academic_year        AS sched_year,
+            sc.complete             AS sched_complete
         FROM `tabSH Student Enrolment` e
-        LEFT JOIN `tabSH Student` s ON s.name = e.student
-        ORDER BY s.intake_year DESC, e.milestone, e.cohort, e.programme_schedule
+        LEFT JOIN `tabSH Student`           s  ON s.name  = e.student
+        LEFT JOIN `tabSH Programme Schedule` sc ON sc.name = e.programme_schedule
+        ORDER BY s.intake_year DESC, sc.skillshub_programme, sc.skillshub_course, sc.cohort, e.programme_schedule
     """, as_dict=True)
 
-    # --- 2. Baseline counts per programme_schedule ---
+    # ── 2. Baseline counts keyed by programme_schedule ──────────────────────
     baselines = frappe.db.sql("""
         SELECT programme_schedule, COUNT(*) AS cnt
         FROM `tabSH Student Baseline Form`
@@ -51,7 +58,7 @@ def get_programme_overview():
     """, as_dict=True)
     baseline_map = {r.programme_schedule: r.cnt for r in baselines}
 
-    # --- 3. Feedback counts per enrolment_ticket ---
+    # ── 3. Feedback counts keyed by enrolment_ticket ────────────────────────
     feedback_tables = {
         'soft_skills':  'SH Soft Skills Feedback',
         'mindset_camp': 'SH Mindset Camp Feedback',
@@ -72,63 +79,85 @@ def get_programme_overview():
         except Exception:
             feedback_maps[key] = {}
 
-    # --- 4. Build nested structure ---
+    # ── 4. Build nested tree: year→path→programme→course→cohort→schedule ────
     tree = {}
+    flat_rows = []   # for the table view
+
     for e in enrolments:
-        year  = e.intake_year or 'Unknown'
-        path  = e.student_path or e.programme_path or 'Unknown'
-        mile  = e.milestone or 'Unknown'
-        cohort = e.cohort or 'Unknown'
-        sched = e.programme_schedule or 'Unknown'
+        year      = e.intake_year      or 'Unknown'
+        path      = e.programme_path   or 'Unknown'
+        programme = e.sched_programme  or e.milestone or 'Unknown'
+        course    = e.sched_course     or e.course    or 'Unknown'
+        cohort    = e.sched_cohort     or e.cohort    or 'Unknown'
+        sched     = e.programme_schedule              or 'Unknown'
 
-        tree.setdefault(year, {})
-        tree[year].setdefault(path, {})
-        tree[year][path].setdefault(mile, {})
-        tree[year][path][mile].setdefault(cohort, {})
-        tree[year][path][mile][cohort].setdefault(sched, {
-            'schedule': sched,
-            'milestone': mile,
-            'cohort': cohort,
-            'enrolments': [],
-            'baseline_count': baseline_map.get(sched, 0),
-            'feedback': {k: 0 for k in feedback_tables},
-        })
+        (tree
+            .setdefault(year,      {})
+            .setdefault(path,      {})
+            .setdefault(programme, {})
+            .setdefault(course,    {})
+            .setdefault(cohort,    {})
+            .setdefault(sched, {
+                'schedule':       sched,
+                'programme':      programme,
+                'course':         course,
+                'cohort':         cohort,
+                'year':           e.sched_year or year,
+                'complete':       bool(e.sched_complete),
+                'enrolments':     [],
+                'baseline_count': baseline_map.get(sched, 0),
+                'feedback':       {k: 0 for k in feedback_tables},
+            })
+        )
 
-        # Accumulate feedback for this enrolment
-        node = tree[year][path][mile][cohort][sched]
+        node = tree[year][path][programme][course][cohort][sched]
         for key in feedback_tables:
             node['feedback'][key] += feedback_maps[key].get(e.enrolment, 0)
 
-        node['enrolments'].append({
-            'id':     e.enrolment,
+        student_data = {
+            'id':      e.enrolment,
             'student': e.student,
-            'name':   e.student_name.strip(),
-            'status': e.status,
+            'name':    (e.student_name or '').strip(),
+            'status':  e.status,
+        }
+        node['enrolments'].append(student_data)
+
+        # Flat row for table view
+        flat_rows.append({
+            'enrolment':  e.enrolment,
+            'student':    e.student,
+            'name':       (e.student_name or '').strip(),
+            'year':       year,
+            'path':       path,
+            'programme':  programme,
+            'course':     course,
+            'cohort':     cohort,
+            'schedule':   sched,
+            'status':     e.status,
+            'baselines':  baseline_map.get(sched, 0),
+            'fb_ss':      feedback_maps['soft_skills'].get(e.enrolment, 0),
+            'fb_msc':     feedback_maps['mindset_camp'].get(e.enrolment, 0),
+            'fb_vt':      feedback_maps['vocational'].get(e.enrolment, 0),
+            'fb_edu':     feedback_maps['edulution'].get(e.enrolment, 0),
+            'fb_att':     feedback_maps['attachment'].get(e.enrolment, 0),
         })
 
-    # --- 5. Compute summary stats ---
-    all_students = frappe.db.sql("""
+    # ── 5. Summary stats ────────────────────────────────────────────────────
+    summary = frappe.db.sql("""
         SELECT status, intake_year, COUNT(*) as cnt
         FROM `tabSH Student`
         GROUP BY status, intake_year
     """, as_dict=True)
 
-    schedules = frappe.db.sql("""
-        SELECT name, skillshub_programme, skillshub_course, cohort, academic_year, complete
-        FROM `tabSH Programme Schedule`
-    """, as_dict=True)
-    schedule_meta = {s.name: s for s in schedules}
-
     return {
-        'tree': tree,
-        'schedule_meta': schedule_meta,
-        'summary': all_students,
-        'feedback_types': list(feedback_tables.keys()),
+        'tree':      tree,
+        'flat':      flat_rows,
+        'summary':   summary,
         'feedback_labels': {
-            'soft_skills':  'Soft Skills Feedback',
-            'mindset_camp': 'Mindset Camp Feedback',
-            'vocational':   'VT Feedback',
-            'edulution':    'Edulution Feedback',
-            'attachment':   'Attachment Feedback',
+            'soft_skills':  'Soft Skills',
+            'mindset_camp': 'Mindset Camp',
+            'vocational':   'Vocational Training',
+            'edulution':    'Edulution',
+            'attachment':   'Attachment',
         }
     }
