@@ -11,20 +11,17 @@
     .sh-admin-nav a{color:white;text-decoration:none;font-size:.875rem;opacity:.8;}
     .sh-admin-nav a.active{opacity:1;border-bottom:2px solid white;padding-bottom:2px;font-weight:600;}
     .sh-admin-nav a:hover{opacity:1;}
-
     .sum-strip{display:flex;gap:1rem;padding:1.25rem 0;flex-wrap:wrap;align-items:center;}
     .sum-pill{background:white;border:1px solid var(--color-slate-200);border-radius:1rem;
               padding:.875rem 1.25rem;box-shadow:var(--shadow-premium);min-width:110px;text-align:center;}
     .sum-num{font-size:1.75rem;font-weight:800;line-height:1;}
     .sum-lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--color-slate-500);margin-top:3px;}
-
     .view-tabs{display:flex;margin-bottom:1.5rem;background:white;border:1px solid var(--color-slate-200);
                border-radius:.75rem;overflow:hidden;box-shadow:var(--shadow-premium);width:fit-content;}
     .view-tab{padding:.625rem 1.5rem;font-size:.875rem;font-weight:600;cursor:pointer;
               border:none;background:none;color:var(--color-slate-500);}
     .view-tab.active{background:var(--color-teal-700);color:white;}
     .view-tab:hover:not(.active){background:var(--color-slate-50);}
-
     .filter-bar{background:white;border:1px solid var(--color-slate-200);border-radius:1rem;
                 padding:1rem 1.25rem;box-shadow:var(--shadow-premium);
                 display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.5rem;}
@@ -39,30 +36,30 @@
       background-repeat:no-repeat;background-position:right .5rem center;background-size:.875rem;}
     .filter-bar input{background-image:none;padding-right:.75rem;}
 
-    /* ── Tree — softened palette ── */
+    /* Tree */
     .t-node{margin-bottom:3px;}
     .t-row{display:flex;align-items:center;gap:.625rem;padding:.625rem .875rem;
            border-radius:.75rem;cursor:pointer;user-select:none;transition:filter .1s;}
     .t-row:hover{filter:brightness(.95);}
-    .t-tog{font-size:.65rem;width:14px;flex-shrink:0;transition:transform .15s;display:inline-block;color:rgba(0,0,0,.4);}
+    .t-tog{font-size:.65rem;width:14px;flex-shrink:0;transition:transform .15s;
+           display:inline-block;color:rgba(0,0,0,.35);}
     .t-tog.open{transform:rotate(90deg);}
     .t-lbl{font-weight:700;flex:1;font-size:.875rem;}
     .t-sub{font-size:.75rem;opacity:.65;font-weight:400;}
-    .t-cnt{font-size:.75rem;font-weight:800;background:rgba(0,0,0,.1);padding:1px 9px;border-radius:9999px;flex-shrink:0;}
-    .t-kids{padding-left:1.5rem;border-left:2px solid rgba(0,0,0,.07);margin-left:1.1rem;display:none;}
+    .t-cnt{font-size:.75rem;font-weight:800;background:rgba(0,0,0,.1);
+           padding:1px 9px;border-radius:9999px;flex-shrink:0;}
+    .t-kids{padding-left:1.5rem;border-left:2px solid rgba(0,0,0,.07);
+            margin-left:1.1rem;display:none;}
     .t-kids.open{display:block;}
-
-    /* Levels 0-5: muted tones, dark text for readability */
-    .lv0>.t-row{background:#0f766e;color:white;}                          /* teal — year */
-    .lv1>.t-row{background:#e0f2fe;color:#0c4a6e;}                        /* sky-100 — path */
-    .lv2>.t-row{background:#ede9fe;color:#4c1d95;}                        /* violet-100 — programme */
-    .lv3>.t-row{background:#fef3c7;color:#78350f;}                        /* amber-100 — course */
-    .lv4>.t-row{background:#d1fae5;color:#064e3b;}                        /* emerald-100 — cohort */
-    .lv5>.t-row{background:white;border:1px solid var(--color-slate-200); /* white — schedule */
+    /* Softened level palette */
+    .lv0>.t-row{background:#0f766e;color:white;}
+    .lv1>.t-row{background:#e0f2fe;color:#0c4a6e;}
+    .lv2>.t-row{background:#ede9fe;color:#4c1d95;}
+    .lv3>.t-row{background:#fef3c7;color:#78350f;}
+    .lv4>.t-row{background:#d1fae5;color:#064e3b;}
+    .lv5>.t-row{background:white;border:1px solid var(--color-slate-200);
                 color:var(--color-slate-800);box-shadow:var(--shadow-premium);}
-    .lv1>.t-row .t-tog,.lv2>.t-row .t-tog,.lv3>.t-row .t-tog,
-    .lv4>.t-row .t-tog{color:rgba(0,0,0,.3);}
-
+    .lv0>.t-row .t-tog{color:rgba(255,255,255,.6);}
     .h-strip{display:flex;gap:.5rem;flex-wrap:wrap;padding:.5rem .875rem .625rem 3rem;
              background:#fafafa;border-top:1px solid var(--color-slate-100);
              border-radius:0 0 .75rem .75rem;}
@@ -76,7 +73,6 @@
     .hc-d{background:#f0fdfa;color:#0f766e;border-color:#99f6e4;}
     .hc-a{background:#fef2f2;color:#b91c1c;border-color:#fecaca;}
     .h-rat{font-size:.62rem;opacity:.65;}
-
     .e-list{padding:.25rem .875rem .625rem 3rem;background:#fafafa;border-radius:0 0 .5rem .5rem;}
     .e-row{display:flex;align-items:center;gap:.5rem;padding:4px 0;font-size:.8rem;
            border-bottom:1px solid var(--color-slate-100);}
@@ -88,7 +84,7 @@
     .es-co{background:#d1fae5;color:#065f46;}
     .es-dr{background:#fee2e2;color:#991b1b;}
 
-    /* ── Report table ── */
+    /* Report */
     .report-wrap{background:white;border:1px solid var(--color-slate-200);
                  border-radius:1rem;box-shadow:var(--shadow-premium);overflow-x:auto;}
     .legend-box{padding:1rem 1.25rem;border-bottom:2px solid var(--color-slate-100);}
@@ -97,11 +93,11 @@
     .legend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.5rem;}
     .leg-item{display:flex;align-items:flex-start;gap:.5rem;font-size:.78rem;}
     .leg-dot{width:26px;height:20px;border-radius:9999px;border:1px solid;
-             display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0;margin-top:1px;}
+             display:flex;align-items:center;justify-content:center;font-size:.72rem;
+             flex-shrink:0;margin-top:1px;}
     .leg-desc{color:var(--color-slate-700);line-height:1.3;}
     .leg-na{margin-top:.5rem;font-size:.72rem;color:var(--color-slate-400);font-style:italic;}
-
-    table.rpt{width:100%;border-collapse:collapse;font-size:.78rem;min-width:960px;}
+    table.rpt{width:100%;border-collapse:collapse;font-size:.78rem;min-width:900px;}
     table.rpt thead th{background:var(--color-slate-50);padding:.625rem .75rem;text-align:left;
                        font-weight:700;color:var(--color-slate-500);font-size:.68rem;
                        text-transform:uppercase;letter-spacing:.05em;
@@ -111,12 +107,8 @@
     table.rpt thead th.s-asc::after{content:' ↑';}
     table.rpt thead th.s-desc::after{content:' ↓';}
     table.rpt td{padding:.5rem .75rem;border-bottom:1px solid #f8fafc;vertical-align:middle;}
-    table.rpt td.grp{vertical-align:top;padding-top:.75rem;font-weight:600;
-                     border-left:3px solid var(--color-slate-100);
-                     border-bottom:1px solid var(--color-slate-200);}
-    table.rpt td.grp:first-child{border-left:none;}
     table.rpt tbody tr:last-child td{border-bottom:none;}
-    table.rpt tbody tr:hover td:not(.grp){background:#f8fafc;}
+    table.rpt tbody tr:hover td{background:#f8fafc;}
     .td-mono{font-family:monospace;font-size:.7rem;color:var(--color-slate-500);}
     .td-num{text-align:center;font-weight:700;font-size:.82rem;}
     .td-good{color:#059669;}.td-part{color:#d97706;}.td-zero{color:#cbd5e1;font-weight:400;}
@@ -124,13 +116,11 @@
     .prog-badge{display:inline-block;padding:2px 9px;border-radius:9999px;font-size:.72rem;font-weight:700;}
     .pg-ss{background:#fdf4ff;color:#7e22ce;}.pg-msc{background:#fffbeb;color:#b45309;}
     .pg-vt{background:#fff7ed;color:#c2410c;}.pg-edu{background:#f0fdfa;color:#0f766e;}
-    .pg-unk{background:#f1f5f9;color:#64748b;}
     .rpt-footer{padding:.75rem 1.25rem;font-size:.75rem;color:var(--color-slate-400);
                 border-top:1px solid var(--color-slate-100);
-                display:flex;justify-content:space-between;align-items:center;}
+                display:flex;justify-content:space-between;}
     .totals-row td{background:var(--color-slate-50)!important;font-weight:700;
                    border-top:2px solid var(--color-slate-200)!important;}
-
     .loading{text-align:center;padding:4rem;color:var(--color-slate-400);font-size:.9rem;}
     .btn-sm{background:var(--color-slate-100);border:none;border-radius:.5rem;
             padding:.4rem .875rem;font-size:.8rem;font-weight:600;color:var(--color-slate-600);cursor:pointer;}
@@ -141,7 +131,6 @@
   <script>window.frappe=window.frappe||{};frappe.csrf_token="{{ frappe.session.csrf_token }}";</script>
 </head>
 <body>
-
 <div class="sh-page-header">
   <div class="sh-container">
     <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -199,12 +188,16 @@
 <script>
 let DATA=null,allExp=false,currentView='tree';
 let sortCol='year',sortDir=1;
-const expanded=new Set();
+
+/* ── Node open/close state stored by stable key (not btoa IDs) ── */
+const openNodes=new Set();
+
 const PROG_ORDER=['Soft Skills Programme','Mindset Camp','Remedial Programme: Literacy and Numeracy','Vocational Training'];
 const PROG_ICON={'Soft Skills Programme':'🧠','Mindset Camp':'⛺','Vocational Training':'🔧','Remedial Programme: Literacy and Numeracy':'📖'};
 const PROG_CLS={'Soft Skills Programme':'pg-ss','Mindset Camp':'pg-msc','Vocational Training':'pg-vt','Remedial Programme: Literacy and Numeracy':'pg-edu'};
-/* Sub-label text for each branch level (0=year handled separately) */
-const NEXT_NOUN=['path','programme','course','cohort','schedule'];
+const PROG_SHORT={'Soft Skills Programme':'Soft Skills','Mindset Camp':'Mindset Camp',
+  'Vocational Training':'Vocational Training','Remedial Programme: Literacy and Numeracy':'Edulution (Remedial)'};
+const NEXT_NOUN=['','path','programme','course','cohort','schedule'];
 
 async function api(m){
   const r=await fetch('/api/method/'+m,{method:'POST',
@@ -250,10 +243,8 @@ function match(r,f){
 function populateFilters(){
   const yr=new Set(),pa=new Set(),pr=new Set(),co=new Set(),ch=new Set();
   DATA.flat.forEach(r=>{yr.add(r.year);pa.add(r.path);pr.add(r.programme);co.add(r.course);ch.add(r.cohort);});
-  fillSel('f-yr',[...yr].sort().reverse(),'All Years');
-  fillSel('f-pa',[...pa].sort(),'All Paths');
-  fillSel('f-pr',[...pr].sort(),'All Programmes');
-  fillSel('f-co',[...co].sort(),'All Courses');
+  fillSel('f-yr',[...yr].sort().reverse(),'All Years');fillSel('f-pa',[...pa].sort(),'All Paths');
+  fillSel('f-pr',[...pr].sort(),'All Programmes');fillSel('f-co',[...co].sort(),'All Courses');
   fillSel('f-ch',[...ch].sort(),'All Cohorts');
 }
 function fillSel(id,items,ph){
@@ -273,20 +264,25 @@ function switchView(v){
 function onFilter(){render();}
 function render(){currentView==='tree'?renderTree():renderReport();}
 
-/* ══════════════════════════════════════════════════════
-   TREE  (levels: 0=year 1=path 2=programme 3=course 4=cohort 5=schedule)
-══════════════════════════════════════════════════════ */
+/* ══════════════════════════════════
+   TREE
+   Fix: stable node keys = pipe-joined path components (no btoa).
+   openNodes persists across re-renders so state is preserved.
+══════════════════════════════════ */
+function stableKey(parts){
+  /* Simple stable key — join path parts, replace chars unsafe for DOM id */
+  return parts.join('|||').replace(/[^a-zA-Z0-9|_\-]/g,'_');
+}
+
 function renderTree(){
   if(!DATA)return;
   const f=gf(),rows=DATA.flat.filter(r=>match(r,f)),panel=document.getElementById('panel-tree');
   if(!rows.length){panel.innerHTML='<div class="loading">No data matches filters.</div>';return;}
 
-  /* Build nested lookup */
   const T={};
   rows.forEach(r=>{
-    [r.year,r.path,r.programme,r.course,r.cohort].reduce((node,k,i)=>{
-      if(!node[k])node[k]=i===4?{}:{};
-      return node[k];
+    [r.year,r.path,r.programme,r.course,r.cohort].reduce((node,k)=>{
+      if(!node[k])node[k]={};return node[k];
     },T);
     const leaf=T[r.year][r.path][r.programme][r.course][r.cohort];
     if(!leaf[r.schedule]){
@@ -304,59 +300,105 @@ function renderTree(){
 
   const wrap=document.createElement('div');wrap.className='tree-wrap';
   Object.keys(T).sort().reverse().forEach(yr=>{
-    wrap.appendChild(makeYearNode(yr,T[yr]));
+    const key=stableKey([yr]);
+    wrap.appendChild(makeBranchNode(yr,T[yr],0,key,
+      '📅 Intake '+yr,Object.keys(T[yr]).length+' path(s)'));
   });
   panel.innerHTML='';panel.appendChild(wrap);
 }
 
-function makeYearNode(yr,obj){
-  const id=nid([yr]);const node=mkDiv('t-node lv0');
-  const count=deepCount(obj);
-  const row=mkDiv('t-row');
-  row.innerHTML=togHtml(id)+'<span class="t-lbl">📅 Intake '+yr+'</span>'+
-    '<span class="t-sub">'+Object.keys(obj).length+' path(s)</span>'+
-    '<span class="t-cnt">'+count+'</span>';
-  row.addEventListener('click',()=>togNode(id));
+function makeBranchNode(key,children,level,stKey,label,sub){
+  const node=document.createElement('div');node.className='t-node lv'+level;
+  const isOpen=openNodes.has(stKey);
+  const row=document.createElement('div');row.className='t-row';
+  const togSpan=document.createElement('span');
+  togSpan.className='t-tog'+(isOpen?' open':'');
+  togSpan.id='tg-'+stKey;
+  togSpan.textContent='▶';
+  const lblSpan=document.createElement('span');lblSpan.className='t-lbl';lblSpan.textContent=label;
+  const subSpan=document.createElement('span');subSpan.className='t-sub';subSpan.textContent=sub;
+  const cntSpan=document.createElement('span');cntSpan.className='t-cnt';cntSpan.textContent=deepCount(children);
+  row.appendChild(togSpan);row.appendChild(lblSpan);row.appendChild(subSpan);row.appendChild(cntSpan);
+  row.addEventListener('click',function(e){e.stopPropagation();togNode(stKey);});
   node.appendChild(row);
-  const kids=mkDiv('t-kids'+(expanded.has(id)?' open':''));kids.id='ch-'+id;
-  kids.appendChild(buildBranch(obj,1,yr,null,null,null));
-  node.appendChild(kids);
+
+  const kidsDiv=document.createElement('div');
+  kidsDiv.className='t-kids'+(isOpen?' open':'');kidsDiv.id='ch-'+stKey;
+
+  /* Build children */
+  const sortedKeys=Object.keys(children).sort((a,b)=>{
+    if(level===1){ /* programme level */
+      const ai=PROG_ORDER.indexOf(a),bi=PROG_ORDER.indexOf(b);return(ai<0?99:ai)-(bi<0?99:bi);
+    }
+    if(level===3)return a.localeCompare(b,undefined,{numeric:true}); /* cohort */
+    return a.localeCompare(b);
+  });
+
+  sortedKeys.forEach(childKey=>{
+    const childVal=children[childKey];
+    const childStKey=stKey+'|||'+childKey.replace(/[^a-zA-Z0-9|_\-]/g,'_');
+    const nextLevel=level+1;
+
+    if(nextLevel===5){
+      /* Schedule leaf */
+      kidsDiv.appendChild(makeLeafNode(childKey,childVal,childStKey));
+    }else{
+      const childNoun=NEXT_NOUN[nextLevel]||(nextLevel===4?'cohort':'schedule');
+      const childCount=Object.keys(childVal).length;
+      const childLabel=levelLabel(nextLevel,childKey);
+      kidsDiv.appendChild(makeBranchNode(
+        childKey,childVal,nextLevel,childStKey,
+        childLabel,childCount+' '+childNoun+(childCount>1?'s':'')
+      ));
+    }
+  });
+
+  node.appendChild(kidsDiv);
   return node;
 }
 
-/* level 1=path 2=programme 3=course 4=cohort 5=schedule(leaf) */
-function buildBranch(obj,level,yr,pa,pr,co){
-  const frag=document.createDocumentFragment();
-  const keys=Object.keys(obj).sort((a,b)=>{
-    if(level===2){const ai=PROG_ORDER.indexOf(a),bi=PROG_ORDER.indexOf(b);return(ai<0?99:ai)-(bi<0?99:bi);}
-    if(level===4)return a.localeCompare(b,undefined,{numeric:true});
-    return a.localeCompare(b);
+function makeLeafNode(key,val,stKey){
+  const node=document.createElement('div');node.className='t-node lv5';
+  const enrols=val.enrolments||[],bl=val.baseline_count||0,fb=val.feedback||{};
+  const prog=val.programme||'';
+  const isVT=prog==='Vocational Training';
+  const isOpen=openNodes.has(stKey);
+
+  const row=document.createElement('div');row.className='t-row';
+  const togSpan=document.createElement('span');
+  togSpan.className='t-tog'+(isOpen?' open':'');togSpan.id='tg-'+stKey;togSpan.textContent='▶';
+  const lblSpan=document.createElement('span');lblSpan.className='t-lbl';
+  lblSpan.innerHTML=key+(val.complete?' <span style="opacity:.4;font-size:.7rem;font-weight:400"> ✓</span>':'');
+  const cntSpan=document.createElement('span');cntSpan.className='t-cnt';cntSpan.textContent=enrols.length;
+  row.appendChild(togSpan);row.appendChild(lblSpan);row.appendChild(cntSpan);
+  row.addEventListener('click',function(e){e.stopPropagation();togNode(stKey);});
+  node.appendChild(row);
+
+  /* Health strip */
+  const strip=document.createElement('div');strip.className='h-strip';
+  strip.innerHTML=
+    hchip('hc-e','📋 Enrolments',enrols.length,null)+
+    hchip('hc-b','📝 Baselines',bl,enrols.length)+
+    (prog==='Soft Skills Programme'?hchip('hc-s','🧠 Soft Skills Feedback',fb.soft_skills||0,enrols.length):'')+
+    (prog==='Mindset Camp'?hchip('hc-m','⛺ Mindset Camp Feedback',fb.mindset_camp||0,enrols.length):'')+
+    (isVT?hchip('hc-v','🔧 VT Feedback',fb.vocational||0,enrols.length):'')+
+    (prog==='Remedial Programme: Literacy and Numeracy'?hchip('hc-d','📖 Edulution Feedback',fb.edulution||0,enrols.length):'')+
+    (isVT?hchip('hc-a','🏢 Attachment Feedback',fb.attachment||0,enrols.length):'');
+  node.appendChild(strip);
+
+  /* Enrolments */
+  const kids=document.createElement('div');
+  kids.className='t-kids'+(isOpen?' open':'');kids.id='ch-'+stKey;
+  const list=document.createElement('div');list.className='e-list';
+  enrols.forEach(e=>{
+    const sc=e.status==='Enrolled'?'es-en':e.status==='Completed'?'es-co':'es-dr';
+    const er=document.createElement('div');er.className='e-row';
+    er.innerHTML='<span class="e-id">'+e.id+'</span><span class="e-nm">'+(e.name||e.student)+
+      '</span><span class="e-st '+sc+'">'+e.status+'</span>';
+    list.appendChild(er);
   });
-  keys.forEach(key=>{
-    const val=obj[key];const node=mkDiv('t-node lv'+level);
-    if(level===5){
-      /* Schedule leaf */
-      buildLeaf(node,key,val);
-    }else{
-      const count=deepCount(val);
-      const childNoun=NEXT_NOUN[level]; /* level1→path, level2→programme ... */
-      const childCount=Object.keys(val).length;
-      const label=levelLabel(level,key);
-      const id=nid([yr,pa,pr,co,key].filter(Boolean));
-      const row=mkDiv('t-row');
-      row.innerHTML=togHtml(id)+'<span class="t-lbl">'+label+'</span>'+
-        '<span class="t-sub">'+childCount+' '+childNoun+(childCount>1?'s':'')+'</span>'+
-        '<span class="t-cnt">'+count+'</span>';
-      row.addEventListener('click',()=>togNode(id));
-      node.appendChild(row);
-      const kids=mkDiv('t-kids'+(expanded.has(id)?' open':''));kids.id='ch-'+id;
-      kids.appendChild(buildBranch(val,level+1,yr,
-        level===1?key:pa, level===2?key:pr, level===3?key:co));
-      node.appendChild(kids);
-    }
-    frag.appendChild(node);
-  });
-  return frag;
+  kids.appendChild(list);node.appendChild(kids);
+  return node;
 }
 
 function levelLabel(level,key){
@@ -367,70 +409,45 @@ function levelLabel(level,key){
   return key;
 }
 
-function buildLeaf(node,key,val){
-  const enrols=val.enrolments||[],bl=val.baseline_count||0,fb=val.feedback||{},prog=val.programme||'';
-  const row=mkDiv('t-row');
-  row.innerHTML=togHtml(key)+'<span class="t-lbl">'+key+
-    (val.complete?' <span style="opacity:.4;font-size:.7rem;font-weight:400"> ✓</span>':'')+
-    '</span><span class="t-cnt">'+enrols.length+'</span>';
-  row.addEventListener('click',()=>togNode(key));
-  node.appendChild(row);
-
-  /* Health strip */
-  const strip=mkDiv('h-strip');
-  strip.innerHTML=
-    hchip('hc-e','📋 Enrolments',enrols.length,null)+
-    hchip('hc-b','📝 Baselines',bl,enrols.length)+
-    (prog==='Soft Skills Programme'?hchip('hc-s','🧠 Soft Skills Feedback',fb.soft_skills||0,enrols.length):'')+
-    (prog==='Mindset Camp'?hchip('hc-m','⛺ Mindset Camp Feedback',fb.mindset_camp||0,enrols.length):'')+
-    (prog==='Vocational Training'?hchip('hc-v','🔧 VT Feedback',fb.vocational||0,enrols.length):'')+
-    (prog==='Remedial Programme: Literacy and Numeracy'?hchip('hc-d','📖 Edulution Feedback',fb.edulution||0,enrols.length):'')+
-    hchip('hc-a','🏢 Attachment Feedback',fb.attachment||0,enrols.length);
-  node.appendChild(strip);
-
-  /* Enrolment list */
-  const kids=mkDiv('t-kids'+(expanded.has(key)?' open':''));kids.id='ch-'+key;
-  const list=mkDiv('e-list');
-  enrols.forEach(e=>{
-    const sc=e.status==='Enrolled'?'es-en':e.status==='Completed'?'es-co':'es-dr';
-    const er=mkDiv('e-row');
-    er.innerHTML='<span class="e-id">'+e.id+'</span><span class="e-nm">'+(e.name||e.student)+
-      '</span><span class="e-st '+sc+'">'+e.status+'</span>';
-    list.appendChild(er);
-  });
-  kids.appendChild(list);node.appendChild(kids);
+function togNode(stKey){
+  const ch=document.getElementById('ch-'+stKey);
+  const tg=document.getElementById('tg-'+stKey);
+  if(!ch)return;
+  const open=ch.classList.toggle('open');
+  if(tg)tg.classList.toggle('open',open);
+  open?openNodes.add(stKey):openNodes.delete(stKey);
 }
 
-function mkDiv(cls){const d=document.createElement('div');d.className=cls;return d;}
-function togHtml(id){return'<span class="t-tog'+(expanded.has(id)?' open':'')+'\" id="tg-'+id+'">▶</span>';}
-function nid(parts){return btoa(parts.join('|')).replace(/[^a-zA-Z0-9]/g,'').slice(0,28);}
-function deepCount(o){if(!o||typeof o!=='object')return 0;if(o.enrolments)return o.enrolments.length;return Object.values(o).reduce((s,v)=>s+deepCount(v),0);}
-function hchip(cls,lbl,n,tot){return'<span class="h-chip '+cls+'">'+lbl+': <strong>'+n+'</strong>'+(tot!=null?' <span class="h-rat">('+n+'/'+tot+')</span>':'')+' </span>';}
-function togNode(id){
-  const ch=document.getElementById('ch-'+id),tg=document.getElementById('tg-'+id);
-  if(!ch)return;const open=ch.classList.toggle('open');
-  if(tg)tg.classList.toggle('open',open);open?expanded.add(id):expanded.delete(id);
-}
 function expandAll(){
   allExp=!allExp;
-  document.querySelectorAll('.t-kids').forEach(el=>el.classList.toggle('open',allExp));
+  document.querySelectorAll('.t-kids').forEach(el=>{
+    el.classList.toggle('open',allExp);
+    const k=el.id.replace(/^ch-/,'');
+    allExp?openNodes.add(k):openNodes.delete(k);
+  });
   document.querySelectorAll('.t-tog').forEach(el=>el.classList.toggle('open',allExp));
   document.getElementById('exp-btn').textContent=allExp?'Collapse All':'Expand All';
 }
 
-/* ══════════════════════════════════════════════════════
-   REPORT VIEW — one row per schedule, rowspan on grouping cols
-   Rowspan is computed AFTER sort so it always reflects the
-   current sort order correctly.
-══════════════════════════════════════════════════════ */
-const MERGE=['year','path','programme','course','cohort'];
+function deepCount(o){
+  if(!o||typeof o!=='object')return 0;
+  if(o.enrolments)return o.enrolments.length;
+  return Object.values(o).reduce((s,v)=>s+deepCount(v),0);
+}
+function hchip(cls,lbl,n,tot){
+  return'<span class="h-chip '+cls+'">'+lbl+': <strong>'+n+'</strong>'+
+    (tot!=null?' <span class="h-rat">('+n+'/'+tot+')</span>':'')+' </span>';
+}
 
+/* ══════════════════════════════════
+   REPORT VIEW — flat table, no rowspan
+══════════════════════════════════ */
 function renderReport(){
   if(!DATA)return;
   const f=gf(),rows=DATA.flat.filter(r=>match(r,f));
   if(!rows.length){document.getElementById('panel-report').innerHTML='<div class="loading">No data matches filters.</div>';return;}
 
-  /* Aggregate to schedule */
+  /* Aggregate to schedule level */
   const SM={};
   rows.forEach(r=>{
     if(!SM[r.schedule]){
@@ -443,34 +460,9 @@ function renderReport(){
     s.ss+=r.fb_ss||0;s.mc+=r.fb_msc||0;s.vt+=r.fb_vt||0;s.edu+=r.fb_edu||0;s.att+=r.fb_att||0;
   });
 
-  /* Sort */
   const srows=Object.values(SM).sort((a,b)=>{
     const va=a[sortCol]||'',vb=b[sortCol]||'';
     return sortDir*(typeof va==='number'?va-vb:String(va).localeCompare(String(vb),undefined,{numeric:true}));
-  });
-
-  /* Compute rowspans AFTER sort.
-     For each MERGE column, scan downward:
-     a row is merged into the one above only when ALL columns to the LEFT
-     (in MERGE order) also match the row above. */
-  const span=srows.map(()=>({}));
-  MERGE.forEach((col,ci)=>{
-    for(let i=0;i<srows.length;i++){
-      if(i===0){span[i][col]=1;continue;}
-      /* Check all merge cols 0..ci match the row above */
-      let sameGroup=true;
-      for(let c=0;c<=ci;c++){
-        if(srows[i][MERGE[c]]!==srows[i-1][MERGE[c]]){sameGroup=false;break;}
-      }
-      if(sameGroup){
-        span[i][col]=0;  /* hidden */
-        /* Find the top of this run and increment its span */
-        let top=i-1;while(top>0&&span[top][col]===0)top--;
-        span[top][col]++;
-      }else{
-        span[i][col]=1;
-      }
-    }
   });
 
   const hasSS=srows.some(r=>r.programme==='Soft Skills Programme');
@@ -483,56 +475,44 @@ function renderReport(){
     if(!v)return'<td class="td-num td-zero">0</td>';
     return'<td class="td-num '+(tot&&v>=tot?'td-good':'td-part')+'">'+v+'</td>';
   };
-  const sth=(col,lbl)=>'<th class="'+(sortCol===col?(sortDir===1?'s-asc':'s-desc'):'')+'" onclick="srt(\''+col+'\')">'+lbl+'</th>';
+  const sth=(col,lbl)=>'<th class="'+(sortCol===col?(sortDir===1?'s-asc':'s-desc'):'')+'\" onclick=\"srt(\''+col+'\')\">'+lbl+'</th>';
 
   let h='<div class="report-wrap">';
 
   /* Legend */
   h+='<div class="legend-box"><div class="legend-title">Column Guide</div><div class="legend-grid">'+
-    '<div class="leg-item"><span class="leg-dot hc-e">📋</span><span class="leg-desc"><strong>Enrolments</strong> — total students in this schedule</span></div>'+
-    '<div class="leg-item"><span class="leg-dot hc-b">📝</span><span class="leg-desc"><strong>Baselines</strong> — baseline form submitted at enrolment</span></div>'+
-    (hasSS?'<div class="leg-item"><span class="leg-dot hc-s">🧠</span><span class="leg-desc"><strong>Soft Skills Feedback</strong> — per enrolment</span></div>':'')+
-    (hasMSC?'<div class="leg-item"><span class="leg-dot hc-m">⛺</span><span class="leg-desc"><strong>Mindset Camp Feedback</strong> — per enrolment</span></div>':'')+
-    (hasVT?'<div class="leg-item"><span class="leg-dot hc-v">🔧</span><span class="leg-desc"><strong>Vocational Training Feedback</strong> — per enrolment</span></div>':'')+
-    (hasEdu?'<div class="leg-item"><span class="leg-dot hc-d">📖</span><span class="leg-desc"><strong>Edulution Feedback</strong> — per enrolment (Path A)</span></div>':'')+
-    '<div class="leg-item"><span class="leg-dot hc-a">🏢</span><span class="leg-desc"><strong>Attachment Feedback</strong> — post-programme</span></div>'+
-    '</div><p class="leg-na">— = this feedback type is not applicable for that programme.</p></div>';
+    '<div class="leg-item"><span class="leg-dot hc-e">📋</span><span class="leg-desc"><strong>Enrolments</strong> — total in this schedule</span></div>'+
+    '<div class="leg-item"><span class="leg-dot hc-b">📝</span><span class="leg-desc"><strong>Baselines</strong> — submitted at enrolment</span></div>'+
+    (hasSS?'<div class="leg-item"><span class="leg-dot hc-s">🧠</span><span class="leg-desc"><strong>Soft Skills Feedback</strong></span></div>':'')+
+    (hasMSC?'<div class="leg-item"><span class="leg-dot hc-m">⛺</span><span class="leg-desc"><strong>Mindset Camp Feedback</strong></span></div>':'')+
+    (hasVT?'<div class="leg-item"><span class="leg-dot hc-v">🔧</span><span class="leg-desc"><strong>VT Feedback</strong></span></div>':'')+
+    (hasEdu?'<div class="leg-item"><span class="leg-dot hc-d">📖</span><span class="leg-desc"><strong>Edulution Feedback</strong></span></div>':'')+
+    (hasVT?'<div class="leg-item"><span class="leg-dot hc-a">🏢</span><span class="leg-desc"><strong>Attachment Feedback</strong> (VT only)</span></div>':'')+
+    '</div><p class="leg-na">— = not applicable for this programme row · 🟢 complete · 🟠 partial</p></div>';
 
   /* Table */
   h+='<table class="rpt"><thead><tr>'+
-    sth('year','Intake Year')+sth('path','Path')+sth('programme','Programme')+
+    sth('year','Year')+sth('path','Path')+sth('programme','Programme')+
     sth('course','Course')+sth('cohort','Cohort')+sth('schedule','Schedule')+
-    sth('en','📋 Enrol.')+'<th>Enrolled</th><th>Completed</th><th>Dropped</th>'+
+    sth('en','📋')+sth('el','Enrolled')+sth('co','Completed')+sth('dr','Dropped')+
     sth('bl','📝 Baselines')+
-    (hasSS?'<th>🧠 SS Feedback</th>':'')+
-    (hasMSC?'<th>⛺ MSC Feedback</th>':'')+
-    (hasVT?'<th>🔧 VT Feedback</th>':'')+
-    (hasEdu?'<th>📖 Edu Feedback</th>':'')+
-    '<th>🏢 Att. Feedback</th></tr></thead><tbody>';
+    (hasSS?'<th>🧠 SS</th>':'')+
+    (hasMSC?'<th>⛺ MSC</th>':'')+
+    (hasVT?'<th>🔧 VT</th>':'')+
+    (hasEdu?'<th>📖 Edu</th>':'')+
+    (hasVT?'<th>🏢 Att</th>':'')+
+    '</tr></thead><tbody>';
 
-  const PROG_SHORT={'Soft Skills Programme':'Soft Skills','Mindset Camp':'Mindset Camp',
-    'Vocational Training':'Vocational Training','Remedial Programme: Literacy and Numeracy':'Edulution (Remedial)'};
-
-  srows.forEach((r,i)=>{
-    const sp=span[i];
+  srows.forEach(r=>{
     const isSS=r.programme==='Soft Skills Programme',isMSC=r.programme==='Mindset Camp';
     const isVT=r.programme==='Vocational Training',isEdu=r.programme==='Remedial Programme: Literacy and Numeracy';
     const pCls=PROG_CLS[r.programme]||'pg-unk';
-
-    h+='<tr>';
-    MERGE.forEach(col=>{
-      if(sp[col]===0)return;
-      const rs=sp[col]>1?' rowspan="'+sp[col]+'"':'';
-      const cls=' class="grp"';
-      if(col==='programme'){
-        h+='<td'+rs+cls+'><span class="prog-badge '+pCls+'">'+(PROG_SHORT[r.programme]||r.programme)+'</span></td>';
-      }else if(col==='path'){
-        h+='<td'+rs+cls+'><span class="sh-badge" style="font-size:.7rem">'+r.path+'</span></td>';
-      }else{
-        h+='<td'+rs+cls+'>'+r[col]+'</td>';
-      }
-    });
-    h+='<td class="td-mono">'+r.schedule+'</td>'+
+    h+='<tr>'+
+      '<td>'+r.year+'</td>'+
+      '<td><span class="sh-badge" style="font-size:.7rem">'+r.path+'</span></td>'+
+      '<td><span class="prog-badge '+pCls+'">'+(PROG_SHORT[r.programme]||r.programme)+'</span></td>'+
+      '<td>'+r.course+'</td><td>'+r.cohort+'</td>'+
+      '<td class="td-mono">'+r.schedule+'</td>'+
       '<td class="td-num" style="color:#1d4ed8;font-weight:800">'+r.en+'</td>'+
       '<td class="td-num '+(r.el?'td-part':'td-zero')+'">'+r.el+'</td>'+
       '<td class="td-num '+(r.co?'td-good':'td-zero')+'">'+r.co+'</td>'+
@@ -542,7 +522,8 @@ function renderReport(){
       (hasMSC?nc(r.mc,r.en,isMSC):'')+
       (hasVT?nc(r.vt,r.en,isVT):'')+
       (hasEdu?nc(r.edu,r.en,isEdu):'')+
-      nc(r.att,r.en,true)+'</tr>';
+      (hasVT?nc(r.att,r.en,isVT):'')+
+      '</tr>';
   });
 
   /* Totals */
@@ -553,9 +534,9 @@ function renderReport(){
   },{en:0,el:0,co:0,dr:0,bl:0,ss:0,mc:0,vt:0,edu:0,att:0});
 
   h+='<tr class="totals-row">'+
-    '<td colspan="5" style="font-size:.72rem;color:var(--color-slate-500)">'+
-    'TOTALS — '+srows.length+' schedule'+(srows.length>1?'s':'')+' · '+rows.length+' enrolment'+(rows.length>1?'s':'')+
-    '</td><td></td>'+
+    '<td colspan="6" style="font-size:.72rem;color:var(--color-slate-500)">'+
+    'TOTALS — '+srows.length+' schedule'+(srows.length>1?'s':'')+
+    '</td>'+
     '<td class="td-num" style="color:#1d4ed8">'+T.en+'</td>'+
     '<td class="td-num td-part">'+T.el+'</td>'+
     '<td class="td-num td-good">'+T.co+'</td>'+
@@ -565,13 +546,12 @@ function renderReport(){
     (hasMSC?'<td class="td-num">'+T.mc+'</td>':'')+
     (hasVT?'<td class="td-num">'+T.vt+'</td>':'')+
     (hasEdu?'<td class="td-num">'+T.edu+'</td>':'')+
-    '<td class="td-num">'+T.att+'</td></tr>';
+    (hasVT?'<td class="td-num">'+T.att+'</td>':'')+
+    '</tr>';
 
-  h+='</tbody></table>'+
-    '<div class="rpt-footer">'+
+  h+='</tbody></table><div class="rpt-footer">'+
     '<span>'+srows.length+' schedule'+(srows.length>1?'s':'')+' shown</span>'+
-    '<span>Click headers to sort · 🟢 complete · 🟠 partial · grey = zero</span>'+
-    '</div></div>';
+    '<span>Click headers to sort</span></div></div>';
 
   document.getElementById('panel-report').innerHTML=h;
 }
