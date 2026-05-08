@@ -132,6 +132,12 @@
     var target = normalizePath(redirectTo || '/skillshub');
     var attempts = [
       function () {
+        return attemptLogoutRequest(
+          '/api/method/skillshub_core.skillshub_portal.api.portal_logout',
+          { method: 'POST', headers: getHeaders() }
+        );
+      },
+      function () {
         return attemptLogoutRequest('/api/method/logout', { method: 'POST', headers: getHeaders() });
       },
       function () {
