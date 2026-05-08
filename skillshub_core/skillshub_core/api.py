@@ -140,7 +140,29 @@ def _list_option_names(doctype, fieldname):
         value = (row.get(fieldname) or "").strip()
         if value:
             out.append(value)
+    if not out:
+        # Fallback: many "master option" doctypes use name == option label
+        name_rows = frappe.get_all(doctype, fields=["name"], limit=0, order_by="name asc")
+        for row in name_rows:
+            value = (row.get("name") or "").strip()
+            if value:
+                out.append(value)
     return out
+
+
+def _list_distinct_values(doctype, fieldname):
+    if not _doctype_exists(doctype) or not _doctype_has_field(doctype, fieldname):
+        return []
+    rows = frappe.db.sql(
+        f"""
+        SELECT DISTINCT `{fieldname}` AS value
+        FROM `tab{doctype}`
+        WHERE IFNULL(`{fieldname}`, '') != ''
+        ORDER BY `{fieldname}` ASC
+        """,
+        as_dict=True,
+    )
+    return [str((row.get("value") or "")).strip() for row in rows if (row.get("value") or "").strip()]
 
 
 @frappe.whitelist()
@@ -307,6 +329,13 @@ def get_student_editable(student):
     if not _has_student_access(student_doc):
         frappe.throw(_("Not permitted"), frappe.PermissionError)
 
+    motivation_options = _list_option_names("SH Student Motivation", "motivation")
+    resilience_options = _list_option_names("SH Student Resilience", "resilience_statement")
+    if not motivation_options:
+        motivation_options = _list_distinct_values("SH Student Motivation Link", "motivation")
+    if not resilience_options:
+        resilience_options = _list_distinct_values("SH Student Resilience Link", "resilience_statement")
+
     return {
         "name": student_doc.name,
         "address_line_1": student_doc.address_line_1,
@@ -323,8 +352,8 @@ def get_student_editable(student):
             for r in (student_doc.resilience_links or [])
             if r and r.resilience_statement
         ],
-        "motivation_options": _list_option_names("SH Student Motivation", "motivation"),
-        "resilience_options": _list_option_names("SH Student Resilience", "resilience_statement"),
+        "motivation_options": motivation_options,
+        "resilience_options": resilience_options,
     }
 
 
