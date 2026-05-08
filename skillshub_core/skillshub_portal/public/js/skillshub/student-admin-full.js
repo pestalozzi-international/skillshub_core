@@ -14,7 +14,8 @@
   var state = {
     studentId: null,
     bundle: null,
-    meta: null
+    meta: null,
+    editable: null
   };
 
   function esc(value) {
@@ -206,6 +207,75 @@
     document.getElementById('tab-feedback').innerHTML = html;
   }
 
+  function selectedValues(rows, key) {
+    return (rows || [])
+      .map(function (row) { return row && row[key] ? String(row[key]).trim() : ''; })
+      .filter(Boolean);
+  }
+
+  function uniqueStrings(values) {
+    var out = [];
+    var seen = {};
+    (values || []).forEach(function (value) {
+      var v = String(value || '').trim();
+      if (!v || seen[v]) return;
+      seen[v] = true;
+      out.push(v);
+    });
+    return out;
+  }
+
+  function renderChecklist(containerId, values, selected, keyPrefix) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+
+    var options = uniqueStrings(values || []);
+    if (!options.length) {
+      container.innerHTML = '<div class="sh-empty-cell">No options configured.</div>';
+      return;
+    }
+
+    var selectedSet = {};
+    (selected || []).forEach(function (value) { selectedSet[value] = true; });
+
+    options.forEach(function (value, idx) {
+      var id = keyPrefix + '-opt-' + idx;
+      var row = document.createElement('label');
+      row.setAttribute('for', id);
+      row.style.display = 'flex';
+      row.style.alignItems = 'center';
+      row.style.gap = '0.45rem';
+      row.style.padding = '0.45rem 0.6rem';
+      row.style.border = '1px solid var(--color-slate-100)';
+      row.style.borderRadius = '0.6rem';
+      row.style.fontSize = '0.84rem';
+      row.style.cursor = 'pointer';
+
+      var checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = id;
+      checkbox.value = value;
+      checkbox.checked = !!selectedSet[value];
+      checkbox.dataset.multiGroup = keyPrefix;
+
+      var text = document.createElement('span');
+      text.textContent = value;
+      row.appendChild(checkbox);
+      row.appendChild(text);
+      container.appendChild(row);
+    });
+  }
+
+  function selectedFromChecklist(keyPrefix, keyName) {
+    var nodes = document.querySelectorAll('input[type="checkbox"][data-multi-group="' + keyPrefix + '"]:checked');
+    return Array.prototype.map.call(nodes, function (node) {
+      var row = {};
+      row[keyName] = String(node.value || '').trim();
+      return row;
+    });
+  }
+
   function buildEditField(field, value) {
     var editable = !field.read_only && !field.hidden;
     if (!editable) return '';
@@ -242,6 +312,7 @@
   function renderEdit() {
     var student = state.bundle.student || {};
     var fields = (state.meta && state.meta.fields) || [];
+    var editable = state.editable || {};
     var byName = {};
     fields.forEach(function (field) {
       if (field && field.fieldname) byName[field.fieldname] = field;
@@ -293,7 +364,34 @@
         '</section>';
     }
 
+    html += '<section class="sh-card" style="padding:1rem;margin-top:0.9rem;border:1px solid var(--color-slate-100);box-shadow:none;">' +
+      '<h4 style="margin:0 0 0.85rem;font-size:0.92rem;color:var(--color-teal-700);">Growth & Motivation</h4>' +
+      '<div class="sh-form-grid">' +
+        '<div>' +
+          '<label class="sh-label">Motivations</label>' +
+          '<div id="admin-motivation-options" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.45rem;"></div>' +
+        '</div>' +
+        '<div>' +
+          '<label class="sh-label">Resilience Statements</label>' +
+          '<div id="admin-resilience-options" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.45rem;"></div>' +
+        '</div>' +
+      '</div>' +
+    '</section>';
+
     document.getElementById('tab-edit').innerHTML = html;
+
+    renderChecklist(
+      'admin-motivation-options',
+      editable.motivation_options || [],
+      selectedValues(student.motivations, 'motivation'),
+      'admin-motivation'
+    );
+    renderChecklist(
+      'admin-resilience-options',
+      editable.resilience_options || [],
+      selectedValues(student.resilience_links, 'resilience_statement'),
+      'admin-resilience'
+    );
   }
 
   function bindTabs() {
@@ -319,6 +417,9 @@
       else payload[fieldname] = input.value;
     });
 
+    payload.motivations = selectedFromChecklist('admin-motivation', 'motivation');
+    payload.resilience_links = selectedFromChecklist('admin-resilience', 'resilience_statement');
+
     var saveBtn = document.getElementById('student-save-btn');
     saveBtn.disabled = true;
     saveBtn.textContent = 'Saving...';
@@ -340,11 +441,13 @@
   function load() {
     return Promise.all([
       api('/api/method/skillshub_core.skillshub_portal.api.get_student_admin_bundle?student=' + encodeURIComponent(state.studentId)),
-      api('/api/method/skillshub_core.skillshub_portal.api.get_doctype_meta?doctype=' + encodeURIComponent('SH Student'))
+      api('/api/method/skillshub_core.skillshub_portal.api.get_doctype_meta?doctype=' + encodeURIComponent('SH Student')),
+      api('/api/method/skillshub_core.skillshub_core.api.get_student_editable?student=' + encodeURIComponent(state.studentId)).catch(function () { return {}; })
     ])
       .then(function (results) {
         state.bundle = results[0];
         state.meta = results[1];
+        state.editable = results[2] || {};
         setHeader();
         renderOverview();
         renderEnrolments();
