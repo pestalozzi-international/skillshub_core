@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_import": 1,
- "autoname": "{student}-{programme_schedule}",
+ "autoname": "{student}-{class}",
  "creation": "2026-05-03 11:40:32.778960",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -115,7 +115,7 @@
    "reqd": 1
   },
   {
-   "fetch_from": "programme_schedule.start_date",
+   "fetch_from": "class.start_date",
    "fieldname": "enrolment_date",
    "fieldtype": "Date",
    "label": "Enrolment Date",
@@ -126,7 +126,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "programme_schedule.end_date",
+   "fetch_from": "class.end_date",
    "fieldname": "completion_date",
    "fieldtype": "Date",
    "label": "Completion Date"
@@ -215,7 +215,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-08 15:54:50.328938",
+ "modified": "2026-05-08 16:00:00.000000",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Enrolment",
