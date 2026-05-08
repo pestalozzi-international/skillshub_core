@@ -1,6 +1,12 @@
 (function () {
   'use strict';
 
+  var state = {
+    studentName: null,
+    editable: null,
+    isSaving: false
+  };
+
   function esc(value) {
     if (value === null || value === undefined) return '';
     var div = document.createElement('div');
@@ -28,6 +34,70 @@
         return response.json();
       })
       .then(function (json) { return json.message || json; });
+  }
+
+  function linesToRows(value, key) {
+    return String(value || '')
+      .split('\n')
+      .map(function (line) { return line.trim(); })
+      .filter(Boolean)
+      .map(function (line) {
+        var row = {};
+        row[key] = line;
+        return row;
+      });
+  }
+
+  function rowsToLines(rows, key) {
+    return (rows || [])
+      .map(function (row) { return row && row[key] ? String(row[key]).trim() : ''; })
+      .filter(Boolean)
+      .join('\n');
+  }
+
+  function setEditStatus(message, isError) {
+    var el = document.getElementById('student-edit-status');
+    if (!el) return;
+    el.textContent = message || '';
+    el.style.color = isError ? 'var(--color-red-700)' : 'var(--muted-text-color)';
+  }
+
+  function setEditMode(isEditing) {
+    var form = document.getElementById('student-edit-form');
+    var editBtn = document.getElementById('btn-edit-profile');
+    if (!form || !editBtn) return;
+    form.style.display = isEditing ? '' : 'none';
+    editBtn.style.display = isEditing ? 'none' : '';
+    if (!isEditing && !state.isSaving) setEditStatus('', false);
+  }
+
+  function fillEditForm(editable) {
+    editable = editable || {};
+    var setVal = function (id, value) {
+      var node = document.getElementById(id);
+      if (node) node.value = value || '';
+    };
+    setVal('edit-mobile', editable.mobile);
+    setVal('edit-pincode', editable.pincode);
+    setVal('edit-address-line-1', editable.address_line_1);
+    setVal('edit-address-line-2', editable.address_line_2);
+    setVal('edit-motivations', rowsToLines(editable.motivations, 'motivation'));
+    setVal('edit-resilience-links', rowsToLines(editable.resilience_links, 'resilience_statement'));
+  }
+
+  function collectEditPayload() {
+    var value = function (id) {
+      var node = document.getElementById(id);
+      return node ? String(node.value || '').trim() : '';
+    };
+    return {
+      mobile: value('edit-mobile'),
+      pincode: value('edit-pincode'),
+      address_line_1: value('edit-address-line-1'),
+      address_line_2: value('edit-address-line-2'),
+      motivations: linesToRows(value('edit-motivations'), 'motivation'),
+      resilience_links: linesToRows(value('edit-resilience-links'), 'resilience_statement')
+    };
   }
 
   function renderStudentCard(student) {
@@ -122,7 +192,7 @@
     }).join('');
   }
 
-  function render(summary, submitted) {
+  function render(summary, submitted, editable) {
     var student = summary.student || {};
     document.getElementById('profile-title').textContent = student.student_name ? ('My Profile · ' + student.student_name) : 'My Profile';
     document.getElementById('profile-subtitle').textContent = (student.programme_path || 'Student') + ' · ' + (student.current_course || 'No current course');
@@ -130,9 +200,75 @@
     renderEnrolments(summary.enrolments || []);
     renderFeedbackLinks(summary, summary.feedback_forms || []);
     renderSubmittedForms(submitted || []);
+    state.editable = editable || {};
+    fillEditForm(state.editable);
+  }
+
+  function loadStudentData(studentName) {
+    return Promise.all([
+      api('/api/method/skillshub_core.skillshub_core.api.get_portal_student_context?student=' + encodeURIComponent(studentName)),
+      api('/api/method/skillshub_core.skillshub_portal.api.get_feedback_records?student=' + encodeURIComponent(studentName)),
+      api('/api/method/skillshub_core.skillshub_core.api.get_student_editable?student=' + encodeURIComponent(studentName))
+        .catch(function () { return {}; })
+    ]).then(function (payload) {
+      render(payload[0], payload[1] || [], payload[2] || {});
+    });
+  }
+
+  function saveProfileEdits(event) {
+    event.preventDefault();
+    if (!state.studentName || state.isSaving) return;
+
+    state.isSaving = true;
+    setEditStatus('Saving profile changes...', false);
+
+    var payload = collectEditPayload();
+    api('/api/method/skillshub_core.skillshub_core.api.update_student_profile', {
+      method: 'POST',
+      body: JSON.stringify({
+        student: state.studentName,
+        payload: JSON.stringify(payload)
+      })
+    })
+      .then(function () {
+        return loadStudentData(state.studentName);
+      })
+      .then(function () {
+        setEditMode(false);
+        setEditStatus('Profile updated successfully.', false);
+      })
+      .catch(function (error) {
+        setEditStatus('Failed to save profile: ' + (error && error.message ? error.message : 'Unknown error'), true);
+      })
+      .finally(function () {
+        state.isSaving = false;
+      });
+  }
+
+  function bindProfileEditHandlers() {
+    var editBtn = document.getElementById('btn-edit-profile');
+    var cancelBtn = document.getElementById('btn-cancel-profile-edit');
+    var form = document.getElementById('student-edit-form');
+
+    if (editBtn) {
+      editBtn.addEventListener('click', function () {
+        fillEditForm(state.editable || {});
+        setEditMode(true);
+      });
+    }
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', function () {
+        fillEditForm(state.editable || {});
+        setEditMode(false);
+      });
+    }
+    if (form) {
+      form.addEventListener('submit', saveProfileEdits);
+    }
   }
 
   function init() {
+    bindProfileEditHandlers();
     api('/api/method/skillshub_core.skillshub_portal.api.get_portal_bootstrap')
       .then(function (bootstrap) {
         var studentName = bootstrap && bootstrap.student ? bootstrap.student.name : null;
@@ -142,16 +278,13 @@
             : 'No student account is linked to this login.';
           throw new Error(message);
         }
-        return Promise.all([
-          api('/api/method/skillshub_core.skillshub_core.api.get_portal_student_context?student=' + encodeURIComponent(studentName)),
-          api('/api/method/skillshub_core.skillshub_portal.api.get_feedback_records?student=' + encodeURIComponent(studentName))
-        ]);
-      })
-      .then(function (payload) {
-        render(payload[0], payload[1] || []);
+        state.studentName = studentName;
+        return loadStudentData(studentName);
       })
       .catch(function (error) {
         document.getElementById('student-card').innerHTML = '<div style="color:var(--color-red-700)">Unable to load profile: ' + esc(error.message) + '</div>';
+        var editBtn = document.getElementById('btn-edit-profile');
+        if (editBtn) editBtn.disabled = true;
       });
   }
 

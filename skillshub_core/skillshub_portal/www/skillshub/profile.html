@@ -48,6 +48,45 @@
 
       <section>
         <section class="sh-card profile-block">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:0.6rem;flex-wrap:wrap;">
+            <h3 style="margin:0;">My Details</h3>
+            <button id="btn-edit-profile" type="button" class="sh-btn-secondary">Edit Profile</button>
+          </div>
+          <form id="student-edit-form" style="display:none;margin-top:0.8rem;">
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.75rem;">
+              <div>
+                <label class="sh-label" for="edit-mobile">Mobile</label>
+                <input id="edit-mobile" class="sh-input" type="text" />
+              </div>
+              <div>
+                <label class="sh-label" for="edit-pincode">Pincode</label>
+                <input id="edit-pincode" class="sh-input" type="text" />
+              </div>
+              <div>
+                <label class="sh-label" for="edit-address-line-1">Address Line 1</label>
+                <input id="edit-address-line-1" class="sh-input" type="text" />
+              </div>
+              <div>
+                <label class="sh-label" for="edit-address-line-2">Address Line 2</label>
+                <input id="edit-address-line-2" class="sh-input" type="text" />
+              </div>
+              <div style="grid-column:1 / -1;">
+                <label class="sh-label" for="edit-motivations">Motivations (one per line)</label>
+                <textarea id="edit-motivations" class="sh-input" rows="3"></textarea>
+              </div>
+              <div style="grid-column:1 / -1;">
+                <label class="sh-label" for="edit-resilience-links">Resilience Statements (one per line)</label>
+                <textarea id="edit-resilience-links" class="sh-input" rows="3"></textarea>
+              </div>
+            </div>
+            <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:0.8rem;">
+              <button id="btn-cancel-profile-edit" type="button" class="sh-btn-secondary">Cancel</button>
+              <button id="btn-save-profile-edit" type="submit" class="sh-btn-primary">Save Changes</button>
+            </div>
+          </form>
+          <div id="student-edit-status" style="margin-top:0.7rem;font-size:0.82rem;color:var(--muted-text-color);"></div>
+        </section>
+        <section class="sh-card profile-block">
           <h3 style="margin-top:0;">Enrolments & Progress</h3>
           <div id="enrolments-list"></div>
         </section>
