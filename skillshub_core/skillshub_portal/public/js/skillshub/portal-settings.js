@@ -106,6 +106,70 @@
     }
   }
 
+  function clearClientSessionState() {
+    var keys = [
+      'sh_student_id',
+      'sh_student_email',
+      'sh_student_name',
+      'sh_portal_bootstrap',
+      'sh_portal_role'
+    ];
+    keys.forEach(function (key) {
+      try { window.localStorage.removeItem(key); } catch (e) {}
+      try { window.sessionStorage.removeItem(key); } catch (e) {}
+    });
+  }
+
+  function attemptLogoutRequest(url, options) {
+    return fetch(url, Object.assign({ credentials: 'include', cache: 'no-store' }, options || {}))
+      .then(function (response) {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response;
+      });
+  }
+
+  function logout(redirectTo) {
+    var target = normalizePath(redirectTo || '/skillshub');
+    var attempts = [
+      function () {
+        return attemptLogoutRequest('/api/method/logout', { method: 'POST', headers: getHeaders() });
+      },
+      function () {
+        return attemptLogoutRequest('/api/method/logout', { method: 'GET', headers: { Accept: 'application/json' } });
+      },
+      function () {
+        return attemptLogoutRequest('/logout', { method: 'GET' });
+      }
+    ];
+
+    function run(index) {
+      if (index >= attempts.length) return Promise.resolve();
+      return attempts[index]().catch(function () { return run(index + 1); });
+    }
+
+    return run(0).finally(function () {
+      clearClientSessionState();
+      window.location.replace(target);
+    });
+  }
+
+  function bindLogoutLinks() {
+    document.addEventListener('click', function (event) {
+      var link = event.target && event.target.closest ? event.target.closest('a') : null;
+      if (!link) return;
+      var href = String(link.getAttribute('href') || '');
+      if (
+        link.dataset.shLogout === '1' ||
+        href === '/logout' ||
+        href.indexOf('/logout?') === 0 ||
+        href.indexOf('/api/method/logout') === 0
+      ) {
+        event.preventDefault();
+        logout('/skillshub');
+      }
+    });
+  }
+
   function api(path, options) {
     return fetch(path, Object.assign({ credentials: 'include', headers: getHeaders() }, options || {})).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status + ' (' + path + ')');
@@ -123,6 +187,8 @@
 
   window.SHPortal = window.SHPortal || {};
   Object.assign(window.SHPortal, context);
+  window.SHPortal.logout = logout;
+  bindLogoutLinks();
 
   Promise.all([
     api('/api/method/skillshub_core.skillshub_portal.doctype.skillshub_portal_settings.skillshub_portal_settings.get_portal_settings').catch(function () { return { message: {} }; }),
