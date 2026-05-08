@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"VLZ5qgyei2\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Mindset Camp</span>\",\"col\":12}},{\"id\":\"YmkeG8I211\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Enrolled Students\",\"col\":3}},{\"id\":\"qxZnwEjaoG\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"xqQXkicagv\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"MSC Baseline\",\"col\":3}},{\"id\":\"bZbxBgrdjb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Mindset Camp Programme Schedules\",\"col\":4}},{\"id\":\"xWsh4r7hFH\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Kc_pJhsjyj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Mindset Camp Feedback\",\"col\":3}},{\"id\":\"IXkIn84-fX\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"0jHksa63If\",\"type\":\"card\",\"data\":{\"card_name\":\"Building Blocks\",\"col\":4}}]",
+ "content": "[{\"id\":\"VLZ5qgyei2\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Mindset Camp</span>\",\"col\":12}},{\"id\":\"YmkeG8I211\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Enrolled Students\",\"col\":3}},{\"id\":\"qxZnwEjaoG\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"xqQXkicagv\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"MSC Baseline\",\"col\":3}},{\"id\":\"bZbxBgrdjb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Mindset Camp Classes\",\"col\":4}},{\"id\":\"xWsh4r7hFH\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Kc_pJhsjyj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Mindset Camp Feedback\",\"col\":3}},{\"id\":\"IXkIn84-fX\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"0jHksa63If\",\"type\":\"card\",\"data\":{\"card_name\":\"Building Blocks\",\"col\":4}}]",
  "creation": "2026-03-30 16:08:04.446613",
  "custom_blocks": [],
  "docstatus": 0,
@@ -50,7 +50,7 @@
    "doc_view": "List",
    "label": "MSC Baseline",
    "link_to": "SH Baseline",
-   "stats_filter": "[[\"SH Student Baseline Form\",\"course\",\"=\",\"Mindset Camp\",false]]",
+   "stats_filter": "[[\"SH Baseline\",\"course\",\"=\",\"Mindset Camp\",false]]",
    "type": "DocType"
   },
   {
@@ -64,9 +64,9 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Mindset Camp Programme Schedules",
+   "label": "Mindset Camp Classes",
    "link_to": "SH Class",
-   "stats_filter": "[[\"SH Programme Schedule\",\"skillshub_programme\",\"=\",\"Mindset Camp\",false]]",
+   "stats_filter": "[[\"SH Class\",\"skillshub_programme\",\"=\",\"Mindset Camp\",false]]",
    "type": "DocType"
   },
   {

@@ -18,6 +18,13 @@ ADMIN_ROLES = {
     "SkillsHub Teacher",
 }
 
+STUDENT_LOGIN_FIELDS = [
+    "portal_user_account",
+    "user_login_email",
+    "pestalozzi_student_email",
+    "personal_email",
+]
+
 FEEDBACK_DOCTYPES = [
     {"doctype": "SH Baseline", "label": "Baseline Assessment", "route": "/skillshub/baseline"},
     {"doctype": "SH Soft Skills Feedback", "label": "Soft Skills Feedback", "route": "/skillshub/feedback/soft-skills"},
@@ -40,22 +47,18 @@ def _has_admin_access(user=None):
 def _find_linked_student(user):
     if not user or user == "Guest":
         return None
-    found = frappe.get_all(
-        "SH Student",
-        filters=[["portal_user_account", "=", user]],
-        fields=["name"],
-        limit=1,
-    )
-    if found:
-        return found[0].name
-
-    found = frappe.get_all(
-        "SH Student",
-        filters=[["user_login_email", "=", user]],
-        fields=["name"],
-        limit=1,
-    )
-    return found[0].name if found else None
+    for fieldname in STUDENT_LOGIN_FIELDS:
+        if not _doctype_has_field("SH Student", fieldname):
+            continue
+        found = frappe.get_all(
+            "SH Student",
+            filters=[[fieldname, "=", user]],
+            fields=["name"],
+            limit=1,
+        )
+        if found:
+            return found[0].name
+    return None
 
 
 def _json_arg(value, fallback):
@@ -82,6 +85,29 @@ def _feedback_student_field(doctype):
     except Exception:
         return None
     return None
+
+
+def _doctype_has_field(doctype, fieldname):
+    try:
+        return bool(frappe.get_meta(doctype).get_field(fieldname))
+    except Exception:
+        return False
+
+
+def _feedback_schedule_field(doctype):
+    for fieldname in ("programme_schedule", "program_schedule", "sh_programme_schedule", "class"):
+        if _doctype_has_field(doctype, fieldname):
+            return fieldname
+    return None
+
+
+def _student_identity_values(student_doc):
+    values = set()
+    for fieldname in STUDENT_LOGIN_FIELDS:
+        value = (student_doc.get(fieldname) or "").strip().lower()
+        if value:
+            values.add(value)
+    return values
 
 
 def _clean_field(field):
@@ -112,10 +138,7 @@ def get_portal_bootstrap(student=None):
     student_doc = None
     if target_student and frappe.db.exists("SH Student", target_student):
         student_doc = frappe.get_doc("SH Student", target_student)
-        if not is_admin and user not in {
-            (student_doc.portal_user_account or "").strip(),
-            (student_doc.user_login_email or "").strip(),
-        }:
+        if not is_admin and (user or "").strip().lower() not in _student_identity_values(student_doc):
             student_doc = None
 
     return {
@@ -127,9 +150,9 @@ def get_portal_bootstrap(student=None):
         "student": (
             {
                 "name": student_doc.name,
-                "student_name": student_doc.student_name,
-                "programme_path": student_doc.programme_path,
-                "status": student_doc.status,
+                "student_name": student_doc.get("student_name"),
+                "programme_path": student_doc.get("programme_path"),
+                "status": student_doc.get("status"),
             }
             if student_doc
             else None
@@ -156,24 +179,27 @@ def get_admin_students(filters=None, page=1, page_size=25):
     if filters.get("intake_cohort"):
         student_filters["intake_cohort"] = filters.get("intake_cohort")
 
+    requested_fields = [
+        "name",
+        "student_name",
+        "status",
+        "programme_path",
+        "intake_year",
+        "intake_cohort",
+        "current_schedule",
+        "current_course",
+        "current_milestone",
+        "mobile",
+        "modified",
+    ]
+    for optional in STUDENT_LOGIN_FIELDS:
+        if _doctype_has_field("SH Student", optional):
+            requested_fields.append(optional)
+
     students = frappe.get_all(
         "SH Student",
         filters=student_filters,
-        fields=[
-            "name",
-            "student_name",
-            "status",
-            "programme_path",
-            "intake_year",
-            "intake_cohort",
-            "portal_user_account",
-            "user_login_email",
-            "current_schedule",
-            "current_course",
-            "current_milestone",
-            "mobile",
-            "modified",
-        ],
+        fields=requested_fields,
         order_by="modified desc",
         limit_start=offset,
         limit=page_size,
@@ -183,12 +209,11 @@ def get_admin_students(filters=None, page=1, page_size=25):
 
     search = (filters.get("search") or "").strip().lower()
     if search:
+        search_fields = ["name", "student_name"] + STUDENT_LOGIN_FIELDS
         students = [
             row
             for row in students
-            if search in (row.get("name") or "").lower()
-            or search in (row.get("student_name") or "").lower()
-            or search in (row.get("user_login_email") or "").lower()
+            if any(search in (row.get(fieldname) or "").lower() for fieldname in search_fields)
         ]
 
     student_ids = [row.name for row in students]
@@ -239,15 +264,22 @@ def get_feedback_records(student):
     records = []
     for spec in FEEDBACK_DOCTYPES:
         doctype = spec["doctype"]
-        student_field = _feedback_student_field(doctype)
-        if not student_field:
-            continue
         if not frappe.db.exists("DocType", doctype):
             continue
+        student_field = _feedback_student_field(doctype)
+        schedule_field = _feedback_schedule_field(doctype)
+        if not student_field:
+            continue
+        fields = ["name", "creation", "modified"]
+        if _doctype_has_field(doctype, "enrolment_ticket"):
+            fields.append("enrolment_ticket")
+        if schedule_field:
+            fields.append(schedule_field)
+
         rows = frappe.get_all(
             doctype,
             filters={student_field: student},
-            fields=["name", "creation", "modified", "enrolment_ticket", "programme_schedule"],
+            fields=fields,
             order_by="creation desc",
             limit=500,
         )
@@ -255,6 +287,8 @@ def get_feedback_records(student):
             row["doctype"] = doctype
             row["label"] = spec["label"]
             row["route"] = spec["route"]
+            row["enrolment_ticket"] = row.get("enrolment_ticket") or ""
+            row["programme_schedule"] = row.get(schedule_field) if schedule_field else ""
             records.append(row)
 
     records.sort(key=lambda x: x.get("creation") or "", reverse=True)

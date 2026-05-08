@@ -26,6 +26,13 @@ FEEDBACK_ROUTE_MAP = {
     "SH Parent Feedback": "/skillshub/feedback/parent",
 }
 
+STUDENT_LOGIN_FIELDS = [
+    "portal_user_account",
+    "user_login_email",
+    "pestalozzi_student_email",
+    "personal_email",
+]
+
 
 def _has_student_access(student_doc):
     user = frappe.session.user
@@ -34,11 +41,8 @@ def _has_student_access(student_doc):
     roles = set(frappe.get_roles(user))
     if roles.intersection(ADMIN_ROLES):
         return True
-    portal_user = getattr(student_doc, "portal_user_account", None)
-    login_email = getattr(student_doc, "user_login_email", None)
     user_norm = (user or "").strip().lower()
-    allowed = {(portal_user or "").strip().lower(), (login_email or "").strip().lower()}
-    return user_norm in allowed
+    return user_norm in _student_identity_values(student_doc)
 
 
 def _feedback_forms_for_path(programme_path):
@@ -75,6 +79,30 @@ def _doctype_has_field(doctype, fieldname):
         return bool(frappe.get_meta(doctype).get_field(fieldname))
     except Exception:
         return False
+
+
+def _student_identity_values(student_doc):
+    values = set()
+    for fieldname in STUDENT_LOGIN_FIELDS:
+        value = (student_doc.get(fieldname) or "").strip().lower()
+        if value:
+            values.add(value)
+    return values
+
+
+def _find_student_for_user(user):
+    for fieldname in STUDENT_LOGIN_FIELDS:
+        if not _doctype_has_field("SH Student", fieldname):
+            continue
+        found = frappe.get_all(
+            "SH Student",
+            filters=[[fieldname, "=", user]],
+            fields=["name"],
+            limit=1,
+        )
+        if found:
+            return found[0].name
+    return None
 
 
 def _feedback_student_field(doctype):
@@ -150,7 +178,8 @@ def get_student_summary(student):
         fields=["name", "milestone", "date_submitted", "programme_schedule"],
         order_by="date_submitted desc",
     )
-    feedback_forms = _feedback_forms_for_path(student_doc.programme_path)
+    programme_path = student_doc.get("programme_path")
+    feedback_forms = _feedback_forms_for_path(programme_path)
     feedback_status = {}
     for form in feedback_forms:
         student_field = _feedback_student_field(form["doctype"])
@@ -203,34 +232,35 @@ def get_student_summary(student):
         "student": {
             "name":             student_doc.name,
             "id":               student_doc.name,
-            "full_name":        student_doc.student_name,
-            "student_name":     student_doc.student_name,
-            "image":            student_doc.student_image,
-            "status":           student_doc.status,
-            "programme_path":   student_doc.programme_path,
-            "current_schedule": student_doc.current_schedule,
-            "current_cohort":   student_doc.current_cohort,
+            "full_name":        student_doc.get("student_name"),
+            "student_name":     student_doc.get("student_name"),
+            "image":            student_doc.get("student_image"),
+            "status":           student_doc.get("status"),
+            "programme_path":   programme_path,
+            "current_schedule": student_doc.get("current_schedule"),
+            "current_cohort":   student_doc.get("current_cohort") or student_doc.get("intake_cohort"),
             "intake_year":      intake_year,
-            "portal_enabled":   getattr(student_doc, 'portal_enabled', False),
-            "date_of_birth":    str(student_doc.date_of_birth) if student_doc.date_of_birth else None,
-            "gender":           student_doc.gender,
-            "nrc_number":       student_doc.nrc_number,
-            "address_line_1":   student_doc.address_line_1,
-            "address_line_2":   student_doc.address_line_2,
-            "pincode":          student_doc.pincode,
-            "mobile":           student_doc.mobile,
-            "personal_email":   student_doc.personal_email,
-            "guardian_name":    student_doc.guardian_name,
-            "guardian_mobile_number": student_doc.guardian_mobile_number,
-            "enrolment_date":   str(student_doc.enrolment_date) if student_doc.enrolment_date else None,
-            "skillshub_programme": student_doc.skillshub_programme,
+            "portal_enabled":   bool(student_doc.get("portal_enabled")),
+            "date_of_birth":    str(student_doc.get("date_of_birth")) if student_doc.get("date_of_birth") else None,
+            "gender":           student_doc.get("gender"),
+            "nrc_number":       student_doc.get("nrc_number"),
+            "address_line_1":   student_doc.get("address_line_1"),
+            "address_line_2":   student_doc.get("address_line_2"),
+            "pincode":          student_doc.get("pincode"),
+            "mobile":           student_doc.get("mobile"),
+            "personal_email":   student_doc.get("personal_email"),
+            "user_login_email": _pick_first(student_doc, ["user_login_email", "pestalozzi_student_email", "personal_email"]),
+            "guardian_name":    student_doc.get("guardian_name"),
+            "guardian_mobile_number": student_doc.get("guardian_mobile_number"),
+            "enrolment_date":   str(student_doc.get("enrolment_date")) if student_doc.get("enrolment_date") else None,
+            "skillshub_programme": student_doc.get("skillshub_programme"),
             "path_definition": (
                 "Path A is the standard progression path."
-                if (student_doc.programme_path or "") == "Path A"
+                if (programme_path or "") == "Path A"
                 else "Path B is the standard path without remedial modules."
             ),
-            "motivations":      [{"name": m.name, "motivation": m.motivation} for m in student_doc.motivations],
-            "resilience_links": [{"name": r.name, "resilience_statement": r.resilience_statement} for r in student_doc.resilience_links],
+            "motivations":      [{"name": m.name, "motivation": m.motivation} for m in (student_doc.get("motivations") or [])],
+            "resilience_links": [{"name": r.name, "resilience_statement": r.resilience_statement} for r in (student_doc.get("resilience_links") or [])],
             "current_enrolment": current_enrolment,
         },
         "enrolments":        enrolments,
@@ -315,22 +345,10 @@ def get_portal_student_context(student=None):
         user = frappe.session.user
         if not user or user == "Guest":
             frappe.throw(_("Not permitted"), frappe.PermissionError)
-        found = frappe.get_all(
-            "SH Student",
-            filters=[["portal_user_account", "=", user]],
-            fields=["name"],
-            limit=1,
-        )
-        if not found:
-            found = frappe.get_all(
-                "SH Student",
-                filters=[["user_login_email", "=", user]],
-                fields=["name"],
-                limit=1,
-            )
-        if not found:
+        linked_student = _find_student_for_user(user)
+        if not linked_student:
             frappe.throw(_("Student profile not linked to current login."), frappe.PermissionError)
-        student_doc = frappe.get_doc("SH Student", found[0].name)
+        student_doc = frappe.get_doc("SH Student", linked_student)
 
     if not _has_student_access(student_doc):
         frappe.throw(_("Not permitted"), frappe.PermissionError)
@@ -394,9 +412,10 @@ def enrol_cohort(cohort, class_name, enrolment_date=None):
         frappe.throw(_("Class is required."))
     enrolment_date = enrolment_date or frappe.utils.today()
 
+    cohort_field = "current_cohort" if _doctype_has_field("SH Student", "current_cohort") else "intake_cohort"
     students = frappe.get_all(
         "SH Student",
-        filters={"current_cohort": cohort, "status": "Student"},
+        filters={cohort_field: cohort, "status": "Student"},
         fields=["name", "student_name"],
     )
     if not students:
@@ -450,13 +469,7 @@ def find_student_by_email(email):
     """
     if not email:
         return None
-    found = frappe.get_all(
-        "SH Student",
-        filters=[["user_login_email", "=", email]],
-        fields=["name"],
-        limit=1,
-    )
-    return found[0]["name"] if found else None
+    return _find_student_for_user(email)
 
 
 # ---------------------------------------------------------------------------

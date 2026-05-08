@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"GT9u3mKvXT\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">SkillsHub Soft Skills</span>\",\"col\":12}},{\"id\":\"7eyyVdQVRx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Enrolled Students\",\"col\":3}},{\"id\":\"fePWKZrduZ\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Fbsv4JlUrq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Soft Skills Baseline\",\"col\":3}},{\"id\":\"344We1_cdl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SH Soft Skills Feedback\",\"col\":4}},{\"id\":\"HNSmdcCvmR\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"X4fvsS5Zk8\",\"type\":\"card\",\"data\":{\"card_name\":\"Building Blocks\",\"col\":4}},{\"id\":\"F0yRNZdxsb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Soft Skills Programme Schedules\",\"col\":3}}]",
+ "content": "[{\"id\":\"GT9u3mKvXT\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">SkillsHub Soft Skills</span>\",\"col\":12}},{\"id\":\"7eyyVdQVRx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Enrolled Students\",\"col\":3}},{\"id\":\"fePWKZrduZ\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Fbsv4JlUrq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Soft Skills Baseline\",\"col\":3}},{\"id\":\"344We1_cdl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SH Soft Skills Feedback\",\"col\":4}},{\"id\":\"HNSmdcCvmR\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"X4fvsS5Zk8\",\"type\":\"card\",\"data\":{\"card_name\":\"Building Blocks\",\"col\":4}},{\"id\":\"F0yRNZdxsb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Soft Skills Classes\",\"col\":3}}]",
  "creation": "2026-01-27 13:57:21.457873",
  "custom_blocks": [],
  "docstatus": 0,
@@ -68,9 +68,9 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Soft Skills Programme Schedules",
+   "label": "Soft Skills Classes",
    "link_to": "SH Class",
-   "stats_filter": "[[\"SH Programme Schedule\",\"skillshub_programme\",\"=\",\"Soft Skills Programme\",false]]",
+   "stats_filter": "[[\"SH Class\",\"skillshub_programme\",\"=\",\"Soft Skills Programme\",false]]",
    "type": "DocType"
   },
   {
@@ -94,7 +94,7 @@
    "doc_view": "List",
    "label": "Soft Skills Baseline",
    "link_to": "SH Baseline",
-   "stats_filter": "[[\"SH Student Baseline Form\",\"course\",\"=\",\"Soft Skills\",false]]",
+   "stats_filter": "[[\"SH Baseline\",\"course\",\"=\",\"Soft Skills\",false]]",
    "type": "DocType"
   }
  ],

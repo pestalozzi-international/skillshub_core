@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"dbkK7JHI85\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Vocational Training</span>\",\"col\":12}},{\"id\":\"q3_EReBPzY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Enrolled Student\",\"col\":3}},{\"id\":\"pmOvC2-FSI\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"X3Rto50i51\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vocational Training Feedback\",\"col\":4}},{\"id\":\"W5KaXOCm2Q\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Baseline Assessment\",\"col\":4}},{\"id\":\"gXr-b6YZOS\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"EKhpu61XeL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vocational Training Programme Schedules\",\"col\":3}},{\"id\":\"HtC4yBuaTW\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Ku2pWJkKRd\",\"type\":\"card\",\"data\":{\"card_name\":\"Building Blocks\",\"col\":4}}]",
+ "content": "[{\"id\":\"dbkK7JHI85\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Vocational Training</span>\",\"col\":12}},{\"id\":\"q3_EReBPzY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Enrolled Student\",\"col\":3}},{\"id\":\"pmOvC2-FSI\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"X3Rto50i51\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vocational Training Feedback\",\"col\":4}},{\"id\":\"W5KaXOCm2Q\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Baseline Assessment\",\"col\":4}},{\"id\":\"gXr-b6YZOS\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"EKhpu61XeL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vocational Training Classes\",\"col\":3}},{\"id\":\"HtC4yBuaTW\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Ku2pWJkKRd\",\"type\":\"card\",\"data\":{\"card_name\":\"Building Blocks\",\"col\":4}}]",
  "creation": "2026-01-28 12:11:14.785286",
  "custom_blocks": [],
  "docstatus": 0,
@@ -80,15 +80,15 @@
    "doc_view": "List",
    "label": "Baseline Assessment",
    "link_to": "SH Baseline",
-   "stats_filter": "[[\"SH Student Baseline Form\",\"milestone\",\"=\",\"Vocational Training\",false]]",
+   "stats_filter": "[[\"SH Baseline\",\"milestone\",\"=\",\"Vocational Training\",false]]",
    "type": "DocType"
   },
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Vocational Training Programme Schedules",
+   "label": "Vocational Training Classes",
    "link_to": "SH Class",
-   "stats_filter": "[[\"SH Programme Schedule\",\"skillshub_programme\",\"=\",\"Vocational Training\",false]]",
+   "stats_filter": "[[\"SH Class\",\"skillshub_programme\",\"=\",\"Vocational Training\",false]]",
    "type": "DocType"
   },
   {

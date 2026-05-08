@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"XJP7g2WxHY\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Edulution</span>\",\"col\":12}},{\"id\":\"_eZS7VPtL3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Enrolled Students\",\"col\":3}},{\"id\":\"AdhqV9GRBY\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"mETa6YoHlE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Edulution Baseline\",\"col\":3}},{\"id\":\"8uaTGA0R-W\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Edulution Feedback\",\"col\":3}},{\"id\":\"P083joZQGA\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"akOixq9PDU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Edulution Programme Schedules\",\"col\":3}},{\"id\":\"wT85BoENWU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Cy5QgPxlAE\",\"type\":\"card\",\"data\":{\"card_name\":\"Building Blocks\",\"col\":4}}]",
+ "content": "[{\"id\":\"XJP7g2WxHY\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Edulution</span>\",\"col\":12}},{\"id\":\"_eZS7VPtL3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Enrolled Students\",\"col\":3}},{\"id\":\"AdhqV9GRBY\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"mETa6YoHlE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Edulution Baseline\",\"col\":3}},{\"id\":\"8uaTGA0R-W\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Edulution Feedback\",\"col\":3}},{\"id\":\"P083joZQGA\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"akOixq9PDU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Edulution Classes\",\"col\":3}},{\"id\":\"wT85BoENWU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Cy5QgPxlAE\",\"type\":\"card\",\"data\":{\"card_name\":\"Building Blocks\",\"col\":4}}]",
  "creation": "2026-01-28 12:10:47.764085",
  "custom_blocks": [],
  "docstatus": 0,
@@ -48,9 +48,9 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Edulution Programme Schedules",
+   "label": "Edulution Classes",
    "link_to": "SH Class",
-   "stats_filter": "[[\"SH Programme Schedule\",\"skillshub_programme\",\"=\",\"Remedial Programme: Literacy and Numeracy\",false],[\"SH Programme Schedule\",\"complete\",\"=\",0,false]]",
+   "stats_filter": "[[\"SH Class\",\"skillshub_programme\",\"=\",\"Remedial Programme: Literacy and Numeracy\",false],[\"SH Class\",\"complete\",\"=\",0,false]]",
    "type": "DocType"
   },
   {
@@ -66,7 +66,7 @@
    "doc_view": "List",
    "label": "Edulution Baseline",
    "link_to": "SH Baseline",
-   "stats_filter": "[[\"SH Student Baseline Form\",\"course\",\"=\",\"Edulution\",false]]",
+   "stats_filter": "[[\"SH Baseline\",\"course\",\"=\",\"Edulution\",false]]",
    "type": "DocType"
   },
   {
