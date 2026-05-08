@@ -288,6 +288,8 @@ def _cleanup_dashboards():
 
 
 def _drop_legacy_tables():
+    sql_ddl = getattr(frappe.db, "sql_ddl", None)
+
     for table_name in (
         "tabSkillsHub Edultion Feedback",
         "tabSkillsHub Edulution Feedback",
@@ -295,7 +297,13 @@ def _drop_legacy_tables():
     ):
         exists = frappe.db.sql("SHOW TABLES LIKE %s", table_name)
         if exists:
-            frappe.db.sql(f"DROP TABLE `{table_name}`")
+            query = f"DROP TABLE `{table_name}`"
+            if callable(sql_ddl):
+                sql_ddl(query)
+            else:
+                frappe.db.commit()
+                frappe.db.sql(query)
+                frappe.db.commit()
 
     for doctype_name in ("SkillsHub Edulution Feedback", "SkillsHub Edultion Feedback"):
         if frappe.db.exists("DocType", doctype_name):
