@@ -121,7 +121,7 @@
  "modified": "2026-04-17 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
- "name": "SH Student Attendance",
+ "name": "SH Attendance",
  "naming_rule": "By script",
  "owner": "Administrator",
  "permissions": [

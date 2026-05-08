@@ -7,7 +7,7 @@ from frappe.model.document import Document
 from frappe.utils import flt
 
 
-class SHStudentAttendance(Document):
+class SHAttendance(Document):
 
     def autoname(self):
         if not self.sh_student or not self.sh_programme_schedule or not self.date:
