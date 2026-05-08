@@ -6,7 +6,7 @@ from frappe import _
 from frappe.model.document import Document
 
 
-class SHStudentEnrolment(Document):
+class SHEnrolment(Document):
     def validate(self):
         self.validate_duplicate_enrolment()
         self.validate_path_b_not_edulution()

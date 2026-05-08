@@ -5,7 +5,7 @@ import frappe
 from frappe.model.document import Document
 
 
-class SHProgrammeSchedule(Document):
+class SHClass(Document):
 
     def autoname(self):
         """

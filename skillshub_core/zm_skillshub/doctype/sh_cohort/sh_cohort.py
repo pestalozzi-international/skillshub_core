@@ -5,7 +5,7 @@ import frappe
 from frappe.model.document import Document
 
 
-class SkillsHubCohort(Document):  # ← capital H
+class SHCohort(Document):  # ← capital H
 
     def autoname(self):
         if not self.cohort_name:
