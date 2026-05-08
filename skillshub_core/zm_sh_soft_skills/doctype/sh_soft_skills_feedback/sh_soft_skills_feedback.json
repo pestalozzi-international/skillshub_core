@@ -91,7 +91,7 @@
    "label": "Do you have any photos or videos you would be happy for us to share with donors or on social media?"
   },
   {
-   "fetch_from": "enrolment_ticket.programme_schedule",
+   "fetch_from": "enrolment_ticket.class",
    "fieldname": "program_schedule",
    "fieldtype": "Link",
    "label": "Program Schedule",

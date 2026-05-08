@@ -22,7 +22,7 @@ def get_programme_overview():
 
     Key rules:
     - Path always comes from SH Student.programme_path (reliable)
-    - Programme/Course/Cohort always come from SH Programme Schedule (reliable)
+    - Programme/Course/Cohort always come from SH Class (reliable)
       NOT from the enrolment fields — those are often null (e.g. SSP enrolments)
     - When course == programme name, collapse to avoid redundant level (e.g. Mindset Camp / Mindset Camp)
     """
@@ -32,7 +32,7 @@ def get_programme_overview():
         SELECT
             e.name                  AS enrolment,
             e.student,
-            e.programme_schedule,
+            e.class                 AS class_name,
             e.status,
             s.intake_year,
             s.programme_path,
@@ -44,8 +44,8 @@ def get_programme_overview():
             sc.complete             AS sched_complete
         FROM `tabSH Enrolment` e
         JOIN  `tabSH Student`            s  ON s.name  = e.student
-        LEFT JOIN `tabSH Class` sc ON sc.name = e.programme_schedule
-        ORDER BY s.intake_year DESC, sc.skillshub_programme, sc.skillshub_course, sc.cohort, e.programme_schedule
+        LEFT JOIN `tabSH Class` sc ON sc.name = e.class
+        ORDER BY s.intake_year DESC, sc.skillshub_programme, sc.skillshub_course, sc.cohort, e.class
     """, as_dict=True)
 
     # ── 2. Baseline counts keyed by programme_schedule ──────────────────────
@@ -61,9 +61,9 @@ def get_programme_overview():
     feedback_tables = {
         'soft_skills':  'SH Soft Skills Feedback',
         'mindset_camp': 'SH Mindset Camp Feedback',
-        'vocational':   'SkillsHub Vocational Training Feedback',
-        'edulution':    'SkillsHub Edulution Feedback',
-        'attachment':   'ZM SkillsHub Attachment Feedback',
+        'vocational':   'SH VT Feedback',
+        'edulution':    'SH Edulution Feedback',
+        'attachment':   'SH Attachment Feedback',
     }
     feedback_maps = {}
     for key, doctype in feedback_tables.items():
@@ -87,7 +87,7 @@ def get_programme_overview():
         path      = e.programme_path or 'Unknown'
         programme = e.programme      or 'Unknown'
         cohort    = e.cohort         or 'Unknown'
-        sched     = e.programme_schedule or 'Unknown'
+        sched     = e.class_name or 'Unknown'
 
         # Collapse course level when it is identical to the programme name
         # (e.g. Mindset Camp programme / Mindset Camp course → just show once)

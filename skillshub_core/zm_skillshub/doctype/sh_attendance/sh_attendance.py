@@ -109,8 +109,8 @@ class SHAttendance(Document):
 
 def _recompute_stats_for_student(student, schedule):
     """
-    Recalculate and persist attendance stats for one student in one schedule.
-    Writes to the SH Enrolment record (the source of truth for per-programme stats).
+    Recalculate and persist attendance stats for one student in one class.
+    Writes to the SH Enrolment record (the source of truth for per-class stats).
     Called after every SH Attendance save or delete.
     """
     if not student or not schedule:
@@ -118,7 +118,7 @@ def _recompute_stats_for_student(student, schedule):
 
     enrolment_name = frappe.db.get_value(
         "SH Enrolment",
-        {"student": student, "programme_schedule": schedule},
+        {"student": student, "class": schedule},
         "name"
     )
     if not enrolment_name:

@@ -13,33 +13,35 @@ class SHEnrolment(Document):
         self.compute_attendance_stats()
 
     def after_insert(self):
-        self.update_programme_schedule_roster()
+        self.update_class_roster()
 
     def validate_duplicate_enrolment(self):
-        """Enforce unique constraint: one enrolment per student per programme schedule."""
+        """Enforce unique constraint: one enrolment per student per class."""
+        class_name = self.get("class")
         existing = frappe.db.exists(
             "SH Enrolment",
             {
                 "student": self.student,
-                "programme_schedule": self.programme_schedule,
+                "class": class_name,
                 "name": ["!=", self.name],
             },
         )
         if existing:
             frappe.throw(
-                _("Student {0} is already enrolled in Programme Schedule {1}.").format(
-                    self.student, self.programme_schedule
+                _("Student {0} is already enrolled in Class {1}.").format(
+                    self.student, class_name
                 )
             )
 
     def validate_path_b_not_edulution(self):
-        """Path B students must not be enrolled in an Edulution Programme Schedule."""
+        """Path B students must not be enrolled in an Edulution class."""
         if self.programme_path == "Path B" and self.milestone == "Edulution":
-            frappe.throw(_("Path B students cannot be enrolled in an Edulution Programme Schedule."))
+            frappe.throw(_("Path B students cannot be enrolled in an Edulution class."))
 
     def compute_attendance_stats(self):
-        """Recompute attendance totals from SH Student Attendance records for this schedule."""
-        if not (self.student and self.programme_schedule):
+        """Recompute attendance totals from SH Attendance records for this class."""
+        class_name = self.get("class")
+        if not (self.student and class_name):
             return
 
         stats = frappe.db.sql(
@@ -52,7 +54,7 @@ class SHEnrolment(Document):
             WHERE sh_student = %s
               AND sh_programme_schedule = %s
             """,
-            (self.student, self.programme_schedule),
+            (self.student, class_name),
             as_dict=True,
         )
 
@@ -67,12 +69,13 @@ class SHEnrolment(Document):
                 else 0.0
             )
 
-    def update_programme_schedule_roster(self):
-        """Sync this student into the enrolled_students child table on the Programme Schedule."""
-        if not (self.student and self.programme_schedule):
+    def update_class_roster(self):
+        """Sync this student into the enrolled_students child table on SH Class."""
+        class_name = self.get("class")
+        if not (self.student and class_name):
             return
 
-        schedule = frappe.get_doc("SH Class", self.programme_schedule)
+        schedule = frappe.get_doc("SH Class", class_name)
         existing_students = [row.student for row in (schedule.enrolled_students or [])]
 
         if self.student not in existing_students:

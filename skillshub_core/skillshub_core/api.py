@@ -20,9 +20,9 @@ FEEDBACK_ROUTE_MAP = {
     "SH Baseline": "/skillshub/baseline",
     "SH Soft Skills Feedback": "/skillshub/feedback/soft-skills",
     "SH Mindset Camp Feedback": "/skillshub/feedback/mindset-camp",
-    "SkillsHub Edulution Feedback": "/skillshub/feedback/edulution",
-    "SkillsHub Vocational Training Feedback": "/skillshub/feedback/vocational-training",
-    "ZM SkillsHub Attachment Feedback": "/skillshub/feedback/attachment",
+    "SH Edulution Feedback": "/skillshub/feedback/edulution",
+    "SH VT Feedback": "/skillshub/feedback/vocational-training",
+    "SH Attachment Feedback": "/skillshub/feedback/attachment",
 }
 
 
@@ -46,13 +46,13 @@ def _feedback_forms_for_path(programme_path):
         {"doctype": "SH Baseline", "label": "Baseline Assessment", "route": FEEDBACK_ROUTE_MAP["SH Baseline"]},
         {"doctype": "SH Soft Skills Feedback", "label": "Soft Skills Feedback", "route": FEEDBACK_ROUTE_MAP["SH Soft Skills Feedback"]},
         {"doctype": "SH Mindset Camp Feedback", "label": "Mindset Camp Feedback", "route": FEEDBACK_ROUTE_MAP["SH Mindset Camp Feedback"]},
-        {"doctype": "SkillsHub Vocational Training Feedback", "label": "Vocational Training Feedback", "route": FEEDBACK_ROUTE_MAP["SkillsHub Vocational Training Feedback"]},
-        {"doctype": "ZM SkillsHub Attachment Feedback", "label": "Attachment Feedback", "route": FEEDBACK_ROUTE_MAP["ZM SkillsHub Attachment Feedback"]},
+        {"doctype": "SH VT Feedback", "label": "Vocational Training Feedback", "route": FEEDBACK_ROUTE_MAP["SH VT Feedback"]},
+        {"doctype": "SH Attachment Feedback", "label": "Attachment Feedback", "route": FEEDBACK_ROUTE_MAP["SH Attachment Feedback"]},
     ]
     if path == "Path A" or not path:
         forms.insert(
             3,
-            {"doctype": "SkillsHub Edulution Feedback", "label": "Edulution Feedback", "route": FEEDBACK_ROUTE_MAP["SkillsHub Edulution Feedback"]},
+            {"doctype": "SH Edulution Feedback", "label": "Edulution Feedback", "route": FEEDBACK_ROUTE_MAP["SH Edulution Feedback"]},
         )
     return forms
 
@@ -83,7 +83,7 @@ def get_student_summary(student):
         filters={"student": student},
         fields=[
             "name",
-            "programme_schedule",
+            "class",
             "milestone",
             "status",
             "enrolment_date",
@@ -134,7 +134,7 @@ def get_student_summary(student):
         )
     schedule_feedback = {}
     for enrolment in enrolments:
-        schedule_name = enrolment.get("programme_schedule")
+        schedule_name = enrolment.get("class")
         if not schedule_name:
             continue
         submitted = []
@@ -307,7 +307,7 @@ def get_portal_student_context(student=None):
 @frappe.whitelist()
 def mark_attendance(schedule, date, attendance_records):
     """
-    Atomically create an SH Attendance session header + all SH Student Attendance rows.
+    Atomically create SH Attendance rows for the selected class and date.
     POST /api/method/skillshub_core.skillshub_core.api.mark_attendance
     attendance_records: JSON list of {student, status, late_minutes?, notes?}
     """
@@ -350,11 +350,13 @@ def mark_attendance(schedule, date, attendance_records):
 
 
 @frappe.whitelist()
-def enrol_cohort(cohort, programme_schedule, enrolment_date=None):
+def enrol_cohort(cohort, class_name, enrolment_date=None):
     """
-    Bulk-enrol all active students in a cohort into a Programme Schedule.
+    Bulk-enrol all active students in a cohort into a class.
     POST /api/method/skillshub_core.skillshub_core.api.enrol_cohort
     """
+    if not class_name:
+        frappe.throw(_("Class is required."))
     enrolment_date = enrolment_date or frappe.utils.today()
 
     students = frappe.get_all(
@@ -370,14 +372,14 @@ def enrol_cohort(cohort, programme_schedule, enrolment_date=None):
     for student in students:
         if frappe.db.exists(
             "SH Enrolment",
-            {"student": student.name, "programme_schedule": programme_schedule},
+            {"student": student.name, "class": class_name},
         ):
             skipped.append(student.name)
             continue
 
         enrolment = frappe.new_doc("SH Enrolment")
         enrolment.student = student.name
-        enrolment.programme_schedule = programme_schedule
+        enrolment.set("class", class_name)
         enrolment.status = "Enrolled"
         enrolment.enrolment_date = enrolment_date
         enrolment.insert()
@@ -386,7 +388,7 @@ def enrol_cohort(cohort, programme_schedule, enrolment_date=None):
     frappe.db.commit()
     return {
         "cohort": cohort,
-        "programme_schedule": programme_schedule,
+        "class": class_name,
         "enrolled": len(created),
         "skipped_duplicates": len(skipped),
     }
@@ -427,10 +429,10 @@ def find_student_by_email(email):
 # ---------------------------------------------------------------------------
 
 def _recompute_enrolment_for_student(student, schedule):
-    """Recompute attendance stats on the SH Student Enrolment for this student+schedule."""
+    """Recompute attendance stats on the SH Enrolment for this student+class."""
     enrolment_name = frappe.db.get_value(
         "SH Enrolment",
-        {"student": student, "programme_schedule": schedule},
+        {"student": student, "class": schedule},
     )
     if enrolment_name:
         doc = frappe.get_doc("SH Enrolment", enrolment_name)
@@ -440,8 +442,8 @@ def _recompute_enrolment_for_student(student, schedule):
 
 def _recompute_enrolment_on_attendance(doc, method=None):
     """
-    doc_events hook: triggered after SH Student Attendance insert/update/trash.
-    Re-runs attendance stat computation on the linked SH Student Enrolment.
+    doc_events hook: triggered after SH Attendance insert/update/trash.
+    Re-runs attendance stat computation on the linked SH Enrolment.
     """
     _recompute_enrolment_for_student(
         doc.sh_student, doc.sh_programme_schedule

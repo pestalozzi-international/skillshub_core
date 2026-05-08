@@ -351,7 +351,7 @@
    "label": "Date Submitted"
   },
   {
-   "fetch_from": "enrolment_ticket.programme_schedule",
+   "fetch_from": "enrolment_ticket.class",
    "fieldname": "programme_schedule",
    "fieldtype": "Link",
    "in_list_view": 1,

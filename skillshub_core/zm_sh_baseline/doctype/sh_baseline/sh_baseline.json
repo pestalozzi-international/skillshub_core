@@ -86,7 +86,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "enrolment_ticket.programme_schedule",
+   "fetch_from": "enrolment_ticket.class",
    "fieldname": "programme_schedule",
    "fieldtype": "Link",
    "label": "Programme Schedule",

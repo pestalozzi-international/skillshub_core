@@ -150,7 +150,7 @@
    "label": "Programme Schedule"
   },
   {
-   "fetch_from": "student_enrolment.programme_schedule",
+   "fetch_from": "student_enrolment.class",
    "fieldname": "current_schedule",
    "fieldtype": "Link",
    "label": "Current Schedule",
@@ -879,7 +879,7 @@
   },
   {
    "group": "Edulution",
-   "link_doctype": "SkillsHub Edulution Feedback",
+   "link_doctype": "SH Edulution Feedback",
    "link_fieldname": "sh_student"
   },
   {

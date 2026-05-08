@@ -15,7 +15,7 @@ def daily_attendance_alerts():
         SELECT
             e.name          AS enrolment,
             e.student,
-            e.programme_schedule,
+            e.class AS class_name,
             s.student_name,
             s.pestalozzi_student_email
         FROM `tabSH Enrolment` e
@@ -37,7 +37,7 @@ def daily_attendance_alerts():
             ORDER BY date DESC
             LIMIT 3
             """,
-            (enrolment.student, enrolment.programme_schedule),
+            (enrolment.student, enrolment.class_name),
             as_list=True,
         )
 
@@ -49,7 +49,7 @@ def daily_attendance_alerts():
 
     rows = "".join(
         f"<tr><td>{a.student}</td><td>{a.student_name}</td>"
-        f"<td>{a.programme_schedule}</td></tr>"
+        f"<td>{a.class_name}</td></tr>"
         for a in at_risk
     )
     body = (
@@ -68,20 +68,20 @@ def daily_attendance_alerts():
 
 def weekly_attendance_summary():
     """
-    Weekly digest: per-schedule unique student counts and average attendance rates.
-    Source of truth: tabSH Enrolment aggregated by programme_schedule.
+    Weekly digest: per-class unique student counts and average attendance rates.
+    Source of truth: tabSH Enrolment aggregated by class.
     """
     summary = frappe.db.sql(
         """
         SELECT
-            e.programme_schedule,
+            e.class AS class_name,
             e.milestone,
             COUNT(DISTINCT e.student)   AS unique_students,
             AVG(e.attendance_rate)      AS avg_attendance_rate
         FROM `tabSH Enrolment` e
         WHERE e.status = 'Enrolled'
-        GROUP BY e.programme_schedule, e.milestone
-        ORDER BY e.programme_schedule
+        GROUP BY e.class, e.milestone
+        ORDER BY e.class
         """,
         as_dict=True,
     )
@@ -90,7 +90,7 @@ def weekly_attendance_summary():
         return
 
     rows = "".join(
-        f"<tr><td>{r.programme_schedule}</td><td>{r.milestone or '-'}</td>"
+        f"<tr><td>{r.class_name}</td><td>{r.milestone or '-'}</td>"
         f"<td>{r.unique_students}</td>"
         f"<td>{round(float(r.avg_attendance_rate or 0), 1)}%</td></tr>"
         for r in summary
