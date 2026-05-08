@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillsHub Admin - Attendance</title>
+  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
+  <link rel="stylesheet" href="/skillshub/theme.css?v=3.0">
+  <link rel="stylesheet" href="/skillshub/admin/theme.css?v=3.0">
+  <style>
+    .att-row { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; padding:0.58rem 0.3rem; border-bottom:1px solid var(--color-slate-100); }
+    .att-status { display:flex; gap:0.35rem; flex-wrap:wrap; }
+    .att-status button { border:1px solid var(--color-slate-200); background:#fff; border-radius:0.55rem; font-size:0.74rem; padding:0.33rem 0.65rem; cursor:pointer; }
+    .att-status button.active { background:var(--color-teal-700); color:#fff; border-color:var(--color-teal-700); }
+    .att-grid { display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap:0.8rem; }
+    @media (max-width:840px) { .att-grid { grid-template-columns:1fr; } }
+  </style>
+  <script>
+    window.frappe = {};
+    frappe.csrf_token = "{{ frappe.session.csrf_token }}";
+  </script>
+</head>
+<body>
+  <div class="sh-page-header">
+    <div class="sh-container">
+      <div class="sh-admin-header-row">
+        <div>
+          <h1>Attendance Management</h1>
+          <p>Take, review and update class attendance sessions.</p>
+        </div>
+        <div class="sh-admin-nav">
+          <a href="/skillshub/admin/students">Students</a>
+          <a href="/skillshub/admin/attendance" class="active">Attendance</a>
+          <a href="/skillshub/admin/programme-overview">Programme</a>
+          <a href="/skillshub/admin/settings">Settings</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="sh-container" style="margin-top:-1.8rem;padding-bottom:2rem;">
+    <section class="sh-card">
+      <div class="att-grid">
+        <div>
+          <label class="sh-label">Class</label>
+          <select id="att-class" class="sh-input"><option value="">Select class</option></select>
+        </div>
+        <div>
+          <label class="sh-label">Date</label>
+          <input id="att-date" type="date" class="sh-input">
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:0.5rem;">
+          <button id="btn-load-att" class="sh-btn-primary">Load</button>
+          <button id="btn-save-att" class="sh-btn-secondary">Save</button>
+        </div>
+      </div>
+      <div id="att-status" style="margin-top:0.8rem;font-size:0.8rem;color:var(--muted-text-color);">Choose class and date.</div>
+    </section>
+
+    <section class="sh-card" style="margin-top:1rem;">
+      <div id="att-roster">No roster loaded.</div>
+    </section>
+  </main>
+  <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=3.0"></script>
+  <script src="/assets/skillshub_core/js/skillshub/attendance.js?v=3.0"></script>
+</body>
+</html>

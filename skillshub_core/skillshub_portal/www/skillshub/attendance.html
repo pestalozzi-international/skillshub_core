@@ -2,75 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkillsHub Attendance</title>
-  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png?v=2.5">
-  <link rel="stylesheet" href="/skillshub/theme.css?v=2.5">
-  <style>
-    .att-wrapper{max-width:900px;margin:2rem auto;padding:0 1rem}
-    .att-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
-    .att-header h1{margin:0;font-size:2rem}
-    #sync-banner{display:none;align-items:center;gap:.75rem;background:var(--color-amber-50);border:1px solid var(--color-amber-200);color:var(--color-amber-700);padding:.625rem 1rem;border-radius:var(--border-radius-btn);font-size:.875rem;font-weight:600;margin-bottom:1.5rem}
-    #sync-banner .dot{width:.625rem;height:.625rem;border-radius:50%;background:var(--color-amber-700);animation:pulse 1.4s infinite}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-    #sync-btn{background:var(--color-amber-700);color:white;border:none;border-radius:var(--border-radius-btn);padding:.375rem .875rem;font-size:.8125rem;font-weight:600;cursor:pointer}
-    .form-group{margin-bottom:1.5rem}
-    .student-list{margin-top:1.5rem}
-    .student-row{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;border-bottom:1px solid var(--color-slate-100)}
-    .student-row:last-child{border-bottom:none}
-    .student-info{font-weight:600;color:var(--color-slate-900)}
-    .student-id{font-size:.875rem;color:var(--color-slate-500);margin-top:.25rem}
-    .toggle-group{display:flex;gap:.375rem;flex-wrap:wrap}
-    .toggle-btn{padding:.375rem .75rem;border:1px solid var(--color-slate-200);background:#fff;color:var(--color-slate-600);border-radius:.5rem;cursor:pointer;font-weight:600;font-size:.8125rem;transition:all .15s}
-    .toggle-btn.present{background:var(--color-emerald-50);color:var(--color-emerald-700);border-color:var(--color-emerald-200)}
-    .toggle-btn.absent{background:var(--color-red-50);color:var(--color-red-700);border-color:var(--color-red-200)}
-    .toggle-btn.late{background:var(--color-amber-50);color:var(--color-amber-700);border-color:var(--color-amber-200)}
-    .toggle-btn.leave{background:var(--color-slate-100);color:var(--color-slate-600)}
-    .submit-btn{width:100%;margin-top:1.5rem}
-    #sh-attendance-area{display:none;margin-top:2rem}
-  </style>
-  <script>
-    window.frappe = {};
-    frappe.csrf_token = "{{ frappe.session.csrf_token }}";
-  </script>
+  <meta http-equiv="refresh" content="0; url=/skillshub/admin/attendance">
+  <title>Redirecting...</title>
 </head>
 <body>
-  <div class="sh-page-header">
-    <div class="sh-container">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <h1>Attendance</h1>
-          <p id="att-subtitle">Mark or view attendance sessions</p>
-        </div>
-        <div class="sh-admin-nav" style="display:flex; gap:1.25rem; align-items:center;">
-          <a href="/app" id="nav-desk" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8; display:none;">Desk</a>
-          <a href="/skillshub/admin/students" id="nav-students" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8; display:none;">Students</a>
-          <a href="/skillshub/profile" id="nav-profile" style="color:white; text-decoration:none; font-size:0.875rem; opacity:0.8; display:none;">Profile</a>
-          <button class="sh-btn-secondary" id="sh-logout" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:white; padding:0.4rem 0.8rem; font-size:0.875rem;">Sign Out</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="sh-container" style="margin-top:-2rem;">
-  <div id="sync-banner"><div class="dot"></div><span id="sync-count">0 sessions pending</span><button id="sync-btn">Sync Now</button></div>
-  <div class="sh-card" style="margin-bottom:2rem">
-    <div class="form-group">
-      <label for="schedule-select" class="sh-label">Programme Schedule</label>
-      <select id="schedule-select" class="sh-input"><option value="">Select a schedule...</option></select>
-    </div>
-    <div class="form-group">
-      <label for="attendance-date" class="sh-label">Date</label>
-      <input type="date" id="attendance-date" class="sh-input">
-    </div>
-  </div>
-  <div class="sh-card" id="sh-attendance-area">
-    <h3 style="margin-top:0">Enrolled Students</h3>
-    <div class="student-list" id="student-list"></div>
-    <button class="sh-btn-primary submit-btn" id="submit-att-btn">Submit Attendance</button>
-  </div>
-</div>
-<script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=2.5"></script>
-<script src="/assets/skillshub_core/js/skillshub/attendance.js?v=2.5"></script>
+  <p>Redirecting to <a href="/skillshub/admin/attendance">/skillshub/admin/attendance</a>...</p>
 </body>
 </html>

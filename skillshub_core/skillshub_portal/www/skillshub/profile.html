@@ -3,12 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Profile - SkillsHub</title>
-  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png?v=2.5">
-  <link rel="stylesheet" href="/skillshub/theme.css?v=2.5">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>My SkillsHub Profile</title>
+  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
+  <link rel="stylesheet" href="/skillshub/theme.css?v=3.0">
   <style>
-    body { background-color: var(--color-slate-50); font-family: var(--font-family); }
+    .profile-grid { display:grid; grid-template-columns: 340px 1fr; gap:1rem; margin-top:-1.8rem; }
+    .profile-block { margin-bottom:1rem; }
+    .feedback-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0.65rem; }
+    .feedback-link { text-decoration:none; border:1px solid var(--color-slate-200); border-radius:0.75rem; padding:0.72rem; color:var(--text-color); background:#fff; }
+    .feedback-link:hover { border-color:var(--color-accent-500); }
+    @media (max-width:960px) { .profile-grid { grid-template-columns:1fr; margin-top:1rem; } .feedback-grid { grid-template-columns:1fr; } }
   </style>
   <script>
     window.frappe = {};
@@ -18,26 +22,44 @@
 <body>
   <div class="sh-page-header">
     <div class="sh-container">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
         <div>
-          <h1>My Profile</h1>
-          <p>Skillshub Student Portal</p>
+          <h1 id="profile-title">My Profile</h1>
+          <p id="profile-subtitle" data-portal-tagline>Everything you need, in one place.</p>
         </div>
-        <div class="sh-admin-nav" style="display:flex; gap:1.5rem; align-items:center;">
-          <a href="/skillshub/profile" class="active" style="color:white; text-decoration:none; font-weight:600; border-bottom:2px solid white; padding-bottom:2px;">Profile</a>
-          <button id="logout-btn" style="background:none; border:none; color:white; opacity:0.8; font-weight:600; cursor:pointer; font-size:0.875rem; margin-left:0.5rem;">Sign Out</button>
+        <div style="display:flex;gap:1rem;align-items:center;">
+          <a href="/skillshub" style="color:white;text-decoration:none;opacity:0.9;">Landing</a>
+          <a href="/skillshub/login" style="color:white;text-decoration:none;opacity:0.9;">Switch User</a>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="sh-container">
-    <div id="content" style="margin-top:-2rem;">
-      <div style="text-align:center; padding:5rem; color:var(--color-slate-400);">Loading student profile...</div>
-    </div>
-  </div>
+  <main class="sh-container" style="padding-bottom:2rem;">
+    <div class="profile-grid">
+      <aside>
+        <section class="sh-card profile-block" id="student-card">
+          <div style="color:var(--muted-text-color);">Loading profile...</div>
+        </section>
+        <section class="sh-card profile-block">
+          <h3 style="margin-top:0;">Submitted Forms</h3>
+          <div id="submitted-forms-list" style="display:grid;gap:0.45rem;"></div>
+        </section>
+      </aside>
 
-  <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=2.5"></script>
-  <script src="/assets/skillshub_core/js/skillshub/profile.js?v=2.5"></script>
+      <section>
+        <section class="sh-card profile-block">
+          <h3 style="margin-top:0;">Enrolments & Progress</h3>
+          <div id="enrolments-list"></div>
+        </section>
+        <section class="sh-card profile-block">
+          <h3 style="margin-top:0;">Submit New Form</h3>
+          <div class="feedback-grid" id="feedback-links"></div>
+        </section>
+      </section>
+    </div>
+  </main>
+  <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=3.0"></script>
+  <script src="/assets/skillshub_core/js/skillshub/profile.js?v=3.0"></script>
 </body>
 </html>

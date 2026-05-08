@@ -23,6 +23,7 @@ FEEDBACK_ROUTE_MAP = {
     "SH Edulution Feedback": "/skillshub/feedback/edulution",
     "SH VT Feedback": "/skillshub/feedback/vocational-training",
     "SH Attachment Feedback": "/skillshub/feedback/attachment",
+    "SH Parent Feedback": "/skillshub/feedback/parent",
 }
 
 
@@ -48,6 +49,7 @@ def _feedback_forms_for_path(programme_path):
         {"doctype": "SH Mindset Camp Feedback", "label": "Mindset Camp Feedback", "route": FEEDBACK_ROUTE_MAP["SH Mindset Camp Feedback"]},
         {"doctype": "SH VT Feedback", "label": "Vocational Training Feedback", "route": FEEDBACK_ROUTE_MAP["SH VT Feedback"]},
         {"doctype": "SH Attachment Feedback", "label": "Attachment Feedback", "route": FEEDBACK_ROUTE_MAP["SH Attachment Feedback"]},
+        {"doctype": "SH Parent Feedback", "label": "Parent Feedback", "route": FEEDBACK_ROUTE_MAP["SH Parent Feedback"]},
     ]
     if path == "Path A" or not path:
         forms.insert(
@@ -65,6 +67,31 @@ def _pick_first(student_doc, fieldnames):
             value = None
         if value not in (None, ""):
             return value
+    return None
+
+
+def _doctype_has_field(doctype, fieldname):
+    try:
+        return bool(frappe.get_meta(doctype).get_field(fieldname))
+    except Exception:
+        return False
+
+
+def _feedback_student_field(doctype):
+    if _doctype_has_field(doctype, "sh_student"):
+        return "sh_student"
+    if _doctype_has_field(doctype, "student"):
+        return "student"
+    return None
+
+
+def _feedback_schedule_field(doctype):
+    if _doctype_has_field(doctype, "programme_schedule"):
+        return "programme_schedule"
+    if _doctype_has_field(doctype, "program_schedule"):
+        return "program_schedule"
+    if _doctype_has_field(doctype, "class"):
+        return "class"
     return None
 
 
@@ -126,10 +153,14 @@ def get_student_summary(student):
     feedback_forms = _feedback_forms_for_path(student_doc.programme_path)
     feedback_status = {}
     for form in feedback_forms:
+        student_field = _feedback_student_field(form["doctype"])
+        if not student_field:
+            feedback_status[form["doctype"]] = False
+            continue
         feedback_status[form["doctype"]] = bool(
             frappe.db.exists(
                 form["doctype"],
-                {"sh_student": student_doc.name},
+                {student_field: student_doc.name},
             )
         )
     schedule_feedback = {}
@@ -139,9 +170,13 @@ def get_student_summary(student):
             continue
         submitted = []
         for form in feedback_forms:
+            student_field = _feedback_student_field(form["doctype"])
+            schedule_field = _feedback_schedule_field(form["doctype"])
+            if not student_field or not schedule_field:
+                continue
             if frappe.db.exists(
                 form["doctype"],
-                {"sh_student": student_doc.name, "programme_schedule": schedule_name},
+                {student_field: student_doc.name, schedule_field: schedule_name},
             ):
                 submitted.append(form["label"])
         enrolment["feedback_forms_submitted"] = submitted

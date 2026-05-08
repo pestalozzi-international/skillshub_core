@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillsHub — Programme Overview</title>
-  <link rel="icon" href="/assets/skillshub_core/images/favicon.png?v=2.5">
-  <link rel="stylesheet" href="/skillshub/theme.css?v=2.5">
+  <link rel="icon" href="/assets/skillshub_core/images/favicon.png?v=3.0">
+  <link rel="stylesheet" href="/skillshub/theme.css?v=3.0">
+  <link rel="stylesheet" href="/skillshub/admin/theme.css?v=3.0">
   <style>
     body{background:var(--color-slate-50);}
     .sh-admin-nav a{color:white;text-decoration:none;font-size:.875rem;opacity:.8;}
@@ -131,12 +132,12 @@
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <div>
         <h1>Programme Overview</h1>
-        <p>Live data health · Intake Year → Path → Programme → Course → Cohort → Schedule → Enrolments</p>
+        <p>Live data health · Intake Year → Path → Programme → Course → Course Run → Schedule → Enrolments</p>
       </div>
       <div class="sh-admin-nav" style="display:flex;gap:1.25rem;align-items:center;">
         <a href="/app">Desk</a><a href="/skillshub/admin/students">Students</a>
         <a href="/skillshub/admin/programme-overview" class="active">Programme</a>
-        <a href="/skillshub/attendance">Attendance</a>
+        <a href="/skillshub/admin/attendance">Attendance</a><a href="/skillshub/admin/settings">Settings</a>
       </div>
     </div>
   </div>
@@ -165,7 +166,7 @@
     <div class="fg"><label>Path</label><select id="f-pa" onchange="onFilter()"><option value="">All</option></select></div>
     <div class="fg"><label>Programme</label><select id="f-pr" onchange="onFilter()"><option value="">All</option></select></div>
     <div class="fg"><label>Course</label><select id="f-co" onchange="onFilter()"><option value="">All</option></select></div>
-    <div class="fg"><label>Cohort</label><select id="f-ch" onchange="onFilter()"><option value="">All</option></select></div>
+    <div class="fg"><label>Course Run</label><select id="f-ch" onchange="onFilter()"><option value="">All</option></select></div>
     <div class="fg"><label>Status</label>
       <select id="f-st" onchange="onFilter()">
         <option value="">All</option><option value="Enrolled">Enrolled</option>
@@ -177,6 +178,7 @@
   <div id="panel-report" style="display:none;"><div class="loading">Loading…</div></div>
 </div>
 
+<script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=3.0"></script>
 <script>
 let DATA=null,allExp=false,currentView='tree';
 let sortCol='year',sortDir=1;
@@ -207,9 +209,9 @@ const PROG_SHORT={
   'Soft Skills Programme':'Soft Skills',
   'Vocational Training':'Vocational Training'
 };
-const NEXT_NOUN=['','path','programme','course','cohort','schedule'];
+const NEXT_NOUN=['','path','programme','course run','schedule','student'];
 
-/* Sort keys for report default: year desc, then programme order, then course alpha, then cohort numeric */
+/* Sort keys for report default: year desc, then programme order, then course alpha, then course run numeric */
 function reportSortKey(r){
   const pi=PROG_ORDER.indexOf(r.programme);
   return String(9999-parseInt(r.year||0,10)).padStart(4,'0')+'|'+
@@ -263,14 +265,14 @@ function populateFilters(){
   DATA.flat.forEach(r=>{yr.add(r.year);pa.add(r.path);pr.add(r.programme);co.add(r.course);ch.add(r.cohort);});
   fillSel('f-yr',[...yr].sort().reverse(),'All Years');fillSel('f-pa',[...pa].sort(),'All Paths');
   fillSel('f-pr',PROG_ORDER.filter(p=>[...pr].includes(p)).concat([...pr].filter(p=>!PROG_ORDER.includes(p))),'All Programmes');
-  fillSel('f-co',[...co].sort(),'All Courses');fillSel('f-ch',[...ch].sort(cohortSort),'All Cohorts');
+  fillSel('f-co',[...co].sort(),'All Courses');fillSel('f-ch',[...ch].sort(cohortSort),'All Course Runs');
 }
 function fillSel(id,items,ph){
   const el=document.getElementById(id),cur=el.value;
   el.innerHTML='<option value="">'+ph+'</option>'+
     items.map(i=>'<option value="'+esc(i)+'"'+(i===cur?' selected':'')+'>'+i+'</option>').join('');
 }
-/* Natural numeric sort for cohorts: "Cohort 1" < "Cohort 2" < "Cohort 10" */
+/* Natural numeric sort for course runs: "R1" < "R2" < "R10" */
 function cohortSort(a,b){return a.localeCompare(b,undefined,{numeric:true});}
 
 function switchView(v){
@@ -325,7 +327,7 @@ function sortKeys(keys,level){
     }
     if(level===2) /* course: alphabetical */
       return a.localeCompare(b);
-    if(level===3) /* cohort: numeric */
+    if(level===3) /* course run: numeric */
       return cohortSort(a,b);
     /* year (0), path (−1) or schedule (4): default alpha/numeric */
     return a.localeCompare(b,undefined,{numeric:true});
@@ -438,7 +440,7 @@ function renderReport(){
     s.ss+=r.fb_ss||0;s.mc+=r.fb_msc||0;s.vt+=r.fb_vt||0;s.edu+=r.fb_edu||0;s.att+=r.fb_att||0;
   });
 
-  /* Default sort: year desc, programme order, course alpha, cohort numeric, schedule alpha */
+  /* Default sort: year desc, programme order, course alpha, course run numeric, schedule alpha */
   const srows=Object.values(SM).sort((a,b)=>{
     if(sortCol!=='year'){ /* user-triggered column sort */
       const va=a[sortCol]||'',vb=b[sortCol]||'';
@@ -473,7 +475,7 @@ function renderReport(){
 
   h+='<table class="rpt"><thead><tr>'+
     sth('year','Year')+sth('path','Path')+sth('programme','Programme')+
-    sth('course','Course')+sth('cohort','Cohort')+sth('schedule','Schedule')+
+    sth('course','Course')+sth('cohort','Course Run')+sth('schedule','Schedule')+
     sth('en','📋')+sth('el','Enrolled')+sth('co','Completed')+sth('dr','Dropped')+
     sth('bl','📝 Baselines')+
     (hasMSC?'<th>⛺ MSC</th>':'')+

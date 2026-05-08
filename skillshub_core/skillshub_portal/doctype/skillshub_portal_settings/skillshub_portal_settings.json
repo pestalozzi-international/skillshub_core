@@ -4,15 +4,32 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "section_brand_identity",
+  "portal_name",
+  "portal_tagline",
+  "column_break_identity",
+  "landing_title",
+  "landing_subtitle",
+  "login_notice",
   "section_branding",
   "primary_color",
   "secondary_color",
+  "accent_color",
   "column_break_colors",
+  "background_color",
+  "surface_color",
+  "text_color",
+  "muted_text_color",
   "header_gradient",
   "section_assets",
   "logo",
   "column_break_assets",
   "favicon",
+  "section_routes",
+  "student_home_route",
+  "admin_home_route",
+  "column_break_routes",
+  "support_email",
   "section_defaults",
   "current_cohort",
   "default_academic_year",
@@ -21,6 +38,42 @@
   "default_term"
  ],
  "fields": [
+  {
+   "fieldname": "section_brand_identity",
+   "fieldtype": "Section Break",
+   "label": "Brand Identity"
+  },
+  {
+   "default": "SkillsHub Portal",
+   "fieldname": "portal_name",
+   "fieldtype": "Data",
+   "label": "Portal Name"
+  },
+  {
+   "fieldname": "portal_tagline",
+   "fieldtype": "Data",
+   "label": "Portal Tagline"
+  },
+  {
+   "fieldname": "column_break_identity",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Welcome to SkillsHub",
+   "fieldname": "landing_title",
+   "fieldtype": "Data",
+   "label": "Landing Title"
+  },
+  {
+   "fieldname": "landing_subtitle",
+   "fieldtype": "Data",
+   "label": "Landing Subtitle"
+  },
+  {
+   "fieldname": "login_notice",
+   "fieldtype": "Small Text",
+   "label": "Login Notice"
+  },
   {
    "fieldname": "section_branding",
    "fieldtype": "Section Break",
@@ -39,8 +92,38 @@
    "label": "Secondary Colour"
   },
   {
+   "default": "#0ea5a4",
+   "fieldname": "accent_color",
+   "fieldtype": "Color",
+   "label": "Accent Colour"
+  },
+  {
    "fieldname": "column_break_colors",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "#f8fafc",
+   "fieldname": "background_color",
+   "fieldtype": "Color",
+   "label": "Background Colour"
+  },
+  {
+   "default": "#ffffff",
+   "fieldname": "surface_color",
+   "fieldtype": "Color",
+   "label": "Surface Colour"
+  },
+  {
+   "default": "#0f172a",
+   "fieldname": "text_color",
+   "fieldtype": "Color",
+   "label": "Primary Text Colour"
+  },
+  {
+   "default": "#64748b",
+   "fieldname": "muted_text_color",
+   "fieldtype": "Color",
+   "label": "Muted Text Colour"
   },
   {
    "default": "linear-gradient(135deg, #0f766e 0%, #115e59 100%)",
@@ -66,6 +149,32 @@
    "fieldname": "favicon",
    "fieldtype": "Attach Image",
    "label": "Favicon"
+  },
+  {
+   "fieldname": "section_routes",
+   "fieldtype": "Section Break",
+   "label": "Portal Routes"
+  },
+  {
+   "default": "/skillshub/profile",
+   "fieldname": "student_home_route",
+   "fieldtype": "Data",
+   "label": "Student Home Route"
+  },
+  {
+   "default": "/skillshub/admin/students",
+   "fieldname": "admin_home_route",
+   "fieldtype": "Data",
+   "label": "Admin Home Route"
+  },
+  {
+   "fieldname": "column_break_routes",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "support_email",
+   "fieldtype": "Data",
+   "label": "Support Email"
   },
   {
    "fieldname": "section_defaults",
@@ -104,7 +213,7 @@
  "index_web_pages_for_search": 0,
  "issingle": 1,
  "links": [],
- "modified": "2026-05-03 00:00:00.000000",
+ "modified": "2026-05-09 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Skillshub Portal",
  "name": "SkillsHub Portal Settings",

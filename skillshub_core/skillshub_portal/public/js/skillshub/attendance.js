@@ -1,220 +1,182 @@
 (function () {
   'use strict';
 
-  function getFrappeHeaders() {
-    const headers = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-    };
-    if (window.frappe && frappe.csrf_token && frappe.csrf_token !== 'None' && !frappe.csrf_token.includes('{{')) {
-        headers['X-Frappe-CSRF-Token'] = frappe.csrf_token;
-    }
-    return headers;
-}
+  var state = {
+    roster: [],
+    recordsByStudent: {}
+  };
 
-  function clearAndRedirect() {
-    localStorage.removeItem('sh_student_id');
-    localStorage.removeItem('sh_role');
-    localStorage.removeItem('sh_user');
-    localStorage.removeItem('sh_display_user');
-    window.location.replace('/skillshub/login');
+  var STATUS_OPTIONS = ['Present', 'Late', 'Absent', 'Leave'];
+
+  function esc(value) {
+    if (value === null || value === undefined) return '';
+    var div = document.createElement('div');
+    div.textContent = String(value);
+    return div.innerHTML;
   }
 
-  // Session is validated server-side via Frappe cookies.
-  // No synchronous localStorage guard — SSO users won't have these keys.
+  function headers() {
+    return (window.SHPortal && window.SHPortal.getHeaders && window.SHPortal.getHeaders()) || {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    };
+  }
 
-  document.addEventListener('DOMContentLoaded', function () {
-    // Navigation & Role UI
-    function updateNav() {
-      var role = localStorage.getItem('sh_role');
-      if (role === 'admin' || role === 'teacher') {
-        var desk = document.getElementById('nav-desk'); if (desk) desk.style.display = 'block';
-        var students = document.getElementById('nav-students'); if (students) students.style.display = 'block';
-      } else if (role === 'student') {
-        var profile = document.getElementById('nav-profile'); if (profile) profile.style.display = 'block';
-        // If student, change title/subtitle
-        var title = document.querySelector('.sh-page-header h1'); if (title) title.textContent = 'My Attendance';
-        var sub = document.getElementById('att-subtitle'); if (sub) sub.textContent = 'View your recent attendance history';
-        // Hide marking controls for students
-        var area = document.getElementById('sh-attendance-area'); if (area) area.style.display = 'none';
-        var markCard = document.querySelector('.sh-card:not(#sh-attendance-area)'); if (markCard) markCard.style.display = 'none';
-      }
+  function api(path, options) {
+    return fetch(path, Object.assign({ credentials: 'include', headers: headers() }, options || {}))
+      .then(function (response) {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json();
+      })
+      .then(function (json) { return json.message || json; });
+  }
+
+  function setStatus(message, isError) {
+    var el = document.getElementById('att-status');
+    el.textContent = message;
+    el.style.color = isError ? 'var(--color-red-700)' : 'var(--muted-text-color)';
+  }
+
+  function getSelection() {
+    return {
+      schedule: document.getElementById('att-class').value,
+      date: document.getElementById('att-date').value
+    };
+  }
+
+  function renderRoster() {
+    var container = document.getElementById('att-roster');
+    if (!state.roster.length) {
+      container.innerHTML = '<div class="sh-empty-cell">No enrolled students in this class.</div>';
+      return;
     }
 
-    updateNav();
-    window.addEventListener('sh-role-synced', updateNav);
+    container.innerHTML = state.roster
+      .map(function (row) {
+        var selected = state.recordsByStudent[row.student] || 'Absent';
+        var buttons = STATUS_OPTIONS.map(function (status) {
+          return '<button class="' + (selected === status ? 'active' : '') + '" data-student="' + esc(row.student) + '" data-status="' + esc(status) + '">' + esc(status) + '</button>';
+        }).join('');
 
-    document.getElementById('sh-logout').addEventListener('click', function () {
-      fetch('/api/method/logout', { method: 'POST', headers: getFrappeHeaders(), credentials: 'include' })
-        .finally(function () { localStorage.clear(); window.location.replace('/skillshub/login'); });
-    });
-
-    var scheduleSelect = document.getElementById('schedule-select');
-    var dateInput      = document.getElementById('attendance-date');
-    var attendanceArea = document.getElementById('sh-attendance-area');
-    var studentList    = document.getElementById('student-list');
-    var submitBtn      = document.getElementById('submit-att-btn');
-    var syncBanner     = document.getElementById('sync-banner');
-    var syncCount      = document.getElementById('sync-count');
-    var syncBtn        = document.getElementById('sync-btn');
-
-    // Set today's date in local time
-    var today = new Date();
-    var yyyy  = today.getFullYear();
-    var mm    = String(today.getMonth() + 1).padStart(2, '0');
-    var dd    = String(today.getDate()).padStart(2, '0');
-    dateInput.value = yyyy + '-' + mm + '-' + dd;
-
-    var attendanceQueue = JSON.parse(localStorage.getItem('sh_attendance_queue') || '[]');
-    updateSyncBanner();
-
-    // Load schedules
-    fetch('/api/resource/SH Class?filters=[["status","=","Active"]]&fields=["name","skillshub_programme","skillshub_course","cohort"]&limit=200',
-      { headers: getFrappeHeaders(), credentials: 'include' })
-    .then(function (r) {
-      if (r.status === 401) { clearAndRedirect(); return null; }
-      return r.json();
-    })
-    .then(function (data) {
-      if (!data) return;
-      (data.data || []).forEach(function (sch) {
-        var opt = document.createElement('option');
-        opt.value = sch.name;
-        opt.textContent = [sch.skillshub_programme, sch.skillshub_course ? '- ' + sch.skillshub_course : '', sch.cohort ? '(' + sch.cohort + ')' : ''].filter(Boolean).join(' ');
-        scheduleSelect.appendChild(opt);
-      });
-    })
-    .catch(function () {});
-
-    scheduleSelect.addEventListener('change', function () {
-      var scheduleId = this.value;
-      if (!scheduleId) { attendanceArea.style.display = 'none'; return; }
-      studentList.innerHTML = '<p style="color:var(--color-slate-500)">Loading students...</p>';
-      attendanceArea.style.display = 'block';
-      submitBtn.disabled = true;
-
-      fetch('/api/resource/SH Enrolment?filters=' +
-          encodeURIComponent(JSON.stringify([['class','=',scheduleId],['status','=','Enrolled']])) +
-          '&fields=' + encodeURIComponent(JSON.stringify(['student','student_name'])) + '&limit=300',
-        { headers: getFrappeHeaders(), credentials: 'include' })
-      .then(function (r) {
-        if (r.status === 401) { clearAndRedirect(); return null; }
-        return r.json();
+        return '' +
+          '<div class="att-row">' +
+            '<div>' +
+              '<div style="font-weight:600;">' + esc(row.student_name || row.student) + '</div>' +
+              '<div style="font-size:0.78rem;color:var(--muted-text-color);">' + esc(row.student) + '</div>' +
+            '</div>' +
+            '<div class="att-status">' + buttons + '</div>' +
+          '</div>';
       })
-      .then(function (data) {
-        if (!data) return;
-        var students = data.data || [];
-        if (students.length > 0) { renderRoster(students); return; }
-        // Fallback: schedule doc's enrolled_students child table
-        return fetch('/api/resource/SH Class/' + encodeURIComponent(scheduleId) + '?fields=["enrolled_students"]',
-          { headers: getFrappeHeaders(), credentials: 'include' })
-          .then(function (r2) { return r2.ok ? r2.json() : null; })
-          .then(function (sData) {
-            if (!sData || !sData.data) { studentList.innerHTML = '<p style="color:var(--color-slate-500)">No students enrolled.</p>'; return; }
-            var roster = (sData.data.enrolled_students || []).filter(function (r) { return r.active !== 0; });
-            if (roster.length > 0) { renderRoster(roster); }
-            else { studentList.innerHTML = '<p style="color:var(--color-slate-500)">No students enrolled in this schedule.</p>'; }
-          });
+      .join('');
+  }
+
+  function loadClassOptions() {
+    api('/api/resource/SH Class?fields=["name","skillshub_course","course_run","class_no"]&limit_page_length=1000')
+      .then(function (response) {
+        var classes = (response && response.data) || [];
+        var select = document.getElementById('att-class');
+        classes.forEach(function (item) {
+          var option = document.createElement('option');
+          option.value = item.name;
+          option.textContent = item.name + ' · ' + (item.skillshub_course || 'Course') + ' · ' + (item.course_run || '');
+          select.appendChild(option);
+        });
       })
       .catch(function () {
-        studentList.innerHTML = '<p class="sh-alert-error">Error loading roster.</p>';
+        setStatus('Failed to load classes.', true);
       });
-    });
+  }
 
-    function renderRoster(students) {
-      studentList.innerHTML = '';
-      submitBtn.disabled = false;
-      students.forEach(function (s) {
-        var sid   = s.student || s.name;
-        var sname = s.student_name || sid;
-        var row   = document.createElement('div');
-        row.className = 'student-row';
-        row.innerHTML =
-          '<div><div class="student-info">' + sname + '</div><div class="student-id">' + sid + '</div></div>' +
-          '<div class="toggle-group" data-student="' + sid + '">' +
-          '<button class="toggle-btn" data-status="Present">Present</button>' +
-          '<button class="toggle-btn" data-status="Absent">Absent</button>' +
-          '<button class="toggle-btn" data-status="Late">Late</button>' +
-          '<button class="toggle-btn" data-status="Leave">Leave</button></div>';
-        studentList.appendChild(row);
-        row.querySelectorAll('.toggle-btn').forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            row.querySelectorAll('.toggle-btn').forEach(function (b) { b.className = 'toggle-btn'; });
-            this.classList.add(this.dataset.status.toLowerCase());
-          });
+  function loadRosterAndRecords() {
+    var selection = getSelection();
+    if (!selection.schedule || !selection.date) {
+      setStatus('Choose class and date first.', true);
+      return;
+    }
+
+    setStatus('Loading roster...');
+    Promise.all([
+      api('/api/method/skillshub_core.skillshub_portal.api.get_attendance_roster?schedule=' + encodeURIComponent(selection.schedule)),
+      api('/api/method/skillshub_core.skillshub_portal.api.get_attendance_records?schedule=' + encodeURIComponent(selection.schedule) + '&date=' + encodeURIComponent(selection.date))
+    ])
+      .then(function (results) {
+        var roster = results[0] || [];
+        var records = results[1] || [];
+        state.roster = roster;
+        state.recordsByStudent = {};
+        records.forEach(function (record) {
+          state.recordsByStudent[record.sh_student] = record.status || 'Absent';
         });
+        roster.forEach(function (row) {
+          if (!state.recordsByStudent[row.student]) state.recordsByStudent[row.student] = 'Absent';
+        });
+        renderRoster();
+        setStatus('Loaded ' + roster.length + ' students for ' + selection.date + '.');
+      })
+      .catch(function (error) {
+        setStatus('Failed to load attendance: ' + error.message, true);
       });
-    }
+  }
 
-    submitBtn.addEventListener('click', function () {
-      var date     = dateInput.value;
-      var schedule = scheduleSelect.value;
-      if (!schedule || !date) { alert('Select a schedule and date.'); return; }
-      var records = [], allMarked = true;
-      studentList.querySelectorAll('.toggle-group').forEach(function (g) {
-        var ab = g.querySelector('.toggle-btn.present,.toggle-btn.absent,.toggle-btn.late,.toggle-btn.leave');
-        if (!ab) allMarked = false;
-        records.push({ student: g.dataset.student, status: ab ? ab.dataset.status : 'Absent' });
-      });
-      if (records.length === 0) { alert('No students to mark.'); return; }
-      if (!allMarked && !confirm('Some students are unmarked and will default to Absent. Continue?')) return;
-      var payload = { schedule: schedule, date: date, attendance_records: records };
-      submitBtn.textContent = 'Submitting...'; submitBtn.disabled = true;
-      submitToAPI(payload)
-        .then(function () { alert('Attendance submitted!'); resetForm(); })
-        .catch(function () { saveToQueue(payload); alert('Saved offline.'); resetForm(); });
+  function saveAttendance() {
+    var selection = getSelection();
+    if (!selection.schedule || !selection.date) {
+      setStatus('Choose class and date first.', true);
+      return;
+    }
+    if (!state.roster.length) {
+      setStatus('No roster loaded.', true);
+      return;
+    }
+    var payload = state.roster.map(function (row) {
+      return {
+        student: row.student,
+        status: state.recordsByStudent[row.student] || 'Absent'
+      };
     });
 
-    function submitToAPI(payload) {
-      return fetch('/api/method/skillshub_core.skillshub_core.api.mark_attendance', {
-        method: 'POST',
-        headers: getFrappeHeaders(),
-        credentials: 'include',
-        body: JSON.stringify(payload)
-      }).then(function (r) {
-        if (r.status === 401) { clearAndRedirect(); return null; }
-        if (!r.ok) throw new Error('API error');
-        return r.json();
+    var button = document.getElementById('btn-save-att');
+    button.disabled = true;
+    button.textContent = 'Saving...';
+
+    api('/api/method/skillshub_core.skillshub_portal.api.save_attendance', {
+      method: 'POST',
+      body: JSON.stringify({
+        schedule: selection.schedule,
+        date: selection.date,
+        attendance_records: payload
+      })
+    })
+      .then(function (result) {
+        setStatus('Saved attendance. Created: ' + (result.created || 0) + ', updated: ' + (result.updated || 0) + '.');
+      })
+      .catch(function (error) {
+        setStatus('Save failed: ' + error.message, true);
+      })
+      .finally(function () {
+        button.disabled = false;
+        button.textContent = 'Save';
       });
-    }
+  }
 
-    function resetForm() {
-      submitBtn.textContent = 'Submit Attendance'; submitBtn.disabled = false;
-      scheduleSelect.value = ''; attendanceArea.style.display = 'none'; studentList.innerHTML = '';
-    }
+  function bindEvents() {
+    document.getElementById('btn-load-att').addEventListener('click', loadRosterAndRecords);
+    document.getElementById('btn-save-att').addEventListener('click', saveAttendance);
 
-    function saveToQueue(payload) {
-      var p = JSON.parse(JSON.stringify(payload));
-      p._savedAt = new Date().toISOString();
-      attendanceQueue.push(p);
-      localStorage.setItem('sh_attendance_queue', JSON.stringify(attendanceQueue));
-      updateSyncBanner();
-    }
+    document.getElementById('att-roster').addEventListener('click', function (event) {
+      var button = event.target.closest('button[data-student][data-status]');
+      if (!button) return;
+      var student = button.getAttribute('data-student');
+      var status = button.getAttribute('data-status');
+      state.recordsByStudent[student] = status;
+      renderRoster();
+    });
+  }
 
-    function updateSyncBanner() {
-      var n = attendanceQueue.length;
-      if (n > 0) {
-        syncBanner.style.display = 'flex';
-        syncCount.textContent = n + ' session' + (n !== 1 ? 's' : '') + ' pending sync';
-        syncBtn.textContent = 'Sync Now'; syncBtn.disabled = false;
-      } else { syncBanner.style.display = 'none'; }
-    }
-
-    syncBtn.addEventListener('click', flushQueue);
-    window.addEventListener('online', flushQueue);
-
-    function flushQueue() {
-      if (!attendanceQueue.length) return;
-      syncBtn.textContent = 'Syncing...'; syncBtn.disabled = true;
-      Promise.allSettled(attendanceQueue.map(submitToAPI)).then(function (results) {
-        var ok = 0, remaining = [];
-        results.forEach(function (r, i) { if (r.status === 'fulfilled' && r.value) ok++; else remaining.push(attendanceQueue[i]); });
-        attendanceQueue = remaining;
-        localStorage.setItem('sh_attendance_queue', JSON.stringify(attendanceQueue));
-        updateSyncBanner(); syncBtn.disabled = false;
-        if (ok > 0) alert('Synced ' + ok + ' session' + (ok !== 1 ? 's' : '') + '.');
-        else alert('Sync failed. Still offline.');
-      });
-    }
+  document.addEventListener('DOMContentLoaded', function () {
+    var today = new Date();
+    document.getElementById('att-date').value = today.toISOString().slice(0, 10);
+    bindEvents();
+    loadClassOptions();
   });
 }());

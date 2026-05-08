@@ -1,369 +1,289 @@
 (function () {
   'use strict';
 
-  function getFrappeHeaders() {
-    var h = { 'Accept': 'application/json', 'Content-Type': 'application/json' };
-    if (window.frappe && frappe.csrf_token && frappe.csrf_token !== 'None' && !frappe.csrf_token.includes('{{')) {
-      h['X-Frappe-CSRF-Token'] = frappe.csrf_token;
-    }
-    return h;
+  var FEEDBACK_FORMS = [
+    { doctype: 'SH Baseline', label: 'Baseline', route: '/skillshub/baseline' },
+    { doctype: 'SH Soft Skills Feedback', label: 'Soft Skills', route: '/skillshub/feedback/soft-skills' },
+    { doctype: 'SH Mindset Camp Feedback', label: 'Mindset Camp', route: '/skillshub/feedback/mindset-camp' },
+    { doctype: 'SH Edulution Feedback', label: 'Edulution', route: '/skillshub/feedback/edulution' },
+    { doctype: 'SH VT Feedback', label: 'Vocational Training', route: '/skillshub/feedback/vocational-training' },
+    { doctype: 'SH Attachment Feedback', label: 'Attachment', route: '/skillshub/feedback/attachment' },
+    { doctype: 'SH Parent Feedback', label: 'Parent', route: '/skillshub/feedback/parent' }
+  ];
+
+  var state = {
+    studentId: null,
+    bundle: null,
+    meta: null
+  };
+
+  function esc(value) {
+    if (value === null || value === undefined) return '';
+    var div = document.createElement('div');
+    div.textContent = String(value);
+    return div.innerHTML;
   }
 
-  function esc(s) {
-    if (s === null || s === undefined) return '';
-    var d = document.createElement('div'); d.textContent = String(s); return d.innerHTML;
+  function fmtDate(value) {
+    if (!value) return '—';
+    var date = new Date(value);
+    return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString('en-GB');
   }
 
-  function fmtDate(d) {
-    if (!d) return '—';
-    var dt = new Date(d);
-    return isNaN(dt) ? d : dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  function headers() {
+    return (window.SHPortal && window.SHPortal.getHeaders && window.SHPortal.getHeaders()) || {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    };
   }
 
-  function badge(text, type) {
-    return '<span class="sh-badge sh-badge-' + (type || 'info') + '">' + esc(text) + '</span>';
+  function api(path, options) {
+    return fetch(path, Object.assign({ credentials: 'include', headers: headers() }, options || {}))
+      .then(function (response) {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json();
+      })
+      .then(function (json) { return json.message || json; });
   }
 
-  function row(label, value) {
-    return '<div class="data-row"><div class="data-label">' + esc(label) + '</div><div class="data-value">' + (value || '—') + '</div></div>';
+  function parseStudentId() {
+    var params = new URLSearchParams(window.location.search);
+    return params.get('id') || params.get('student');
   }
 
-  var params = new URLSearchParams(window.location.search);
-  var studentId = params.get('id') || params.get('student');
-
-  async function fetchJson(url) {
-    var r = await fetch(url, { headers: getFrappeHeaders(), credentials: 'include' });
-    if (!r.ok) throw new Error('HTTP ' + r.status + ' from ' + url);
-    return r.json();
+  function setHeader() {
+    var student = state.bundle && state.bundle.student ? state.bundle.student : {};
+    document.getElementById('student-page-title').textContent = student.student_name || student.name || 'Student Profile';
+    document.getElementById('student-page-subtitle').textContent =
+      'ID: ' + (student.name || '—') + ' · Path: ' + (student.programme_path || '—') + ' · Status: ' + (student.status || '—');
   }
 
-  async function postJson(url, body) {
-    var r = await fetch(url, {
-      method: 'POST',
-      headers: getFrappeHeaders(),
-      credentials: 'include',
-      body: JSON.stringify(body)
-    });
-    var jr = await r.json();
-    if (!r.ok) throw new Error((jr && jr.message) || 'HTTP ' + r.status);
-    return jr;
-  }
-
-  async function getUserRoles() {
-    try {
-      var jr = await fetchJson('/api/method/skillshub_core.skillshub_core.api.get_current_user_roles');
-      return jr.message || [];
-    } catch (e) { return []; }
-  }
-
-  // Fetch all submitted feedback for a student across all feedback doctypes
-  async function fetchSubmittedFeedback(studentId) {
-    var doctypes = [
-      { doctype: 'SH Baseline',                   label: 'Baseline Assessment',         route: '/skillshub/baseline',                       studentField: 'sh_student' },
-      { doctype: 'SH Soft Skills Feedback',                    label: 'Soft Skills Feedback',         route: '/skillshub/feedback/soft-skills',            studentField: 'sh_student' },
-      { doctype: 'SH Mindset Camp Feedback',                   label: 'Mindset Camp Feedback',        route: '/skillshub/feedback/mindset-camp',           studentField: 'sh_student' },
-      { doctype: 'SH Edulution Feedback',               label: 'Edulution Feedback',           route: '/skillshub/feedback/edulution',              studentField: 'sh_student' },
-      { doctype: 'SH VT Feedback',     label: 'Vocational Training Feedback', route: '/skillshub/feedback/vocational-training',    studentField: 'sh_student' },
-      { doctype: 'SH Attachment Feedback',           label: 'Attachment Feedback',          route: '/skillshub/feedback/attachment',             studentField: 'sh_student' },
+  function renderOverview() {
+    var student = state.bundle.student || {};
+    var content = '';
+    var keys = [
+      ['Student ID', student.name],
+      ['Full Name', student.student_name],
+      ['Status', student.status],
+      ['Programme Path', student.programme_path],
+      ['Intake Year', student.intake_year],
+      ['Intake Cohort', student.intake_cohort],
+      ['Current Course', student.current_course],
+      ['Current Class', student.current_schedule],
+      ['Current Milestone', student.current_milestone],
+      ['Portal User', student.portal_user_account],
+      ['Login Email', student.user_login_email],
+      ['Mobile', student.mobile],
+      ['Personal Email', student.personal_email],
+      ['Date of Birth', student.date_of_birth],
+      ['Gender', student.gender],
+      ['Address', [student.address_line_1, student.address_line_2, student.pincode].filter(Boolean).join(', ') || '—']
     ];
-    var results = [];
-    await Promise.all(doctypes.map(async function (spec) {
-      try {
-        var filters = JSON.stringify([[spec.studentField, '=', studentId]]);
-        var fields = JSON.stringify(['name', spec.studentField, 'programme_schedule', 'enrolment_ticket', 'creation']);
-        var url = '/api/resource/' + encodeURIComponent(spec.doctype) +
-          '?filters=' + encodeURIComponent(filters) +
-          '&fields=' + encodeURIComponent(fields) +
-          '&limit=50&order_by=creation desc';
-        var jr = await fetch(url, { headers: getFrappeHeaders(), credentials: 'include' });
-        if (!jr.ok) return;
-        var data = await jr.json();
-        (data.data || []).forEach(function (rec) {
-          results.push(Object.assign({}, rec, { _label: spec.label, _route: spec.route, _doctype: spec.doctype }));
-        });
-      } catch (e) { /* skip doctype if not accessible */ }
-    }));
-    results.sort(function (a, b) { return (b.creation || '').localeCompare(a.creation || ''); });
-    return results;
+
+    content += '<div class="kv-grid">';
+    keys.forEach(function (pair) {
+      content += '<div class="kv-item"><strong>' + esc(pair[0]) + '</strong><div>' + esc(pair[1] || '—') + '</div></div>';
+    });
+    content += '</div>';
+    document.getElementById('tab-overview').innerHTML = content;
   }
 
-  async function render() {
-    var content = document.getElementById('content');
-    if (!studentId) {
-      content.innerHTML = '<div class="sh-container"><div class="glass-card" style="padding:2rem;text-align:center">Student ID missing from URL.</div></div>';
+  function renderEnrolments() {
+    var rows = state.bundle.enrolments || [];
+    if (!rows.length) {
+      document.getElementById('tab-enrolments').innerHTML = '<div class="sh-empty-cell">No enrolments found.</div>';
       return;
     }
 
-    try {
-      var [summaryRes, roles, submittedFeedback] = await Promise.all([
-        fetchJson('/api/method/skillshub_core.skillshub_core.api.get_student_summary?student=' + encodeURIComponent(studentId)),
-        getUserRoles(),
-        fetchSubmittedFeedback(studentId)
-      ]);
-
-      var msg = summaryRes.message || {};
-      var student = msg.student;
-      if (!student) throw new Error('Student not found or not accessible.');
-
-      var enrolments = msg.enrolments || [];
-      var employment = msg.employment_history || [];
-      var feedback_forms = msg.feedback_forms || [];
-
-      var ADMIN_ROLES = ['System Manager', 'Administrator', 'PI Admin', 'SH Admin', 'SkillsHub Admin'];
-      var isAdmin = roles.some(function (r) { return ADMIN_ROLES.indexOf(r) !== -1; });
-
-      // ── HEADER ───────────────────────────────────────────────────────────
-      var html = '<div class="sh-page-header sh-animate-fade"><div class="sh-container">';
-      html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">';
-      html += '<div>';
-      html += '<h1 style="margin:0">' + esc(student.student_name || student.full_name || student.name) + '</h1>';
-      html += '<div style="color:var(--color-slate-200);margin-top:0.25rem">' +
-        esc(student.skillshub_programme || '') + ' • Intake ' + esc(student.intake_year || '—') + '</div>';
-      html += '</div>';
-      html += '<div style="display:flex;gap:0.75rem;flex-wrap:wrap">';
-      html += '<a href="/skillshub/admin/students" class="nav-btn">← Students</a>';
-      if (isAdmin) html += '<button id="sh-edit-btn" class="nav-btn">Edit Student</button>';
-      html += '<button id="sh-logout-btn" class="nav-btn logout-btn" onclick="fetch(\'/api/method/logout\',{method:\'POST\'}).finally(()=>{localStorage.clear();window.location.replace(\'/skillshub/login\');})">Sign Out</button>';
-      html += '</div></div></div></div>';
-
-      html += '<div class="sh-container" style="padding-top:1.5rem">';
-
-      // ── ROW 1: Demographics + Status ─────────────────────────────────────
-      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">';
-
-      html += '<div class="glass-card sh-animate-fade">';
-      html += '<div class="section-title">Demographics</div>';
-      html += row('Student ID', esc(student.name));
-      html += row('Full Name', esc(student.student_name));
-      html += row('Date of Birth', fmtDate(student.date_of_birth));
-      html += row('Gender', esc(student.gender));
-      html += row('NRC Number', esc(student.nrc_number));
-      html += '</div>';
-
-      html += '<div class="glass-card sh-animate-fade">';
-      html += '<div class="section-title">Status & Programme</div>';
-      html += '<div class="data-row"><div class="data-label">Status</div><div class="data-value">' + badge(student.status, student.status === 'Student' ? 'success' : 'info') + '</div></div>';
-      html += row('Programme', esc(student.skillshub_programme));
-      html += row('Path', esc(student.programme_path));
-      html += row('Current Cohort', esc(student.current_cohort));
-      html += row('Current Schedule', esc(student.current_schedule));
-      if (isAdmin) {
-        html += row('Login Email', esc(student.user_login_email || student.personal_email));
-        html += row('Portal Account', esc(student.portal_user_account));
-      }
-      html += '</div>';
-
-      html += '</div>'; // end row 1 grid
-
-      // ── ROW 2: Contact ───────────────────────────────────────────────────
-      html += '<div class="glass-card sh-animate-fade" style="margin-bottom:1rem">';
-      html += '<div class="section-title">Contact Information</div>';
-      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">';
-      html += row('Mobile', esc(student.mobile));
-      html += row('Personal Email', esc(student.personal_email));
-      html += row('Address', esc([student.address_line_1, student.address_line_2, student.pincode].filter(Boolean).join(', ')));
-      html += row('Guardian', esc(student.guardian_name));
-      html += row('Guardian Mobile', esc(student.guardian_mobile_number));
-      html += '</div></div>';
-
-      // ── ROW 3: Enrolment Journey ──────────────────────────────────────────
-      html += '<div class="glass-card sh-animate-fade" style="margin-bottom:1rem">';
-      html += '<div class="section-title">Enrolment Journey</div>';
-      if (!enrolments.length) {
-        html += '<div style="color:var(--color-slate-500);padding:1rem 0">No enrolment history.</div>';
-      } else {
-        enrolments.forEach(function (e) {
-          var statusType = e.status === 'Completed' ? 'success' : e.status === 'Enrolled' ? 'enrolled' : 'info';
-          html += '<div class="tl-item" style="padding:1rem 0;border-bottom:1px solid var(--color-slate-100)">';
-          html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem">';
-          html += '<div>';
-          html += '<div style="font-weight:600">' + esc(e.class || e.milestone || '—') + '</div>';
-          if (e.course) html += '<div style="font-size:0.85rem;color:var(--color-slate-500)">' + esc(e.course) + '</div>';
-          html += '<div style="font-size:0.8rem;color:var(--color-slate-400);margin-top:0.2rem">' + fmtDate(e.enrolment_date) + (e.completion_date ? ' → ' + fmtDate(e.completion_date) : '') + '</div>';
-          html += '</div>';
-          html += '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.3rem">';
-          html += badge(e.status || '—', statusType);
-          if (e.attendance_rate != null) html += badge(Math.round(e.attendance_rate) + '% Att.', 'info');
-          html += '</div></div>';
-
-          // Submitted feedback for this enrolment
-          var submittedForEnrolment = submittedFeedback.filter(function (f) {
-            return f.programme_schedule === e.class || f.enrolment_ticket === e.name;
-          });
-          if (submittedForEnrolment.length) {
-            html += '<div style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0.4rem">';
-            submittedForEnrolment.forEach(function (f) {
-              var viewUrl = '/api/resource/' + encodeURIComponent(f._doctype) + '/' + encodeURIComponent(f.name);
-              html += '<span class="sh-badge sh-badge-success" title="Submitted: ' + esc(f.creation) + '">✓ ' + esc(f._label) + '</span>';
-            });
-            html += '</div>';
-          } else {
-            html += '<div style="margin-top:0.4rem;font-size:0.8rem;color:var(--color-slate-400)">No feedback submitted for this schedule</div>';
-          }
-
-          // Links to add new feedback
-          if (isAdmin && feedback_forms.length) {
-            html += '<div style="margin-top:0.6rem;display:flex;flex-wrap:wrap;gap:0.4rem">';
-            feedback_forms.forEach(function (ff) {
-              var href = ff.route + '?student=' + encodeURIComponent(studentId) +
-                '&schedule=' + encodeURIComponent(e.class || '') +
-                '&enrolment_ticket=' + encodeURIComponent(e.name || '');
-              html += '<a class="sh-btn-secondary" style="font-size:0.8rem;padding:0.3rem 0.75rem" href="' + esc(href) + '">+ ' + esc(ff.label) + '</a>';
-            });
-            html += '</div>';
-          }
-
-          html += '</div>';
-        });
-      }
-      html += '</div>';
-
-      // ── ROW 4: All Submitted Feedback ────────────────────────────────────
-      html += '<div class="glass-card sh-animate-fade" style="margin-bottom:1rem">';
-      html += '<div class="section-title">Submitted Feedback Records</div>';
-      if (!submittedFeedback.length) {
-        html += '<div style="color:var(--color-slate-500);padding:0.5rem 0">No feedback records submitted yet.</div>';
-      } else {
-        html += '<table style="width:100%;border-collapse:collapse;font-size:0.9rem">';
-        html += '<thead><tr style="text-align:left;border-bottom:2px solid var(--color-slate-200)">';
-        html += '<th style="padding:0.5rem 0.75rem">Type</th><th style="padding:0.5rem 0.75rem">Schedule</th><th style="padding:0.5rem 0.75rem">Submitted</th>';
-        if (isAdmin) html += '<th style="padding:0.5rem 0.75rem">Action</th>';
-        html += '</tr></thead><tbody>';
-        submittedFeedback.forEach(function (f) {
-          html += '<tr style="border-bottom:1px solid var(--color-slate-100)">';
-          html += '<td style="padding:0.5rem 0.75rem">' + badge(f._label, 'success') + '</td>';
-          html += '<td style="padding:0.5rem 0.75rem">' + esc(f.programme_schedule || '—') + '</td>';
-          html += '<td style="padding:0.5rem 0.75rem">' + fmtDate(f.creation) + '</td>';
-          if (isAdmin) {
-            html += '<td style="padding:0.5rem 0.75rem"><a class="sh-btn-secondary" style="font-size:0.8rem;padding:0.25rem 0.6rem" href="/app/' +
-              encodeURIComponent(f._doctype.toLowerCase().replace(/ /g, '-')) + '/' +
-              encodeURIComponent(f.name) + '" target="_blank">View in Desk</a></td>';
-          }
-          html += '</tr>';
-        });
-        html += '</tbody></table>';
-      }
-      html += '</div>';
-
-      // ── ROW 5: Employment History ─────────────────────────────────────────
-      html += '<div class="glass-card sh-animate-fade" style="margin-bottom:1rem">';
-      html += '<div class="section-title">Employment History</div>';
-      if (!employment.length) {
-        html += '<div style="color:var(--color-slate-500);padding:0.5rem 0">No employment history recorded.</div>';
-      } else {
-        employment.forEach(function (e) {
-          html += '<div style="padding:0.75rem 0;border-bottom:1px solid var(--color-slate-100)">';
-          html += '<div style="display:flex;justify-content:space-between;align-items:flex-start">';
-          html += '<div><div style="font-weight:600">' + esc(e.occupation || e.role || '—') + '</div>';
-          html += '<div style="color:var(--color-slate-600);font-size:0.9rem">' + esc(e.institution || '') + '</div>';
-          if (e.monthly_salary_zmw) html += '<div style="font-size:0.85rem;color:var(--color-slate-500)">ZMW ' + esc(e.monthly_salary_zmw) + '/mo</div>';
-          html += '</div>';
-          html += '<div style="text-align:right;font-size:0.8rem;color:var(--color-slate-400)">';
-          html += fmtDate(e.start_date) + (e.end_date ? ' → ' + fmtDate(e.end_date) : ' → Present');
-          if (e.is_current) html += '<br>' + badge('Current', 'success');
-          html += '</div></div>';
-          if (e.notes) html += '<div style="margin-top:0.4rem;font-size:0.8rem;color:var(--color-slate-500)">' + esc(e.notes) + '</div>';
-          html += '</div>';
-        });
-      }
-      html += '</div>';
-
-      html += '</div>'; // end sh-container
-
-      // ── EDIT MODAL ────────────────────────────────────────────────────────
-      if (isAdmin) {
-        html += '<div id="sh-edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;overflow:auto">';
-        html += '<div style="background:white;max-width:700px;margin:2rem auto;border-radius:12px;padding:2rem">';
-        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">';
-        html += '<h2 style="margin:0">Edit Student</h2>';
-        html += '<button id="sh-modal-close" style="background:none;border:none;font-size:1.5rem;cursor:pointer">&times;</button>';
-        html += '</div>';
-        html += '<form id="sh-edit-form">';
-        var editFields = [
-          { name: 'student_name', label: 'Student Full Name', type: 'text' },
-          { name: 'mobile', label: 'Mobile', type: 'tel' },
-          { name: 'personal_email', label: 'Personal Email', type: 'email' },
-          { name: 'address_line_1', label: 'Address Line 1', type: 'text' },
-          { name: 'address_line_2', label: 'Address Line 2', type: 'text' },
-          { name: 'pincode', label: 'Postcode', type: 'text' },
-          { name: 'guardian_name', label: 'Guardian Name', type: 'text' },
-          { name: 'guardian_mobile_number', label: 'Guardian Mobile', type: 'tel' },
-          { name: 'nrc_number', label: 'NRC Number', type: 'text' },
-          { name: 'gender', label: 'Gender', type: 'select', options: ['', 'Male', 'Female', 'Other', 'Prefer not to say'] },
-          { name: 'status', label: 'Status', type: 'select', options: ['', 'Student', 'Graduated', 'Dropped Out', 'On Hold'] },
-          { name: 'programme_path', label: 'Programme Path', type: 'select', options: ['', 'Path A', 'Path B'] },
-          { name: 'portal_user_account', label: 'Portal User Account', type: 'text' },
-          { name: 'user_login_email', label: 'Login Email', type: 'email' },
-        ];
-        editFields.forEach(function (f) {
-          html += '<div class="sh-input-group" style="margin-bottom:1rem">';
-          html += '<label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.3rem">' + esc(f.label) + '</label>';
-          if (f.type === 'select') {
-            html += '<select name="' + esc(f.name) + '" class="sh-input">';
-            f.options.forEach(function (o) {
-              html += '<option value="' + esc(o) + '"' + (student[f.name] === o ? ' selected' : '') + '>' + esc(o || '—') + '</option>';
-            });
-            html += '</select>';
-          } else {
-            html += '<input type="' + esc(f.type) + '" name="' + esc(f.name) + '" class="sh-input" value="' + esc(student[f.name] || '') + '">';
-          }
-          html += '</div>';
-        });
-        html += '<div style="margin-top:1.5rem;display:flex;gap:0.75rem">';
-        html += '<button type="submit" class="sh-btn-primary" id="sh-save-btn">Save Changes</button>';
-        html += '<button type="button" id="sh-modal-cancel" class="sh-btn-secondary">Cancel</button>';
-        html += '<button type="button" id="sh-delete-btn" class="sh-btn-secondary" style="margin-left:auto;color:var(--color-red-600)">Delete Student</button>';
-        html += '</div></form></div></div>';
-      }
-
-      content.innerHTML = html;
-
-      // ── WIRE UP EVENTS ────────────────────────────────────────────────────
-      if (isAdmin) {
-        var modal = document.getElementById('sh-edit-modal');
-        document.getElementById('sh-edit-btn').addEventListener('click', function () {
-          modal.style.display = 'block';
-        });
-        document.getElementById('sh-modal-close').addEventListener('click', function () { modal.style.display = 'none'; });
-        document.getElementById('sh-modal-cancel').addEventListener('click', function () { modal.style.display = 'none'; });
-        modal.addEventListener('click', function (e) { if (e.target === modal) modal.style.display = 'none'; });
-
-        document.getElementById('sh-edit-form').addEventListener('submit', async function (ev) {
-          ev.preventDefault();
-          var btn = document.getElementById('sh-save-btn');
-          btn.disabled = true; btn.textContent = 'Saving...';
-          try {
-            var fd = new FormData(ev.target);
-            var payload = {};
-            fd.forEach(function (v, k) { payload[k] = v; });
-            await postJson('/api/method/skillshub_core.skillshub_core.api.update_student_admin?student=' + encodeURIComponent(studentId), payload);
-            btn.textContent = 'Saved!';
-            setTimeout(function () { window.location.reload(); }, 800);
-          } catch (e) {
-            btn.disabled = false; btn.textContent = 'Save Changes';
-            alert('Save failed: ' + (e.message || e));
-          }
-        });
-
-        document.getElementById('sh-delete-btn').addEventListener('click', async function () {
-          if (!confirm('Permanently delete this student? This cannot be undone.')) return;
-          try {
-            await postJson('/api/method/skillshub_core.skillshub_core.api.delete_student_admin?student=' + encodeURIComponent(studentId), {});
-            alert('Student deleted.');
-            window.location.href = '/skillshub/admin/students';
-          } catch (e) { alert('Delete failed: ' + (e.message || e)); }
-        });
-      }
-
-    } catch (err) {
-      console.error(err);
-      content.innerHTML = '<div class="sh-container"><div class="glass-card" style="padding:2rem;color:var(--color-red-700)">' +
-        '<h3>Unable to load student profile</h3><p>' + esc(err.message) + '</p>' +
-        '<a href="/skillshub/admin/students" class="sh-btn-secondary">← Back to Students</a>' +
-        '</div></div>';
-    }
+    var html = '<div class="table-wrap"><table class="sh-admin-table"><thead><tr>' +
+      '<th>Class</th><th>Course</th><th>Milestone</th><th>Status</th><th>Dates</th><th>Attendance</th>' +
+      '</tr></thead><tbody>';
+    rows.forEach(function (row) {
+      html += '<tr>' +
+        '<td>' + esc(row.class || '—') + '<div style="font-size:0.76rem;color:var(--muted-text-color)">' + esc(row.course_run || '—') + '</div></td>' +
+        '<td>' + esc(row.course || '—') + '</td>' +
+        '<td>' + esc(row.milestone || '—') + '</td>' +
+        '<td><span class="sh-badge sh-badge-info">' + esc(row.status || '—') + '</span></td>' +
+        '<td>' + esc(fmtDate(row.enrolment_date)) + ' → ' + esc(fmtDate(row.completion_date)) + '</td>' +
+        '<td>' + esc(row.attendance_rate ? Math.round(row.attendance_rate) + '%' : '—') +
+        '<div style="font-size:0.76rem;color:var(--muted-text-color)">' +
+        esc((row.sessions_present || 0) + '/' + (row.sessions_total || 0) + ' present') + '</div></td>' +
+        '</tr>';
+    });
+    html += '</tbody></table></div>';
+    document.getElementById('tab-enrolments').innerHTML = html;
   }
 
-  document.addEventListener('DOMContentLoaded', function () { render(); });
+  function renderAttendance() {
+    var rows = state.bundle.attendance || [];
+    if (!rows.length) {
+      document.getElementById('tab-attendance').innerHTML = '<div class="sh-empty-cell">No attendance records found.</div>';
+      return;
+    }
+    var html = '<div class="table-wrap"><table class="sh-admin-table"><thead><tr>' +
+      '<th>Date</th><th>Class</th><th>Status</th><th>Week/Day</th><th>Marked By</th>' +
+      '</tr></thead><tbody>';
+    rows.forEach(function (row) {
+      html += '<tr>' +
+        '<td>' + esc(fmtDate(row.date)) + '</td>' +
+        '<td>' + esc(row.sh_programme_schedule || '—') + '</td>' +
+        '<td><span class="sh-badge sh-badge-info">' + esc(row.status || '—') + '</span></td>' +
+        '<td>' + esc((row.week || '—') + ' / ' + (row.day || '—')) + '</td>' +
+        '<td>' + esc(row.marked_by || '—') + '</td>' +
+        '</tr>';
+    });
+    html += '</tbody></table></div>';
+    document.getElementById('tab-attendance').innerHTML = html;
+  }
 
-})();
+  function renderFeedback() {
+    var rows = state.bundle.feedback || [];
+    var enrolments = state.bundle.enrolments || [];
+    var current = enrolments.find(function (row) { return row.status === 'Enrolled'; }) || enrolments[0] || {};
+    var links = FEEDBACK_FORMS.map(function (form) {
+      var href = form.route +
+        '?student=' + encodeURIComponent(state.studentId) +
+        '&schedule=' + encodeURIComponent(current.class || '') +
+        '&enrolment_ticket=' + encodeURIComponent(current.name || '');
+      return '<a class="sh-btn-secondary" style="font-size:0.76rem;padding:0.35rem 0.65rem;text-decoration:none;" href="' + href + '">+ ' + esc(form.label) + '</a>';
+    }).join('');
+
+    var top = '<div style="display:flex;gap:0.45rem;flex-wrap:wrap;margin-bottom:0.7rem;">' + links + '</div>';
+    if (!rows.length) {
+      document.getElementById('tab-feedback').innerHTML = top + '<div class="sh-empty-cell">No submitted feedback records.</div>';
+      return;
+    }
+    var html = top + '<div class="table-wrap"><table class="sh-admin-table"><thead><tr>' +
+      '<th>Form</th><th>Doc</th><th>Class</th><th>Submitted</th><th>View</th>' +
+      '</tr></thead><tbody>';
+    rows.forEach(function (row) {
+      var viewUrl = '/skillshub/form-view?doctype=' + encodeURIComponent(row.doctype) + '&name=' + encodeURIComponent(row.name) + '&student=' + encodeURIComponent(state.studentId);
+      html += '<tr>' +
+        '<td>' + esc(row.label || row.doctype) + '</td>' +
+        '<td><code>' + esc(row.name) + '</code></td>' +
+        '<td>' + esc(row.programme_schedule || '—') + '</td>' +
+        '<td>' + esc(fmtDate(row.creation)) + '</td>' +
+        '<td><a class="sh-btn-secondary" style="font-size:0.78rem;padding:0.38rem 0.7rem;text-decoration:none;" href="' + viewUrl + '">Open</a></td>' +
+        '</tr>';
+    });
+    html += '</tbody></table></div>';
+    document.getElementById('tab-feedback').innerHTML = html;
+  }
+
+  function buildEditField(field, value) {
+    var editable = !field.read_only && !field.hidden;
+    if (!editable) return '';
+    if (!field.fieldname || ['name', 'owner', 'modified', 'modified_by', 'creation', 'doctype'].indexOf(field.fieldname) > -1) return '';
+    if (['Section Break', 'Column Break', 'Tab Break', 'HTML', 'Button', 'Attach', 'Attach Image', 'Table'].indexOf(field.fieldtype) > -1) return '';
+
+    var html = '<div class="sh-input-group" style="margin-bottom:0.8rem;">';
+    html += '<label class="sh-label" for="fld-' + esc(field.fieldname) + '">' + esc(field.label || field.fieldname) + '</label>';
+
+    var current = value === null || value === undefined ? '' : value;
+    if (field.fieldtype === 'Check') {
+      html += '<input id="fld-' + esc(field.fieldname) + '" data-fieldname="' + esc(field.fieldname) + '" data-fieldtype="Check" class="sh-input" type="checkbox" ' + (current ? 'checked' : '') + '>';
+    } else if (field.fieldtype === 'Select') {
+      html += '<select id="fld-' + esc(field.fieldname) + '" data-fieldname="' + esc(field.fieldname) + '" data-fieldtype="Select" class="sh-input">';
+      html += '<option value=""></option>';
+      (field.options || '').split('\n').filter(Boolean).forEach(function (option) {
+        html += '<option value="' + esc(option) + '"' + (String(current) === String(option) ? ' selected' : '') + '>' + esc(option) + '</option>';
+      });
+      html += '</select>';
+    } else if (field.fieldtype === 'Small Text' || field.fieldtype === 'Text' || field.fieldtype === 'Long Text' || field.fieldtype === 'Text Editor') {
+      html += '<textarea id="fld-' + esc(field.fieldname) + '" data-fieldname="' + esc(field.fieldname) + '" data-fieldtype="' + esc(field.fieldtype) + '" class="sh-input" rows="3">' + esc(current) + '</textarea>';
+    } else if (field.fieldtype === 'Date') {
+      html += '<input id="fld-' + esc(field.fieldname) + '" data-fieldname="' + esc(field.fieldname) + '" data-fieldtype="Date" class="sh-input" type="date" value="' + esc(current) + '">';
+    } else if (field.fieldtype === 'Int' || field.fieldtype === 'Float' || field.fieldtype === 'Currency' || field.fieldtype === 'Percent') {
+      html += '<input id="fld-' + esc(field.fieldname) + '" data-fieldname="' + esc(field.fieldname) + '" data-fieldtype="' + esc(field.fieldtype) + '" class="sh-input" type="number" value="' + esc(current) + '">';
+    } else {
+      html += '<input id="fld-' + esc(field.fieldname) + '" data-fieldname="' + esc(field.fieldname) + '" data-fieldtype="' + esc(field.fieldtype) + '" class="sh-input" type="text" value="' + esc(current) + '">';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  function renderEdit() {
+    var student = state.bundle.student || {};
+    var fields = (state.meta && state.meta.fields) || [];
+    var html = '<div class="sh-form-grid">';
+    fields.forEach(function (field) {
+      html += buildEditField(field, student[field.fieldname]);
+    });
+    html += '</div>';
+    document.getElementById('tab-edit').innerHTML = html;
+  }
+
+  function bindTabs() {
+    var tabs = document.querySelectorAll('#student-tabs button[data-tab]');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        tabs.forEach(function (b) { b.classList.remove('active'); });
+        document.querySelectorAll('.tab-panel').forEach(function (panel) { panel.classList.remove('active'); });
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.getAttribute('data-tab')).classList.add('active');
+      });
+    });
+  }
+
+  function saveChanges() {
+    var inputs = document.querySelectorAll('#tab-edit [data-fieldname]');
+    var payload = {};
+    inputs.forEach(function (input) {
+      var fieldname = input.getAttribute('data-fieldname');
+      var fieldtype = input.getAttribute('data-fieldtype');
+      if (!fieldname) return;
+      if (fieldtype === 'Check') payload[fieldname] = input.checked ? 1 : 0;
+      else payload[fieldname] = input.value;
+    });
+
+    var saveBtn = document.getElementById('student-save-btn');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving...';
+    api('/api/method/skillshub_core.skillshub_core.api.update_student_admin?student=' + encodeURIComponent(state.studentId), {
+      method: 'POST',
+      body: JSON.stringify({ payload: payload })
+    })
+      .then(function () {
+        saveBtn.textContent = 'Saved';
+        load();
+      })
+      .catch(function (error) {
+        saveBtn.textContent = 'Save Changes';
+        saveBtn.disabled = false;
+        alert('Save failed: ' + error.message);
+      });
+  }
+
+  function load() {
+    return Promise.all([
+      api('/api/method/skillshub_core.skillshub_portal.api.get_student_admin_bundle?student=' + encodeURIComponent(state.studentId)),
+      api('/api/method/skillshub_core.skillshub_portal.api.get_doctype_meta?doctype=' + encodeURIComponent('SH Student'))
+    ])
+      .then(function (results) {
+        state.bundle = results[0];
+        state.meta = results[1];
+        setHeader();
+        renderOverview();
+        renderEnrolments();
+        renderAttendance();
+        renderFeedback();
+        renderEdit();
+      })
+      .catch(function (error) {
+        document.getElementById('tab-overview').innerHTML = '<div class="sh-empty-cell">Failed to load profile: ' + esc(error.message) + '</div>';
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    state.studentId = parseStudentId();
+    if (!state.studentId) {
+      document.getElementById('tab-overview').innerHTML = '<div class="sh-empty-cell">Student ID missing from URL.</div>';
+      return;
+    }
+
+    bindTabs();
+    document.getElementById('student-save-btn').addEventListener('click', saveChanges);
+    load();
+  });
+}());

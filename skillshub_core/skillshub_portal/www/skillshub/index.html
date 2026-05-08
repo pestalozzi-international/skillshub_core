@@ -1,40 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Redirecting... - SkillsHub</title>
-    <script>
-        // Simple role-based router for SkillsHub Portal
-        fetch('/api/method/frappe.auth.get_logged_user', { credentials: 'include' })
-            .then(r => r.json())
-            .then(data => {
-                if (!data.message || data.message === 'Guest') {
-                    window.location.replace('/skillshub/login');
-                    return;
-                }
-                // Fetch roles to decide where to go
-                return fetch('/api/method/skillshub_core.skillshub_core.api.get_current_user_roles', { credentials: 'include' })
-                    .then(r => r.json())
-                    .then(roleData => {
-                        const roles = roleData.message || [];
-                        if (roles.includes('System Manager') || roles.includes('PI Admin')) {
-                            window.location.replace('/skillshub/admin/students');
-                        } else if (roles.includes('SH Student')) {
-                            window.location.replace('/skillshub/profile');
-                        } else {
-                            // Default fallback
-                            window.location.replace('/skillshub/attendance');
-                        }
-                    });
-            })
-            .catch(() => {
-                window.location.replace('/skillshub/login');
-            });
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillsHub Portal</title>
+  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
+  <link rel="stylesheet" href="/skillshub/theme.css?v=3.0">
+  <style>
+    .landing-wrap { min-height: 100vh; display: grid; place-items: center; padding: 2rem; background: var(--header-gradient); }
+    .landing-card { width: min(780px, 100%); background: rgba(255,255,255,0.92); border: 1px solid rgba(255,255,255,0.36); border-radius: 1rem; box-shadow: var(--shadow-premium); padding: 2rem; }
+    .landing-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .landing-btn { display: flex; flex-direction: column; gap: 0.3rem; text-decoration: none; border: 1px solid var(--color-slate-200); border-radius: 0.85rem; padding: 1rem 1rem; color: var(--text-color); background: #fff; }
+    .landing-btn:hover { border-color: var(--color-accent-500); transform: translateY(-1px); transition: 0.2s ease; }
+    .landing-btn strong { font-size: 1rem; }
+    .landing-btn span { font-size: 0.82rem; color: var(--muted-text-color); }
+    @media (max-width: 720px) { .landing-grid { grid-template-columns: 1fr; } }
+  </style>
+  <script>
+    window.frappe = {};
+    frappe.csrf_token = "{{ frappe.session.csrf_token }}";
+  </script>
 </head>
 <body>
-    <div style="text-align:center; padding:5rem; font-family:sans-serif; color:#64748b;">
-        Redirecting you to the right place...
-    </div>
+  <main class="landing-wrap">
+    <section class="landing-card">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">
+        <img class="sh-logo" style="display:none;max-height:44px;" alt="SkillsHub">
+        <div>
+          <h1 style="margin:0;font-size:1.8rem;" data-portal-name>SkillsHub Portal</h1>
+          <p style="margin:0.2rem 0 0;color:var(--muted-text-color);" data-portal-tagline></p>
+        </div>
+      </div>
+      <p style="margin:0 0 1.2rem;color:var(--muted-text-color);" id="landing-subtitle">Choose how you want to continue.</p>
+      <div class="landing-grid">
+        <a class="landing-btn" href="/skillshub/login?mode=student">
+          <strong>Continue as Student</strong>
+          <span>View profile, enrolments, attendance and forms</span>
+        </a>
+        <a class="landing-btn" href="/skillshub/login?mode=admin">
+          <strong>Continue as Administrator</strong>
+          <span>Manage students, attendance, and form submissions</span>
+        </a>
+      </div>
+    </section>
+  </main>
+  <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=3.0"></script>
+  <script>
+    window.addEventListener('sh-portal-ready', function (event) {
+      var settings = event.detail && event.detail.settings ? event.detail.settings : {};
+      var subtitle = document.getElementById('landing-subtitle');
+      if (subtitle) subtitle.textContent = settings.landing_subtitle || 'Choose how you want to continue.';
+      var bootstrap = event.detail && event.detail.bootstrap ? event.detail.bootstrap : {};
+      if (bootstrap && bootstrap.is_logged_in) {
+        var target = bootstrap.is_admin
+          ? ((settings.admin_home_route || '/skillshub/admin/students'))
+          : ((settings.student_home_route || '/skillshub/profile'));
+        window.location.replace(target);
+      }
+    });
+  </script>
 </body>
 </html>

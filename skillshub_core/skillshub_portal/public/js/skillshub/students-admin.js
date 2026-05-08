@@ -1,282 +1,147 @@
 (function () {
   'use strict';
 
-  function getFrappeHeaders() {
-    var headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' };
-    if (window.frappe && frappe.csrf_token && frappe.csrf_token !== 'None' && !frappe.csrf_token.includes('{{')) {
-      headers['X-Frappe-CSRF-Token'] = frappe.csrf_token;
-    }
-    return headers;
+  var state = {
+    page: 1,
+    totalPages: 1,
+    total: 0
+  };
+
+  function esc(value) {
+    if (value === null || value === undefined) return '';
+    var div = document.createElement('div');
+    div.textContent = String(value);
+    return div.innerHTML;
   }
 
-  function clearAndRedirect() {
-    localStorage.removeItem('sh_student_id'); localStorage.removeItem('sh_role');
-    localStorage.removeItem('sh_user'); localStorage.removeItem('sh_display_user');
-    window.location.replace('/skillshub/login');
-  }
-
-  function sf(url) {
-    return fetch(url, { headers: getFrappeHeaders(), credentials: 'include' })
-      .then(function (r) {
-        if (r.status === 401) { clearAndRedirect(); return null; }
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      });
-  }
-
-  function esc(s) {
-    if (!s) return '';
-    var d = document.createElement('div'); d.textContent = s; return d.innerHTML;
-  }
-
-  function getIndicator(student, enrolments) {
-    if (student.status === 'Dropped')
-      return { label: 'Dropped', cssClass: 'sh-badge-dropped' };
-    if (student.status === 'Alumni' && student.graduated)
-      return { label: 'Graduated', cssClass: 'sh-badge-completed' };
-    if (student.status === 'Alumni')
-      return { label: 'Alumni', cssClass: 'sh-badge-info' };
-    var hasAttach = enrolments.some(function (e) {
-      return e.milestone === 'Attachment' && e.status === 'Enrolled';
-    });
-    if (hasAttach)
-      return { label: 'Attached', cssClass: 'sh-badge-warning' };
-    return { label: 'Active', cssClass: 'sh-badge-success' };
-  }
-
-  function deriveContext(enrolments, schedMap) {
-    if (!enrolments.length) return { cohort: null, milestone: null, class_name: null, academic_year: null, course: null };
-    var sorted = enrolments.slice().sort(function (a, b) {
-      var aA = a.status === 'Enrolled' ? 0 : 1, bA = b.status === 'Enrolled' ? 0 : 1;
-      if (aA !== bA) return aA - bA;
-      return (b.enrolment_date || '').localeCompare(a.enrolment_date || '');
-    });
-    var latest = sorted[0];
-    var sched = schedMap[latest.class] || {};
-    return {
-      cohort: sched.cohort || latest.cohort || null, 
-      milestone: latest.milestone || null,
-      class_name: latest.class || null,
-      academic_year: latest.academic_year || sched.academic_year || null,
-      course: latest.course || sched.skillshub_course || null
+  function getHeaders() {
+    return (window.SHPortal && window.SHPortal.getHeaders && window.SHPortal.getHeaders()) || {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
     };
   }
 
-  var allStudents = [], allEnrolments = [], allYears = [], allCourses = [], scheduleMap = {};
+  function api(path, options) {
+    return fetch(path, Object.assign({ credentials: 'include', headers: getHeaders() }, options || {}))
+      .then(function (response) {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json();
+      })
+      .then(function (json) { return json.message || json; });
+  }
 
-  function checkAccess() {
-    // Ensure current user has admin/teacher roles; otherwise redirect to appropriate portal.
-    return fetch('/api/method/frappe.auth.get_logged_user', { headers: getFrappeHeaders(), credentials: 'include' })
-      .then(function (r) { return r.ok ? r.json() : null; })
+  function currentFilters() {
+    return {
+      search: document.getElementById('f-search').value.trim(),
+      status: document.getElementById('f-status').value,
+      programme_path: document.getElementById('f-programme-path').value
+    };
+  }
+
+  function pageSize() {
+    return parseInt(document.getElementById('f-page-size').value, 10) || 25;
+  }
+
+  function renderRows(items) {
+    var body = document.getElementById('students-body');
+    if (!items.length) {
+      body.innerHTML = '<tr><td colspan="7" class="sh-empty-cell">No students found for current filters.</td></tr>';
+      return;
+    }
+
+    body.innerHTML = items
+      .map(function (row) {
+        var attendance = row.avg_attendance ? Math.round(row.avg_attendance) + '%' : '—';
+        return (
+          '<tr>' +
+          '<td><div style="font-weight:600">' + esc(row.student_name || row.name) + '</div><div style="font-size:0.78rem;color:var(--muted-text-color)">' + esc(row.name) + '</div></td>' +
+          '<td><span class="sh-badge sh-badge-info">' + esc(row.status || '—') + '</span></td>' +
+          '<td>' + esc(row.programme_path || '—') + '</td>' +
+          '<td>' +
+            '<div style="font-size:0.82rem;">Course: ' + esc(row.current_course || '—') + '</div>' +
+            '<div style="font-size:0.78rem;color:var(--muted-text-color);">Class: ' + esc(row.current_schedule || '—') + '</div>' +
+          '</td>' +
+          '<td><div>' + esc(row.enrolment_count || 0) + ' total</div><div style="font-size:0.78rem;color:var(--muted-text-color);">' + esc(row.active_enrolments || 0) + ' active</div></td>' +
+          '<td>' + esc(attendance) + '</td>' +
+          '<td><a class="sh-btn-secondary" style="padding:0.45rem 0.8rem;font-size:0.82rem;text-decoration:none;" href="/skillshub/admin/student?id=' + encodeURIComponent(row.name) + '">Open</a></td>' +
+          '</tr>'
+        );
+      })
+      .join('');
+  }
+
+  function updatePaginationMeta() {
+    var from = state.total === 0 ? 0 : (state.page - 1) * pageSize() + 1;
+    var to = Math.min(state.page * pageSize(), state.total);
+    document.getElementById('pagination-info').textContent = from && to ? ('Showing ' + from + '–' + to + ' of ' + state.total) : 'No records';
+    document.getElementById('page-label').textContent = 'Page ' + state.page + ' / ' + state.totalPages;
+    document.getElementById('page-prev').disabled = state.page <= 1;
+    document.getElementById('page-next').disabled = state.page >= state.totalPages;
+  }
+
+  function loadStudents() {
+    var meta = document.getElementById('students-meta');
+    meta.textContent = 'Loading...';
+    var payload = {
+      filters: currentFilters(),
+      page: state.page,
+      page_size: pageSize()
+    };
+    return api('/api/method/skillshub_core.skillshub_portal.api.get_admin_students', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
       .then(function (data) {
-        if (!data || !data.message || data.message === 'Guest') {
-          window.location.replace('/skillshub/login');
-          return false;
-        }
-        // Check roles
-        return fetch('/api/resource/Has Role?filters=' + encodeURIComponent(JSON.stringify([
-          ['parent','=',data.message],
-          ['role','in',['System Manager','PI Admin','SH Admin','SH Teacher','SH Student']]
-        ])) + '&fields=' + encodeURIComponent(JSON.stringify(['role'])) + '&limit=10', { headers: getFrappeHeaders(), credentials: 'include' })
-          .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (roleData) {
-            var roles = (roleData && roleData.data || []).map(function (r) { return r.role; });
-            if (roles.indexOf('SH Student') !== -1 && roles.indexOf('SH Admin') === -1 && roles.indexOf('PI Admin') === -1 && roles.indexOf('System Manager') === -1) {
-              // Student user without admin privileges
-              window.location.replace('/skillshub/profile');
-              return false;
-            }
-            return true;
-          });
+        state.total = data.total || 0;
+        state.totalPages = data.total_pages || 1;
+        renderRows(data.items || []);
+        updatePaginationMeta();
+        meta.textContent = 'Directory loaded';
+      })
+      .catch(function (error) {
+        document.getElementById('students-body').innerHTML =
+          '<tr><td colspan="7" class="sh-empty-cell">Failed to load students: ' + esc(error.message) + '</td></tr>';
+        meta.textContent = 'Load failed';
       });
+  }
+
+  function bindEvents() {
+    document.getElementById('btn-apply').addEventListener('click', function () {
+      state.page = 1;
+      loadStudents();
+    });
+    document.getElementById('btn-reset').addEventListener('click', function () {
+      document.getElementById('f-search').value = '';
+      document.getElementById('f-status').value = '';
+      document.getElementById('f-programme-path').value = '';
+      document.getElementById('f-page-size').value = '25';
+      state.page = 1;
+      loadStudents();
+    });
+    document.getElementById('f-page-size').addEventListener('change', function () {
+      state.page = 1;
+      loadStudents();
+    });
+    document.getElementById('f-search').addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        state.page = 1;
+        loadStudents();
+      }
+    });
+    document.getElementById('page-prev').addEventListener('click', function () {
+      if (state.page <= 1) return;
+      state.page -= 1;
+      loadStudents();
+    });
+    document.getElementById('page-next').addEventListener('click', function () {
+      if (state.page >= state.totalPages) return;
+      state.page += 1;
+      loadStudents();
+    });
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    if (!checkAccess()) return;
-    window.addEventListener('sh-role-synced', checkAccess);
-
-    document.getElementById('logout-btn').addEventListener('click', function () {
-      fetch('/api/method/logout', { method: 'POST', headers: getFrappeHeaders(), credentials: 'include' })
-        .finally(function () { localStorage.clear(); window.location.replace('/skillshub/login'); });
-    });
-    ['f-academic-year','f-course','f-status','f-search'].forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) el.addEventListener(id === 'f-search' ? 'input' : 'change', applyFilters);
-    });
-    document.querySelectorAll('.path-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        document.querySelectorAll('.path-btn').forEach(function (b) { b.classList.remove('active'); });
-        this.classList.add('active'); applyFilters();
-      });
-    });
-    loadData();
-
-    // Global toggle handler
-    document.addEventListener('click', function(e) {
-      if (e.target.closest('.toggle-history')) {
-        var btn = e.target.closest('.toggle-history');
-        var studentId = btn.dataset.student;
-        var historyRow = document.getElementById('history-' + studentId);
-        if (historyRow) {
-          var isHidden = historyRow.style.display === 'none';
-          historyRow.style.display = isHidden ? 'table-row' : 'none';
-          btn.textContent = isHidden ? 'Hide History' : 'Show History';
-        }
-      }
-    });
+    bindEvents();
+    loadStudents();
   });
-
-  function loadData() {
-    console.log('[SkillsHub] Loading admin directory data...');
-    Promise.allSettled([
-      sf('/api/resource/SH Academic Year?fields=["name"]&limit=50').then(function (d) { if (d) allYears = d.data || []; }),
-      sf('/api/resource/SkillsHub Course?fields=["name"]&limit=100').then(function (d) { if (d) allCourses = d.data || []; }),
-      sf('/api/resource/SH Student?fields=["name","student_name","programme_path","status","graduated","intake_year"]&limit=1000')
-        .catch(function () {
-          return sf('/api/resource/SH Student?fields=["name","student_name","programme_path","status","graduated"]&limit=1000');
-        })
-        .then(function (d) { if (d) allStudents = d.data || []; }),
-      sf('/api/resource/SH Enrolment?fields=["name","student","milestone","class","feedback_submitted","attendance_rate","status","enrolment_date","academic_year","course"]&limit=5000').then(function (d) { if (d) allEnrolments = d.data || []; }),
-      sf('/api/resource/SH Class?fields=["name","cohort","skillshub_programme","academic_year","skillshub_course"]&limit=500').then(function (d) { if (d && d.data) d.data.forEach(function (s) { scheduleMap[s.name] = s; }); })
-    ]).then(function (results) {
-      var errors = [];
-      results.forEach(function(r, i) {
-        if (r.status === 'rejected') {
-          console.warn('[SkillsHub] Data fetch #' + i + ' failed:', r.reason);
-          errors.push('Fetch #' + i + ': ' + (r.reason.message || 'Network error'));
-        }
-      });
-      
-      if (errors.length > 2) { // Allow some minor failures (like empty years/courses) but not core data
-        document.getElementById('content').innerHTML = 
-          '<div class="sh-card" style="text-align:center; padding:4rem; color:var(--color-red-700)">' +
-          '<h2>Data Loading Error</h2><p>Multiple API requests failed. Please check your permissions.</p>' +
-          '<div style="font-size:0.75rem; margin-top:1rem; opacity:0.7">' + errors.join('<br>') + '</div>' +
-          '<button onclick="location.reload()" class="sh-btn-secondary" style="margin-top:1.5rem">Retry</button>' +
-          '</div>';
-        return;
-      }
-      
-      var ay = document.getElementById('f-academic-year');
-      if (ay) allYears.forEach(function (y) { var o = document.createElement('option'); o.value = y.name; o.textContent = y.name; ay.appendChild(o); });
-      var crs = document.getElementById('f-course');
-      if (crs) allCourses.forEach(function (c) { var o = document.createElement('option'); o.value = c.name; o.textContent = c.name; crs.appendChild(o); });
-      
-      console.log('[SkillsHub] Data loaded. Students:', allStudents.length);
-      if (!allStudents.length) { 
-        document.getElementById('content').innerHTML = '<div class="state-box">No student records found.</div>'; 
-        return; 
-      }
-      applyFilters();
-    });
-  }
-
-  function applyFilters() {
-    var ayEl = document.getElementById('f-academic-year');
-    var courseEl = document.getElementById('f-course');
-    var statusEl = document.getElementById('f-status');
-    var searchEl = document.getElementById('f-search');
-    
-    var statusVal = statusEl ? statusEl.value : '';
-    var search = searchEl ? searchEl.value.toLowerCase() : '';
-    
-    var pb = document.querySelector('.path-btn.active');
-    var path = pb ? pb.dataset.path : '';
-
-    var filtered = allStudents.filter(function (s) {
-      if (path && s.programme_path !== path) return false;
-      if (search && s.name.toLowerCase().indexOf(search) === -1 && (s.student_name||'').toLowerCase().indexOf(search) === -1) return false;
-      
-      var enrols = allEnrolments.filter(function (e) { return e.student === s.name; });
-      var ctx = deriveContext(enrols, scheduleMap);
-      
-      var yearVal = ayEl ? ayEl.value : '';
-      var courseVal = courseEl ? courseEl.value : '';
-
-      if (yearVal && ctx.academic_year !== yearVal) return false;
-      if (courseVal && ctx.course !== courseVal) return false;
-      
-      if (statusVal) { var ind = getIndicator(s, enrols); if (statusVal !== ind.label) return false; }
-      return true;
-    });
-    renderTable(filtered);
-  }
-
-  function renderTable(students) {
-    var content = document.getElementById('content');
-    var footer = document.getElementById('footer');
-    if (!students.length) { content.innerHTML = '<div class="state-box">No students match the selected filters.</div>'; footer.style.display = 'none'; return; }
-    
-    var html = '<div class="table-wrap"><table class="sh-table-compact"><thead><tr><th style="width:25%">Student</th><th style="width:12%">Status</th><th style="width:23%">Latest Context</th><th style="width:10%">Path</th><th style="width:15%">Stats</th><th style="width:15%">Actions</th></tr></thead><tbody>';
-    
-    students.forEach(function (s) {
-      var enrols = allEnrolments.filter(function (e) { return e.student === s.name; });
-      var ind = getIndicator(s, enrols);
-      var ctx = deriveContext(enrols, scheduleMap);
-      
-      var active = enrols.filter(function (e) { return e.status === 'Enrolled'; });
-      if (!active.length) active = enrols;
-      var avgAtt = active.length ? Math.round(active.reduce(function (a,b) { return a + (b.attendance_rate||0); }, 0) / active.length) : 0;
-      var fbCount = enrols.filter(function (e) { return e.feedback_submitted; }).length;
-
-      html += '<tr class="student-row">' +
-        '<td>' +
-          '<div style="font-weight:600;color:var(--color-slate-900)">' + esc(s.student_name||'—') + '</div>' +
-          '<div class="sid" style="font-size:0.75rem">' + esc(s.name) + '</div>' +
-        '</td>' +
-        '<td><span class="sh-badge ' + ind.cssClass + '">' + esc(ind.label) + '</span></td>' +
-        '<td>' +
-          '<div style="font-size:0.75rem; color:var(--color-slate-500); text-transform:uppercase; letter-spacing:0.04em;">Class</div>' +
-          '<div style="font-size:0.8rem; font-weight:600; color:var(--color-slate-700); margin-bottom:0.25rem;">' + esc(ctx.class_name || '—') + '</div>' +
-          '<div style="font-size:0.875rem; font-weight:600; color:var(--color-teal-700)">' + esc(ctx.course||'No Course') + '</div>' +
-          '<div style="font-size:0.75rem; color:var(--color-slate-500)">Intake: ' + esc(s.intake_year || '—') + '</div>' +
-        '</td>' +
-        '<td><span class="sh-badge sh-badge-info">' + esc(s.programme_path||'—') + '</span>' +
-          '<div style="font-size:0.68rem;color:var(--color-slate-500); margin-top:0.35rem;">' + (s.programme_path === 'Path B' ? 'Standard (No Remedial)' : 'Standard Progression') + '</div>' +
-        '</td>' +
-        '<td>' +
-          '<div style="font-size:0.875rem">' + avgAtt + '% Att.</div>' +
-          '<div style="font-size:0.75rem;color:' + (fbCount === enrols.length ? 'var(--color-emerald-700)' : 'var(--color-amber-700)') + '">' + fbCount + '/' + enrols.length + ' Feedback</div>' +
-        '</td>' +
-        '<td>' +
-          '<div style="display:flex;gap:0.5rem">' +
-            '<a href="/skillshub/admin/student?id=' + encodeURIComponent(s.name) + '" class="sh-btn-secondary" style="padding:0.4rem 0.8rem;font-size:0.875rem">Profile</a>' +
-            '<button class="sh-btn-secondary toggle-history" data-student="' + s.name + '" style="padding:0.4rem 0.8rem;font-size:0.875rem">History</button>' +
-          '</div>' +
-        '</td>' +
-      '</tr>';
-
-      // History Row (Hidden by default)
-      html += '<tr id="history-' + s.name + '" class="history-row" style="display:none;background:var(--color-slate-50)">' +
-        '<td colspan="6" style="padding:1.5rem">' +
-          '<div style="font-weight:600;margin-bottom:1rem;font-size:0.875rem;color:var(--color-slate-700)">Enrolment History</div>' +
-          '<table style="width:100%;background:white;border-radius:0.75rem;border-collapse:collapse;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">' +
-            '<thead style="background:var(--color-slate-100)">' +
-              '<tr><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Class</th><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Status</th><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Date</th><th style="padding:0.75rem;text-align:left;font-size:0.75rem">Feedback</th></tr>' +
-            '</thead>' +
-            '<tbody>' +
-              enrols.map(function(e) {
-                return '<tr>' +
-                  '<td style="padding:0.75rem;border-top:1px solid var(--color-slate-100)">' + esc(e.class || e.milestone || '—') + '</td>' +
-                  '<td style="padding:0.75rem;border-top:1px solid var(--color-slate-100)"><span class="sh-badge ' + (e.status === 'Completed' ? 'sh-badge-success' : e.status === 'Dropped' ? 'sh-badge-dropped' : 'sh-badge-enrolled') + '" style="font-size:0.7rem">' + (e.status||'Enrolled') + '</span></td>' +
-                  '<td style="padding:0.75rem;border-top:1px solid var(--color-slate-100);font-size:0.75rem">' + (e.enrolment_date||'—') + '</td>' +
-                  '<td style="padding:0.75rem;border-top:1px solid var(--color-slate-100)">' +
-                    (e.feedback_submitted ? '<span style="color:var(--color-emerald-700);font-size:0.75rem">✓ Submitted</span>' : '<span style="color:var(--color-amber-700);font-size:0.75rem">⚠ Pending</span>') +
-                  '</td>' +
-                '</tr>';
-              }).join('') +
-              (!enrols.length ? '<tr><td colspan="4" style="padding:1rem;text-align:center;color:var(--color-slate-500)">No enrolment history found.</td></tr>' : '') +
-            '</tbody>' +
-          '</table>' +
-        '</td>' +
-      '</tr>';
-    });
-    
-    html += '</tbody></table></div>';
-    content.innerHTML = html;
-    if (footer) {
-      footer.textContent = students.length + ' student' + (students.length !== 1 ? 's' : '') + ' shown';
-      footer.style.display = 'block';
-    }
-  }
 }());

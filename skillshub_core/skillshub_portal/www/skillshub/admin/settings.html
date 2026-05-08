@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillsHub Admin - Portal Settings</title>
+  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
+  <link rel="stylesheet" href="/skillshub/theme.css?v=3.0">
+  <link rel="stylesheet" href="/skillshub/admin/theme.css?v=3.0">
+  <script>
+    window.frappe = {};
+    frappe.csrf_token = "{{ frappe.session.csrf_token }}";
+  </script>
+</head>
+<body>
+  <div class="sh-page-header">
+    <div class="sh-container">
+      <div class="sh-admin-header-row">
+        <div>
+          <h1>Portal Settings</h1>
+          <p>Branding and UX controls for all external pages.</p>
+        </div>
+        <div class="sh-admin-nav">
+          <a href="/skillshub/admin/students">Students</a>
+          <a href="/skillshub/admin/attendance">Attendance</a>
+          <a href="/skillshub/admin/programme-overview">Programme</a>
+          <a href="/skillshub/admin/settings" class="active">Settings</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="sh-container" style="margin-top:-1.8rem;padding-bottom:2rem;">
+    <section class="sh-card">
+      <div id="settings-message"></div>
+      <div class="sh-form-grid" id="settings-form"></div>
+      <div style="margin-top:1rem;display:flex;gap:0.5rem;">
+        <button id="settings-save" class="sh-btn-primary">Save Settings</button>
+        <button id="settings-reload" class="sh-btn-secondary">Reload</button>
+      </div>
+    </section>
+  </main>
+  <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=3.0"></script>
+  <script src="/assets/skillshub_core/js/skillshub/admin-settings.js?v=3.0"></script>
+</body>
+</html>

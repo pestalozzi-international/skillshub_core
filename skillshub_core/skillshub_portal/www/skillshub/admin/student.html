@@ -3,30 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - Student Detail - SkillsHub</title>
-  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png?v=2.5">
-  <link rel="stylesheet" href="/skillshub/theme.css?v=2.5">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>SkillsHub Admin - Student Profile</title>
+  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
+  <link rel="stylesheet" href="/skillshub/theme.css?v=3.0">
+  <link rel="stylesheet" href="/skillshub/admin/theme.css?v=3.0">
   <style>
-    body { background-color: var(--color-slate-50); font-family: var(--font-family); }
+    .tab-strip { display:flex; gap:0.5rem; flex-wrap:wrap; margin:0.8rem 0 1rem; }
+    .tab-strip button { border:1px solid var(--color-slate-200); background:#fff; border-radius:0.65rem; padding:0.48rem 0.9rem; font-size:0.82rem; cursor:pointer; }
+    .tab-strip button.active { background:var(--color-teal-700); color:#fff; border-color:var(--color-teal-700); }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+    .kv-grid { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:0.7rem; }
+    .kv-item { border:1px solid var(--color-slate-100); border-radius:0.75rem; padding:0.65rem; background:var(--surface-color); }
+    .kv-item strong { display:block; font-size:0.7rem; text-transform:uppercase; color:var(--muted-text-color); margin-bottom:0.25rem; }
+    @media (max-width:900px) { .kv-grid { grid-template-columns:1fr; } }
   </style>
-</head>
-<body>
   <script>
     window.frappe = {};
     frappe.csrf_token = "{{ frappe.session.csrf_token }}";
   </script>
-  <div id="page-layout">
-    <!-- Rendered by student-detail.js -->
-    <div id="content">
-      <div style="text-align:center; padding:10rem 2rem; opacity:0.5;">
-        <div class="sh-loader" style="margin: 0 auto 1rem;"></div>
-        Loading student profile...
+</head>
+<body>
+  <div class="sh-page-header">
+    <div class="sh-container">
+      <div class="sh-admin-header-row">
+        <div>
+          <h1 id="student-page-title">Student Profile</h1>
+          <p id="student-page-subtitle">Loading...</p>
+        </div>
+        <div class="sh-admin-nav">
+          <a href="/skillshub/admin/students">Students</a>
+          <a href="/skillshub/admin/attendance">Attendance</a>
+          <a href="/skillshub/admin/programme-overview">Programme</a>
+          <a href="/skillshub/admin/settings">Settings</a>
+        </div>
       </div>
     </div>
   </div>
 
-  <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=2.5"></script>
-  <script src="/assets/skillshub_core/js/skillshub/student-admin-full.js?v=2.5"></script>
+  <main class="sh-container" style="margin-top:-1.8rem;padding-bottom:2rem;">
+    <section class="sh-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:0.6rem;flex-wrap:wrap;">
+        <a href="/skillshub/admin/students" class="sh-btn-secondary" style="text-decoration:none;">← Back to students</a>
+        <button id="student-save-btn" class="sh-btn-primary">Save Changes</button>
+      </div>
+      <div class="tab-strip" id="student-tabs">
+        <button class="active" data-tab="overview">Overview</button>
+        <button data-tab="enrolments">Enrolments</button>
+        <button data-tab="attendance">Attendance</button>
+        <button data-tab="feedback">Feedback</button>
+        <button data-tab="edit">Edit Record</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-overview"></div>
+      <div class="tab-panel" id="tab-enrolments"></div>
+      <div class="tab-panel" id="tab-attendance"></div>
+      <div class="tab-panel" id="tab-feedback"></div>
+      <div class="tab-panel" id="tab-edit"></div>
+    </section>
+  </main>
+  <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=3.0"></script>
+  <script src="/assets/skillshub_core/js/skillshub/student-admin-full.js?v=3.0"></script>
 </body>
 </html>

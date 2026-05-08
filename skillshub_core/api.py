@@ -8,7 +8,9 @@ def find_student_by_email(email):
     """
     if not email:
         return None
-    found = frappe.get_all('SH Student', filters=[['portal_access_user_id', '=', email]], fields=['name'], limit=1)
+    found = frappe.get_all('SH Student', filters=[['user_login_email', '=', email]], fields=['name'], limit=1)
+    if not found:
+        found = frappe.get_all('SH Student', filters=[['portal_user_account', '=', email]], fields=['name'], limit=1)
     return found[0]['name'] if found else None
 
 
@@ -18,11 +20,11 @@ def get_programme_overview():
     Returns data for the Programme Overview page.
 
     Correct hierarchy:
-      Intake Year → Path → Programme → Course → Cohort → Schedule → Enrolments
+      Intake Year → Path → Programme → Course → Course Run → Schedule → Enrolments
 
     Key rules:
     - Path always comes from SH Student.programme_path (reliable)
-    - Programme/Course/Cohort always come from SH Class (reliable)
+    - Programme/Course/Course Run always come from SH Class (reliable)
       NOT from the enrolment fields — those are often null (e.g. SSP enrolments)
     - When course == programme name, collapse to avoid redundant level (e.g. Mindset Camp / Mindset Camp)
     """
@@ -39,13 +41,14 @@ def get_programme_overview():
             CONCAT(IFNULL(s.first_name,''), ' ', IFNULL(s.last_name,'')) AS student_name,
             sc.skillshub_programme  AS programme,
             sc.skillshub_course     AS course,
-            sc.cohort               AS cohort,
+            sc.course_run           AS course_run,
+            s.intake_cohort         AS student_cohort,
             sc.academic_year        AS sched_year,
             sc.complete             AS sched_complete
         FROM `tabSH Enrolment` e
         JOIN  `tabSH Student`            s  ON s.name  = e.student
         LEFT JOIN `tabSH Class` sc ON sc.name = e.class
-        ORDER BY s.intake_year DESC, sc.skillshub_programme, sc.skillshub_course, sc.cohort, e.class
+        ORDER BY s.intake_year DESC, sc.skillshub_programme, sc.skillshub_course, sc.course_run, e.class
     """, as_dict=True)
 
     # ── 2. Baseline counts keyed by programme_schedule ──────────────────────
@@ -86,7 +89,7 @@ def get_programme_overview():
         year      = e.intake_year    or 'Unknown'
         path      = e.programme_path or 'Unknown'
         programme = e.programme      or 'Unknown'
-        cohort    = e.cohort         or 'Unknown'
+        course_run = e.course_run     or 'Unknown'
         sched     = e.class_name or 'Unknown'
 
         # Collapse course level when it is identical to the programme name
@@ -99,12 +102,13 @@ def get_programme_overview():
             .setdefault(path,      {})
             .setdefault(programme, {})
             .setdefault(course,    {})
-            .setdefault(cohort,    {})
+            .setdefault(course_run, {})
             .setdefault(sched, {
                 'schedule':       sched,
                 'programme':      programme,
                 'course':         course,
-                'cohort':         cohort,
+                'course_run':     course_run,
+                'student_cohort': e.student_cohort or '',
                 'year':           e.sched_year or year,
                 'complete':       bool(e.sched_complete),
                 'enrolments':     [],
@@ -113,7 +117,7 @@ def get_programme_overview():
             })
         )
 
-        node = tree[year][path][programme][course][cohort][sched]
+        node = tree[year][path][programme][course][course_run][sched]
         for key in feedback_tables:
             node['feedback'][key] += feedback_maps[key].get(e.enrolment, 0)
 
@@ -132,7 +136,9 @@ def get_programme_overview():
             'path':       path,
             'programme':  programme,
             'course':     course,
-            'cohort':     cohort,
+            'course_run': course_run,
+            'cohort':     course_run,
+            'student_cohort': e.student_cohort or '',
             'schedule':   sched,
             'status':     e.status,
             'baselines':  baseline_map.get(sched, 0),

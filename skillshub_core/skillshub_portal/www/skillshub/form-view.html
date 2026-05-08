@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkillsHub - Edulution Feedback</title>
+  <title>SkillsHub - Form View</title>
   <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
   <link rel="stylesheet" href="/skillshub/theme.css?v=3.0">
   <style>
@@ -18,17 +18,30 @@
     frappe.csrf_token = "{{ frappe.session.csrf_token }}";
   </script>
 </head>
-<body data-doctype="SH Edulution Feedback" data-title="Edulution Feedback">
+<body>
   <main class="form-shell">
     <a href="/skillshub/profile" class="sh-btn-secondary" style="text-decoration:none;display:inline-block;margin-bottom:1rem;">← Back</a>
     <div class="sh-card">
-      <h1 id="portal-form-title" style="margin-top:0;">Edulution Feedback</h1>
+      <h1 id="portal-form-title" style="margin-top:0;">Form Record</h1>
       <div id="portal-form-context" class="kv-grid"></div>
       <div id="portal-form-message"></div>
       <div id="portal-form-body"></div>
-      <button id="portal-form-submit" class="sh-btn-primary" style="margin-top:1rem;">Submit Form</button>
+      <button id="portal-form-submit" class="sh-btn-primary" style="display:none;margin-top:1rem;">Submit Form</button>
     </div>
   </main>
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var doctype = params.get('doctype');
+      if (!doctype) {
+        document.getElementById('portal-form-body').innerHTML = '<div class="sh-alert-error">Missing doctype in URL.</div>';
+        return;
+      }
+      document.body.setAttribute('data-doctype', doctype);
+      document.body.setAttribute('data-title', doctype + ' · View');
+      document.getElementById('portal-form-title').textContent = doctype + ' · View';
+    }());
+  </script>
   <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=3.0"></script>
   <script src="/assets/skillshub_core/js/skillshub/form-engine.js?v=3.0"></script>
 </body>

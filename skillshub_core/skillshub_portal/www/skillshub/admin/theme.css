@@ -1,0 +1,55 @@
+.sh-admin-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sh-admin-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sh-admin-nav a {
+  color: #fff;
+  text-decoration: none;
+  opacity: 0.85;
+  font-weight: 600;
+  font-size: 0.86rem;
+}
+
+.sh-admin-nav a.active {
+  opacity: 1;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.9);
+  padding-bottom: 0.2rem;
+}
+
+.sh-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 880px;
+}
+
+.sh-admin-table th {
+  text-align: left;
+  padding: 0.8rem 0.65rem;
+  border-bottom: 2px solid var(--color-slate-100);
+  font-size: 0.72rem;
+  color: var(--muted-text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sh-admin-table td {
+  padding: 0.72rem 0.65rem;
+  border-bottom: 1px solid var(--color-slate-100);
+  vertical-align: top;
+}
+
+.sh-empty-cell {
+  text-align: center;
+  color: var(--muted-text-color);
+  padding: 2rem 1rem;
+}

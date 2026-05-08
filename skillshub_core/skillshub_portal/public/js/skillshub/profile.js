@@ -1,446 +1,154 @@
 (function () {
   'use strict';
 
-  // --- Constants & State ---
-  let studentId = localStorage.getItem('sh_student_id');
-  let currentStudentDoc = null;
-
-  function getFrappeHeaders() {
-    const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' };
-    if (window.frappe && frappe.csrf_token && frappe.csrf_token !== 'None' && !frappe.csrf_token.includes('{{')) {
-      headers['X-Frappe-CSRF-Token'] = frappe.csrf_token;
-    }
-    return headers;
+  function esc(value) {
+    if (value === null || value === undefined) return '';
+    var div = document.createElement('div');
+    div.textContent = String(value);
+    return div.innerHTML;
   }
 
-  function clearAndRedirect() {
-    localStorage.clear();
-    window.location.replace('/skillshub/login');
+  function fmtDate(value) {
+    if (!value) return '—';
+    var date = new Date(value);
+    return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString('en-GB');
   }
 
-  // --- Core Lifecycle ---
-  document.addEventListener('DOMContentLoaded', async () => {
-    // Rescue: If studentId is missing but we're at /profile, try to fetch it from session
-    if (!studentId) {
-      await attemptRescue();
-      studentId = localStorage.getItem('sh_student_id');
-    }
-
-    fetchStudentSummary();
-    setupEventListeners();
-  });
-
-  async function attemptRescue() {
-    try {
-      const userRes = await fetch('/api/method/frappe.auth.get_logged_user', { credentials: 'include' });
-      const userData = await userRes.json();
-      const userEmail = userData.message;
-
-      if (!userEmail || userEmail === 'Guest') return;
-
-      // First try portal_user_account (standard field, allowed in client filters)
-      const filters1 = JSON.stringify([['portal_user_account', '=', userEmail]]);
-      const res = await fetch(`/api/resource/SH Student?filters=${encodeURIComponent(filters1)}&fields=["name"]&limit=1`, {
-        headers: getFrappeHeaders(),
-        credentials: 'include'
-      });
-      const data = await res.json();
-      let sid = (data && data.data && data.data.length > 0) ? data.data[0].name : null;
-
-      // Fall back: look up by login email via safe server-side method
-      if (!sid) {
-        sid = await fetch(
-          '/api/method/skillshub_core.skillshub_core.api.find_student_by_email?email=' + encodeURIComponent(userEmail),
-          { credentials: 'include' }
-        ).then(r => r.json()).then(j => j.message || null);
-      }
-
-      if (sid) {
-        localStorage.setItem('sh_student_id', sid);
-        localStorage.setItem('sh_role', 'student');
-      }
-    } catch (err) {
-      console.error('Rescue failed:', err);
-    }
+  function headers() {
+    return (window.SHPortal && window.SHPortal.getHeaders && window.SHPortal.getHeaders()) || {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    };
   }
 
-  function setupEventListeners() {
-    // Logout
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', () => {
-        fetch('/api/method/logout', { method: 'POST', headers: getFrappeHeaders(), credentials: 'include' })
-          .finally(() => clearAndRedirect());
-      });
-    }
-
-    // Form Toggles
-    document.querySelectorAll('.edit-toggle').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const formId = btn.getAttribute('data-form');
-        const form = document.getElementById(formId);
-        if (form) {
-          form.classList.toggle('active');
-          btn.textContent = form.classList.contains('active') ? 'Cancel' : 'Edit Contact';
-        }
-      });
-    });
-
-    document.querySelectorAll('.cancel-edit').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const form = btn.closest('form');
-        if (form) {
-          form.classList.remove('active');
-          const toggle = document.querySelector(`.edit-toggle[data-form="${form.id}"]`);
-          if (toggle) toggle.textContent = 'Edit Contact';
-        }
-      });
-    });
-
-    // Contact Form Submit
-    const contactForm = document.getElementById('contact-form');
-    if (contactForm) {
-      contactForm.addEventListener('submit', handleProfileUpdate);
-    }
-
-    // Pill Add Buttons
-    const addMotivationBtn = document.getElementById('add-motivation-btn');
-    if (addMotivationBtn) {
-      addMotivationBtn.addEventListener('click', () => showOptionsModal('SH Student Motivation', 'motivation', 'motivations'));
-    }
-
-    const addResilienceBtn = document.getElementById('add-resilience-btn');
-    if (addResilienceBtn) {
-      addResilienceBtn.addEventListener('click', () => showOptionsModal('SH Student Resilience', 'resilience_statement', 'resilience_links'));
-    }
+  function api(path, options) {
+    return fetch(path, Object.assign({ credentials: 'include', headers: headers() }, options || {}))
+      .then(function (response) {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json();
+      })
+      .then(function (json) { return json.message || json; });
   }
 
-  // --- API Methods ---
-  async function fetchStudentSummary() {
-    try {
-      const res = await fetch('/api/method/skillshub_core.skillshub_core.api.get_portal_student_context', {
-        headers: getFrappeHeaders(),
-        credentials: 'include'
-      });
-      if (res.status === 401 || res.status === 403) { clearAndRedirect(); return; }
-      if (!res.ok) throw new Error('Unable to fetch student summary (HTTP ' + res.status + ')');
-      const data = await res.json();
-      if (data && data.message && data.message.student) {
-        studentId = data.message.student.name || data.message.student.id || studentId;
-        if (studentId) localStorage.setItem('sh_student_id', studentId);
-        renderProfile(data.message.student);
-        renderTimeline(data.message.enrolments || [], data.message.student);
-        renderFeedbackLinks(data.message.feedback_forms || [], data.message.feedback_status || {});
-        // Also fetch the full doc for CRUD/Tables
-        fetchFullStudentDoc();
-      } else {
-        throw new Error('Summary response was empty.');
-      }
-    } catch (err) {
-      console.error('Failed to fetch summary:', err);
-      const content = document.getElementById('content');
-      if (content) {
-        content.innerHTML = '<div class="glass-card sh-animate-fade" style="margin-top:2rem; text-align:center; padding:4rem; color:var(--color-red-700)">' +
-          '<h2 style="color:var(--color-red-700)">Unable to load profile</h2><p>' + (err.message || 'Unknown error') + '</p>' +
-          '<button onclick="location.reload()" class="sh-btn-secondary" style="margin-top:1rem">Try Again</button></div>';
-      }
+  function renderStudentCard(student) {
+    var html = '';
+    html += '<h3 style="margin-top:0;">' + esc(student.student_name || student.full_name || student.name) + '</h3>';
+    html += '<div style="font-size:0.84rem;color:var(--muted-text-color);margin-bottom:0.8rem;">' + esc(student.name || '—') + '</div>';
+    html += '<div style="display:grid;gap:0.5rem;font-size:0.9rem;">';
+    html += '<div><strong>Status:</strong> ' + esc(student.status || '—') + '</div>';
+    html += '<div><strong>Path:</strong> ' + esc(student.programme_path || '—') + '</div>';
+    html += '<div><strong>Intake Cohort:</strong> ' + esc(student.current_cohort || '—') + '</div>';
+    html += '<div><strong>Current Course:</strong> ' + esc(student.current_course || '—') + '</div>';
+    html += '<div><strong>Current Class:</strong> ' + esc(student.current_schedule || '—') + '</div>';
+    html += '<div><strong>Mobile:</strong> ' + esc(student.mobile || '—') + '</div>';
+    html += '<div><strong>Email:</strong> ' + esc(student.personal_email || student.user_login_email || '—') + '</div>';
+    html += '</div>';
+    document.getElementById('student-card').innerHTML = html;
+  }
+
+  function renderEnrolments(enrolments) {
+    var container = document.getElementById('enrolments-list');
+    if (!enrolments || !enrolments.length) {
+      container.innerHTML = '<div style="color:var(--muted-text-color);">No enrolment records yet.</div>';
+      return;
     }
-  }
 
-  async function fetchFullStudentDoc() {
-    try {
-      const res = await fetch(`/api/method/skillshub_core.skillshub_core.api.get_student_editable?student=${encodeURIComponent(studentId)}`, {
-        headers: getFrappeHeaders(),
-        credentials: 'include'
-      });
-      if (!res.ok) throw new Error('Unable to fetch editable profile (HTTP ' + res.status + ')');
-      const data = await res.json();
-      if (data && data.message) {
-        currentStudentDoc = data.message;
-        populateForms(currentStudentDoc);
-        renderGrowthPills(currentStudentDoc);
-      }
-    } catch (err) {
-      console.error('Failed to fetch full doc:', err);
-    }
-  }
-
-  async function handleProfileUpdate(e) {
-    e.preventDefault();
-    const form = e.target;
-    const saveBtn = form.querySelector('button[type="submit"]');
-    const originalText = saveBtn.textContent;
-    
-    saveBtn.disabled = true;
-    saveBtn.textContent = 'Saving...';
-
-    const formData = new FormData(form);
-    const payload = {};
-    formData.forEach((value, key) => { payload[key] = value.trim(); });
-
-    try {
-      const res = await fetch('/api/method/skillshub_core.skillshub_core.api.update_student_profile', {
-        method: 'POST',
-        headers: getFrappeHeaders(),
-        credentials: 'include',
-        body: JSON.stringify({ student: studentId, payload: payload })
-      });
-      if (!res.ok) throw new Error('Update failed');
-      
-      form.classList.remove('active');
-      const toggle = document.querySelector(`.edit-toggle[data-form="${form.id}"]`);
-      if (toggle) toggle.textContent = 'Edit Contact';
-      
-      fetchStudentSummary();
-    } catch (err) {
-      alert('Error updating profile: ' + err.message);
-    } finally {
-      saveBtn.disabled = false;
-      saveBtn.textContent = originalText;
-    }
-  }
-
-  // --- Growth/Pill Management ---
-  function renderGrowthPills(doc) {
-    renderPills('motivation-pills', doc.motivations || [], 'motivation', 'motivations');
-    renderPills('resilience-pills', doc.resilience_links || [], 'resilience_statement', 'resilience_links');
-  }
-
-  function populateForms(doc) {
-    var contactForm = document.getElementById('contact-form');
-    if (!contactForm || !doc) return;
-    var fields = ['address_line_1', 'address_line_2', 'pincode', 'mobile'];
-    fields.forEach(function (fieldname) {
-      var input = contactForm.querySelector('[name="' + fieldname + '"]');
-      if (input) input.value = doc[fieldname] || '';
-    });
-  }
-
-  function renderPills(containerId, data, fieldname, tableField) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    
-    const addBtn = container.querySelector('.sh-pill-add-btn');
-    container.innerHTML = '';
-    
-    data.forEach(item => {
-      const pill = document.createElement('div');
-      pill.className = 'sh-pill';
-      pill.innerHTML = `${item[fieldname]} <span class="sh-pill-remove" data-name="${item.name}" data-table="${tableField}">&times;</span>`;
-      container.appendChild(pill);
-    });
-    
-    if (addBtn) container.appendChild(addBtn);
-
-    // Listen for removes
-    container.querySelectorAll('.sh-pill-remove').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const name = btn.getAttribute('data-name');
-        const table = btn.getAttribute('data-table');
-        removePill(table, name);
-      });
-    });
-  }
-
-  async function removePill(tableField, rowName) {
-    if (!currentStudentDoc) return;
-    const existing = Array.isArray(currentStudentDoc[tableField]) ? currentStudentDoc[tableField] : [];
-    const updatedTable = existing.filter(row => row.name !== rowName);
-    
-    try {
-      const res = await fetch('/api/method/skillshub_core.skillshub_core.api.update_student_profile', {
-        method: 'POST',
-        headers: getFrappeHeaders(),
-        credentials: 'include',
-        body: JSON.stringify({ student: studentId, payload: { [tableField]: updatedTable } })
-      });
-      if (res.ok) fetchFullStudentDoc();
-    } catch (err) {
-      console.error('Failed to remove pill:', err);
-    }
-  }
-
-  async function addPill(tableField, valueField, value) {
-    if (!currentStudentDoc) return;
-    const newRow = { [valueField]: value };
-    const updatedTable = [...(currentStudentDoc[tableField] || []), newRow];
-    
-    try {
-      const res = await fetch('/api/method/skillshub_core.skillshub_core.api.update_student_profile', {
-        method: 'POST',
-        headers: getFrappeHeaders(),
-        credentials: 'include',
-        body: JSON.stringify({ student: studentId, payload: { [tableField]: updatedTable } })
-      });
-      if (res.ok) {
-        hideModal();
-        fetchFullStudentDoc();
-      }
-    } catch (err) {
-      console.error('Failed to add pill:', err);
-    }
-  }
-
-  // --- Options Modal ---
-  async function showOptionsModal(doctype, valueField, tableField) {
-    let overlay = document.querySelector('.sh-modal-overlay');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.className = 'sh-modal-overlay';
-      overlay.innerHTML = `
-        <div class="sh-modal">
-          <div class="sh-modal-header">
-            <div class="sh-modal-title">Select Option</div>
-            <button class="sh-modal-close" style="background:none; border:none; cursor:pointer; font-size:1.5rem;">&times;</button>
-          </div>
-          <div class="sh-modal-body" id="modal-list">Loading...</div>
-        </div>
-      `;
-      document.body.appendChild(overlay);
-      overlay.querySelector('.sh-modal-close').addEventListener('click', hideModal);
-    }
-    
-    overlay.classList.add('active');
-    const listContainer = document.getElementById('modal-list');
-    listContainer.innerHTML = 'Loading...';
-
-    try {
-      const res = await fetch(`/api/resource/${doctype}?fields=["name"]&limit_page_length=100`, {
-        headers: getFrappeHeaders(),
-        credentials: 'include'
-      });
-      const data = await res.json();
-      if (data && data.data) {
-        listContainer.innerHTML = '';
-        data.data.forEach(opt => {
-          const item = document.createElement('div');
-          item.className = 'sh-list-item';
-          item.textContent = opt.name;
-          item.addEventListener('click', () => addPill(tableField, valueField, opt.name));
-          listContainer.appendChild(item);
-        });
-      }
-    } catch (err) {
-      listContainer.innerHTML = 'Error loading options.';
-    }
-  }
-
-  function hideModal() {
-    const overlay = document.querySelector('.sh-modal-overlay');
-    if (overlay) overlay.classList.remove('active');
-  }
-
-  // --- Rendering Helpers ---
-  function renderProfile(s) {
-    var content = document.getElementById('content');
-    
-    // Banner
-    var bannerHtml = '<div class="sh-page-header sh-animate-fade"><div class="sh-container"><div style="display:flex; justify-content:space-between; align-items:center;">' +
-      '<div><h1>' + (s.student_name || '—') + '</h1><p>' + (s.intake_year || '—') + ' • ' + (s.skillshub_programme || '—') + '</p></div>' +
-      '<div style="display:flex; gap:1rem;">' +
-        '<a href="/skillshub/baseline" class="nav-btn">Baseline</a>' +
-        '<a href="/skillshub/feedback/soft-skills" class="nav-btn">Feedback</a>' +
-        '<button id="logout-btn" class="nav-btn logout-btn">Sign Out</button>' +
-      '</div>' +
-      '</div></div></div>';
-
-    // Sidebar
-    var sidebarHtml = '<div class="sidebar-col">' +
-      '<div class="glass-card sh-animate-fade">' +
-        '<div class="section-title">Demographics</div>' +
-        row('Student ID', s.name) +
-        row('Birth Date', formatDate(s.date_of_birth)) +
-        row('Gender', s.gender) +
-        '<div class="data-row"><div class="data-label">Status</div><div class="data-value"><span class="sh-badge sh-badge-info">' + s.status + '</span></div></div>' +
-      '</div>' +
-      '<div class="glass-card sh-animate-fade" style="animation-delay: 0.1s;">' +
-        '<div class="section-title">Growth & Motivation</div>' +
-        '<div class="data-label" style="margin-bottom:0.5rem">Motivations</div>' +
-        '<div id="motivation-pills" class="sh-pill-container"><button class="sh-pill-add-btn" id="add-motivation-btn">+ Add</button></div>' +
-        '<div class="data-label" style="margin-top:1.5rem; margin-bottom:0.5rem">Resilience</div>' +
-        '<div id="resilience-pills" class="sh-pill-container"><button class="sh-pill-add-btn" id="add-resilience-btn">+ Add</button></div>' +
-      '</div></div>';
-
-    // Main Content
-    var mainHtml = '<div class="content-col">' +
-      '<div class="glass-card sh-animate-fade editable-card" style="animation-delay: 0.2s;">' +
-        '<div class="edit-toggle" data-form="contact-form">Edit Contact</div>' +
-        '<div class="section-title">Contact Information</div>' +
-        '<div class="sh-grid sh-grid-2" id="contact-display-grid">' +
-          row('Address', [s.address_line_1, s.address_line_2, s.pincode].filter(Boolean).join(', ') || '—') +
-          row('Mobile', s.mobile || '—') +
-        '</div>' +
-        '<form id="contact-form" class="sh-form">' +
-          '<div class="sh-form-grid">' +
-            '<div class="sh-input-group"><label>Address Line 1</label><input type="text" name="address_line_1" class="sh-input"></div>' +
-            '<div class="sh-input-group"><label>Address Line 2</label><input type="text" name="address_line_2" class="sh-input"></div>' +
-            '<div class="sh-input-group"><label>Postcode</label><input type="text" name="pincode" class="sh-input"></div>' +
-            '<div class="sh-input-group"><label>Mobile</label><input type="text" name="mobile" class="sh-input"></div>' +
+    container.innerHTML = enrolments.map(function (row) {
+      return '' +
+        '<article style="border:1px solid var(--color-slate-100);border-radius:0.85rem;padding:0.75rem;margin-bottom:0.65rem;">' +
+          '<div style="display:flex;justify-content:space-between;gap:0.6rem;flex-wrap:wrap;">' +
+            '<div>' +
+              '<div style="font-weight:600;">' + esc(row.class || '—') + '</div>' +
+              '<div style="font-size:0.82rem;color:var(--muted-text-color);">' + esc(row.course || '—') + ' · ' + esc(row.milestone || '—') + '</div>' +
+            '</div>' +
+            '<div style="text-align:right;">' +
+              '<div><span class="sh-badge sh-badge-info">' + esc(row.status || '—') + '</span></div>' +
+              '<div style="font-size:0.8rem;color:var(--muted-text-color);margin-top:0.2rem;">' + esc(fmtDate(row.enrolment_date)) + '</div>' +
+            '</div>' +
           '</div>' +
-          '<div style="margin-top:1.5rem; display:flex; gap:0.75rem;">' +
-            '<button type="submit" class="sh-btn-primary">Save</button>' +
-            '<button type="button" class="sh-btn-secondary cancel-edit">Cancel</button>' +
-          '</div>' +
-        '</form>' +
-      '</div>' +
-      '<div class="glass-card sh-animate-fade" style="animation-delay: 0.3s;">' +
-        '<div class="section-title">Enrolment Journey</div>' +
-        '<div id="timeline-container" class="timeline">Loading timeline...</div>' +
-      '</div>' +
-      '<div class="glass-card sh-animate-fade" style="animation-delay: 0.35s;">' +
-        '<div class="section-title">Feedback Forms</div>' +
-        '<div id="feedback-links" class="sh-grid sh-grid-2"></div>' +
-      '</div></div>';
-
-    content.innerHTML = bannerHtml + '<div class="sh-container"><div class="sh-main-container">' + sidebarHtml + mainHtml + '</div></div>';
-    
-    // Re-bind events after render
-    setupEventListeners();
+          '<div style="margin-top:0.55rem;font-size:0.82rem;">Attendance: <strong>' + esc(row.attendance_rate ? Math.round(row.attendance_rate) + '%' : '—') + '</strong></div>' +
+        '</article>';
+    }).join('');
   }
 
-  function row(label, value) {
-    return '<div class="data-row"><div class="data-label">' + label + '</div><div class="data-value">' + (value || '—') + '</div></div>';
-  }
-
-  function renderFeedbackLinks(forms, statusMap) {
+  function renderFeedbackLinks(summary, feedbackForms) {
     var container = document.getElementById('feedback-links');
-    if (!container) return;
-    if (!Array.isArray(forms) || !forms.length) {
-      container.innerHTML = '<div class="data-value">No feedback forms configured.</div>';
+    var enrolments = summary.enrolments || [];
+    var activeEnrolment = enrolments.find(function (row) { return row.status === 'Enrolled'; }) || enrolments[0] || null;
+    var student = summary.student || {};
+
+    if (!feedbackForms || !feedbackForms.length) {
+      container.innerHTML = '<div style="color:var(--muted-text-color);">No forms configured.</div>';
       return;
     }
-    container.innerHTML = forms.map(function (f) {
-      var submitted = !!statusMap[f.doctype];
-      return '<a href="' + f.route + '" class="sh-btn-secondary" style="display:flex; align-items:center; justify-content:space-between; text-decoration:none;">' +
-        '<span style="font-weight:600;color:var(--color-slate-800)">' + f.label + '</span>' +
-        '<span class="sh-badge ' + (submitted ? 'sh-badge-success' : 'sh-badge-info') + '">' + (submitted ? 'Submitted' : 'Pending') + '</span>' +
-      '</a>';
+
+    container.innerHTML = feedbackForms.map(function (form) {
+      var href = form.route +
+        '?student=' + encodeURIComponent(student.name || '') +
+        '&schedule=' + encodeURIComponent((activeEnrolment && activeEnrolment.class) || student.current_schedule || '') +
+        '&enrolment_ticket=' + encodeURIComponent((activeEnrolment && activeEnrolment.name) || student.current_enrolment || '');
+      var status = summary.feedback_status && summary.feedback_status[form.doctype] ? 'Submitted' : 'Pending';
+      return '' +
+        '<a class="feedback-link" href="' + href + '">' +
+          '<strong>' + esc(form.label) + '</strong>' +
+          '<span style="display:flex;justify-content:space-between;gap:0.5rem;align-items:center;">' +
+            '<span>' + esc(form.doctype) + '</span>' +
+            '<span class="sh-badge ' + (status === 'Submitted' ? 'sh-badge-success' : 'sh-badge-info') + '">' + status + '</span>' +
+          '</span>' +
+        '</a>';
     }).join('');
   }
 
-  function renderTimeline(enrolments, student) {
-    var container = document.getElementById('timeline-container');
-    if (!container) return;
-    if (!enrolments.length) {
-      container.innerHTML = '<div class="tl-item"><div class="tl-title">Started Journey</div></div>';
+  function renderSubmittedForms(rows) {
+    var container = document.getElementById('submitted-forms-list');
+    if (!rows || !rows.length) {
+      container.innerHTML = '<div style="font-size:0.84rem;color:var(--muted-text-color);">No submitted forms.</div>';
       return;
     }
-    container.innerHTML = enrolments.map(function (e) {
-      return '<div class="tl-item ' + (e.status === 'Completed' ? 'completed' : '') + '">' +
-        '<div class="tl-date">' + formatDate(e.enrolment_date) + (e.completion_date ? ' — ' + formatDate(e.completion_date) : '') + '</div>' +
-        '<div class="tl-title">' + (e.milestone || 'Milestone') + '</div>' +
-        '<div class="tl-meta">' +
-          '<span class="sh-badge ' + (e.status === 'Completed' ? 'sh-badge-success' : 'sh-badge-info') + '">' + e.status + '</span>' +
-          (e.attendance_rate ? '<span class="sh-badge sh-badge-info">' + Math.round(e.attendance_rate) + '% Att.</span>' : '') +
-          (e.feedback_submitted ? '<span class="sh-badge sh-badge-success">✓ Feedback</span>' : '') +
-        '</div></div>';
+
+    container.innerHTML = rows.map(function (row) {
+      var link = '/skillshub/form-view?doctype=' + encodeURIComponent(row.doctype) + '&name=' + encodeURIComponent(row.name);
+      return '' +
+        '<a href="' + link + '" style="text-decoration:none;border:1px solid var(--color-slate-100);border-radius:0.65rem;padding:0.52rem 0.6rem;color:inherit;">' +
+          '<div style="font-size:0.78rem;color:var(--muted-text-color);">' + esc(row.label || row.doctype) + '</div>' +
+          '<div style="font-weight:600;font-size:0.84rem;">' + esc(row.name) + '</div>' +
+          '<div style="font-size:0.74rem;color:var(--muted-text-color);">' + esc(fmtDate(row.creation)) + '</div>' +
+        '</a>';
     }).join('');
   }
 
-  function formatDate(d) {
-    if (!d) return '—';
-    const dt = new Date(d);
-    return isNaN(dt) ? d : dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  function render(summary, submitted) {
+    var student = summary.student || {};
+    document.getElementById('profile-title').textContent = student.student_name ? ('My Profile · ' + student.student_name) : 'My Profile';
+    document.getElementById('profile-subtitle').textContent = (student.programme_path || 'Student') + ' · ' + (student.current_course || 'No current course');
+    renderStudentCard(student);
+    renderEnrolments(summary.enrolments || []);
+    renderFeedbackLinks(summary, summary.feedback_forms || []);
+    renderSubmittedForms(submitted || []);
   }
 
-})();
+  function init() {
+    Promise.all([
+      api('/api/method/skillshub_core.skillshub_core.api.get_portal_student_context'),
+      api('/api/method/skillshub_core.skillshub_portal.api.get_portal_bootstrap')
+    ])
+      .then(function (results) {
+        var summary = results[0] || {};
+        var bootstrap = results[1] || {};
+        var studentName = bootstrap && bootstrap.student ? bootstrap.student.name : (summary.student && summary.student.name);
+        if (!studentName) throw new Error('No student account is linked to this login.');
+        return Promise.all([
+          Promise.resolve(summary),
+          api('/api/method/skillshub_core.skillshub_portal.api.get_feedback_records?student=' + encodeURIComponent(studentName))
+        ]);
+      })
+      .then(function (payload) {
+        render(payload[0], payload[1] || []);
+      })
+      .catch(function (error) {
+        document.getElementById('student-card').innerHTML = '<div style="color:var(--color-red-700)">Unable to load profile: ' + esc(error.message) + '</div>';
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+}());
