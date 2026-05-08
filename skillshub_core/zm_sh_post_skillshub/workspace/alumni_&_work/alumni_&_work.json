@@ -1,0 +1,61 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"dash-header-aw\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">\ud83d\udcca Dashboards</span>\",\"col\":12}},{\"id\":\"dash-aw1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employment & Outcomes Dashboard\",\"col\":4}},{\"id\":\"spacer-aw0\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"hL3pq7qJ-Y\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Attachment &amp; Work</b></span>\",\"col\":12}},{\"id\":\"VwRaMTOYz4\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Attachment Feedback\",\"col\":4}},{\"id\":\"cZ15X4Yemz\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"FM7fr3GuMg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attachment & Employment Institutions\",\"col\":5}},{\"id\":\"XR0LLQ3mjw\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"xLpNjivaN7\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">SkillsHub Alumni</span>\",\"col\":12}},{\"id\":\"BShj55dNNw\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Alumni\",\"col\":3}}]",
+ "creation": "2026-01-28 13:02:17.486264",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "color-rank",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "Alumni & Work",
+ "links": [],
+ "modified": "2026-05-08 19:09:47.459772",
+ "modified_by": "Administrator",
+ "module": "ZM SH Post SkillsHub",
+ "name": "Alumni & Work",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "Zambia: SkillsHub",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 13.0,
+ "shortcuts": [
+  {
+   "color": "#8B5CF6",
+   "doc_view": "",
+   "label": "Employment & Outcomes Dashboard",
+   "link_to": "SkillsHub Employment & Outcomes",
+   "type": "Dashboard"
+  },
+  {
+   "color": "#10B981",
+   "doc_view": "List",
+   "label": "Attachment & Employment Institutions",
+   "link_to": "SH Employment Institution",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "#6366F1",
+   "doc_view": "List",
+   "label": "SkillsHub Alumni",
+   "link_to": "SH Student",
+   "stats_filter": "[[\"SH Student\",\"status\",\"=\",\"Alumni\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "#10B981",
+   "doc_view": "List",
+   "label": "SkillsHub Attachment Feedback",
+   "link_to": "SH Attachment Feedback",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Alumni & Work"
+}

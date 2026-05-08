@@ -1,0 +1,58 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"Ko8unb_XSY\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Parent Feedback</span>\",\"col\":12}},{\"id\":\"MkjhmS3Ox2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Parent Feedback\",\"col\":4}},{\"id\":\"M9c-HYdMTa\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"4F-AeiGRPA\",\"type\":\"card\",\"data\":{\"card_name\":\"Building Blocks\",\"col\":4}}]",
+ "creation": "2026-02-05 19:49:57.839482",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "milestone",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Parent Feedback",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Building Blocks",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "SH Household Participation Impact",
+   "link_count": 0,
+   "link_to": "SH Household Participation Impact",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-05-08 19:09:39.585927",
+ "modified_by": "Administrator",
+ "module": "ZM SH Parent Feedback",
+ "name": "Parent Feedback",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "Zambia: SkillsHub",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 14.0,
+ "shortcuts": [
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "SkillsHub Parent Feedback",
+   "link_to": "SH Parent Feedback",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Parent Feedback"
+}

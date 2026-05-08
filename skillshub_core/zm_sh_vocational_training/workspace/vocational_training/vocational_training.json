@@ -1,0 +1,112 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"dbkK7JHI85\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Vocational Training</span>\",\"col\":12}},{\"id\":\"q3_EReBPzY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Enrolled Student\",\"col\":3}},{\"id\":\"pmOvC2-FSI\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"X3Rto50i51\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vocational Training Feedback\",\"col\":4}},{\"id\":\"W5KaXOCm2Q\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Baseline Assessment\",\"col\":4}},{\"id\":\"gXr-b6YZOS\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"EKhpu61XeL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vocational Training Programme Schedules\",\"col\":3}},{\"id\":\"HtC4yBuaTW\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Ku2pWJkKRd\",\"type\":\"card\",\"data\":{\"card_name\":\"Building Blocks\",\"col\":4}}]",
+ "creation": "2026-01-28 12:11:14.785286",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "attachment",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Vocational Training",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Building Blocks",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "SH VT Course Expectation",
+   "link_count": 0,
+   "link_to": "SH VT Course Expectation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "SH Beneficiary",
+   "link_count": 0,
+   "link_to": "SH Beneficiary",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "SH VT Attachment Challenge",
+   "link_count": 0,
+   "link_to": "SH Attachment Challenge",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "SH VT Beneficial Programme Aspect",
+   "link_count": 0,
+   "link_to": "SH VT Beneficial Programme Aspect",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-05-08 19:09:31.225213",
+ "modified_by": "Administrator",
+ "module": "ZM SH Vocational Training",
+ "name": "Vocational Training",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "Zambia: SkillsHub",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 12.0,
+ "shortcuts": [
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Baseline Assessment",
+   "link_to": "SH Baseline",
+   "stats_filter": "[[\"SH Student Baseline Form\",\"milestone\",\"=\",\"Vocational Training\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Vocational Training Programme Schedules",
+   "link_to": "SH Class",
+   "stats_filter": "[[\"SH Programme Schedule\",\"skillshub_programme\",\"=\",\"Vocational Training\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Enrolled Student",
+   "link_to": "SH Student",
+   "stats_filter": "[[\"SH Student\",\"current_milestone\",\"=\",\"Vocational Training\",false],[\"SH Student\",\"status\",\"=\",\"Student\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Vocational Training Feedback",
+   "link_to": "SH VT Feedback",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Vocational Training"
+}
