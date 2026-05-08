@@ -163,6 +163,7 @@
   </div>
   <div class="filter-bar">
     <div class="fg"><label>Intake Year</label><select id="f-yr" onchange="onFilter()"><option value="">All</option></select></div>
+    <div class="fg"><label>Intake Cohort</label><select id="f-ic" onchange="onFilter()"><option value="">All</option></select></div>
     <div class="fg"><label>Path</label><select id="f-pa" onchange="onFilter()"><option value="">All</option></select></div>
     <div class="fg"><label>Programme</label><select id="f-pr" onchange="onFilter()"><option value="">All</option></select></div>
     <div class="fg"><label>Course</label><select id="f-co" onchange="onFilter()"><option value="">All</option></select></div>
@@ -251,19 +252,24 @@ function updateSummary(){
   sid('s-yr',yr.size);sid('s-ac',ac);sid('s-al',al);sid('s-en',DATA.flat.length);sid('s-bl',bl);
 }
 function sid(id,v){document.getElementById(id).textContent=v;}
-function gf(){return{yr:gv('f-yr'),pa:gv('f-pa'),pr:gv('f-pr'),co:gv('f-co'),ch:gv('f-ch'),st:gv('f-st'),sq:gv('f-sq').toLowerCase()};}
+function gf(){return{yr:gv('f-yr'),ic:gv('f-ic'),pa:gv('f-pa'),pr:gv('f-pr'),co:gv('f-co'),ch:gv('f-ch'),st:gv('f-st'),sq:gv('f-sq').toLowerCase()};}
 function gv(id){return document.getElementById(id).value||'';}
 function match(r,f){
   if(f.yr&&r.year!==f.yr)return false;if(f.pa&&r.path!==f.pa)return false;
+  if(f.ic&&r.student_cohort!==f.ic)return false;
   if(f.pr&&r.programme!==f.pr)return false;if(f.co&&r.course!==f.co)return false;
   if(f.ch&&r.cohort!==f.ch)return false;if(f.st&&r.status!==f.st)return false;
   if(f.sq&&!r.name.toLowerCase().includes(f.sq)&&!r.student.toLowerCase().includes(f.sq)&&!r.enrolment.toLowerCase().includes(f.sq))return false;
   return true;
 }
 function populateFilters(){
-  const yr=new Set(),pa=new Set(),pr=new Set(),co=new Set(),ch=new Set();
-  DATA.flat.forEach(r=>{yr.add(r.year);pa.add(r.path);pr.add(r.programme);co.add(r.course);ch.add(r.cohort);});
+  const yr=new Set(),ic=new Set(),pa=new Set(),pr=new Set(),co=new Set(),ch=new Set();
+  DATA.flat.forEach(r=>{
+    yr.add(r.year);pa.add(r.path);pr.add(r.programme);co.add(r.course);ch.add(r.cohort);
+    if(r.student_cohort)ic.add(r.student_cohort);
+  });
   fillSel('f-yr',[...yr].sort().reverse(),'All Years');fillSel('f-pa',[...pa].sort(),'All Paths');
+  fillSel('f-ic',[...ic].sort(cohortSort),'All Intake Cohorts');
   fillSel('f-pr',PROG_ORDER.filter(p=>[...pr].includes(p)).concat([...pr].filter(p=>!PROG_ORDER.includes(p))),'All Programmes');
   fillSel('f-co',[...co].sort(),'All Courses');fillSel('f-ch',[...ch].sort(cohortSort),'All Course Runs');
 }
