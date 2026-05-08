@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{student_name}-ED{##}",
+ "autoname": "format:{student}-ED{##}",
  "creation": "2026-01-28 10:21:38.059716",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -276,7 +276,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Enrolment Ticket",
-   "options": "SH Student Enrolment",
+   "options": "SH Enrolment",
    "reqd": 1
   },
   {
@@ -341,8 +341,8 @@
    "fetch_from": "enrolment_ticket.cohort",
    "fieldname": "skillshub_cohort",
    "fieldtype": "Link",
-   "label": "SkillsHub Cohort",
-   "options": "SkillsHub Cohort"
+   "label": "SH Cohort",
+   "options": "SH Cohort"
   },
   {
    "default": "Today",
@@ -356,7 +356,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Programme Schedule",
-   "options": "SH Programme Schedule"
+   "options": "SH Class"
   }
  ],
  "grid_page_length": 50,

@@ -18,7 +18,7 @@ class SHEnrolment(Document):
     def validate_duplicate_enrolment(self):
         """Enforce unique constraint: one enrolment per student per programme schedule."""
         existing = frappe.db.exists(
-            "SH Student Enrolment",
+            "SH Enrolment",
             {
                 "student": self.student,
                 "programme_schedule": self.programme_schedule,
@@ -48,7 +48,7 @@ class SHEnrolment(Document):
                 COUNT(*) AS total,
                 SUM(CASE WHEN status = 'Present' OR status = 'Late' THEN 1 ELSE 0 END) AS present,
                 SUM(CASE WHEN status = 'Absent' THEN 1 ELSE 0 END) AS absent
-            FROM `tabSH Student Attendance`
+            FROM `tabSH Attendance`
             WHERE sh_student = %s
               AND sh_programme_schedule = %s
             """,
@@ -72,7 +72,7 @@ class SHEnrolment(Document):
         if not (self.student and self.programme_schedule):
             return
 
-        schedule = frappe.get_doc("SH Programme Schedule", self.programme_schedule)
+        schedule = frappe.get_doc("SH Class", self.programme_schedule)
         existing_students = [row.student for row in (schedule.enrolled_students or [])]
 
         if self.student not in existing_students:
@@ -91,7 +91,7 @@ class SHEnrolment(Document):
 @frappe.whitelist()
 def recompute_enrolment_stats(enrolment_name):
     """Manually trigger attendance stat recomputation for a single enrolment."""
-    doc = frappe.get_doc("SH Student Enrolment", enrolment_name)
+    doc = frappe.get_doc("SH Enrolment", enrolment_name)
     doc.compute_attendance_stats()
     doc.save(ignore_permissions=True)
     return {"sessions_total": doc.sessions_total, "attendance_rate": doc.attendance_rate}

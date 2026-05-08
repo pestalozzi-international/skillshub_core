@@ -2,6 +2,7 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
+ "autoname": "{course_code}-{course_run}{class_no}",
  "creation": "2026-05-03 11:40:33.559842",
  "default_view": "List",
  "doctype": "DocType",
@@ -15,13 +16,12 @@
   "section_break_bksr",
   "academic_year",
   "skillshub_programme",
-  "course_run",
   "column_break_gbly",
   "skillshub_course",
   "course_code",
   "column_break_jkjr",
-  "cohort",
-  "cohort_code",
+  "course_run",
+  "class_no",
   "section_break_smzk",
   "course_notes",
   "section_break_rkqu",
@@ -67,16 +67,6 @@
    "fieldname": "max_strength",
    "fieldtype": "Int",
    "label": "Max Strength"
-  },
-  {
-   "fieldname": "cohort",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Cohort",
-   "options": "SkillsHub Cohort",
-   "reqd": 1,
-   "search_index": 1
   },
   {
    "fieldname": "start_date",
@@ -143,12 +133,6 @@
   {
    "fieldname": "column_break_nfbv",
    "fieldtype": "Column Break"
-  },
-  {
-   "fetch_from": "cohort.code",
-   "fieldname": "cohort_code",
-   "fieldtype": "Read Only",
-   "label": "Cohort Code"
   },
   {
    "fieldname": "section_break_smzk",
@@ -225,16 +209,23 @@
    "in_standard_filter": 1,
    "label": "Course Run",
    "options": "R1\nR2\nR3\nR4\nR5\nR6\nR7\nR8\nR9\nR10\nR11\nR12\nR13\nR14\nR15\nR16\nR17\nR18\nR19\nR20\nR21\nR22\nR23\nR24\nR25\nR26\nR27\nR28\nR29\nR30\nR31\nR32\nR33\nR34\nR35\nR36\nR37\nR38\nR39\nR40\nR41\nR42\nR43\nR44\nR45\nR46\nR47\nR48\nR49\nR50\nR51\nR52\nR53\nR54\nR55\nR56\nR57\nR58\nR59\nR60\nR61\nR62\nR63\nR64\nR65\nR66\nR67\nR68\nR69\nR70\nR71\nR72\nR73\nR74\nR75\nR76\nR77\nR78\nR79\nR80\nR81\nR82\nR83\nR84\nR85\nR86\nR87\nR88\nR89\nR90\nR91\nR92\nR93\nR94\nR95\nR96\nR97\nR98\nR99\nR100"
+  },
+  {
+   "default": "A",
+   "fieldname": "class_no",
+   "fieldtype": "Select",
+   "label": "Class No.",
+   "options": "A\nB\nC\nD"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-08 12:49:47.147383",
+ "modified": "2026-05-08 15:49:19.890935",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Class",
- "naming_rule": "By script",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {

@@ -76,7 +76,7 @@
    "fieldname": "current_cohort",
    "fieldtype": "Link",
    "label": "Current Cohort",
-   "options": "SkillsHub Cohort"
+   "options": "SH Cohort"
   },
   {
    "fieldname": "default_academic_year",

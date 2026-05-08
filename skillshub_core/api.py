@@ -42,16 +42,16 @@ def get_programme_overview():
             sc.cohort               AS cohort,
             sc.academic_year        AS sched_year,
             sc.complete             AS sched_complete
-        FROM `tabSH Student Enrolment` e
+        FROM `tabSH Enrolment` e
         JOIN  `tabSH Student`            s  ON s.name  = e.student
-        LEFT JOIN `tabSH Programme Schedule` sc ON sc.name = e.programme_schedule
+        LEFT JOIN `tabSH Class` sc ON sc.name = e.programme_schedule
         ORDER BY s.intake_year DESC, sc.skillshub_programme, sc.skillshub_course, sc.cohort, e.programme_schedule
     """, as_dict=True)
 
     # ── 2. Baseline counts keyed by programme_schedule ──────────────────────
     baselines = frappe.db.sql("""
         SELECT programme_schedule, COUNT(*) AS cnt
-        FROM `tabSH Student Baseline Form`
+        FROM `tabSH Baseline`
         WHERE programme_schedule IS NOT NULL AND programme_schedule != ''
         GROUP BY programme_schedule
     """, as_dict=True)

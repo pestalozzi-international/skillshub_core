@@ -59,7 +59,7 @@
   // Fetch all submitted feedback for a student across all feedback doctypes
   async function fetchSubmittedFeedback(studentId) {
     var doctypes = [
-      { doctype: 'SH Student Baseline Form',                   label: 'Baseline Assessment',         route: '/skillshub/baseline',                       studentField: 'sh_student' },
+      { doctype: 'SH Baseline',                   label: 'Baseline Assessment',         route: '/skillshub/baseline',                       studentField: 'sh_student' },
       { doctype: 'SH Soft Skills Feedback',                    label: 'Soft Skills Feedback',         route: '/skillshub/feedback/soft-skills',            studentField: 'sh_student' },
       { doctype: 'SH Mindset Camp Feedback',                   label: 'Mindset Camp Feedback',        route: '/skillshub/feedback/mindset-camp',           studentField: 'sh_student' },
       { doctype: 'SkillsHub Edulution Feedback',               label: 'Edulution Feedback',           route: '/skillshub/feedback/edulution',              studentField: 'sh_student' },

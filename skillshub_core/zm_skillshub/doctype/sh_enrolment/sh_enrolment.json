@@ -1,22 +1,21 @@
 {
  "actions": [],
  "allow_import": 1,
- "autoname": "format:{student}-{programme_schedule}",
+ "autoname": "{student}-{programme_schedule}",
  "creation": "2026-05-03 11:40:32.778960",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "student",
   "student_name",
-  "column_break_main",
-  "programme_schedule",
-  "milestone",
-  "section_break_context",
-  "academic_year",
   "cohort",
-  "column_break_context2",
-  "course",
   "programme_path",
+  "column_break_qcfu",
+  "class",
+  "milestone",
+  "academic_year",
+  "course",
+  "course_run",
   "section_break_status",
   "status",
   "enrolment_date",
@@ -53,20 +52,7 @@
    "read_only": 1
   },
   {
-   "fieldname": "column_break_main",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "programme_schedule",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Programme Schedule",
-   "options": "SH Programme Schedule",
-   "reqd": 1,
-   "search_index": 1
-  },
-  {
-   "fetch_from": "programme_schedule.skillshub_programme",
+   "fetch_from": "class.skillshub_programme",
    "fieldname": "milestone",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -74,11 +60,7 @@
    "options": "SkillsHub Programme"
   },
   {
-   "fieldname": "section_break_context",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fetch_from": "programme_schedule.academic_year",
+   "fetch_from": "class.academic_year",
    "fieldname": "academic_year",
    "fieldtype": "Link",
    "label": "Academic Year",
@@ -86,46 +68,23 @@
    "read_only": 1
   },
   {
-   "fetch_from": "programme_schedule.cohort",
+   "fetch_from": "student.intake_cohort",
    "fieldname": "cohort",
    "fieldtype": "Link",
    "label": "Cohort",
-   "options": "SkillsHub Cohort",
+   "options": "SH Cohort",
    "read_only": 1
   },
   {
+   "fetch_from": "class.course_run",
    "fieldname": "course_run",
    "fieldtype": "Data",
-   "label": "Course Run",
-   "read_only": 1,
-   "in_list_view": 0,
    "in_standard_filter": 1,
-   "reqd": 0,
-   "bold": 0,
-   "hidden": 0,
-   "print_hide": 0,
-   "translatable": 0,
-   "fetch_if_empty": 0,
-   "allow_bulk_edit": 0,
-   "in_filter": 0,
-   "in_global_search": 0,
-   "in_preview": 0,
-   "search_index": 0,
-   "permlevel": 0,
-   "length": 0,
-   "columns": 0,
-   "no_copy": 0,
-   "allow_on_submit": 0,
-   "print_hide_if_no_value": 0,
-   "allow_in_quick_entry": 0,
-   "fetch_from": "programme_schedule.course_run"
+   "label": "Course Run",
+   "read_only": 1
   },
   {
-   "fieldname": "column_break_context2",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fetch_from": "programme_schedule.skillshub_course",
+   "fetch_from": "class.skillshub_course",
    "fieldname": "course",
    "fieldtype": "Link",
    "label": "Course",
@@ -238,16 +197,29 @@
    "fieldname": "notes",
    "fieldtype": "Small Text",
    "label": "Notes"
+  },
+  {
+   "fieldname": "column_break_qcfu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "class",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Class",
+   "options": "SH Class",
+   "reqd": 1,
+   "search_index": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-07 14:07:53.352374",
+ "modified": "2026-05-08 15:54:50.328938",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Enrolment",
- "naming_rule": "Expression (old style)",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {

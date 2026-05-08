@@ -1,7 +1,7 @@
 // Copyright (c) 2026, PI Dev and contributors
 // For license information, please see license.txt
 
-// frappe.ui.form.on("SH Programme Schedule", {
+// frappe.ui.form.on("SH Class", {
 // 	refresh(frm) {
 
 // 	},

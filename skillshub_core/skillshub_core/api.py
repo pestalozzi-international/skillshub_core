@@ -17,7 +17,7 @@ ADMIN_ROLES = {
 }
 
 FEEDBACK_ROUTE_MAP = {
-    "SH Student Baseline Form": "/skillshub/baseline",
+    "SH Baseline": "/skillshub/baseline",
     "SH Soft Skills Feedback": "/skillshub/feedback/soft-skills",
     "SH Mindset Camp Feedback": "/skillshub/feedback/mindset-camp",
     "SkillsHub Edulution Feedback": "/skillshub/feedback/edulution",
@@ -43,7 +43,7 @@ def _has_student_access(student_doc):
 def _feedback_forms_for_path(programme_path):
     path = (programme_path or "").strip()
     forms = [
-        {"doctype": "SH Student Baseline Form", "label": "Baseline Assessment", "route": FEEDBACK_ROUTE_MAP["SH Student Baseline Form"]},
+        {"doctype": "SH Baseline", "label": "Baseline Assessment", "route": FEEDBACK_ROUTE_MAP["SH Baseline"]},
         {"doctype": "SH Soft Skills Feedback", "label": "Soft Skills Feedback", "route": FEEDBACK_ROUTE_MAP["SH Soft Skills Feedback"]},
         {"doctype": "SH Mindset Camp Feedback", "label": "Mindset Camp Feedback", "route": FEEDBACK_ROUTE_MAP["SH Mindset Camp Feedback"]},
         {"doctype": "SkillsHub Vocational Training Feedback", "label": "Vocational Training Feedback", "route": FEEDBACK_ROUTE_MAP["SkillsHub Vocational Training Feedback"]},
@@ -79,7 +79,7 @@ def get_student_summary(student):
         frappe.throw(_("Not permitted"), frappe.PermissionError)
 
     enrolments = frappe.get_all(
-        "SH Student Enrolment",
+        "SH Enrolment",
         filters={"student": student},
         fields=[
             "name",
@@ -118,7 +118,7 @@ def get_student_summary(student):
     )
 
     baselines = frappe.get_all(
-        "SH Student Baseline Form",
+        "SH Baseline",
         filters={"sh_student": student},
         fields=["name", "milestone", "date_submitted", "programme_schedule"],
         order_by="date_submitted desc",
@@ -331,7 +331,7 @@ def mark_attendance(schedule, date, attendance_records):
     session.insert()
 
     for record in attendance_records:
-        row = frappe.new_doc("SH Student Attendance")
+        row = frappe.new_doc("SH Attendance")
         row.sh_student = record.get("student")
         row.sh_programme_schedule = schedule
         row.date = date
@@ -369,13 +369,13 @@ def enrol_cohort(cohort, programme_schedule, enrolment_date=None):
 
     for student in students:
         if frappe.db.exists(
-            "SH Student Enrolment",
+            "SH Enrolment",
             {"student": student.name, "programme_schedule": programme_schedule},
         ):
             skipped.append(student.name)
             continue
 
-        enrolment = frappe.new_doc("SH Student Enrolment")
+        enrolment = frappe.new_doc("SH Enrolment")
         enrolment.student = student.name
         enrolment.programme_schedule = programme_schedule
         enrolment.status = "Enrolled"
@@ -429,11 +429,11 @@ def find_student_by_email(email):
 def _recompute_enrolment_for_student(student, schedule):
     """Recompute attendance stats on the SH Student Enrolment for this student+schedule."""
     enrolment_name = frappe.db.get_value(
-        "SH Student Enrolment",
+        "SH Enrolment",
         {"student": student, "programme_schedule": schedule},
     )
     if enrolment_name:
-        doc = frappe.get_doc("SH Student Enrolment", enrolment_name)
+        doc = frappe.get_doc("SH Enrolment", enrolment_name)
         doc.compute_attendance_stats()
         doc.save(ignore_permissions=True)
 

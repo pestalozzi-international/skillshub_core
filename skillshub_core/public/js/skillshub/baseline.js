@@ -85,7 +85,7 @@
 
       var rFields = ['self_confidence','communication','teamwork','problem_solving','leadership','financial_literacy','employment_readiness'];
       var payload = {
-        doctype:               'SH Student Baseline Form',
+        doctype:               'SH Baseline',
         sh_student:            studentId,
         enrolment_ticket:      enrolmentTicket || null,
         student_full_name:     ctx.student_name || ctx.full_name,
@@ -104,7 +104,7 @@
         payload[f] = el ? parseInt(el.value) || 0 : 0;
       });
 
-      fetch('/api/resource/SH Student Baseline Form', {
+      fetch('/api/resource/SH Baseline', {
         method: 'POST',
         headers: getFrappeHeaders(),
         credentials: 'include',

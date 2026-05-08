@@ -47,7 +47,7 @@
  "index_web_pages_for_search": 1,
  "links": [
   {
-   "link_doctype": "SH Programme Schedule",
+   "link_doctype": "SH Class",
    "link_fieldname": "cohort"
   }
  ],

@@ -71,7 +71,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Programme Schedule",
-   "options": "SH Programme Schedule",
+   "options": "SH Class",
    "reqd": 1
   },
   {
@@ -212,7 +212,7 @@
    "fieldname": "enrolment_ticket",
    "fieldtype": "Link",
    "label": "Enrolment Ticket",
-   "options": "SH Student Enrolment"
+   "options": "SH Enrolment"
   },
   {
    "fetch_from": "enrolment_ticket.cohort",
@@ -220,7 +220,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Cohort",
-   "options": "SkillsHub Cohort"
+   "options": "SH Cohort"
   },
   {
    "fieldname": "course_run",

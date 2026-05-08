@@ -69,7 +69,7 @@
     updateSyncBanner();
 
     // Load schedules
-    fetch('/api/resource/SH Programme Schedule?filters=[["status","=","Active"]]&fields=["name","skillshub_programme","skillshub_course","cohort"]&limit=200',
+    fetch('/api/resource/SH Class?filters=[["status","=","Active"]]&fields=["name","skillshub_programme","skillshub_course","cohort"]&limit=200',
       { headers: getFrappeHeaders(), credentials: 'include' })
     .then(function (r) {
       if (r.status === 401) { clearAndRedirect(); return null; }
@@ -93,7 +93,7 @@
       attendanceArea.style.display = 'block';
       submitBtn.disabled = true;
 
-      fetch('/api/resource/SH Student Enrolment?filters=' +
+      fetch('/api/resource/SH Enrolment?filters=' +
           encodeURIComponent(JSON.stringify([['programme_schedule','=',scheduleId],['status','=','Enrolled']])) +
           '&fields=' + encodeURIComponent(JSON.stringify(['student','student_name'])) + '&limit=300',
         { headers: getFrappeHeaders(), credentials: 'include' })
@@ -106,7 +106,7 @@
         var students = data.data || [];
         if (students.length > 0) { renderRoster(students); return; }
         // Fallback: schedule doc's enrolled_students child table
-        return fetch('/api/resource/SH Programme Schedule/' + encodeURIComponent(scheduleId) + '?fields=["enrolled_students"]',
+        return fetch('/api/resource/SH Class/' + encodeURIComponent(scheduleId) + '?fields=["enrolled_students"]',
           { headers: getFrappeHeaders(), credentials: 'include' })
           .then(function (r2) { return r2.ok ? r2.json() : null; })
           .then(function (sData) {

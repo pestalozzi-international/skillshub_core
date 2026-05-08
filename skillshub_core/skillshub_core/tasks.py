@@ -7,8 +7,8 @@ import frappe
 def daily_attendance_alerts():
     """
     Flag students with 3+ consecutive absences in their active schedule enrolment.
-    Source of truth: tabSH Student Enrolment (active enrolments) +
-                     tabSH Student Attendance (per-day records).
+    Source of truth: tabSH Enrolment (active enrolments) +
+                     tabSH Attendance (per-day records).
     """
     active_enrolments = frappe.db.sql(
         """
@@ -18,7 +18,7 @@ def daily_attendance_alerts():
             e.programme_schedule,
             s.student_name,
             s.pestalozzi_student_email
-        FROM `tabSH Student Enrolment` e
+        FROM `tabSH Enrolment` e
         INNER JOIN `tabSH Student` s ON s.name = e.student
         WHERE e.status = 'Enrolled'
         """,
@@ -31,7 +31,7 @@ def daily_attendance_alerts():
         recent = frappe.db.sql(
             """
             SELECT status
-            FROM `tabSH Student Attendance`
+            FROM `tabSH Attendance`
             WHERE sh_student = %s
               AND sh_programme_schedule = %s
             ORDER BY date DESC
@@ -69,7 +69,7 @@ def daily_attendance_alerts():
 def weekly_attendance_summary():
     """
     Weekly digest: per-schedule unique student counts and average attendance rates.
-    Source of truth: tabSH Student Enrolment aggregated by programme_schedule.
+    Source of truth: tabSH Enrolment aggregated by programme_schedule.
     """
     summary = frappe.db.sql(
         """
@@ -78,7 +78,7 @@ def weekly_attendance_summary():
             e.milestone,
             COUNT(DISTINCT e.student)   AS unique_students,
             AVG(e.attendance_rate)      AS avg_attendance_rate
-        FROM `tabSH Student Enrolment` e
+        FROM `tabSH Enrolment` e
         WHERE e.status = 'Enrolled'
         GROUP BY e.programme_schedule, e.milestone
         ORDER BY e.programme_schedule

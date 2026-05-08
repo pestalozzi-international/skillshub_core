@@ -2,7 +2,7 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
- "autoname": "format:{student_name}-SS{##}",
+ "autoname": "format:{sh_student}-SS{##}",
  "creation": "2026-01-26 07:59:41.680598",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -95,7 +95,7 @@
    "fieldname": "program_schedule",
    "fieldtype": "Link",
    "label": "Program Schedule",
-   "options": "SH Programme Schedule"
+   "options": "SH Class"
   },
   {
    "fieldname": "feedback_form_tab",
@@ -167,14 +167,14 @@
    "fieldname": "enrolment_ticket",
    "fieldtype": "Link",
    "label": "Enrolment Ticket",
-   "options": "SH Student Enrolment"
+   "options": "SH Enrolment"
   },
   {
    "fetch_from": "enrolment_ticket.cohort",
    "fieldname": "cohort",
    "fieldtype": "Link",
    "label": "Cohort",
-   "options": "SkillsHub Cohort"
+   "options": "SH Cohort"
   },
   {
    "fieldname": "course_run",

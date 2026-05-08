@@ -44,7 +44,7 @@ scheduler_events = {
 # on_trash fires before deletion so stats are recalculated after a record is removed.
 
 doc_events = {
-    "SH Student Attendance": {
+    "SH Attendance": {
         "on_update": "skillshub_core.skillshub_core.api._recompute_enrolment_on_attendance",
         "on_trash": "skillshub_core.skillshub_core.api._recompute_enrolment_on_attendance",
     }

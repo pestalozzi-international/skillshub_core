@@ -15,7 +15,7 @@ class SHStudent(WebsiteGenerator):
             return
 
         latest_path = frappe.db.get_value(
-            "SH Student Enrolment",
+            "SH Enrolment",
             filters={"student": self.name, "status": "Enrolled"},
             fieldname="programme_path",
             order_by="enrolment_date desc",

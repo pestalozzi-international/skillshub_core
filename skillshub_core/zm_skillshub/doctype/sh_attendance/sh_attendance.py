@@ -30,7 +30,7 @@ class SHAttendance(Document):
         self.day = date_obj.strftime("%A").upper()
         if self.sh_programme_schedule:
             start_date = frappe.db.get_value(
-                "SH Programme Schedule", self.sh_programme_schedule, "start_date"
+                "SH Class", self.sh_programme_schedule, "start_date"
             )
             if start_date:
                 delta = (date_obj.date() - start_date).days
@@ -41,7 +41,7 @@ class SHAttendance(Document):
         if not self.sh_student or not self.sh_programme_schedule or not self.date:
             return
         existing = frappe.db.get_value(
-            "SH Student Attendance",
+            "SH Attendance",
             {
                 "sh_student": self.sh_student,
                 "sh_programme_schedule": self.sh_programme_schedule,
@@ -61,7 +61,7 @@ class SHAttendance(Document):
         if not self.sh_programme_schedule or not self.date:
             return
         holiday_list = frappe.db.get_value(
-            "SH Programme Schedule", self.sh_programme_schedule, "holiday_list"
+            "SH Class", self.sh_programme_schedule, "holiday_list"
         )
         if not holiday_list:
             return
@@ -120,16 +120,16 @@ def _recompute_stats_for_student(student, schedule):
     # Count distinct session dates so total reflects sessions, not student rows
     total = frappe.db.sql("""
         SELECT COUNT(DISTINCT date)
-        FROM `tabSH Student Attendance`
+        FROM `tabSH Attendance`
         WHERE sh_programme_schedule = %s
     """, schedule)[0][0] or 0
 
-    present = frappe.db.count("SH Student Attendance", {
+    present = frappe.db.count("SH Attendance", {
         "sh_student": student,
         "sh_programme_schedule": schedule,
         "status": ("in", ["Present", "Late"])
     })
-    absent = frappe.db.count("SH Student Attendance", {
+    absent = frappe.db.count("SH Attendance", {
         "sh_student": student,
         "sh_programme_schedule": schedule,
         "status": "Absent"
@@ -188,7 +188,7 @@ def _sync_session_header(schedule, date):
 
     counts = frappe.db.sql("""
         SELECT status, COUNT(*) AS cnt
-        FROM `tabSH Student Attendance`
+        FROM `tabSH Attendance`
         WHERE sh_programme_schedule = %s AND date = %s
         GROUP BY status
     """, (schedule, date), as_dict=True)

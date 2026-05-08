@@ -924,7 +924,7 @@
    "mandatory_depends_on": "eval:doc.status == \"Student\"",
    "max_length": 0,
    "max_value": 0,
-   "options": "SH Programme Schedule",
+   "options": "SH Class",
    "precision": "",
    "read_only": 0,
    "reqd": 0,

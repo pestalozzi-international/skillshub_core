@@ -185,7 +185,7 @@ def weekly_attendance_summary():
             COUNT(DISTINCT sa.date)                 AS sessions_this_week,
             COUNT(DISTINCT sa.sh_student)           AS unique_students,
             AVG(CASE WHEN sa.status IN ('Present','Late') THEN 100.0 ELSE 0.0 END) AS avg_rate
-        FROM `tabSH Student Attendance` sa
+        FROM `tabSH Attendance` sa
         WHERE sa.date BETWEEN %(start)s AND %(end)s
         GROUP BY sa.sh_programme_schedule
         ORDER BY avg_rate ASC

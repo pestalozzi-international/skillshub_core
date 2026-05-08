@@ -65,7 +65,7 @@
       "fieldtype": "Link",
       "in_list_view": 1,
       "label": "Programme Schedule",
-      "options": "SH Programme Schedule",
+      "options": "SH Class",
       "reqd": 1
     },
     {
@@ -92,7 +92,7 @@
       "fieldname": "cohort",
       "fieldtype": "Link",
       "label": "Cohort",
-      "options": "SkillsHub Cohort"
+      "options": "SH Cohort"
     },
     {
       "fieldname": "column_break_context2",

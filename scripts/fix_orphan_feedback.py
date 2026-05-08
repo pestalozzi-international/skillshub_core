@@ -43,7 +43,7 @@ def run():
             "enrolment_field": "enrolment_ticket",
         },
         {
-            "doctype": "SH Student Baseline Form",
+            "doctype": "SH Baseline",
             "schedule_prefix": None,
             "label": "Baseline (any)",
             "student_field": "sh_student",
@@ -76,7 +76,7 @@ def run():
                 "programme_schedule": ["like", f"{schedule_prefix}%"]
             }
             enrolments = frappe.get_all(
-                "SH Student Enrolment",
+                "SH Enrolment",
                 filters=filters,
                 fields=["name", "status", "enrolment_date"],
                 order_by="enrolment_date desc",
@@ -87,7 +87,7 @@ def run():
 
         # 2. Fallback to ANY enrolment for this student (Logical Match)
         enrolments = frappe.get_all(
-            "SH Student Enrolment",
+            "SH Enrolment",
             filters={"student": student_id},
             fields=["name", "status", "enrolment_date"],
             order_by="enrolment_date desc",

@@ -154,8 +154,7 @@
    "fieldname": "current_schedule",
    "fieldtype": "Link",
    "label": "Current Schedule",
-   "mandatory_depends_on": "eval:doc.status == \"Student\"",
-   "options": "SH Programme Schedule"
+   "options": "SH Class"
   },
   {
    "fieldname": "applications_section",
@@ -283,7 +282,8 @@
    "fieldname": "programme_path",
    "fieldtype": "Select",
    "label": "Programme Path",
-   "options": "\nPath A\nPath B"
+   "options": "\nPath A\nPath B",
+   "reqd": 1
   },
   {
    "depends_on": "eval:doc.status == 'Alumni' || doc.status == 'Dropped'",
@@ -516,6 +516,7 @@
    "options": "SH Discipline"
   },
   {
+   "default": "Student",
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
@@ -716,7 +717,8 @@
    "fieldname": "intake_year",
    "fieldtype": "Link",
    "label": "Intake Year",
-   "options": "SH Academic Year"
+   "options": "SH Academic Year",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_lsvw",
@@ -727,7 +729,7 @@
    "fieldname": "student_enrolment",
    "fieldtype": "Link",
    "label": "Current Enrolment Record",
-   "options": "SH Student Enrolment"
+   "options": "SH Enrolment"
   },
   {
    "fieldname": "guardian_column",
@@ -836,14 +838,14 @@
    "fieldname": "intake_cohort",
    "fieldtype": "Link",
    "label": "Intake Cohort",
-   "options": "SkillsHub Cohort"
+   "options": "SH Cohort",
+   "reqd": 1
   },
   {
    "fetch_from": "student_enrolment.course",
    "fieldname": "current_course",
    "fieldtype": "Link",
    "label": "Current Course",
-   "mandatory_depends_on": "eval:doc.status == \"Student\"",
    "options": "SkillsHub Course"
   },
   {
@@ -851,7 +853,6 @@
    "fieldname": "current_milestone",
    "fieldtype": "Link",
    "label": "Current Milestone",
-   "mandatory_depends_on": "eval:doc.status == \"Student\"",
    "options": "SkillsHub Programme"
   }
  ],
@@ -863,7 +864,7 @@
  "links": [
   {
    "group": "Baseline",
-   "link_doctype": "SH Student Baseline Form",
+   "link_doctype": "SH Baseline",
    "link_fieldname": "sh_student"
   },
   {
@@ -873,7 +874,7 @@
   },
   {
    "group": "Vocational Training",
-   "link_doctype": "SkillsHub Vocational Training Feedback",
+   "link_doctype": "SH VT Feedback",
    "link_fieldname": "sh_student"
   },
   {
@@ -883,12 +884,12 @@
   },
   {
    "group": "Vocational Training",
-   "link_doctype": "ZM SkillsHub Attachment Feedback",
+   "link_doctype": "SH Attachment Feedback",
    "link_fieldname": "sh_student"
   },
   {
    "group": "Parents",
-   "link_doctype": "ZM SkillsHub Parent Feedback",
+   "link_doctype": "SH Parent Feedback",
    "link_fieldname": "sh_student"
   },
   {
@@ -898,11 +899,11 @@
   },
   {
    "group": "Enrolments",
-   "link_doctype": "SH Student Enrolment",
+   "link_doctype": "SH Enrolment",
    "link_fieldname": "student"
   }
  ],
- "modified": "2026-05-07 16:37:58.106728",
+ "modified": "2026-05-08 16:01:23.554892",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Student",
@@ -967,12 +968,8 @@
  "rows_threshold_for_grid_search": 20,
  "search_fields": "student_name",
  "show_name_in_global_search": 1,
- "show_preview_popup": 1,
- "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "fullname_and_id",
- "track_changes": 1,
- "translated_doctype": 1
+ "track_changes": 1
 }

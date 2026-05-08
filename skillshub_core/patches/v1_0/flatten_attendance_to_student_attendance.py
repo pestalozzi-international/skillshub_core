@@ -9,7 +9,7 @@ Design notes
 * Uses raw SQL INSERT so Frappe validation hooks (validate_holiday,
   validate_schedule_day) do not block migration of historical data.
 * Idempotent — records that already exist are skipped; safe to re-run.
-* Runs in [post_model_sync] so tabSH Student Attendance already exists
+* Runs in [post_model_sync] so tabSH Attendance already exists
   when this patch executes.
 * After inserting all flat records, batch-recomputes stats for every
   unique (student, schedule) pair, then refreshes all SH Attendance
@@ -54,7 +54,7 @@ def execute():
 
     def _get_start_date(schedule):
         if schedule not in start_date_cache:
-            sd = frappe.db.get_value("SH Programme Schedule", schedule, "start_date")
+            sd = frappe.db.get_value("SH Class", schedule, "start_date")
             start_date_cache[schedule] = sd
         return start_date_cache[schedule]
 
@@ -72,7 +72,7 @@ def execute():
             rec_name = f"SA-{row.schedule}-{row.sh_student}-{date_str}"
 
             # Idempotency guard
-            if frappe.db.exists("SH Student Attendance", rec_name):
+            if frappe.db.exists("SH Attendance", rec_name):
                 skipped += 1
                 continue
 
@@ -94,7 +94,7 @@ def execute():
             owner = row.recorded_by or "Administrator"
 
             frappe.db.sql("""
-                INSERT INTO `tabSH Student Attendance`
+                INSERT INTO `tabSH Attendance`
                     (name, sh_student, sh_programme_schedule, date,
                      status, day, week, marked_by,
                      creation, modified, modified_by, owner, docstatus)
@@ -139,7 +139,7 @@ def execute():
 
     combos = frappe.db.sql("""
         SELECT DISTINCT sh_student, sh_programme_schedule
-        FROM `tabSH Student Attendance`
+        FROM `tabSH Attendance`
     """, as_dict=True)
 
     stat_errors = 0
@@ -161,7 +161,7 @@ def execute():
     # ---------------------------------------------------------------- #
     sessions = frappe.db.sql("""
         SELECT DISTINCT sh_programme_schedule, date
-        FROM `tabSH Student Attendance`
+        FROM `tabSH Attendance`
     """, as_dict=True)
 
     hdr_errors = 0

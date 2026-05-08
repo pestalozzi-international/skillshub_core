@@ -129,7 +129,7 @@
    "is_query_report": 0,
    "label": "Programme Schedule",
    "link_count": 0,
-   "link_to": "SH Programme Schedule",
+   "link_to": "SH Class",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -149,7 +149,7 @@
    "is_query_report": 0,
    "label": " Cohort",
    "link_count": 0,
-   "link_to": "SkillsHub Cohort",
+   "link_to": "SH Cohort",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -217,7 +217,7 @@
    "color": "Green",
    "doc_view": "List",
    "label": "Student Enrolment",
-   "link_to": "SH Student Enrolment",
+   "link_to": "SH Enrolment",
    "stats_filter": "[]",
    "type": "DocType"
   },
@@ -262,7 +262,7 @@
    "color": "Green",
    "doc_view": "List",
    "label": "Student Baseline Assessment",
-   "link_to": "SH Student Baseline Form",
+   "link_to": "SH Baseline",
    "stats_filter": "[]",
    "type": "DocType"
   },
