@@ -131,6 +131,18 @@ def _feedback_schedule_field(doctype):
     return None
 
 
+def _list_option_names(doctype, fieldname):
+    if not _doctype_exists(doctype) or not _doctype_has_field(doctype, fieldname):
+        return []
+    rows = frappe.get_all(doctype, fields=[fieldname], limit=0, order_by=f"{fieldname} asc")
+    out = []
+    for row in rows:
+        value = (row.get(fieldname) or "").strip()
+        if value:
+            out.append(value)
+    return out
+
+
 @frappe.whitelist()
 def get_student_summary(student):
     """
@@ -311,6 +323,8 @@ def get_student_editable(student):
             for r in (student_doc.resilience_links or [])
             if r and r.resilience_statement
         ],
+        "motivation_options": _list_option_names("SH Student Motivation", "motivation"),
+        "resilience_options": _list_option_names("SH Student Resilience", "resilience_statement"),
     }
 
 
@@ -329,13 +343,16 @@ def update_student_profile(student, payload):
         if fieldname in payload:
             student_doc.set(fieldname, payload.get(fieldname) or "")
 
+    valid_motivations = set(_list_option_names("SH Student Motivation", "motivation"))
+    valid_resilience = set(_list_option_names("SH Student Resilience", "resilience_statement"))
+
     if "motivations" in payload and isinstance(payload.get("motivations"), list):
         student_doc.set("motivations", [])
         for row in payload.get("motivations") or []:
             if not isinstance(row, dict):
                 continue
             motivation = (row.get("motivation") or "").strip()
-            if motivation:
+            if motivation and (not valid_motivations or motivation in valid_motivations):
                 student_doc.append("motivations", {"motivation": motivation})
 
     if "resilience_links" in payload and isinstance(payload.get("resilience_links"), list):
@@ -344,7 +361,7 @@ def update_student_profile(student, payload):
             if not isinstance(row, dict):
                 continue
             statement = (row.get("resilience_statement") or "").strip()
-            if statement:
+            if statement and (not valid_resilience or statement in valid_resilience):
                 student_doc.append("resilience_links", {"resilience_statement": statement})
 
     student_doc.save(ignore_permissions=True)

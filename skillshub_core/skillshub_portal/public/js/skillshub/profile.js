@@ -36,23 +36,58 @@
       .then(function (json) { return json.message || json; });
   }
 
-  function linesToRows(value, key) {
-    return String(value || '')
-      .split('\n')
-      .map(function (line) { return line.trim(); })
-      .filter(Boolean)
-      .map(function (line) {
-        var row = {};
-        row[key] = line;
-        return row;
-      });
-  }
-
-  function rowsToLines(rows, key) {
+  function selectedValues(rows, key) {
     return (rows || [])
       .map(function (row) { return row && row[key] ? String(row[key]).trim() : ''; })
-      .filter(Boolean)
-      .join('\n');
+      .filter(Boolean);
+  }
+
+  function renderChecklist(containerId, values, selected, keyPrefix) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    var options = (values || []).slice();
+    container.innerHTML = '';
+    if (!options.length) {
+      container.innerHTML = '<div style="font-size:0.8rem;color:var(--muted-text-color);">No options configured.</div>';
+      return;
+    }
+    var selectedSet = new Set(selected || []);
+    options.forEach(function (value, idx) {
+      var id = keyPrefix + '-' + idx;
+      var label = document.createElement('label');
+      label.setAttribute('for', id);
+      label.style.display = 'flex';
+      label.style.alignItems = 'center';
+      label.style.gap = '0.4rem';
+      label.style.padding = '0.4rem 0.55rem';
+      label.style.border = '1px solid var(--color-slate-200)';
+      label.style.borderRadius = '0.55rem';
+      label.style.fontSize = '0.84rem';
+      label.style.cursor = 'pointer';
+
+      var input = document.createElement('input');
+      input.type = 'checkbox';
+      input.id = id;
+      input.value = value;
+      input.checked = selectedSet.has(value);
+      input.dataset.multiSelect = keyPrefix;
+
+      var span = document.createElement('span');
+      span.textContent = value;
+
+      label.appendChild(input);
+      label.appendChild(span);
+      container.appendChild(label);
+    });
+  }
+
+  function selectedFromChecklist(keyPrefix, keyName) {
+    var nodes = document.querySelectorAll('input[type="checkbox"][data-multi-select="' + keyPrefix + '"]:checked');
+    return Array.prototype.map.call(nodes, function (node) {
+      var row = {};
+      row[keyName] = String(node.value || '').trim();
+      return row;
+    });
   }
 
   function setEditStatus(message, isError) {
@@ -81,8 +116,19 @@
     setVal('edit-pincode', editable.pincode);
     setVal('edit-address-line-1', editable.address_line_1);
     setVal('edit-address-line-2', editable.address_line_2);
-    setVal('edit-motivations', rowsToLines(editable.motivations, 'motivation'));
-    setVal('edit-resilience-links', rowsToLines(editable.resilience_links, 'resilience_statement'));
+
+    renderChecklist(
+      'edit-motivations-options',
+      editable.motivation_options || [],
+      selectedValues(editable.motivations, 'motivation'),
+      'motivation'
+    );
+    renderChecklist(
+      'edit-resilience-options',
+      editable.resilience_options || [],
+      selectedValues(editable.resilience_links, 'resilience_statement'),
+      'resilience'
+    );
   }
 
   function collectEditPayload() {
@@ -95,8 +141,8 @@
       pincode: value('edit-pincode'),
       address_line_1: value('edit-address-line-1'),
       address_line_2: value('edit-address-line-2'),
-      motivations: linesToRows(value('edit-motivations'), 'motivation'),
-      resilience_links: linesToRows(value('edit-resilience-links'), 'resilience_statement')
+      motivations: selectedFromChecklist('motivation', 'motivation'),
+      resilience_links: selectedFromChecklist('resilience', 'resilience_statement')
     };
   }
 

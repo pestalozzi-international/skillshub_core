@@ -71,12 +71,12 @@
                 <input id="edit-address-line-2" class="sh-input" type="text" />
               </div>
               <div style="grid-column:1 / -1;">
-                <label class="sh-label" for="edit-motivations">Motivations (one per line)</label>
-                <textarea id="edit-motivations" class="sh-input" rows="3"></textarea>
+                <label class="sh-label">Motivations</label>
+                <div id="edit-motivations-options" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.45rem;"></div>
               </div>
               <div style="grid-column:1 / -1;">
-                <label class="sh-label" for="edit-resilience-links">Resilience Statements (one per line)</label>
-                <textarea id="edit-resilience-links" class="sh-input" rows="3"></textarea>
+                <label class="sh-label">Resilience Statements</label>
+                <div id="edit-resilience-options" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.45rem;"></div>
               </div>
             </div>
             <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:0.8rem;">
@@ -98,6 +98,6 @@
     </div>
   </main>
   <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=3.0"></script>
-  <script src="/assets/skillshub_core/js/skillshub/profile.js?v=3.1"></script>
+  <script src="/assets/skillshub_core/js/skillshub/profile.js?v=3.2"></script>
 </body>
 </html>
