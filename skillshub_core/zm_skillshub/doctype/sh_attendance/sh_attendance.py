@@ -11,7 +11,7 @@ class SHAttendance(Document):
 
     def autoname(self):
         if not self.sh_student or not self.sh_programme_schedule or not self.date:
-            frappe.throw("Student, Programme Schedule and Date are required.")
+            frappe.throw("Student, Class and Date are required.")
         date_str = str(self.date)[:10]
         self.name = f"SA-{self.sh_programme_schedule}-{self.sh_student}-{date_str}"
 
@@ -53,7 +53,7 @@ class SHAttendance(Document):
         if existing:
             frappe.throw(
                 f"Attendance for <b>{self.sh_student}</b> on <b>{self.date}</b> "
-                f"(schedule: <b>{self.sh_programme_schedule}</b>) already exists: "
+                f"(class: <b>{self.sh_programme_schedule}</b>) already exists: "
                 f"<a href='/app/sh-attendance/{existing}'>{existing}</a>"
             )
 

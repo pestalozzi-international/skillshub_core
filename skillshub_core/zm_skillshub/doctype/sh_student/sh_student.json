@@ -147,7 +147,7 @@
   {
    "fieldname": "enrolled_programmes_section",
    "fieldtype": "Section Break",
-   "label": "Programme Schedule"
+   "label": "Class Enrolment"
   },
   {
    "fetch_from": "student_enrolment.class",

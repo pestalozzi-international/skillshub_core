@@ -132,12 +132,12 @@
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <div>
         <h1>Programme Overview</h1>
-        <p>Live data health · Intake Year → Path → Programme → Course → Course Run → Schedule → Enrolments</p>
+        <p>Live data health · Intake Year → Path → Programme → Course → Course Run → Class → Enrolments</p>
       </div>
       <div class="sh-admin-nav" style="display:flex;gap:1.25rem;align-items:center;">
         <a href="/app">Desk</a><a href="/skillshub/admin/students">Students</a>
         <a href="/skillshub/admin/programme-overview" class="active">Programme</a>
-        <a href="/skillshub/admin/attendance">Attendance</a><a href="/skillshub/admin/settings">Settings</a>
+        <a href="/skillshub/admin/attendance">Attendance</a><a href="/skillshub/admin/settings">Settings</a><a href="/api/method/logout?redirect-to=/login">Logout</a>
       </div>
     </div>
   </div>
@@ -209,7 +209,7 @@ const PROG_SHORT={
   'Soft Skills Programme':'Soft Skills',
   'Vocational Training':'Vocational Training'
 };
-const NEXT_NOUN=['','path','programme','course run','schedule','student'];
+const NEXT_NOUN=['','path','programme','course run','class','student'];
 
 /* Sort keys for report default: year desc, then programme order, then course alpha, then course run numeric */
 function reportSortKey(r){
@@ -464,7 +464,7 @@ function renderReport(){
 
   let h='<div class="report-wrap">';
   h+='<div class="legend-box"><div class="legend-title">Column Guide</div><div class="legend-grid">'+
-    '<div class="leg-item"><span class="leg-dot hc-e">📋</span><span class="leg-desc"><strong>Enrolments</strong> — total in this schedule</span></div>'+
+    '<div class="leg-item"><span class="leg-dot hc-e">📋</span><span class="leg-desc"><strong>Enrolments</strong> — total in this class</span></div>'+
     '<div class="leg-item"><span class="leg-dot hc-b">📝</span><span class="leg-desc"><strong>Baselines</strong> — submitted at enrolment</span></div>'+
     (hasMSC?'<div class="leg-item"><span class="leg-dot hc-m">⛺</span><span class="leg-desc"><strong>Mindset Camp Feedback</strong></span></div>':'')+
     (hasEdu?'<div class="leg-item"><span class="leg-dot hc-d">📖</span><span class="leg-desc"><strong>Edulution Feedback</strong></span></div>':'')+
@@ -475,7 +475,7 @@ function renderReport(){
 
   h+='<table class="rpt"><thead><tr>'+
     sth('year','Year')+sth('path','Path')+sth('programme','Programme')+
-    sth('course','Course')+sth('cohort','Course Run')+sth('schedule','Schedule')+
+    sth('course','Course')+sth('cohort','Course Run')+sth('schedule','Class')+
     sth('en','📋')+sth('el','Enrolled')+sth('co','Completed')+sth('dr','Dropped')+
     sth('bl','📝 Baselines')+
     (hasMSC?'<th>⛺ MSC</th>':'')+
@@ -515,7 +515,7 @@ function renderReport(){
   },{en:0,el:0,co:0,dr:0,bl:0,ss:0,mc:0,vt:0,edu:0,att:0});
 
   h+='<tr class="totals-row">'+
-    '<td colspan="6" style="font-size:.72rem;color:var(--color-slate-500)">TOTALS — '+srows.length+' schedule'+(srows.length>1?'s':'')+
+    '<td colspan="6" style="font-size:.72rem;color:var(--color-slate-500)">TOTALS — '+srows.length+' class'+(srows.length>1?'es':'')+
     '</td><td class="td-num" style="color:#1d4ed8">'+T.en+'</td>'+
     '<td class="td-num td-part">'+T.el+'</td><td class="td-num td-good">'+T.co+'</td>'+
     '<td class="td-num td-zero">'+T.dr+'</td><td class="td-num">'+T.bl+'</td>'+
@@ -527,7 +527,7 @@ function renderReport(){
     '</tr>';
 
   h+='</tbody></table><div class="rpt-footer">'+
-    '<span>'+srows.length+' schedule'+(srows.length>1?'s':'')+' shown</span>'+
+    '<span>'+srows.length+' class'+(srows.length>1?'es':'')+' shown</span>'+
     '<span>Click headers to sort</span></div></div>';
   document.getElementById('panel-report').innerHTML=h;
 }

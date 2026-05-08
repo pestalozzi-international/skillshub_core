@@ -94,6 +94,10 @@ def _doctype_has_field(doctype, fieldname):
         return False
 
 
+def _existing_fields(doctype, candidates):
+    return [fieldname for fieldname in candidates if fieldname == "name" or _doctype_has_field(doctype, fieldname)]
+
+
 def _feedback_schedule_field(doctype):
     for fieldname in ("programme_schedule", "program_schedule", "sh_programme_schedule", "class"):
         if _doctype_has_field(doctype, fieldname):
@@ -179,7 +183,7 @@ def get_admin_students(filters=None, page=1, page_size=25):
     if filters.get("intake_cohort"):
         student_filters["intake_cohort"] = filters.get("intake_cohort")
 
-    requested_fields = [
+    requested_fields = _existing_fields("SH Student", [
         "name",
         "student_name",
         "status",
@@ -191,30 +195,39 @@ def get_admin_students(filters=None, page=1, page_size=25):
         "current_milestone",
         "mobile",
         "modified",
-    ]
+    ])
     for optional in STUDENT_LOGIN_FIELDS:
         if _doctype_has_field("SH Student", optional):
             requested_fields.append(optional)
 
-    students = frappe.get_all(
-        "SH Student",
-        filters=student_filters,
-        fields=requested_fields,
-        order_by="modified desc",
-        limit_start=offset,
-        limit=page_size,
-    )
-
-    total = frappe.db.count("SH Student", student_filters)
-
     search = (filters.get("search") or "").strip().lower()
+
     if search:
-        search_fields = ["name", "student_name"] + STUDENT_LOGIN_FIELDS
+        students = frappe.get_all(
+            "SH Student",
+            filters=student_filters,
+            fields=requested_fields,
+            order_by="modified desc",
+            limit=0,
+        )
+        search_fields = _existing_fields("SH Student", ["name", "student_name"] + STUDENT_LOGIN_FIELDS)
         students = [
             row
             for row in students
             if any(search in (row.get(fieldname) or "").lower() for fieldname in search_fields)
         ]
+        total = len(students)
+        students = students[offset : offset + page_size]
+    else:
+        students = frappe.get_all(
+            "SH Student",
+            filters=student_filters,
+            fields=requested_fields,
+            order_by="modified desc",
+            limit_start=offset,
+            limit=page_size,
+        )
+        total = frappe.db.count("SH Student", student_filters)
 
     student_ids = [row.name for row in students]
     enrolments = {}
@@ -310,34 +323,47 @@ def get_student_admin_bundle(student):
     student_doc = frappe.get_doc("SH Student", student)
     student_data = student_doc.as_dict()
 
+    enrolment_fields = _existing_fields("SH Enrolment", [
+        "name",
+        "class",
+        "course",
+        "milestone",
+        "cohort",
+        "course_run",
+        "status",
+        "enrolment_date",
+        "completion_date",
+        "sessions_total",
+        "sessions_present",
+        "sessions_absent",
+        "attendance_rate",
+        "feedback_submitted",
+        "baseline_submitted",
+    ])
     enrolments = frappe.get_all(
         "SH Enrolment",
         filters={"student": student},
-        fields=[
-            "name",
-            "class",
-            "course",
-            "milestone",
-            "cohort",
-            "course_run",
-            "status",
-            "enrolment_date",
-            "completion_date",
-            "sessions_total",
-            "sessions_present",
-            "sessions_absent",
-            "attendance_rate",
-            "feedback_submitted",
-            "baseline_submitted",
-        ],
+        fields=enrolment_fields,
         order_by="enrolment_date desc",
         limit=1000,
     )
 
+    attendance_fields = _existing_fields("SH Attendance", [
+        "name",
+        "date",
+        "status",
+        "sh_programme_schedule",
+        "week",
+        "day",
+        "late_minutes",
+        "notes",
+        "marked_by",
+        "modified",
+    ])
     attendance = frappe.get_all(
         "SH Attendance",
         filters={"sh_student": student},
-        fields=["name", "date", "status", "sh_programme_schedule", "week", "day", "marked_by", "modified"],
+        fields=attendance_fields,
         order_by="date desc",
         limit=2000,
     )

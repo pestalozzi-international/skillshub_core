@@ -355,7 +355,7 @@
    "fieldname": "programme_schedule",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Programme Schedule",
+   "label": "Class",
    "options": "SH Class"
   }
  ],

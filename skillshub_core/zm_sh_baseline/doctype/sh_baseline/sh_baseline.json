@@ -89,7 +89,7 @@
    "fetch_from": "enrolment_ticket.class",
    "fieldname": "programme_schedule",
    "fieldtype": "Link",
-   "label": "Programme Schedule",
+   "label": "Class",
    "options": "SH Class"
   },
   {

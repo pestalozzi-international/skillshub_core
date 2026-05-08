@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"GT9u3mKvXT\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">SkillsHub Data</span>\",\"col\":12}},{\"id\":\"B4zJiaDoqc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Current Students\",\"col\":4}},{\"id\":\"aSSeyUVobr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Alumni\",\"col\":4}},{\"id\":\"7OGhxqZVSs\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"rn0VIJRaVM\",\"type\":\"card\",\"data\":{\"card_name\":\"Programme Design\",\"col\":4}},{\"id\":\"zCEDYKxuNK\",\"type\":\"card\",\"data\":{\"card_name\":\"Faculty\",\"col\":4}},{\"id\":\"SKkaE9TVdd\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}},{\"id\":\"W36lVSeQ7j\",\"type\":\"card\",\"data\":{\"card_name\":\"Work post SkillsHub\",\"col\":4}},{\"id\":\"gaEa9Bbw18\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"7dj3pDOBzP\",\"type\":\"card\",\"data\":{\"card_name\":\"Baseline Building Blocks\",\"col\":4}},{\"id\":\"YxWip5M53x\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Student Baseline Assessment\",\"col\":4}},{\"id\":\"a6urO1Q_E-\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"OuOmJrpZlk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Cohort Analysis\",\"col\":3}},{\"id\":\"z2qSFPsHxE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Employment & Outcomes\",\"col\":3}},{\"id\":\"rBAjfHTSz_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Programme Overview\",\"col\":3}},{\"id\":\"nfynGDayJf\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>SkillsHub Overview</b></span>\",\"col\":12}},{\"id\":\"5jTSCbIp8C\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Programme Overview\",\"col\":3}},{\"id\":\"66t6MaYky0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Student Enrolment\",\"col\":3}},{\"id\":\"okt619BqeX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"All SkillsHub Students\",\"col\":3}},{\"id\":\"6K_PoA2_uK\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"NkY8yZProk\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"SkillsHub Architecture Guide\",\"col\":12}}]",
+ "content": "[{\"id\":\"GT9u3mKvXT\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">SkillsHub Data</span>\",\"col\":12}},{\"id\":\"B4zJiaDoqc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Current Students\",\"col\":4}},{\"id\":\"aSSeyUVobr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Alumni\",\"col\":4}},{\"id\":\"7OGhxqZVSs\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"rn0VIJRaVM\",\"type\":\"card\",\"data\":{\"card_name\":\"Programme Design\",\"col\":4}},{\"id\":\"zCEDYKxuNK\",\"type\":\"card\",\"data\":{\"card_name\":\"Faculty\",\"col\":4}},{\"id\":\"SKkaE9TVdd\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}},{\"id\":\"W36lVSeQ7j\",\"type\":\"card\",\"data\":{\"card_name\":\"Work post SkillsHub\",\"col\":4}},{\"id\":\"gaEa9Bbw18\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"7dj3pDOBzP\",\"type\":\"card\",\"data\":{\"card_name\":\"Baseline Building Blocks\",\"col\":4}},{\"id\":\"YxWip5M53x\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Student Baseline Assessment\",\"col\":4}},{\"id\":\"a6urO1Q_E-\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"OuOmJrpZlk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Cohort Analysis\",\"col\":3}},{\"id\":\"z2qSFPsHxE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Employment & Outcomes\",\"col\":3}},{\"id\":\"rBAjfHTSz_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Programme Overview\",\"col\":3}},{\"id\":\"nfynGDayJf\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>SkillsHub Overview</b></span>\",\"col\":12}},{\"id\":\"5jTSCbIp8C\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Programme Overview\",\"col\":3}},{\"id\":\"66t6MaYky0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SH Enrolment\",\"col\":3}},{\"id\":\"okt619BqeX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"All SkillsHub Students\",\"col\":3}},{\"id\":\"portalSettingsCta\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Portal Settings\",\"col\":3}},{\"id\":\"6K_PoA2_uK\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"NkY8yZProk\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"SkillsHub Architecture Guide\",\"col\":12}}]",
  "creation": "2026-05-03 11:40:35.225496",
  "custom_blocks": [
   {
@@ -192,6 +192,25 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Settings",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Portal Settings",
+   "link_count": 0,
+   "link_to": "SkillsHub Portal Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
  "modified": "2026-05-07 16:51:34.233540",
@@ -216,7 +235,7 @@
   {
    "color": "Green",
    "doc_view": "List",
-   "label": "Student Enrolment",
+   "label": "SH Enrolment",
    "link_to": "SH Enrolment",
    "stats_filter": "[]",
    "type": "DocType"
@@ -272,6 +291,13 @@
    "label": "All SkillsHub Students",
    "link_to": "SH Student",
    "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Portal Settings",
+   "link_to": "SkillsHub Portal Settings",
    "type": "DocType"
   },
   {

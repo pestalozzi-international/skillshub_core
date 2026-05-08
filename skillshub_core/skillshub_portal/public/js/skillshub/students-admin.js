@@ -34,7 +34,8 @@
     return {
       search: document.getElementById('f-search').value.trim(),
       status: document.getElementById('f-status').value,
-      programme_path: document.getElementById('f-programme-path').value
+      programme_path: document.getElementById('f-programme-path').value,
+      intake_cohort: document.getElementById('f-intake-cohort').value
     };
   }
 
@@ -45,7 +46,7 @@
   function renderRows(items) {
     var body = document.getElementById('students-body');
     if (!items.length) {
-      body.innerHTML = '<tr><td colspan="7" class="sh-empty-cell">No students found for current filters.</td></tr>';
+      body.innerHTML = '<tr><td colspan="8" class="sh-empty-cell">No students found for current filters.</td></tr>';
       return;
     }
 
@@ -57,6 +58,7 @@
           '<td><div style="font-weight:600">' + esc(row.student_name || row.name) + '</div><div style="font-size:0.78rem;color:var(--muted-text-color)">' + esc(row.name) + '</div></td>' +
           '<td><span class="sh-badge sh-badge-info">' + esc(row.status || '—') + '</span></td>' +
           '<td>' + esc(row.programme_path || '—') + '</td>' +
+          '<td>' + esc(row.intake_cohort || '—') + '</td>' +
           '<td>' +
             '<div style="font-size:0.82rem;">Course: ' + esc(row.current_course || '—') + '</div>' +
             '<div style="font-size:0.78rem;color:var(--muted-text-color);">Class: ' + esc(row.current_schedule || '—') + '</div>' +
@@ -100,8 +102,23 @@
       })
       .catch(function (error) {
         document.getElementById('students-body').innerHTML =
-          '<tr><td colspan="7" class="sh-empty-cell">Failed to load students: ' + esc(error.message) + '</td></tr>';
+          '<tr><td colspan="8" class="sh-empty-cell">Failed to load students: ' + esc(error.message) + '</td></tr>';
         meta.textContent = 'Load failed';
+      });
+  }
+
+  function loadCohortOptions() {
+    var cohortSelect = document.getElementById('f-intake-cohort');
+    return api('/api/method/skillshub_core.skillshub_portal.api.get_link_options?doctype=' + encodeURIComponent('SH Cohort'))
+      .then(function (rows) {
+        var options = ['<option value="">All</option>'];
+        (rows || []).forEach(function (name) {
+          options.push('<option value="' + esc(name) + '">' + esc(name) + '</option>');
+        });
+        cohortSelect.innerHTML = options.join('');
+      })
+      .catch(function () {
+        cohortSelect.innerHTML = '<option value="">All</option>';
       });
   }
 
@@ -114,6 +131,7 @@
       document.getElementById('f-search').value = '';
       document.getElementById('f-status').value = '';
       document.getElementById('f-programme-path').value = '';
+      document.getElementById('f-intake-cohort').value = '';
       document.getElementById('f-page-size').value = '25';
       state.page = 1;
       loadStudents();
@@ -142,6 +160,6 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     bindEvents();
-    loadStudents();
+    loadCohortOptions().then(loadStudents);
   });
 }());

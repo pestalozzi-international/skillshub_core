@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"dbkK7JHI85\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Vocational Training</span>\",\"col\":12}},{\"id\":\"q3_EReBPzY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Enrolled Student\",\"col\":3}},{\"id\":\"pmOvC2-FSI\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"X3Rto50i51\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vocational Training Feedback\",\"col\":4}},{\"id\":\"W5KaXOCm2Q\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Baseline Assessment\",\"col\":4}},{\"id\":\"gXr-b6YZOS\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"EKhpu61XeL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vocational Training Classes\",\"col\":3}},{\"id\":\"HtC4yBuaTW\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Ku2pWJkKRd\",\"type\":\"card\",\"data\":{\"card_name\":\"Building Blocks\",\"col\":4}}]",
+ "content": "[{\"id\":\"dbkK7JHI85\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Vocational Training</span>\",\"col\":12}},{\"id\":\"q3_EReBPzY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Enrolled Students\",\"col\":3}},{\"id\":\"pmOvC2-FSI\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"X3Rto50i51\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vocational Training Feedback\",\"col\":4}},{\"id\":\"W5KaXOCm2Q\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Baseline Assessment\",\"col\":4}},{\"id\":\"gXr-b6YZOS\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"EKhpu61XeL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vocational Training Classes\",\"col\":3}},{\"id\":\"HtC4yBuaTW\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Ku2pWJkKRd\",\"type\":\"card\",\"data\":{\"card_name\":\"Building Blocks\",\"col\":4}}]",
  "creation": "2026-01-28 12:11:14.785286",
  "custom_blocks": [],
  "docstatus": 0,
@@ -94,7 +94,7 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Enrolled Student",
+   "label": "Enrolled Students",
    "link_to": "SH Student",
    "stats_filter": "[[\"SH Student\",\"current_milestone\",\"=\",\"Vocational Training\",false],[\"SH Student\",\"status\",\"=\",\"Student\",false]]",
    "type": "DocType"

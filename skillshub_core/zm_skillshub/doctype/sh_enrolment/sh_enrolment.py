@@ -12,9 +12,6 @@ class SHEnrolment(Document):
         self.validate_path_b_not_edulution()
         self.compute_attendance_stats()
 
-    def after_insert(self):
-        self.update_class_roster()
-
     def validate_duplicate_enrolment(self):
         """Enforce unique constraint: one enrolment per student per class."""
         class_name = self.get("class")
@@ -68,28 +65,6 @@ class SHEnrolment(Document):
                 if self.sessions_total
                 else 0.0
             )
-
-    def update_class_roster(self):
-        """Sync this student into the enrolled_students child table on SH Class."""
-        class_name = self.get("class")
-        if not (self.student and class_name):
-            return
-
-        schedule = frappe.get_doc("SH Class", class_name)
-        existing_students = [row.student for row in (schedule.enrolled_students or [])]
-
-        if self.student not in existing_students:
-            schedule.append(
-                "enrolled_students",
-                {
-                    "student": self.student,
-                    "student_name": self.student_name,
-                    "enrolment_date": self.enrolment_date,
-                    "active": 1,
-                },
-            )
-            schedule.save(ignore_permissions=True)
-
 
 @frappe.whitelist()
 def recompute_enrolment_stats(enrolment_name):

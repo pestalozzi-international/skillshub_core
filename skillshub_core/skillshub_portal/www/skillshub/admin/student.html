@@ -36,6 +36,7 @@
           <a href="/skillshub/admin/attendance">Attendance</a>
           <a href="/skillshub/admin/programme-overview">Programme</a>
           <a href="/skillshub/admin/settings">Settings</a>
+          <a href="/api/method/logout?redirect-to=/login">Logout</a>
         </div>
       </div>
     </div>
@@ -44,7 +45,10 @@
   <main class="sh-container" style="margin-top:-1.8rem;padding-bottom:2rem;">
     <section class="sh-card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:0.6rem;flex-wrap:wrap;">
-        <a href="/skillshub/admin/students" class="sh-btn-secondary" style="text-decoration:none;">← Back to students</a>
+        <div style="display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap;">
+          <a href="/skillshub/admin/students" class="sh-btn-secondary" style="text-decoration:none;">← Back to students</a>
+          <a id="open-student-desk" href="/app" class="sh-btn-secondary" style="text-decoration:none;">Open Student in Desk</a>
+        </div>
         <button id="student-save-btn" class="sh-btn-primary">Save Changes</button>
       </div>
       <div class="tab-strip" id="student-tabs">

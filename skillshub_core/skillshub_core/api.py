@@ -81,6 +81,14 @@ def _doctype_has_field(doctype, fieldname):
         return False
 
 
+def _doctype_exists(doctype):
+    return bool(doctype and frappe.db.exists("DocType", doctype))
+
+
+def _existing_fields(doctype, candidates):
+    return [fieldname for fieldname in candidates if fieldname == "name" or _doctype_has_field(doctype, fieldname)]
+
+
 def _student_identity_values(student_doc):
     values = set()
     for fieldname in STUDENT_LOGIN_FIELDS:
@@ -133,10 +141,9 @@ def get_student_summary(student):
     if not _has_student_access(student_doc):
         frappe.throw(_("Not permitted"), frappe.PermissionError)
 
-    enrolments = frappe.get_all(
-        "SH Enrolment",
-        filters={"student": student},
-        fields=[
+    enrolments = []
+    if _doctype_exists("SH Enrolment"):
+        enrolment_fields = _existing_fields("SH Enrolment", [
             "name",
             "class",
             "milestone",
@@ -151,14 +158,17 @@ def get_student_summary(student):
             "feedback_submitted",
             "baseline_submitted",
             "course",
-        ],
-        order_by="enrolment_date asc",
-    )
+        ])
+        enrolments = frappe.get_all(
+            "SH Enrolment",
+            filters={"student": student},
+            fields=enrolment_fields,
+            order_by="enrolment_date asc",
+        )
 
-    employment = frappe.get_all(
-        "SH Employment History",
-        filters={"parent": student, "parenttype": "SH Student"},
-        fields=[
+    employment = []
+    if _doctype_exists("SH Employment History"):
+        employment_fields = _existing_fields("SH Employment History", [
             "institution",
             "occupation",
             "role",
@@ -168,16 +178,23 @@ def get_student_summary(student):
             "monthly_salary_zmw",
             "is_current",
             "notes",
-        ],
-        order_by="start_date desc",
-    )
+        ])
+        employment = frappe.get_all(
+            "SH Employment History",
+            filters={"parent": student, "parenttype": "SH Student"},
+            fields=employment_fields,
+            order_by="start_date desc",
+        )
 
-    baselines = frappe.get_all(
-        "SH Baseline",
-        filters={"sh_student": student},
-        fields=["name", "milestone", "date_submitted", "programme_schedule"],
-        order_by="date_submitted desc",
-    )
+    baselines = []
+    if _doctype_exists("SH Baseline"):
+        baseline_fields = _existing_fields("SH Baseline", ["name", "milestone", "date_submitted", "programme_schedule", "class"])
+        baselines = frappe.get_all(
+            "SH Baseline",
+            filters={"sh_student": student},
+            fields=baseline_fields,
+            order_by="date_submitted desc",
+        )
     programme_path = student_doc.get("programme_path")
     feedback_forms = _feedback_forms_for_path(programme_path)
     feedback_status = {}
@@ -255,9 +272,9 @@ def get_student_summary(student):
             "enrolment_date":   str(student_doc.get("enrolment_date")) if student_doc.get("enrolment_date") else None,
             "skillshub_programme": student_doc.get("skillshub_programme"),
             "path_definition": (
-                "Path A is the standard progression path."
+                "Path A includes the remedial learning pathway."
                 if (programme_path or "") == "Path A"
-                else "Path B is the standard path without remedial modules."
+                else "Path B is the standard progression pathway."
             ),
             "motivations":      [{"name": m.name, "motivation": m.motivation} for m in (student_doc.get("motivations") or [])],
             "resilience_links": [{"name": r.name, "resilience_statement": r.resilience_statement} for r in (student_doc.get("resilience_links") or [])],

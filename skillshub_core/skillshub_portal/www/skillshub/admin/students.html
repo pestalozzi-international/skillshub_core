@@ -26,6 +26,7 @@
           <a href="/skillshub/admin/programme-overview">Programme</a>
           <a href="/skillshub/admin/settings">Settings</a>
           <a href="/skillshub">Landing</a>
+          <a href="/api/method/logout?redirect-to=/login">Logout</a>
         </div>
       </div>
     </div>
@@ -56,6 +57,12 @@
           </select>
         </div>
         <div>
+          <label class="sh-label">Cohort</label>
+          <select id="f-intake-cohort" class="sh-input">
+            <option value="">All</option>
+          </select>
+        </div>
+        <div>
           <label class="sh-label">Items per page</label>
           <select id="f-page-size" class="sh-input">
             <option value="10">10</option>
@@ -80,6 +87,7 @@
               <th>Student</th>
               <th>Status</th>
               <th>Path</th>
+              <th>Cohort</th>
               <th>Current</th>
               <th>Enrolments</th>
               <th>Attendance</th>
@@ -87,7 +95,7 @@
             </tr>
           </thead>
           <tbody id="students-body">
-            <tr><td colspan="7" class="sh-empty-cell">Loading students...</td></tr>
+            <tr><td colspan="8" class="sh-empty-cell">Loading students...</td></tr>
           </tbody>
         </table>
       </div>

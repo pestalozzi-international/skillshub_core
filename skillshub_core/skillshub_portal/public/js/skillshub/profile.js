@@ -32,6 +32,9 @@
 
   function renderStudentCard(student) {
     var html = '';
+    if (student.image || student.student_image) {
+      html += '<div style="margin-bottom:0.7rem;"><img src="' + esc(student.image || student.student_image) + '" alt="Student photo" style="width:92px;height:92px;border-radius:999px;object-fit:cover;border:1px solid var(--color-slate-100);"></div>';
+    }
     html += '<h3 style="margin-top:0;">' + esc(student.student_name || student.full_name || student.name) + '</h3>';
     html += '<div style="font-size:0.84rem;color:var(--muted-text-color);margin-bottom:0.8rem;">' + esc(student.name || '—') + '</div>';
     html += '<div style="display:grid;gap:0.5rem;font-size:0.9rem;">';
@@ -107,7 +110,9 @@
     }
 
     container.innerHTML = rows.map(function (row) {
-      var link = '/skillshub/form-view?doctype=' + encodeURIComponent(row.doctype) + '&name=' + encodeURIComponent(row.name);
+      var link = '/skillshub/form-view?doctype=' + encodeURIComponent(row.doctype) +
+        '&name=' + encodeURIComponent(row.name) +
+        '&return_to=' + encodeURIComponent('/skillshub/profile');
       return '' +
         '<a href="' + link + '" style="text-decoration:none;border:1px solid var(--color-slate-100);border-radius:0.65rem;padding:0.52rem 0.6rem;color:inherit;">' +
           '<div style="font-size:0.78rem;color:var(--muted-text-color);">' + esc(row.label || row.doctype) + '</div>' +
@@ -128,17 +133,17 @@
   }
 
   function init() {
-    Promise.all([
-      api('/api/method/skillshub_core.skillshub_core.api.get_portal_student_context'),
-      api('/api/method/skillshub_core.skillshub_portal.api.get_portal_bootstrap')
-    ])
-      .then(function (results) {
-        var summary = results[0] || {};
-        var bootstrap = results[1] || {};
-        var studentName = bootstrap && bootstrap.student ? bootstrap.student.name : (summary.student && summary.student.name);
-        if (!studentName) throw new Error('No student account is linked to this login.');
+    api('/api/method/skillshub_core.skillshub_portal.api.get_portal_bootstrap')
+      .then(function (bootstrap) {
+        var studentName = bootstrap && bootstrap.student ? bootstrap.student.name : null;
+        if (!studentName) {
+          var message = bootstrap && bootstrap.is_admin
+            ? 'This page is for student accounts. Use the admin portal for student management.'
+            : 'No student account is linked to this login.';
+          throw new Error(message);
+        }
         return Promise.all([
-          Promise.resolve(summary),
+          api('/api/method/skillshub_core.skillshub_core.api.get_portal_student_context?student=' + encodeURIComponent(studentName)),
           api('/api/method/skillshub_core.skillshub_portal.api.get_feedback_records?student=' + encodeURIComponent(studentName))
         ]);
       })

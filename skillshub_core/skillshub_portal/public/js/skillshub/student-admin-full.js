@@ -51,11 +51,25 @@
     return params.get('id') || params.get('student');
   }
 
+  function deskUrl(doctype, name) {
+    if (!doctype || !name) return '/app';
+    var route = String(doctype).toLowerCase().replace(/\s+/g, '-');
+    return '/app/' + route + '/' + encodeURIComponent(name);
+  }
+
+  function adminReturnUrl() {
+    return '/skillshub/admin/student?id=' + encodeURIComponent(state.studentId || '');
+  }
+
   function setHeader() {
     var student = state.bundle && state.bundle.student ? state.bundle.student : {};
     document.getElementById('student-page-title').textContent = student.student_name || student.name || 'Student Profile';
     document.getElementById('student-page-subtitle').textContent =
       'ID: ' + (student.name || '—') + ' · Path: ' + (student.programme_path || '—') + ' · Status: ' + (student.status || '—');
+    var deskLink = document.getElementById('open-student-desk');
+    if (deskLink) {
+      deskLink.href = deskUrl('SH Student', student.name || state.studentId);
+    }
   }
 
   function renderOverview() {
@@ -81,6 +95,9 @@
     ];
 
     content += '<div class="kv-grid">';
+    if (student.student_image) {
+      content += '<div class="kv-item"><strong>Profile Photo</strong><div><img src="' + esc(student.student_image) + '" alt="Student photo" style="width:88px;height:88px;border-radius:999px;object-fit:cover;border:1px solid var(--color-slate-100);"></div></div>';
+    }
     keys.forEach(function (pair) {
       content += '<div class="kv-item"><strong>' + esc(pair[0]) + '</strong><div>' + esc(pair[1] || '—') + '</div></div>';
     });
@@ -96,11 +113,17 @@
     }
 
     var html = '<div class="table-wrap"><table class="sh-admin-table"><thead><tr>' +
-      '<th>Class</th><th>Course</th><th>Milestone</th><th>Status</th><th>Dates</th><th>Attendance</th>' +
+      '<th>Class</th><th>Course</th><th>Milestone</th><th>Status</th><th>Dates</th><th>Attendance</th><th>Desk</th>' +
       '</tr></thead><tbody>';
     rows.forEach(function (row) {
+      var classDesk = row.class ? deskUrl('SH Class', row.class) : '/app';
+      var enrolmentDesk = row.name ? deskUrl('SH Enrolment', row.name) : '/app';
       html += '<tr>' +
-        '<td>' + esc(row.class || '—') + '<div style="font-size:0.76rem;color:var(--muted-text-color)">' + esc(row.course_run || '—') + '</div></td>' +
+        '<td>' +
+          esc(row.class || '—') +
+          '<div style="font-size:0.76rem;color:var(--muted-text-color)">' + esc(row.course_run || '—') + '</div>' +
+          (row.class ? '<div style="margin-top:0.22rem;"><a href="' + classDesk + '" style="font-size:0.74rem;text-decoration:none;" target="_blank">Class ↗</a></div>' : '') +
+        '</td>' +
         '<td>' + esc(row.course || '—') + '</td>' +
         '<td>' + esc(row.milestone || '—') + '</td>' +
         '<td><span class="sh-badge sh-badge-info">' + esc(row.status || '—') + '</span></td>' +
@@ -108,6 +131,7 @@
         '<td>' + esc(row.attendance_rate ? Math.round(row.attendance_rate) + '%' : '—') +
         '<div style="font-size:0.76rem;color:var(--muted-text-color)">' +
         esc((row.sessions_present || 0) + '/' + (row.sessions_total || 0) + ' present') + '</div></td>' +
+        '<td>' + (row.name ? '<a class="sh-btn-secondary" style="font-size:0.76rem;padding:0.32rem 0.62rem;text-decoration:none;" href="' + enrolmentDesk + '" target="_blank">Enrolment</a>' : '—') + '</td>' +
         '</tr>';
     });
     html += '</tbody></table></div>';
@@ -121,15 +145,17 @@
       return;
     }
     var html = '<div class="table-wrap"><table class="sh-admin-table"><thead><tr>' +
-      '<th>Date</th><th>Class</th><th>Status</th><th>Week/Day</th><th>Marked By</th>' +
+      '<th>Date</th><th>Class</th><th>Status</th><th>Week/Day</th><th>Marked By</th><th>Desk</th>' +
       '</tr></thead><tbody>';
     rows.forEach(function (row) {
+      var attDesk = row.name ? deskUrl('SH Attendance', row.name) : '/app';
       html += '<tr>' +
         '<td>' + esc(fmtDate(row.date)) + '</td>' +
         '<td>' + esc(row.sh_programme_schedule || '—') + '</td>' +
         '<td><span class="sh-badge sh-badge-info">' + esc(row.status || '—') + '</span></td>' +
         '<td>' + esc((row.week || '—') + ' / ' + (row.day || '—')) + '</td>' +
         '<td>' + esc(row.marked_by || '—') + '</td>' +
+        '<td>' + (row.name ? '<a class="sh-btn-secondary" style="font-size:0.76rem;padding:0.32rem 0.62rem;text-decoration:none;" href="' + attDesk + '" target="_blank">Attendance</a>' : '—') + '</td>' +
         '</tr>';
     });
     html += '</tbody></table></div>';
@@ -144,7 +170,9 @@
       var href = form.route +
         '?student=' + encodeURIComponent(state.studentId) +
         '&schedule=' + encodeURIComponent(current.class || '') +
-        '&enrolment_ticket=' + encodeURIComponent(current.name || '');
+        '&enrolment_ticket=' + encodeURIComponent(current.name || '') +
+        '&return_to=' + encodeURIComponent(adminReturnUrl()) +
+        '&from=admin';
       return '<a class="sh-btn-secondary" style="font-size:0.76rem;padding:0.35rem 0.65rem;text-decoration:none;" href="' + href + '">+ ' + esc(form.label) + '</a>';
     }).join('');
 
@@ -157,13 +185,21 @@
       '<th>Form</th><th>Doc</th><th>Class</th><th>Submitted</th><th>View</th>' +
       '</tr></thead><tbody>';
     rows.forEach(function (row) {
-      var viewUrl = '/skillshub/form-view?doctype=' + encodeURIComponent(row.doctype) + '&name=' + encodeURIComponent(row.name) + '&student=' + encodeURIComponent(state.studentId);
+      var viewUrl = '/skillshub/form-view?doctype=' + encodeURIComponent(row.doctype) +
+        '&name=' + encodeURIComponent(row.name) +
+        '&student=' + encodeURIComponent(state.studentId) +
+        '&return_to=' + encodeURIComponent(adminReturnUrl()) +
+        '&from=admin';
+      var feedbackDesk = deskUrl(row.doctype, row.name);
       html += '<tr>' +
         '<td>' + esc(row.label || row.doctype) + '</td>' +
         '<td><code>' + esc(row.name) + '</code></td>' +
         '<td>' + esc(row.programme_schedule || '—') + '</td>' +
         '<td>' + esc(fmtDate(row.creation)) + '</td>' +
-        '<td><a class="sh-btn-secondary" style="font-size:0.78rem;padding:0.38rem 0.7rem;text-decoration:none;" href="' + viewUrl + '">Open</a></td>' +
+        '<td style="display:flex;gap:0.35rem;flex-wrap:wrap;">' +
+          '<a class="sh-btn-secondary" style="font-size:0.78rem;padding:0.38rem 0.7rem;text-decoration:none;" href="' + viewUrl + '">Open</a>' +
+          '<a class="sh-btn-secondary" style="font-size:0.78rem;padding:0.38rem 0.7rem;text-decoration:none;" target="_blank" href="' + feedbackDesk + '">Desk ↗</a>' +
+        '</td>' +
         '</tr>';
     });
     html += '</tbody></table></div>';

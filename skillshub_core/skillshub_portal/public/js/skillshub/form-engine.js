@@ -53,6 +53,23 @@
     return new URLSearchParams(window.location.search);
   }
 
+  function resolveBackLink() {
+    var backLink = document.getElementById('portal-form-back');
+    if (!backLink) return;
+    var params = getParams();
+    var returnTo = params.get('return_to');
+    if (returnTo && returnTo.charAt(0) === '/') {
+      backLink.href = returnTo;
+      return;
+    }
+    var student = params.get('student');
+    if (params.get('from') === 'admin' && student) {
+      backLink.href = '/skillshub/admin/student?id=' + encodeURIComponent(student);
+      return;
+    }
+    backLink.href = '/skillshub/profile';
+  }
+
   function inferStudentField() {
     var names = ['sh_student', 'student'];
     var fields = (state.meta && state.meta.fields) || [];
@@ -355,6 +372,7 @@
     var readName = params.get('name');
 
     document.getElementById('portal-form-title').textContent = title;
+    resolveBackLink();
 
     var summaryPromise = api('/api/method/skillshub_core.skillshub_core.api.get_portal_student_context' + (params.get('student') ? '?student=' + encodeURIComponent(params.get('student')) : ''))
       .catch(function () { return {}; });

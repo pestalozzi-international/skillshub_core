@@ -34,9 +34,7 @@
   "section_break_tjts",
   "start_date",
   "column_break_nfbv",
-  "end_date",
-  "section_break_roster",
-  "enrolled_students"
+  "end_date"
  ],
  "fields": [
   {
@@ -190,17 +188,6 @@
   {
    "fieldname": "column_break_jkjr",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "section_break_roster",
-   "fieldtype": "Section Break",
-   "label": "Enrolled Students"
-  },
-  {
-   "fieldname": "enrolled_students",
-   "fieldtype": "Table",
-   "label": "Enrolled Students",
-   "options": "SH Schedule Student"
   },
   {
    "fieldname": "course_run",
