@@ -76,10 +76,10 @@
       var chs = [];
       document.querySelectorAll('.ch-cb:checked').forEach(function (cb) { chs.push({ challenge: cb.value }); });
 
-      fetch('/api/resource/ZM SkillsHub Attachment Feedback', {
+      fetch('/api/resource/SH Attachment Feedback', {
         method: 'POST', headers: getFrappeHeaders(), credentials: 'include',
         body: JSON.stringify({
-          doctype:                 'ZM SkillsHub Attachment Feedback',
+          doctype:                 'SH Attachment Feedback',
           sh_student:              studentId,
           enrolment_ticket:        enrolmentTicket || null,
           student_full_name:       ctx.student_name || ctx.full_name,

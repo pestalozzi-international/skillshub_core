@@ -62,9 +62,9 @@
       { doctype: 'SH Baseline',                   label: 'Baseline Assessment',         route: '/skillshub/baseline',                       studentField: 'sh_student' },
       { doctype: 'SH Soft Skills Feedback',                    label: 'Soft Skills Feedback',         route: '/skillshub/feedback/soft-skills',            studentField: 'sh_student' },
       { doctype: 'SH Mindset Camp Feedback',                   label: 'Mindset Camp Feedback',        route: '/skillshub/feedback/mindset-camp',           studentField: 'sh_student' },
-      { doctype: 'SkillsHub Edulution Feedback',               label: 'Edulution Feedback',           route: '/skillshub/feedback/edulution',              studentField: 'sh_student' },
-      { doctype: 'SkillsHub Vocational Training Feedback',     label: 'Vocational Training Feedback', route: '/skillshub/feedback/vocational-training',    studentField: 'sh_student' },
-      { doctype: 'ZM SkillsHub Attachment Feedback',           label: 'Attachment Feedback',          route: '/skillshub/feedback/attachment',             studentField: 'sh_student' },
+      { doctype: 'SH Edulution Feedback',               label: 'Edulution Feedback',           route: '/skillshub/feedback/edulution',              studentField: 'sh_student' },
+      { doctype: 'SH VT Feedback',     label: 'Vocational Training Feedback', route: '/skillshub/feedback/vocational-training',    studentField: 'sh_student' },
+      { doctype: 'SH Attachment Feedback',           label: 'Attachment Feedback',          route: '/skillshub/feedback/attachment',             studentField: 'sh_student' },
     ];
     var results = [];
     await Promise.all(doctypes.map(async function (spec) {
@@ -177,7 +177,7 @@
           html += '<div class="tl-item" style="padding:1rem 0;border-bottom:1px solid var(--color-slate-100)">';
           html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem">';
           html += '<div>';
-          html += '<div style="font-weight:600">' + esc(e.programme_schedule || e.milestone || '—') + '</div>';
+          html += '<div style="font-weight:600">' + esc(e.class || e.milestone || '—') + '</div>';
           if (e.course) html += '<div style="font-size:0.85rem;color:var(--color-slate-500)">' + esc(e.course) + '</div>';
           html += '<div style="font-size:0.8rem;color:var(--color-slate-400);margin-top:0.2rem">' + fmtDate(e.enrolment_date) + (e.completion_date ? ' → ' + fmtDate(e.completion_date) : '') + '</div>';
           html += '</div>';
@@ -188,7 +188,7 @@
 
           // Submitted feedback for this enrolment
           var submittedForEnrolment = submittedFeedback.filter(function (f) {
-            return f.programme_schedule === e.programme_schedule || f.enrolment_ticket === e.name;
+            return f.programme_schedule === e.class || f.enrolment_ticket === e.name;
           });
           if (submittedForEnrolment.length) {
             html += '<div style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0.4rem">';
@@ -206,7 +206,7 @@
             html += '<div style="margin-top:0.6rem;display:flex;flex-wrap:wrap;gap:0.4rem">';
             feedback_forms.forEach(function (ff) {
               var href = ff.route + '?student=' + encodeURIComponent(studentId) +
-                '&schedule=' + encodeURIComponent(e.programme_schedule || '') +
+                '&schedule=' + encodeURIComponent(e.class || '') +
                 '&enrolment_ticket=' + encodeURIComponent(e.name || '');
               html += '<a class="sh-btn-secondary" style="font-size:0.8rem;padding:0.3rem 0.75rem" href="' + esc(href) + '">+ ' + esc(ff.label) + '</a>';
             });

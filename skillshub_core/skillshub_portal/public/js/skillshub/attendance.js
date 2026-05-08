@@ -94,7 +94,7 @@
       submitBtn.disabled = true;
 
       fetch('/api/resource/SH Enrolment?filters=' +
-          encodeURIComponent(JSON.stringify([['programme_schedule','=',scheduleId],['status','=','Enrolled']])) +
+          encodeURIComponent(JSON.stringify([['class','=',scheduleId],['status','=','Enrolled']])) +
           '&fields=' + encodeURIComponent(JSON.stringify(['student','student_name'])) + '&limit=300',
         { headers: getFrappeHeaders(), credentials: 'include' })
       .then(function (r) {

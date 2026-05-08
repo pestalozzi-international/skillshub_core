@@ -27,11 +27,15 @@
     fetch('/api/method/skillshub_core.skillshub_core.api.get_portal_student_context' +
       (urlStudent ? '?student=' + encodeURIComponent(urlStudent) : ''),
       { headers: getFrappeHeaders(), credentials: 'include' })
-    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (r) { return r.json(); })
     .then(function (data) {
-      var s = data && data.message && data.message.student ? data.message.student : null;
-      if (!s) throw new Error('Unable to fetch student context');
-      ctx = s; studentId = s.name || s.id || studentId;
+      var s = data.message.student; ctx = s; studentId = s.name || s.id || studentId;
+
+      if (s.programme_path === 'Path B') {
+        document.getElementById('sh-loading').style.display = 'none';
+        document.getElementById('sh-path-b-msg').style.display = 'block';
+        return;
+      }
 
       var schedule        = urlSchedule        || s.current_schedule  || '';
       var enrolmentTicket = urlEnrolmentTicket || s.current_enrolment || '';
@@ -39,26 +43,12 @@
       try { document.getElementById('ctx-id').textContent        = studentId; }       catch(e){}
       try { document.getElementById('ctx-name').textContent      = s.student_name || s.full_name || '-'; } catch(e){}
       try { document.getElementById('ctx-schedule').textContent  = schedule; }        catch(e){}
-      try { document.getElementById('ctx-enrolment').textContent = enrolmentTicket; } catch(e){}
       try { document.getElementById('ctx-path').textContent      = s.programme_path || '-'; } catch(e){}
+      try { document.getElementById('ctx-enrolment').textContent = enrolmentTicket; } catch(e){}
 
       var form = document.getElementById('sh-feedback-form');
       if (form) { form.dataset.schedule = schedule; form.dataset.enrolmentTicket = enrolmentTicket; }
 
-      return fetch('/api/resource/SH VT Course Expectation?fields=["name"]&limit=50',
-        { headers: getFrappeHeaders(), credentials: 'include' }).then(function (r) { return r.json(); });
-    })
-    .then(function (exps) {
-      var group = document.getElementById('expectations-group');
-      if (group) {
-        group.innerHTML = '';
-        (exps.data || []).forEach(function (ex) {
-          var d = document.createElement('div'); d.className = 'checkbox-item';
-          var inp = document.createElement('input'); inp.type = 'checkbox'; inp.id = 'exp-' + ex.name; inp.value = ex.name; inp.className = 'exp-cb';
-          var lbl = document.createElement('label'); lbl.htmlFor = 'exp-' + ex.name; lbl.textContent = ex.name;
-          d.appendChild(inp); d.appendChild(lbl); group.appendChild(d);
-        });
-      }
       document.getElementById('sh-loading').style.display = 'none';
       document.getElementById('sh-feedback-form').style.display = 'block';
     })
@@ -74,29 +64,24 @@
       var schedule        = form.dataset.schedule        || ctx.current_schedule  || '';
       var enrolmentTicket = form.dataset.enrolmentTicket || ctx.current_enrolment || null;
 
-      var exps = [];
-      document.querySelectorAll('.exp-cb:checked').forEach(function (cb) { exps.push({ expectation: cb.value }); });
-
-      var sFields = ['problem_solving', 'time_management', 'teamwork', 'mental_resilience'];
+      var rFields = ['confidence','literacy','numeracy','resilience','problem_solving'];
       var payload = {
-        doctype:                  'SkillsHub Vocational Training Feedback',
-        sh_student:               studentId,
-        enrolment_ticket:         enrolmentTicket || null,
-        student_full_name:        ctx.student_name || ctx.full_name,
-        programme_schedule:       schedule,
-        course_expectations:      exps,
-        course_met_expectations:  document.getElementById('met_expectations').value,
-        objective_comms_rating:   parseInt(document.getElementById('r-objective_comms').value) || 3,
-        trainer_comms_rating:     parseInt(document.getElementById('r-trainer_comms').value) || 3,
-        goals:                    document.getElementById('goals').value,
-        volunteering:             document.getElementById('volunteering').checked ? 1 : 0
+        doctype:            'SH Edulution Feedback',
+        sh_student:         studentId,
+        enrolment_ticket:   enrolmentTicket || null,
+        student_full_name:  ctx.student_name || ctx.full_name,
+        programme_schedule: schedule,
+        goals_achieved:     document.getElementById('goals_achieved').value,
+        skills_learned:     document.getElementById('skills_learned').value,
+        impact_statement:   document.getElementById('impact_statement').value,
+        coaching_opt_in:    document.getElementById('coaching_opt_in').checked ? 1 : 0
       };
-      sFields.forEach(function (f) {
+      rFields.forEach(function (f) {
         var el = document.getElementById('r-' + f);
         payload[f] = el ? parseInt(el.value) || 0 : 0;
       });
 
-      fetch('/api/resource/SkillsHub Vocational Training Feedback', {
+      fetch('/api/resource/SH Edulution Feedback', {
         method: 'POST', headers: getFrappeHeaders(), credentials: 'include',
         body: JSON.stringify(payload)
       })

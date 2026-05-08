@@ -177,7 +177,7 @@
         : '<div style="margin-top:0.5rem; font-size:0.78rem; color:var(--color-slate-500)">No submitted feedback for this schedule yet.</div>';
       return '<div class="tl-item ' + (e.status === 'Completed' ? 'completed' : '') + '">' +
         '<div class="tl-date">' + fmt(e.enrolment_date) + (e.completion_date ? ' — ' + fmt(e.completion_date) : '') + '</div>' +
-        '<div class="tl-title">' + (e.milestone || e.course || e.programme_schedule || 'Programme Milestone') + (e.course && e.milestone ? ' · ' + e.course : '') + '</div>' +
+        '<div class="tl-title">' + (e.milestone || e.course || e.class || 'Programme Milestone') + (e.course && e.milestone ? ' · ' + e.course : '') + '</div>' +
         '<div class="tl-meta">' +
           '<span class="sh-badge ' + (e.status === 'Completed' ? 'sh-badge-success' : 'sh-badge-info') + '">' + e.status + '</span>' +
           (e.attendance_rate ? '<span class="sh-badge sh-badge-info">' + Math.round(e.attendance_rate) + '% Att.</span>' : '') +

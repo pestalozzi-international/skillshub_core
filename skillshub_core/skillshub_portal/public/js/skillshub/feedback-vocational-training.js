@@ -40,21 +40,22 @@
       try { document.getElementById('ctx-name').textContent      = s.student_name || s.full_name || '-'; } catch(e){}
       try { document.getElementById('ctx-schedule').textContent  = schedule; }        catch(e){}
       try { document.getElementById('ctx-enrolment').textContent = enrolmentTicket; } catch(e){}
+      try { document.getElementById('ctx-path').textContent      = s.programme_path || '-'; } catch(e){}
 
       var form = document.getElementById('sh-feedback-form');
       if (form) { form.dataset.schedule = schedule; form.dataset.enrolmentTicket = enrolmentTicket; }
 
-      return fetch('/api/resource/SH Attachment Challenge?fields=["name"]&limit=50',
+      return fetch('/api/resource/SH VT Course Expectation?fields=["name"]&limit=50',
         { headers: getFrappeHeaders(), credentials: 'include' }).then(function (r) { return r.json(); });
     })
-    .then(function (chs) {
-      var group = document.getElementById('challenges-group');
+    .then(function (exps) {
+      var group = document.getElementById('expectations-group');
       if (group) {
         group.innerHTML = '';
-        (chs.data || []).forEach(function (ch) {
+        (exps.data || []).forEach(function (ex) {
           var d = document.createElement('div'); d.className = 'checkbox-item';
-          var inp = document.createElement('input'); inp.type = 'checkbox'; inp.id = 'ch-' + ch.name; inp.value = ch.name; inp.className = 'ch-cb';
-          var lbl = document.createElement('label'); lbl.htmlFor = 'ch-' + ch.name; lbl.textContent = ch.name;
+          var inp = document.createElement('input'); inp.type = 'checkbox'; inp.id = 'exp-' + ex.name; inp.value = ex.name; inp.className = 'exp-cb';
+          var lbl = document.createElement('label'); lbl.htmlFor = 'exp-' + ex.name; lbl.textContent = ex.name;
           d.appendChild(inp); d.appendChild(lbl); group.appendChild(d);
         });
       }
@@ -73,23 +74,31 @@
       var schedule        = form.dataset.schedule        || ctx.current_schedule  || '';
       var enrolmentTicket = form.dataset.enrolmentTicket || ctx.current_enrolment || null;
 
-      var chs = [];
-      document.querySelectorAll('.ch-cb:checked').forEach(function (cb) { chs.push({ challenge: cb.value }); });
+      var exps = [];
+      document.querySelectorAll('.exp-cb:checked').forEach(function (cb) { exps.push({ expectation: cb.value }); });
 
-      fetch('/api/resource/ZM SkillsHub Attachment Feedback', {
+      var sFields = ['problem_solving', 'time_management', 'teamwork', 'mental_resilience'];
+      var payload = {
+        doctype:                  'SH VT Feedback',
+        sh_student:               studentId,
+        enrolment_ticket:         enrolmentTicket || null,
+        student_full_name:        ctx.student_name || ctx.full_name,
+        programme_schedule:       schedule,
+        course_expectations:      exps,
+        course_met_expectations:  document.getElementById('met_expectations').value,
+        objective_comms_rating:   parseInt(document.getElementById('r-objective_comms').value) || 3,
+        trainer_comms_rating:     parseInt(document.getElementById('r-trainer_comms').value) || 3,
+        goals:                    document.getElementById('goals').value,
+        volunteering:             document.getElementById('volunteering').checked ? 1 : 0
+      };
+      sFields.forEach(function (f) {
+        var el = document.getElementById('r-' + f);
+        payload[f] = el ? parseInt(el.value) || 0 : 0;
+      });
+
+      fetch('/api/resource/SH VT Feedback', {
         method: 'POST', headers: getFrappeHeaders(), credentials: 'include',
-        body: JSON.stringify({
-          doctype:                 'ZM SkillsHub Attachment Feedback',
-          sh_student:              studentId,
-          enrolment_ticket:        enrolmentTicket || null,
-          student_full_name:       ctx.student_name || ctx.full_name,
-          programme_schedule:      schedule,
-          challenges:              chs,
-          preparation_rating:      parseInt(document.getElementById('r-preparation').value) || 3,
-          skills_use_example:      document.getElementById('skills_use').value,
-          challenges_text:         document.getElementById('challenges_text').value,
-          improvement_suggestions: document.getElementById('improvements').value
-        })
+        body: JSON.stringify(payload)
       })
       .then(function (r) {
         if (!r.ok) throw new Error('Failed');
