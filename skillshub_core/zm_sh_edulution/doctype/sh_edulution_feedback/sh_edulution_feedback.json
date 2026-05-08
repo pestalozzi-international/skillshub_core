@@ -280,6 +280,33 @@
    "reqd": 1
   },
   {
+   "fieldname": "course_run",
+   "fieldtype": "Data",
+   "label": "Course Run",
+   "read_only": 1,
+   "in_list_view": 0,
+   "in_standard_filter": 1,
+   "reqd": 0,
+   "bold": 0,
+   "hidden": 0,
+   "print_hide": 0,
+   "translatable": 0,
+   "fetch_if_empty": 0,
+   "allow_bulk_edit": 0,
+   "in_filter": 0,
+   "in_global_search": 0,
+   "in_preview": 0,
+   "search_index": 0,
+   "permlevel": 0,
+   "length": 0,
+   "columns": 0,
+   "no_copy": 0,
+   "allow_on_submit": 0,
+   "print_hide_if_no_value": 0,
+   "allow_in_quick_entry": 0,
+   "fetch_from": "enrolment_ticket.course_run"
+  },
+  {
    "fieldname": "column_break_ntka",
    "fieldtype": "Column Break"
   },
