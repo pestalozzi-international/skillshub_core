@@ -15,7 +15,8 @@
     studentId: null,
     bundle: null,
     meta: null,
-    editable: null
+    editable: null,
+    linkCache: {}
   };
 
   function esc(value) {
@@ -45,6 +46,39 @@
         return response.json();
       })
       .then(function (json) { return json.message || json; });
+  }
+
+  function getLinkOptions(doctype) {
+    if (!doctype) return Promise.resolve([]);
+    if (state.linkCache[doctype]) return Promise.resolve(state.linkCache[doctype]);
+    return api('/api/method/skillshub_core.skillshub_portal.api.get_link_options?doctype=' + encodeURIComponent(doctype) + '&limit=300')
+      .then(function (rows) {
+        state.linkCache[doctype] = rows || [];
+        return state.linkCache[doctype];
+      })
+      .catch(function () { return []; });
+  }
+
+  function hydrateLinkFields() {
+    var fields = document.querySelectorAll('#tab-edit select[data-fieldtype="Link"][data-link-doctype]');
+    Array.prototype.forEach.call(fields, function (select) {
+      var doctype = select.getAttribute('data-link-doctype') || '';
+      var current = select.getAttribute('data-current') || select.value || '';
+      getLinkOptions(doctype).then(function (options) {
+        var html = '<option value=""></option>';
+        var seen = {};
+        (options || []).forEach(function (value) {
+          var v = String(value || '').trim();
+          if (!v || seen[v]) return;
+          seen[v] = true;
+          html += '<option value="' + esc(v) + '"' + (v === String(current) ? ' selected' : '') + '>' + esc(v) + '</option>';
+        });
+        if (current && !seen[current]) {
+          html += '<option value="' + esc(current) + '" selected>' + esc(current) + '</option>';
+        }
+        select.innerHTML = html;
+      });
+    });
   }
 
   function parseStudentId() {
@@ -288,6 +322,10 @@
     var current = value === null || value === undefined ? '' : value;
     if (field.fieldtype === 'Check') {
       html += '<input id="fld-' + esc(field.fieldname) + '" data-fieldname="' + esc(field.fieldname) + '" data-fieldtype="Check" class="sh-input" type="checkbox" ' + (current ? 'checked' : '') + '>';
+    } else if (field.fieldtype === 'Link') {
+      html += '<select id="fld-' + esc(field.fieldname) + '" data-fieldname="' + esc(field.fieldname) + '" data-fieldtype="Link" data-link-doctype="' + esc(field.options || '') + '" data-current="' + esc(current) + '" class="sh-input">';
+      html += '<option value="' + esc(current) + '">' + esc(current || '') + '</option>';
+      html += '</select>';
     } else if (field.fieldtype === 'Select') {
       html += '<select id="fld-' + esc(field.fieldname) + '" data-fieldname="' + esc(field.fieldname) + '" data-fieldtype="Select" class="sh-input">';
       html += '<option value=""></option>';
@@ -392,6 +430,7 @@
       selectedValues(student.resilience_links, 'resilience_statement'),
       'admin-resilience'
     );
+    hydrateLinkFields();
   }
 
   function bindTabs() {
