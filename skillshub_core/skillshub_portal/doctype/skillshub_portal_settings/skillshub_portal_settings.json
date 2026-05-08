@@ -34,8 +34,7 @@
   "current_cohort",
   "default_academic_year",
   "column_break_defaults",
-  "default_programme",
-  "default_term"
+  "default_programme"
  ],
  "fields": [
   {
@@ -202,12 +201,6 @@
    "fieldtype": "Link",
    "label": "Default Programme",
    "options": "SkillsHub Programme"
-  },
-  {
-   "fieldname": "default_term",
-   "fieldtype": "Link",
-   "label": "Default Academic Term",
-   "options": "SH Academic Term"
   }
  ],
  "index_web_pages_for_search": 0,

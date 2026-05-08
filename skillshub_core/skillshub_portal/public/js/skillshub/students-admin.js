@@ -109,7 +109,7 @@
 
   function loadCohortOptions() {
     var cohortSelect = document.getElementById('f-intake-cohort');
-    return api('/api/method/skillshub_core.skillshub_portal.api.get_link_options?doctype=' + encodeURIComponent('SH Cohort'))
+    return api('/api/method/skillshub_core.skillshub_portal.api.get_intake_cohort_options')
       .then(function (rows) {
         var options = ['<option value="">All</option>'];
         (rows || []).forEach(function (name) {

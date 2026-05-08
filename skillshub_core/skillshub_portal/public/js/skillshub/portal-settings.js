@@ -69,6 +69,43 @@
     }
   }
 
+  function normalizePath(pathname) {
+    var path = pathname || '/';
+    if (path.length > 1 && path.endsWith('/')) return path.slice(0, -1);
+    return path;
+  }
+
+  function enforceAccess(bootstrap) {
+    var path = normalizePath(window.location.pathname || '/');
+    if (!path.startsWith('/skillshub')) return;
+
+    var isLoggedIn = !!(bootstrap && bootstrap.is_logged_in);
+    var isAdmin = !!(bootstrap && bootstrap.is_admin);
+
+    var guestAllowed = path === '/skillshub' || path === '/skillshub/login';
+    var protectedPath =
+      path === '/skillshub/profile' ||
+      path === '/skillshub/baseline' ||
+      path === '/skillshub/attendance' ||
+      path === '/skillshub/form-view' ||
+      path.startsWith('/skillshub/feedback') ||
+      path.startsWith('/skillshub/admin');
+
+    if (protectedPath && !isLoggedIn) {
+      window.location.replace('/skillshub');
+      return;
+    }
+
+    if (path.startsWith('/skillshub/admin') && !isAdmin) {
+      window.location.replace('/skillshub');
+      return;
+    }
+
+    if (!guestAllowed && !protectedPath && !isLoggedIn) {
+      window.location.replace('/skillshub');
+    }
+  }
+
   function api(path, options) {
     return fetch(path, Object.assign({ credentials: 'include', headers: getHeaders() }, options || {})).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status + ' (' + path + ')');
@@ -97,6 +134,7 @@
       window.SHPortal.settings = settings;
       window.SHPortal.bootstrap = bootstrap;
       applyBranding(settings);
+      enforceAccess(bootstrap);
 
       var roleClass = bootstrap && bootstrap.is_admin ? 'sh-role-admin' : bootstrap && bootstrap.is_logged_in ? 'sh-role-student' : 'sh-role-guest';
       document.body.classList.add(roleClass);

@@ -57,15 +57,23 @@
     var backLink = document.getElementById('portal-form-back');
     if (!backLink) return;
     var params = getParams();
+    var student = params.get('student');
     var returnTo = params.get('return_to');
     if (returnTo && returnTo.charAt(0) === '/') {
       backLink.href = returnTo;
       return;
     }
-    var student = params.get('student');
     if (params.get('from') === 'admin' && student) {
       backLink.href = '/skillshub/admin/student?id=' + encodeURIComponent(student);
       return;
+    }
+    if (student) {
+      var isAdmin = !!(window.SHPortal && window.SHPortal.bootstrap && window.SHPortal.bootstrap.is_admin);
+      var referrer = document.referrer || '';
+      if (isAdmin || referrer.indexOf('/skillshub/admin/student') > -1 || referrer.indexOf('/skillshub/admin/') > -1) {
+        backLink.href = '/skillshub/admin/student?id=' + encodeURIComponent(student);
+        return;
+      }
     }
     backLink.href = '/skillshub/profile';
   }
@@ -263,6 +271,7 @@
     var renderPromises = fields.map(function (field) {
       if (!field.fieldname) return Promise.resolve('');
       if (field.hidden) return Promise.resolve('');
+      if (!existingDoc && field.fieldname === 'course_run') return Promise.resolve('');
       if (['name', 'owner', 'creation', 'modified', 'modified_by', 'idx', 'parent', 'parentfield', 'parenttype', 'docstatus'].indexOf(field.fieldname) > -1) return Promise.resolve('');
 
       var existingValue = existingDoc ? existingDoc[field.fieldname] : null;
@@ -385,6 +394,7 @@
         state.meta = results[0] || {};
         state.summary = results[1] || {};
         state.context = contextDefaults();
+        resolveBackLink();
 
         if (readName) {
           return api('/api/method/skillshub_core.skillshub_portal.api.get_portal_form_doc?doctype=' + encodeURIComponent(state.doctype) + '&name=' + encodeURIComponent(readName))

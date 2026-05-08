@@ -40,5 +40,4 @@ def get_portal_settings():
         "current_cohort":          doc.current_cohort          or "",
         "default_academic_year":   doc.default_academic_year   or "",
         "default_programme":       doc.default_programme       or "",
-        "default_term":            doc.default_term            or "",
     }

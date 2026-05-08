@@ -436,6 +436,44 @@ def get_link_options(doctype, search_text=None, limit=200):
 
 
 @frappe.whitelist()
+def get_intake_cohort_options():
+    if not _has_admin_access():
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    options = set()
+
+    if frappe.db.exists("DocType", "SH Cohort"):
+        cohort_fields = _existing_fields("SH Cohort", ["name", "cohort_name"])
+        cohort_rows = frappe.get_all(
+            "SH Cohort",
+            fields=cohort_fields,
+            limit=1000,
+            order_by="name asc",
+        )
+        for row in cohort_rows:
+            value = (row.get("name") or row.get("cohort_name") or "").strip()
+            if value:
+                options.add(value)
+
+    if _doctype_has_field("SH Student", "intake_cohort"):
+        student_rows = frappe.db.sql(
+            """
+            SELECT DISTINCT intake_cohort
+            FROM `tabSH Student`
+            WHERE IFNULL(intake_cohort, '') != ''
+            ORDER BY intake_cohort ASC
+            """,
+            as_dict=True,
+        )
+        for row in student_rows:
+            value = (row.get("intake_cohort") or "").strip()
+            if value:
+                options.add(value)
+
+    return sorted(options)
+
+
+@frappe.whitelist()
 def submit_portal_form(doctype, values):
     allowed = {row["doctype"] for row in FEEDBACK_DOCTYPES}
     if doctype not in allowed:
@@ -513,6 +551,20 @@ def get_attendance_roster(schedule):
         order_by="student_name asc",
         limit=5000,
     )
+    missing_names = [row.student for row in rows if not row.get("student_name")]
+    if missing_names:
+        student_names = {
+            row.name: row.student_name
+            for row in frappe.get_all(
+                "SH Student",
+                filters={"name": ["in", missing_names]},
+                fields=["name", "student_name"],
+                limit=5000,
+            )
+        }
+        for row in rows:
+            if not row.get("student_name"):
+                row["student_name"] = student_names.get(row.student) or row.student
     return rows
 
 
@@ -547,6 +599,22 @@ def save_attendance(schedule, date, attendance_records):
     changed_students = set()
     created = 0
     updated = 0
+    student_ids = sorted({
+        row.get("student")
+        for row in attendance_records
+        if isinstance(row, dict) and row.get("student")
+    })
+    student_name_map = {}
+    if student_ids:
+        student_name_map = {
+            row.name: row.student_name
+            for row in frappe.get_all(
+                "SH Student",
+                filters={"name": ["in", student_ids]},
+                fields=["name", "student_name"],
+                limit=len(student_ids),
+            )
+        }
 
     for row in attendance_records:
         if not isinstance(row, dict):
@@ -557,6 +625,7 @@ def save_attendance(schedule, date, attendance_records):
 
         values = {
             "sh_student": student,
+            "student_name": student_name_map.get(student) or student,
             "sh_programme_schedule": schedule,
             "date": date,
             "status": row.get("status") or "Absent",
@@ -652,7 +721,6 @@ def update_portal_settings(values):
         "current_cohort",
         "default_academic_year",
         "default_programme",
-        "default_term",
     }
 
     doc = frappe.get_single("SkillsHub Portal Settings")

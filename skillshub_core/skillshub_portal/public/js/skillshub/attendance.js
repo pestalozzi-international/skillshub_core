@@ -3,7 +3,8 @@
 
   var state = {
     roster: [],
-    recordsByStudent: {}
+    recordsByStudent: {},
+    recordNameByStudent: {}
   };
 
   var STATUS_OPTIONS = ['Present', 'Late', 'Absent', 'Leave'];
@@ -44,6 +45,11 @@
     };
   }
 
+  function deskUrl(doctype, name) {
+    if (!doctype || !name) return '/app';
+    return '/app/' + String(doctype).toLowerCase().replace(/\s+/g, '-') + '/' + encodeURIComponent(name);
+  }
+
   function renderRoster() {
     var container = document.getElementById('att-roster');
     if (!state.roster.length) {
@@ -54,6 +60,7 @@
     container.innerHTML = state.roster
       .map(function (row) {
         var selected = state.recordsByStudent[row.student] || 'Absent';
+        var recordName = state.recordNameByStudent[row.student] || '';
         var buttons = STATUS_OPTIONS.map(function (status) {
           return '<button class="' + (selected === status ? 'active' : '') + '" data-student="' + esc(row.student) + '" data-status="' + esc(status) + '">' + esc(status) + '</button>';
         }).join('');
@@ -62,7 +69,10 @@
           '<div class="att-row">' +
             '<div>' +
               '<div style="font-weight:600;">' + esc(row.student_name || row.student) + '</div>' +
-              '<div style="font-size:0.78rem;color:var(--muted-text-color);">' + esc(row.student) + '</div>' +
+              '<div style="font-size:0.78rem;color:var(--muted-text-color);">' +
+                esc(row.student) +
+                (recordName ? ' · <a href="' + deskUrl('SH Attendance', recordName) + '" target="_blank" style="text-decoration:none;">Desk ↗</a>' : '') +
+              '</div>' +
             '</div>' +
             '<div class="att-status">' + buttons + '</div>' +
           '</div>';
@@ -104,8 +114,10 @@
         var records = results[1] || [];
         state.roster = roster;
         state.recordsByStudent = {};
+        state.recordNameByStudent = {};
         records.forEach(function (record) {
           state.recordsByStudent[record.sh_student] = record.status || 'Absent';
+          state.recordNameByStudent[record.sh_student] = record.name || '';
         });
         roster.forEach(function (row) {
           if (!state.recordsByStudent[row.student]) state.recordsByStudent[row.student] = 'Absent';

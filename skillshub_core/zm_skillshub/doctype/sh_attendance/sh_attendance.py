@@ -16,6 +16,8 @@ class SHAttendance(Document):
         self.name = f"SA-{self.sh_programme_schedule}-{self.sh_student}-{date_str}"
 
     def validate(self):
+        if self.sh_student and not self.student_name:
+            self.student_name = frappe.db.get_value("SH Student", self.sh_student, "student_name") or self.sh_student
         self.compute_day_and_week()
         self.validate_duplicate()
         self.validate_holiday()

@@ -242,11 +242,57 @@
   function renderEdit() {
     var student = state.bundle.student || {};
     var fields = (state.meta && state.meta.fields) || [];
-    var html = '<div class="sh-form-grid">';
+    var byName = {};
     fields.forEach(function (field) {
-      html += buildEditField(field, student[field.fieldname]);
+      if (field && field.fieldname) byName[field.fieldname] = field;
     });
-    html += '</div>';
+
+    var groups = [
+      { title: 'Personal Details', fields: ['first_name', 'middle_name', 'last_name', 'student_name', 'student_image', 'date_of_birth', 'age', 'gender', 'religion', 'nationality'] },
+      { title: 'Address & Contact', fields: ['address_line_1', 'address_line_2', 'city', 'stateprovince', 'country', 'pincode', 'mobile', 'personal_email', 'portal_user_account', 'user_login_email'] },
+      { title: 'ID & Application', fields: ['student_id', 'student_full_name', 'full_name_and_id', 'nrc_number', 'route', 'published', 'date_submitted_enrolment_form', 'applicant_record'] },
+      { title: 'Enrolment & Grouping', fields: ['status', 'programme_path', 'intake_year', 'intake_cohort', 'current_enrolment_record', 'current_schedule', 'current_course', 'current_milestone', 'enrolment_date', 'graduation_completion_date', 'exit_reason'] },
+      { title: 'Household & Guardian', fields: ['household_income', 'household_receives_financial_aid', 'housing_status', 'guardian_name', 'guardian_email', 'guardian_mobile_number', 'guardian_address', 'guardian_date_of_birth', 'guardian_occupation', 'relationship', 'parents_marital_status', 'number_of_siblings'] },
+      { title: 'Attachment & Work', fields: ['attachment_institution', 'attachment_institution_niche', 'attachment_institution_address', 'course_at_time_of_attachment', 'attachment_start_date', 'attachment_end_date', 'attachment_completed', 'emp_start_date', 'emp_end_date', 'emp_is_current', 'emp_institution', 'emp_niche', 'emp_address', 'emp_occupation', 'emp_role', 'emp_salary', 'emp_income_level', 'emp_notes'] }
+    ];
+
+    var used = {};
+    var html = '';
+
+    groups.forEach(function (group) {
+      var controls = '';
+      group.fields.forEach(function (fieldname) {
+        var field = byName[fieldname];
+        if (!field) return;
+        var control = buildEditField(field, student[field.fieldname]);
+        if (!control) return;
+        controls += control;
+        used[field.fieldname] = true;
+      });
+
+      if (controls) {
+        html += '<section class="sh-card" style="padding:1rem;margin-bottom:0.9rem;border:1px solid var(--color-slate-100);box-shadow:none;">' +
+          '<h4 style="margin:0 0 0.85rem;font-size:0.92rem;color:var(--color-teal-700);">' + esc(group.title) + '</h4>' +
+          '<div class="sh-form-grid">' + controls + '</div>' +
+          '</section>';
+      }
+    });
+
+    var remaining = '';
+    fields.forEach(function (field) {
+      if (!field || !field.fieldname || used[field.fieldname]) return;
+      var control = buildEditField(field, student[field.fieldname]);
+      if (!control) return;
+      remaining += control;
+    });
+
+    if (remaining) {
+      html += '<section class="sh-card" style="padding:1rem;border:1px solid var(--color-slate-100);box-shadow:none;">' +
+        '<h4 style="margin:0 0 0.85rem;font-size:0.92rem;color:var(--color-teal-700);">Additional Fields</h4>' +
+        '<div class="sh-form-grid">' + remaining + '</div>' +
+        '</section>';
+    }
+
     document.getElementById('tab-edit').innerHTML = html;
   }
 
