@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class SkillsHubVocationalTrainingFeedback(Document):
+class SHAttachmentFeedback(Document):
 	pass

@@ -9,15 +9,18 @@
  "field_order": [
   "general_tab",
   "section_break_sbdv",
-  "enrolment_ticket",
   "sh_student",
-  "column_break_pppv",
+  "student_name",
+  "section_break_whmc",
+  "enrolment_ticket",
   "programme_schedule",
   "milestone",
-  "column_break_context2",
-  "section_break_whmc",
+  "column_break_pppv",
+  "academic_year",
+  "course",
+  "cohort",
+  "column_break_pnkk",
   "date_submitted",
-  "feedback_form_tab",
   "section_break_uoxy",
   "course_expectations_column",
   "vt_expectations_html",
@@ -47,12 +50,7 @@
   "impact",
   "section_break_arte",
   "volunteer",
-  "vol_details",
-  "section_break_ilfx",
-  "cohort",
-  "course",
-  "academic_year",
-  "portal_user_account"
+  "vol_details"
  ],
  "fields": [
   {
@@ -90,17 +88,13 @@
    "reqd": 1
   },
   {
-   "fetch_from": "programme_schedule.skillshub_programme",
+   "fetch_from": "enrolment_ticket.milestone",
    "fieldname": "milestone",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Milestone",
    "options": "SkillsHub Programme",
    "read_only": 1
-  },
-  {
-   "fieldname": "column_break_context2",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "section_break_whmc",
@@ -111,11 +105,6 @@
    "fieldname": "date_submitted",
    "fieldtype": "Datetime",
    "label": "Date Submitted"
-  },
-  {
-   "fieldname": "feedback_form_tab",
-   "fieldtype": "Section Break",
-   "label": "Feedback Form"
   },
   {
    "fieldname": "section_break_uoxy",
@@ -271,10 +260,6 @@
    "label": "Please share information about the volunteering you have done"
   },
   {
-   "fieldname": "section_break_ilfx",
-   "fieldtype": "Section Break"
-  },
-  {
    "bold": 1,
    "fieldname": "enrolment_ticket",
    "fieldtype": "Link",
@@ -285,41 +270,44 @@
    "reqd": 1
   },
   {
+   "fetch_from": "enrolment_ticket.cohort",
    "fieldname": "cohort",
    "fieldtype": "Link",
-   "label": "Old Cohort",
-   "options": "SkillsHub Cohort",
-   "read_only": 1
+   "label": "Cohort",
+   "options": "SkillsHub Cohort"
   },
   {
+   "fetch_from": "enrolment_ticket.course",
    "fieldname": "course",
    "fieldtype": "Link",
-   "label": "Old Course",
-   "options": "SkillsHub Course",
-   "read_only": 1
+   "label": "Course",
+   "options": "SkillsHub Course"
   },
   {
+   "fetch_from": "enrolment_ticket.academic_year",
    "fieldname": "academic_year",
    "fieldtype": "Link",
-   "label": "Old Academic Year",
-   "options": "SH Academic Year",
-   "read_only": 1
+   "label": "Academic Year",
+   "options": "SH Academic Year"
   },
   {
-   "fieldname": "portal_user_account",
-   "fieldtype": "Link",
-   "label": "Old Portal Link",
-   "options": "User",
-   "read_only": 1
+   "fetch_from": "sh_student.student_name",
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "Student Name"
+  },
+  {
+   "fieldname": "column_break_pnkk",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-03 20:18:24.906665",
+ "modified": "2026-05-07 17:36:49.254850",
  "modified_by": "Administrator",
  "module": "ZM SH Vocational Training",
- "name": "SkillsHub Vocational Training Feedback",
+ "name": "SH VT Feedback",
  "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [

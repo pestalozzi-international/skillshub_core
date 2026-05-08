@@ -9,16 +9,19 @@
  "engine": "InnoDB",
  "field_order": [
   "general_tab",
-  "section_break_qbrj",
+  "section_break_whmc",
   "enrolment_ticket",
   "sh_student",
+  "section_break_qbrj",
   "column_break_pppv",
   "programme_schedule",
   "milestone",
+  "column_break_venb",
+  "academic_year",
+  "course",
+  "cohort",
   "column_break_context2",
-  "section_break_whmc",
   "date_of_submission",
-  "feedback_form_tab",
   "parent_details_section",
   "full_name",
   "phone_number",
@@ -54,12 +57,7 @@
   "section_break_sewu",
   "statisfaction",
   "liked_most_about_programme",
-  "suggestions_programme",
-  "section_break_scfb",
-  "cohort",
-  "course",
-  "academic_year",
-  "portal_user_account"
+  "suggestions_programme"
  ],
  "fields": [
   {
@@ -96,7 +94,7 @@
    "read_only": 1
   },
   {
-   "fetch_from": "programme_schedule.skillshub_programme",
+   "fetch_from": "enrolment_ticket.milestone",
    "fieldname": "milestone",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -116,11 +114,6 @@
    "fieldname": "date_of_submission",
    "fieldtype": "Datetime",
    "label": "Date of Submission"
-  },
-  {
-   "fieldname": "feedback_form_tab",
-   "fieldtype": "Section Break",
-   "label": "Feedback Form"
   },
   {
    "fieldname": "parent_details_section",
@@ -298,10 +291,6 @@
    "label": "What suggestions do you have to improve the programme?"
   },
   {
-   "fieldname": "section_break_scfb",
-   "fieldtype": "Section Break"
-  },
-  {
    "fieldname": "column_break_stgw",
    "fieldtype": "Column Break"
   },
@@ -325,45 +314,41 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Enrolment Ticket",
-   "options": "SH Student Enrolment",
-   "reqd": 1
+   "options": "SH Student Enrolment"
   },
   {
+   "fetch_from": "enrolment_ticket.cohort",
    "fieldname": "cohort",
    "fieldtype": "Link",
-   "label": "Old Cohort",
-   "options": "SkillsHub Cohort",
-   "read_only": 1
+   "label": "Cohort",
+   "options": "SkillsHub Cohort"
   },
   {
+   "fetch_from": "enrolment_ticket.course",
    "fieldname": "course",
    "fieldtype": "Link",
-   "label": "Old Course",
-   "options": "SkillsHub Course",
-   "read_only": 1
+   "label": "Course",
+   "options": "SkillsHub Course"
   },
   {
+   "fetch_from": "enrolment_ticket.academic_year",
    "fieldname": "academic_year",
    "fieldtype": "Link",
-   "label": "Old Academic Year",
-   "options": "SH Academic Year",
-   "read_only": 1
+   "label": "Academic Year",
+   "options": "SH Academic Year"
   },
   {
-   "fieldname": "portal_user_account",
-   "fieldtype": "Link",
-   "label": "Old Portal Link",
-   "options": "User",
-   "read_only": 1
+   "fieldname": "column_break_venb",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-03 20:18:25.267943",
+ "modified": "2026-05-07 15:52:41.571579",
  "modified_by": "Administrator",
  "module": "ZM SH Parent Feedback",
- "name": "ZM SkillsHub Parent Feedback",
+ "name": "SH Parent Feedback",
  "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [

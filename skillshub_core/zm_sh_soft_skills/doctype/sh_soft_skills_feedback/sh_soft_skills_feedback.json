@@ -9,19 +9,22 @@
  "engine": "InnoDB",
  "field_order": [
   "general_tab",
-  "portal_user_details_section",
-  "section_break_bcuw",
-  "student_column",
-  "column_break_pppv",
+  "student",
+  "student_name",
+  "section_break_fxpc",
+  "enrolment_ticket",
   "program_schedule",
-  "cohort",
+  "milestone",
+  "column_break_atze",
   "academic_year",
   "course",
+  "cohort",
+  "column_break_canf",
+  "date_submitted",
   "feedback_form_tab",
   "soft_skill",
   "section_break_rgss",
   "course_expectations_column",
-  "ss_expectations_html",
   "ss_expectations_table",
   "section_break_vmwo",
   "favourite_aspects",
@@ -36,21 +39,11 @@
   "photo",
   "section_break_kkuc",
   "beneficiaries_column",
-  "ss_beneficiaries_html",
   "ss_beneficiaries_table",
-  "section_break_abzv",
-  "impact_example",
-  "milestone",
-  "student",
-  "programme_schedule",
-  "enrolment_ticket"
+  "section_break_xdpg",
+  "impact_example"
  ],
  "fields": [
-  {
-   "fieldname": "student_column",
-   "fieldtype": "Column Break",
-   "label": "Student"
-  },
   {
    "fieldname": "soft_skill",
    "fieldtype": "Link",
@@ -98,10 +91,7 @@
    "label": "Do you have any photos or videos you would be happy for us to share with donors or on social media?"
   },
   {
-   "fieldname": "column_break_pppv",
-   "fieldtype": "Column Break"
-  },
-  {
+   "fetch_from": "enrolment_ticket.programme_schedule",
    "fieldname": "program_schedule",
    "fieldtype": "Link",
    "label": "Program Schedule",
@@ -133,14 +123,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "section_break_abzv",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "section_break_bcuw",
-   "fieldtype": "Section Break"
-  },
-  {
    "fieldname": "section_break_rgss",
    "fieldtype": "Section Break"
   },
@@ -150,14 +132,9 @@
    "label": "Course Expectations"
   },
   {
-   "fieldname": "ss_expectations_html",
-   "fieldtype": "Data",
-   "label": "What were your main expectations of this course?"
-  },
-  {
    "fieldname": "ss_expectations_table",
    "fieldtype": "Table",
-   "label": "Course Expectation Table",
+   "label": "What were your main expectations of this course?",
    "options": "SH SS Course Expectation Link",
    "read_only": 1
   },
@@ -171,19 +148,14 @@
    "label": "Beneficiaries"
   },
   {
-   "fieldname": "ss_beneficiaries_html",
-   "fieldtype": "Data",
-   "label": "Who else do you think has been impacted by your participation in this course?"
-  },
-  {
    "fieldname": "ss_beneficiaries_table",
    "fieldtype": "Table",
-   "label": "Beneficiaries Table",
+   "label": "Who else do you think has been impacted by your participation in this course?",
    "options": "SH Beneficiary Link",
    "read_only": 1
   },
   {
-   "fetch_from": "programme_schedule.skillshub_programme",
+   "fetch_from": "enrolment_ticket.milestone",
    "fieldname": "milestone",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -198,29 +170,25 @@
    "options": "SH Student Enrolment"
   },
   {
-   "fetch_from": "program_schedule.cohort",
+   "fetch_from": "enrolment_ticket.cohort",
    "fieldname": "cohort",
    "fieldtype": "Link",
    "label": "Cohort",
    "options": "SkillsHub Cohort"
   },
   {
-   "fetch_from": "program_schedule.skillshub_course",
+   "fetch_from": "enrolment_ticket.course",
    "fieldname": "course",
    "fieldtype": "Link",
    "label": "Course",
    "options": "SkillsHub Course"
   },
   {
-   "fetch_from": "program_schedule.academic_year",
+   "fetch_from": "enrolment_ticket.academic_year",
    "fieldname": "academic_year",
-   "fieldtype": "Read Only",
-   "label": "Academic Year"
-  },
-  {
-   "fieldname": "portal_user_details_section",
-   "fieldtype": "Section Break",
-   "label": "Portal User Details"
+   "fieldtype": "Link",
+   "label": "Academic Year",
+   "options": "SH Academic Year"
   },
   {
    "fieldname": "student",
@@ -229,17 +197,39 @@
    "options": "SH Student"
   },
   {
-   "fieldname": "programme_schedule",
-   "fieldtype": "Link",
-   "label": "Programme Schedule",
-   "options": "SH Programme Schedule"
+   "fetch_from": "student.student_name",
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "Student Name"
+  },
+  {
+   "fieldname": "section_break_fxpc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_atze",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_canf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "date_submitted",
+   "fieldtype": "Date",
+   "label": "Date Submitted"
+  },
+  {
+   "fieldname": "section_break_xdpg",
+   "fieldtype": "Section Break"
   }
  ],
  "grid_page_length": 50,
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-04 13:55:19.629937",
+ "modified": "2026-05-07 16:13:06.059054",
  "modified_by": "Administrator",
  "module": "ZM SH Soft Skills",
  "name": "SH Soft Skills Feedback",

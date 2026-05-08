@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class SkillsHubProgrammeStudentLink(Document):
+class SHParentFeedback(Document):
 	pass

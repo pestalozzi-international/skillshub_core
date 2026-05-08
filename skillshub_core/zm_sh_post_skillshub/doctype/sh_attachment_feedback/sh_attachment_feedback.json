@@ -8,31 +8,28 @@
  "engine": "InnoDB",
  "field_order": [
   "general_tab",
+  "section_break_whmc",
+  "sh_student",
+  "student_name",
   "section_break_auxc",
   "enrolment_ticket",
-  "sh_student",
-  "column_break_pppv",
   "programme_schedule",
   "milestone",
+  "column_break_pppv",
+  "academic_year",
+  "course",
+  "cohort",
   "column_break_context2",
-  "section_break_whmc",
   "date_submitted",
-  "feedback_form_tab",
   "section_break_ltky",
   "attachment_preparation",
   "knowledge_use_example",
   "section_break_elvw",
   "attachment_challenges_column",
-  "main_challenges_html",
   "main_challenges_table",
   "can_you_share_more_details_about_the_attachment_challenges",
   "section_break_dsqn",
-  "improve_suggest",
-  "section_break_cazq",
-  "cohort",
-  "course",
-  "academic_year",
-  "portal_user_account"
+  "improve_suggest"
  ],
  "fields": [
   {
@@ -45,7 +42,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "fetch_from": "enrolment_ticket.student",
    "fieldname": "sh_student",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -66,11 +62,10 @@
    "in_list_view": 1,
    "label": "Programme Schedule",
    "options": "SH Programme Schedule",
-   "read_only": 1,
-   "reqd": 1
+   "read_only": 1
   },
   {
-   "fetch_from": "programme_schedule.skillshub_programme",
+   "fetch_from": "enrolment_ticket.milestone",
    "fieldname": "milestone",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -91,11 +86,6 @@
    "fieldname": "date_submitted",
    "fieldtype": "Datetime",
    "label": "Date Submitted"
-  },
-  {
-   "fieldname": "feedback_form_tab",
-   "fieldtype": "Section Break",
-   "label": "Feedback Form"
   },
   {
    "fieldname": "section_break_dsqn",
@@ -136,19 +126,10 @@
    "label": "Can you share more details about the attachment Challenges?"
   },
   {
-   "fieldname": "main_challenges_html",
-   "fieldtype": "Data",
-   "label": "What was the main challenge you faced during the attachment?"
-  },
-  {
    "fieldname": "main_challenges_table",
    "fieldtype": "Table",
-   "label": "Main Challenges Table",
+   "label": "What was the main challenge you faced during the attachment?",
    "options": "SH Attachment Challenge Link"
-  },
-  {
-   "fieldname": "section_break_cazq",
-   "fieldtype": "Section Break"
   },
   {
    "bold": 1,
@@ -161,41 +142,40 @@
    "reqd": 1
   },
   {
+   "fetch_from": "enrolment_ticket.cohort",
    "fieldname": "cohort",
    "fieldtype": "Link",
-   "label": "Old Cohort",
-   "options": "SkillsHub Cohort",
-   "read_only": 1
+   "label": "Cohort",
+   "options": "SkillsHub Cohort"
   },
   {
+   "fetch_from": "enrolment_ticket.course",
    "fieldname": "course",
    "fieldtype": "Link",
-   "label": "Old Course",
-   "options": "SkillsHub Course",
-   "read_only": 1
+   "label": "Course",
+   "options": "SkillsHub Course"
   },
   {
+   "fetch_from": "enrolment_ticket.academic_year",
    "fieldname": "academic_year",
    "fieldtype": "Link",
-   "label": "Old Academic Year",
-   "options": "SH Academic Year",
-   "read_only": 1
+   "label": "Academic Year",
+   "options": "SH Academic Year"
   },
   {
-   "fieldname": "portal_user_account",
-   "fieldtype": "Link",
-   "label": "Old Portal Link",
-   "options": "User",
-   "read_only": 1
+   "fetch_from": "sh_student.student_name",
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "Student Name"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-03 20:18:25.128419",
+ "modified": "2026-05-07 15:59:08.946602",
  "modified_by": "Administrator",
  "module": "ZM SH Post SkillsHub",
- "name": "ZM SkillsHub Attachment Feedback",
+ "name": "SH Attachment Feedback",
  "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [

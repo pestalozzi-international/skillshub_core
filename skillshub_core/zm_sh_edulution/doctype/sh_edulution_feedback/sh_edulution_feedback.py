@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class ZMSkillsHubAttachmentFeedback(Document):
+class SHEdulutionFeedback(Document):
 	pass

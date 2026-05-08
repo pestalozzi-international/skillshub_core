@@ -8,16 +8,22 @@
  "engine": "InnoDB",
  "field_order": [
   "general_tab",
+  "column_break_ntka",
+  "student",
+  "student_name",
   "section_break_vovo",
   "enrolment_ticket",
-  "student_column",
-  "feedback_phase",
+  "programme_schedule",
+  "milestone",
   "column_break_pppv",
-  "program_schedule",
+  "academic_year",
+  "skillshub_course",
+  "skillshub_cohort",
+  "student_column",
+  "date_submitted",
   "feedback_form_tab",
   "goals_set",
   "section_break_syuq",
-  "skills_html",
   "skills_learned",
   "section_break_vxus",
   "how_well_have_you_progressed_with_your_goals",
@@ -43,7 +49,6 @@
   "column_break_nxxq",
   "can_you_give_a_reallife_example_of_your_resilience",
   "section_break_clpd",
-  "resilience_html",
   "resilience_table",
   "section_break_jonn",
   "what_are_you_most_proud_of_since_joining_this_course",
@@ -53,12 +58,7 @@
   "do_you_want_coaching",
   "would_you_recommend_this_course",
   "section_break_lbyc",
-  "photo",
-  "milestone",
-  "cohort",
-  "course",
-  "academic_year",
-  "portal_user_account"
+  "photo"
  ],
  "fields": [
   {
@@ -68,25 +68,11 @@
   },
   {
    "fieldname": "student_column",
-   "fieldtype": "Column Break",
-   "label": "Student"
-  },
-  {
-   "fieldname": "feedback_phase",
-   "fieldtype": "Link",
-   "label": "Feedback Phase",
-   "options": "SkillsHub Phases"
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "column_break_pppv",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "program_schedule",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Program Schedule",
-   "options": "SH Programme Schedule"
   },
   {
    "fieldname": "feedback_form_tab",
@@ -257,14 +243,9 @@
    "label": "Skills"
   },
   {
-   "fieldname": "skills_html",
-   "fieldtype": "Data",
-   "label": "Which soft skills have you learned so far?"
-  },
-  {
    "fieldname": "skills_learned",
    "fieldtype": "Table",
-   "label": "Skills Learned",
+   "label": "Which soft skills have you learned so far?",
    "options": "SkillsHub Soft Skills Link",
    "read_only": 1
   },
@@ -273,19 +254,14 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "resilience_html",
-   "fieldtype": "Data",
-   "label": "Which of these statements describes you?"
-  },
-  {
    "fieldname": "resilience_table",
    "fieldtype": "Table",
-   "label": "Resilience Table",
+   "label": "Which of these statements describes you?",
    "options": "SH Student Resilience Link",
    "read_only": 1
   },
   {
-   "fetch_from": "programme_schedule.skillshub_programme",
+   "fetch_from": "enrolment_ticket.milestone",
    "fieldname": "milestone",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -304,42 +280,66 @@
    "reqd": 1
   },
   {
-   "fieldname": "cohort",
-   "fieldtype": "Link",
-   "label": "Old Cohort",
-   "options": "SkillsHub Cohort",
-   "read_only": 1
+   "fieldname": "column_break_ntka",
+   "fieldtype": "Column Break"
   },
   {
-   "fieldname": "course",
+   "fieldname": "student",
    "fieldtype": "Link",
-   "label": "Old Course",
-   "options": "SkillsHub Course",
-   "read_only": 1
+   "label": "Student",
+   "options": "SH Student",
+   "reqd": 1
   },
   {
+   "fetch_from": "student.student_name",
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "Student Name"
+  },
+  {
+   "fetch_from": "enrolment_ticket.academic_year",
    "fieldname": "academic_year",
    "fieldtype": "Link",
-   "label": "Old Academic Year",
-   "options": "SH Academic Year",
-   "read_only": 1
+   "label": "Academic Year",
+   "options": "SH Academic Year"
   },
   {
-   "fieldname": "portal_user_account",
+   "fetch_from": "enrolment_ticket.course",
+   "fieldname": "skillshub_course",
    "fieldtype": "Link",
-   "label": "Old Portal Link",
-   "options": "User",
-   "read_only": 1
+   "label": "SkillsHub Course",
+   "options": "SkillsHub Course"
+  },
+  {
+   "fetch_from": "enrolment_ticket.cohort",
+   "fieldname": "skillshub_cohort",
+   "fieldtype": "Link",
+   "label": "SkillsHub Cohort",
+   "options": "SkillsHub Cohort"
+  },
+  {
+   "default": "Today",
+   "fieldname": "date_submitted",
+   "fieldtype": "Date",
+   "label": "Date Submitted"
+  },
+  {
+   "fetch_from": "enrolment_ticket.programme_schedule",
+   "fieldname": "programme_schedule",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Programme Schedule",
+   "options": "SH Programme Schedule"
   }
  ],
  "grid_page_length": 50,
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-03 20:18:24.436373",
+ "modified": "2026-05-07 17:15:06.833523",
  "modified_by": "Administrator",
  "module": "ZM SH Edulution",
- "name": "SkillsHub Edulution Feedback",
+ "name": "SH Edulution Feedback",
  "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [

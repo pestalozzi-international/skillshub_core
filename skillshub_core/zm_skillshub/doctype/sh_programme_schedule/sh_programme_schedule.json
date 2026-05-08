@@ -45,7 +45,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "\nActive\nComplete\nCancelled"
+   "options": "\nActive\nComplete\nCancelled",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_ysxh",
@@ -70,9 +71,11 @@
    "fieldname": "cohort",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Cohort",
    "options": "SkillsHub Cohort",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "start_date",
@@ -92,6 +95,7 @@
    "fieldname": "duration",
    "fieldtype": "Select",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Duration",
    "options": "\n6 Months\n3 Months\n6 Weeks",
    "reqd": 1
@@ -100,9 +104,11 @@
    "fieldname": "skillshub_programme",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "SkillsHub Programme",
    "options": "SkillsHub Programme",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "holiday_list",
@@ -115,9 +121,11 @@
    "fieldname": "academic_year",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Academic Year",
    "options": "SH Academic Year",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "section_break_rkqu",
@@ -174,9 +182,11 @@
    "fieldname": "skillshub_course",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "SkillsHub Course",
    "options": "SkillsHub Course",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fetch_from": "skillshub_course.course_code",
@@ -211,7 +221,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-03 19:02:21.476751",
+ "modified": "2026-05-07 16:28:32.030651",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Programme Schedule",

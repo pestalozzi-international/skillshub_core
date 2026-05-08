@@ -12,19 +12,19 @@
   "section_break_vkis",
   "sh_student",
   "student_full_name",
+  "section_break_context",
   "column_break_pppv",
+  "enrolment_ticket",
   "programme_schedule",
   "milestone",
-  "section_break_context",
+  "column_break_jhwn",
   "academic_year",
+  "course",
   "cohort",
   "column_break_context2",
-  "course",
-  "section_break_javg",
   "date_submitted",
   "feedback_form_tab",
   "motivation_column",
-  "student_motivation_html",
   "student_motivation_table",
   "column_break_jvdl",
   "motivation_statement",
@@ -33,7 +33,6 @@
   "confidence_finding_employment",
   "section_break_kmnv",
   "resilience_column",
-  "resilience_html",
   "resilience_table",
   "column_break_hjyt",
   "how_resilient_are_you",
@@ -50,7 +49,6 @@
   "responsibilities_impact",
   "community_environment_section",
   "challenges_in_your_community_column",
-  "community_challenge_html",
   "community_challenge_table",
   "column_break_fzvy",
   "community_safety",
@@ -62,9 +60,7 @@
   "help_source",
   "expectations_section",
   "sh_goals",
-  "post_sh_contributions",
-  "student",
-  "enrolment_ticket"
+  "post_sh_contributions"
  ],
  "fields": [
   {
@@ -90,26 +86,24 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "enrolment_ticket.programme_schedule",
    "fieldname": "programme_schedule",
    "fieldtype": "Link",
    "label": "Programme Schedule",
    "options": "SH Programme Schedule"
   },
   {
+   "fetch_from": "enrolment_ticket.milestone",
    "fieldname": "milestone",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Milestone",
-   "options": "SkillsHub Programme",
-   "reqd": 1
+   "options": "SkillsHub Programme"
   },
   {
    "fieldname": "column_break_context2",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "section_break_javg",
-   "fieldtype": "Section Break"
   },
   {
    "default": "Today",
@@ -292,14 +286,9 @@
    "label": "Motivation"
   },
   {
-   "fieldname": "student_motivation_html",
-   "fieldtype": "Data",
-   "label": "Student Motivation"
-  },
-  {
    "fieldname": "student_motivation_table",
    "fieldtype": "Table",
-   "label": "Student Motivation Table",
+   "label": "Student Motivation",
    "options": "SH Student Motivation Link"
   },
   {
@@ -308,14 +297,9 @@
    "label": "Resilience"
   },
   {
-   "fieldname": "resilience_html",
-   "fieldtype": "Data",
-   "label": "Which of these statements describes you?"
-  },
-  {
    "fieldname": "resilience_table",
    "fieldtype": "Table",
-   "label": "Student Resilience Table",
+   "label": "Which of these statements describes you?",
    "options": "SH Student Resilience Link"
   },
   {
@@ -324,14 +308,9 @@
    "label": "Challenges in your community"
   },
   {
-   "fieldname": "community_challenge_html",
-   "fieldtype": "Data",
-   "label": "Challenges faced in your community"
-  },
-  {
    "fieldname": "community_challenge_table",
    "fieldtype": "Table",
-   "label": "Community Challenges Table",
+   "label": "Challenges faced in your community",
    "options": "SH Student Community Challenge Link"
   },
   {
@@ -341,25 +320,28 @@
    "options": "SH Student Enrolment"
   },
   {
-   "fetch_from": "programme_schedule.cohort",
+   "fetch_from": "enrolment_ticket.cohort",
    "fieldname": "cohort",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Cohort",
    "options": "SkillsHub Cohort",
    "read_only": 1
   },
   {
-   "fetch_from": "programme_schedule.skillshub_course",
+   "fetch_from": "enrolment_ticket.course",
    "fieldname": "course",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Course",
    "options": "SkillsHub Course",
    "read_only": 1
   },
   {
-   "fetch_from": "programme_schedule.academic_year",
+   "fetch_from": "enrolment_ticket.academic_year",
    "fieldname": "academic_year",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Academic Year",
    "options": "SH Academic Year",
    "read_only": 1
@@ -376,16 +358,14 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "student",
-   "fieldtype": "Link",
-   "label": "Student",
-   "options": "SH Student"
+   "fieldname": "column_break_jhwn",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-04 13:47:20.522753",
+ "modified": "2026-05-07 16:19:57.776307",
  "modified_by": "Administrator",
  "module": "ZM SH Baseline",
  "name": "SH Student Baseline Form",

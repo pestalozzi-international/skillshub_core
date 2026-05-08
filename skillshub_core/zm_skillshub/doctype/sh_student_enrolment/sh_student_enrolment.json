@@ -71,8 +71,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Milestone",
-   "options": "SkillsHub Programme",
-   "read_only": 1
+   "options": "SkillsHub Programme"
   },
   {
    "fieldname": "section_break_context",
@@ -120,6 +119,7 @@
    "label": "Status"
   },
   {
+   "default": "Enrolled",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -129,6 +129,7 @@
    "reqd": 1
   },
   {
+   "fetch_from": "programme_schedule.start_date",
    "fieldname": "enrolment_date",
    "fieldtype": "Date",
    "label": "Enrolment Date",
@@ -139,12 +140,12 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "programme_schedule.end_date",
    "fieldname": "completion_date",
    "fieldtype": "Date",
    "label": "Completion Date"
   },
   {
-   "depends_on": "eval:doc.status == 'Dropped'",
    "fieldname": "exit_reason",
    "fieldtype": "Small Text",
    "label": "Exit Reason"
@@ -215,7 +216,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-03 19:09:28.104086",
+ "modified": "2026-05-07 14:07:53.352374",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Student Enrolment",

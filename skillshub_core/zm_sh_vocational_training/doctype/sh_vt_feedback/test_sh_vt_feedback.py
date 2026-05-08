@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestZMSkillsHubAttachmentFeedback(FrappeTestCase):
+class TestSHVTFeedback(FrappeTestCase):
 	pass
