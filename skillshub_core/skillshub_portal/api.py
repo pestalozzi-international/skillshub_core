@@ -166,17 +166,24 @@ def get_portal_bootstrap(student=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def portal_logout():
+def portal_logout(redirect_to="/skillshub"):
     """
     Explicitly terminate the active Frappe session for portal users.
-    Safe to call repeatedly; returns redirect target for client navigation.
+    Safe to call repeatedly; supports both JSON API and hard redirect flows.
     """
+    target = (redirect_to or "/skillshub").strip() or "/skillshub"
     try:
         if getattr(frappe.session, "user", None) and frappe.session.user != "Guest":
             frappe.local.login_manager.logout()
     except Exception:
         frappe.log_error(frappe.get_traceback(), "SkillsHub Portal Logout")
-    return {"ok": True, "redirect_to": "/skillshub"}
+
+    if getattr(frappe, "request", None) and frappe.request.method == "GET":
+        frappe.local.response["type"] = "redirect"
+        frappe.local.response["location"] = target
+        return
+
+    return {"ok": True, "redirect_to": target}
 
 
 @frappe.whitelist()

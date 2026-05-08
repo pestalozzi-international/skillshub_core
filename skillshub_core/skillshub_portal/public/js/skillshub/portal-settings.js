@@ -128,34 +128,40 @@
       });
   }
 
+  function portalLogoutUrl(target) {
+    return '/api/method/skillshub_core.skillshub_portal.api.portal_logout?redirect_to=' + encodeURIComponent(target || '/skillshub');
+  }
+
   function logout(redirectTo) {
     var target = normalizePath(redirectTo || '/skillshub');
-    var attempts = [
-      function () {
-        return attemptLogoutRequest(
-          '/api/method/skillshub_core.skillshub_portal.api.portal_logout',
-          { method: 'POST', headers: getHeaders() }
-        );
-      },
-      function () {
-        return attemptLogoutRequest('/api/method/logout', { method: 'POST', headers: getHeaders() });
-      },
-      function () {
-        return attemptLogoutRequest('/api/method/logout', { method: 'GET', headers: { Accept: 'application/json' } });
-      },
-      function () {
-        return attemptLogoutRequest('/logout', { method: 'GET' });
-      }
-    ];
-
-    function run(index) {
-      if (index >= attempts.length) return Promise.resolve();
-      return attempts[index]().catch(function () { return run(index + 1); });
-    }
-
-    return run(0).finally(function () {
+    return attemptLogoutRequest(
+      '/api/method/skillshub_core.skillshub_portal.api.portal_logout',
+      { method: 'POST', headers: getHeaders() }
+    )
+      .then(function () {
+        return fetch('/api/method/frappe.auth.get_logged_user', {
+          method: 'GET',
+          credentials: 'include',
+          cache: 'no-store',
+          headers: { Accept: 'application/json' }
+        }).then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        });
+      })
+      .then(function (payload) {
+        var currentUser = payload && payload.message ? String(payload.message) : '';
+        if (currentUser && currentUser !== 'Guest') {
+          window.location.assign(portalLogoutUrl(target));
+          return;
+        }
+        window.location.replace(target);
+      })
+      .catch(function () {
+        window.location.assign(portalLogoutUrl(target));
+      })
+      .finally(function () {
       clearClientSessionState();
-      window.location.replace(target);
     });
   }
 
