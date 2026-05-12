@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"GT9u3mKvXT\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">SkillsHub Soft Skills</span>\",\"col\":12}},{\"id\":\"7eyyVdQVRx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Enrolled Students\",\"col\":3}},{\"id\":\"fePWKZrduZ\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Fbsv4JlUrq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Soft Skills Baseline\",\"col\":3}},{\"id\":\"344We1_cdl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SH Soft Skills Feedback\",\"col\":4}},{\"id\":\"HNSmdcCvmR\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"X4fvsS5Zk8\",\"type\":\"card\",\"data\":{\"card_name\":\"Building Blocks\",\"col\":4}},{\"id\":\"F0yRNZdxsb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Soft Skills Classes\",\"col\":3}}]",
+ "content": "[{\"id\": \"GT9u3mKvXT\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\">SkillsHub Soft Skills</span>\", \"col\": 12}}, {\"id\": \"7eyyVdQVRx\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Enrolled Students\", \"col\": 3}}, {\"id\": \"fePWKZrduZ\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"Fbsv4JlUrq\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Soft Skills Baseline\", \"col\": 3}}, {\"id\": \"344We1_cdl\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"SH Soft Skills Feedback\", \"col\": 4}}, {\"id\": \"HNSmdcCvmR\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"X4fvsS5Zk8\", \"type\": \"card\", \"data\": {\"card_name\": \"Building Blocks\", \"col\": 4}}, {\"id\": \"F0yRNZdxsb\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Soft Skills Classes\", \"col\": 3}}]",
  "creation": "2026-01-27 13:57:21.457873",
  "custom_blocks": [],
  "docstatus": 0,
@@ -53,7 +53,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-05-08 19:10:02.606062",
+ "modified": "2026-05-12 16:26:18.111981",
  "modified_by": "Administrator",
  "module": "ZM SH Soft Skills",
  "name": "Soft Skills",
@@ -63,7 +63,7 @@
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 11.0,
+ "sequence_id": 12.0,
  "shortcuts": [
   {
    "color": "Grey",
