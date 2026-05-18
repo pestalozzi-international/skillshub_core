@@ -487,7 +487,7 @@
    "label": "Number of Siblings"
   },
   {
-   "description": "<div class=\"alert alert-info\" style=\"margin-top: 10px; border: 1px dashed #3498db; background-color: #f7fbff; padding: 15px; border-radius: 4px;\">\n    <h5 style=\"margin-top: 0; color: #2980b9; font-weight: bold;\">\n        <i class=\"fa fa-info-circle\"></i> Provisioning Instructions\n    </h5>\n    <p style=\"margin-bottom: 10px; color: #2c3e50;\">To set up this student's digital identity, please follow these steps in order:</p>\n    <ol style=\"padding-left: 20px; color: #2c3e50;\">\n        <li><b>Generate Email:</b> Go to <b>Actions</b> &gt; <i>\"Generate Student Email\"</i>.</li>\n        <li><b>Save the Record:</b> Click <b>Save</b> to lock in the new email address.</li>\n    </ol>\n    \n    <div style=\"background-color: #e8f4fd; padding: 10px; border-radius: 4px; margin-top: 10px; border-left: 4px solid #3498db;\">\n        <p style=\"margin-bottom: 0; font-size: 0.95em; color: #2c3e50;\">\n            <strong>Account Credentials:</strong><br>\n            \u2022 <b>Username:</b> Use the generated Pestalozzi Student Email.<br>\n            \u2022 <b>Initial Password:</b> Use the Student's <b>Pestalozzi ID</b>.\n        </p>\n    </div>\n\n    <p style=\"font-size: 0.85em; color: #7f8c8d; margin-top: 10px; font-style: italic;\">\n        Note: The buttons will automatically disappear from the menu once each step is successfully completed.\n    </p>\n</div>",
+   "description": "<div class=\"alert alert-info\" style=\"margin-top: 10px; border: 1px dashed #3498db; background-color: #f7fbff; padding: 15px; border-radius: 4px;\">\n    <h5 style=\"margin-top: 0; color: #2980b9; font-weight: bold;\">\n        <i class=\"fa fa-info-circle\"></i> Provisioning Instructions\n    </h5>\n    <p style=\"margin-bottom: 10px; color: #2c3e50;\">To set up this student's digital identity, please follow these steps in order:</p>\n    <ol style=\"padding-left: 20px; color: #2c3e50;\">\n        <li><b>Generate Email:</b> Go to <b>Actions</b> &gt; <i>\"Generate Student Email\"</i>.</li>\n        <li><b>Save the Record:</b> Click <b>Save</b> to lock in the new email address.</li>\n    </ol>\n    \n    <div style=\"background-color: #e8f4fd; padding: 10px; border-radius: 4px; margin-top: 10px; border-left: 4px solid #3498db;\">\n        <p style=\"margin-bottom: 0; font-size: 0.95em; color: #2c3e50;\">\n            <strong>Account Credentials:</strong><br>\n            • <b>Username:</b> Use the generated Pestalozzi Student Email.<br>\n            • <b>Initial Password:</b> Use the Student's <b>Pestalozzi ID</b>.\n        </p>\n    </div>\n\n    <p style=\"font-size: 0.85em; color: #7f8c8d; margin-top: 10px; font-style: italic;\">\n        Note: The buttons will automatically disappear from the menu once each step is successfully completed.\n    </p>\n</div>",
    "fieldname": "pestalozzi_student_email",
    "fieldtype": "Data",
    "label": "Pestalozzi Student Email",
@@ -870,7 +870,7 @@
   {
    "group": "Soft Skills",
    "link_doctype": "SH Soft Skills Feedback",
-   "link_fieldname": "sh_student"
+   "link_fieldname": "student"
   },
   {
    "group": "Vocational Training",
@@ -880,7 +880,7 @@
   {
    "group": "Edulution",
    "link_doctype": "SH Edulution Feedback",
-   "link_fieldname": "sh_student"
+   "link_fieldname": "student"
   },
   {
    "group": "Vocational Training",
