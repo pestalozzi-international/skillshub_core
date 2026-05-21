@@ -9,13 +9,13 @@ is not called by the scheduler. It is kept for import compatibility only.
 """
 
 from skillshub_core.skillshub_core.tasks import (
-    daily_attendance_alerts,
-    weekly_attendance_summary,
-    check_post_skillshub_followups,
+	check_post_skillshub_followups,
+	daily_attendance_alerts,
+	weekly_attendance_summary,
 )
 
 __all__ = [
-    "daily_attendance_alerts",
-    "weekly_attendance_summary",
-    "check_post_skillshub_followups",
+	"daily_attendance_alerts",
+	"weekly_attendance_summary",
+	"check_post_skillshub_followups",
 ]
