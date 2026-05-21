@@ -70,7 +70,7 @@ class SHAttendance(Document):  # nosemgrep
 		)
 		if holiday:
 			frappe.throw(
-				f"<b>{self.date}</b> is a holiday: <b>{holiday}</b>. " f"Cannot mark attendance on a holiday."
+				f"<b>{self.date}</b> is a holiday: <b>{holiday}</b>. Cannot mark attendance on a holiday."
 			)
 
 	def validate_schedule_day(self):

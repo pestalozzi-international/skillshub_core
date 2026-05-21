@@ -39,7 +39,9 @@ class SHHolidayList(Document):
 			response.raise_for_status()
 			data = response.json()
 		except requests.exceptions.Timeout:
-			frappe.throw("The request timed out. Check your server internet connection and try again.")  # nosemgrep
+			frappe.throw(  # nosemgrep
+				"The request timed out. Check your server internet connection and try again."
+			)
 		except requests.exceptions.RequestException as e:
 			frappe.throw(f"Failed to reach Calendarific API: {e!s}")
 

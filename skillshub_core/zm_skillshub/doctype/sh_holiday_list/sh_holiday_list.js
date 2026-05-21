@@ -9,9 +9,8 @@ frappe.ui.form.on("SH Holiday List", {
 				__("Fetch Holidays"),
 				function () {
 					frappe.confirm(
-						__(  # nosemgrep
-							"This will <b>clear all existing holidays</b> and re-fetch " +
-								"from Calendarific for <b>{0}</b>.<br><br>Continue?",
+						__(
+							"This will <b>clear all existing holidays</b> and re-fetch from Calendarific for <b>{0}</b>.<br><br>Continue?",
 							[frm.doc.academic_year]
 						),
 						function () {

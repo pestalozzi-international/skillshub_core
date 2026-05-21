@@ -26,8 +26,7 @@ class SHApplicant(Document):
 		"""
 		if self.status != "Accepted":
 			frappe.throw(
-				f"Only Accepted applicants can be converted. "
-				f"This applicant's status is <b>{self.status}</b>."
+				f"Only Accepted applicants can be converted. This applicant's status is <b>{self.status}</b>."
 			)
 
 		if self.converted_to_student:
@@ -73,7 +72,7 @@ class SHApplicant(Document):
 		self.reload()
 
 		frappe.msgprint(
-			f"Student <a href='/app/sh-student/{student.name}'>{student.name}</a> " f"created successfully.",
+			f"Student <a href='/app/sh-student/{student.name}'>{student.name}</a> created successfully.",
 			title="Conversion Complete",
 			indicator="green",
 		)

@@ -48,7 +48,7 @@ def daily_attendance_alerts():
 		return 0
 
 	rows = "".join(
-		f"<tr><td>{a.student}</td><td>{a.student_name}</td>" f"<td>{a.class_name}</td></tr>" for a in at_risk
+		f"<tr><td>{a.student}</td><td>{a.student_name}</td><td>{a.class_name}</td></tr>" for a in at_risk
 	)
 	body = (
 		"<h3>Students with 3+ consecutive absences</h3>"
