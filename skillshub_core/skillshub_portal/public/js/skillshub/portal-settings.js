@@ -37,22 +37,22 @@
 		var root = document.documentElement;
 		root.style.setProperty(
 			"--color-teal-700",
-			settings.primary_color || "#0f766e",
+			settings.primary_color || "#CA0733",
 			"important"
 		);
 		root.style.setProperty(
 			"--color-teal-800",
-			settings.secondary_color || "#115e59",
+			settings.secondary_color || "#a3052a",
 			"important"
 		);
 		root.style.setProperty(
 			"--color-accent-500",
-			settings.accent_color || "#0ea5a4",
+			settings.accent_color || "#9de3eb",
 			"important"
 		);
 		root.style.setProperty(
 			"--color-slate-50",
-			settings.background_color || "#f8fafc",
+			settings.background_color || "#F1E8DA",
 			"important"
 		);
 		root.style.setProperty(
@@ -60,15 +60,15 @@
 			settings.surface_color || "#ffffff",
 			"important"
 		);
-		root.style.setProperty("--text-color", settings.text_color || "#0f172a", "important");
+		root.style.setProperty("--text-color", settings.text_color || "#343837", "important");
 		root.style.setProperty(
 			"--muted-text-color",
-			settings.muted_text_color || "#64748b",
+			settings.muted_text_color || "#6b6f6e",
 			"important"
 		);
 		root.style.setProperty(
 			"--header-gradient",
-			settings.header_gradient || "linear-gradient(135deg, #0f766e 0%, #115e59 100%)",
+			settings.header_gradient || "linear-gradient(135deg, #CA0733 0%, #a3052a 100%)",
 			"important"
 		);
 

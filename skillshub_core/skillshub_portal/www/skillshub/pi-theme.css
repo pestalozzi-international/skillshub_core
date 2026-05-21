@@ -78,6 +78,12 @@ body {
 }
 .pi-header-nav a:hover { opacity: 1; }
 
+/* ---- Admin page-header override ---- */
+.sh-page-header {
+  background: linear-gradient(135deg, var(--pi-red) 0%, var(--pi-red-dark) 100%) !important;
+  font-family: var(--font-family) !important;
+}
+
 /* ---- Hero band ---- */
 .pi-hero {
   background: linear-gradient(135deg, var(--pi-red) 0%, var(--pi-red-dark) 100%);

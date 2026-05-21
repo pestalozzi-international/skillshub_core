@@ -972,6 +972,7 @@ def get_public_profile(student_id, token):
 			"hidden": int(field.hidden or 0),
 			"default": field.default or "",
 			"description": field.description or "",
+			"depends_on": field.depends_on or "",
 		}
 		fields.append(fd)
 
@@ -1188,7 +1189,7 @@ def get_public_form_meta(doctype):
 
 
 @frappe.whitelist(allow_guest=True)  # nosemgrep
-def get_public_link_options(doctype, search_text=None, limit=200):
+def get_public_link_options(doctype, search_text=None, limit=500):
 	"""Guest-accessible link options — allowlisted doctypes only."""
 	if doctype not in PUBLIC_LINK_ALLOWED:
 		frappe.throw(_("DocType not accessible."))

@@ -163,6 +163,59 @@
 		function () {
 			return Promise.reject(new Error("SHGate not loaded"));
 		};
+
+	/* ---- depends_on evaluation ---- */
+	function evalDependsOn(expr, doc) {
+		if (!expr) return true;
+		try {
+			if (expr.indexOf("eval:") === 0) {
+				return !!new Function("doc", "return (" + expr.slice(5) + ")")(doc); // eslint-disable-line no-new-func
+			}
+			return !!doc[expr];
+		} catch (_e) {
+			return true;
+		}
+	}
+
+	function gatherCurrentDoc() {
+		var doc =
+			state.profile && state.profile.student ? Object.assign({}, state.profile.student) : {};
+		document
+			.querySelectorAll("#pi-profile-body [data-fieldname][data-fieldtype]")
+			.forEach(function (el) {
+				var fn = el.getAttribute("data-fieldname");
+				var ft = el.getAttribute("data-fieldtype");
+				if (!fn) return;
+				if (ft === "Check") {
+					doc[fn] = el.checked;
+					return;
+				}
+				if (ft === "Rating" && el.type === "hidden") {
+					doc[fn] = el.value ? Number(el.value) : null;
+					return;
+				}
+				if (ft === "Link" && el.classList.contains("pi-link-value")) {
+					doc[fn] = el.value;
+					return;
+				}
+				if (ft === "Link" || ft === "Table") return;
+				doc[fn] = el.value;
+			});
+		return doc;
+	}
+
+	function applyDependsOn(root) {
+		if (!state.profile || !state.profile.fields) return;
+		var doc = gatherCurrentDoc();
+		state.profile.fields.forEach(function (field) {
+			if (!field.depends_on) return;
+			var el = root.querySelector('[data-fieldname="' + field.fieldname + '"]');
+			if (!el) return;
+			var wrapper = el.closest(".pi-field");
+			if (!wrapper) return;
+			wrapper.style.display = evalDependsOn(field.depends_on, doc) ? "" : "none";
+		});
+	}
 	var esc =
 		(window.SHGate && window.SHGate.esc) ||
 		function (v) {
@@ -568,6 +621,7 @@
 		Promise.all(sectionPromises).then(function (parts) {
 			root.innerHTML = parts.filter(Boolean).join("");
 			bindInteractions(root);
+			applyDependsOn(root);
 			updateSaveBar();
 		});
 	}
@@ -680,6 +734,7 @@
 			if (hidden) hidden.value = val;
 			if (dropdown) dropdown.hidden = true;
 			markDirty();
+			applyDependsOn(root);
 		});
 
 		/* Close dropdowns on outside click */
@@ -694,6 +749,7 @@
 		/* Any plain input change */
 		root.addEventListener("change", function (e) {
 			if (e.target.matches(".pi-input, .pi-select, .pi-textarea")) markDirty();
+			applyDependsOn(root);
 		});
 	}
 

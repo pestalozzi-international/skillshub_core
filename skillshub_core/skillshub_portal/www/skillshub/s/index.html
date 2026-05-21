@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillsHub Student Portal</title>
+  <link rel="icon" href="/assets/skillshub_core/images/favicon.png">
   <link rel="stylesheet" href="/skillshub/theme.css?v=4.0">
   <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.0">
   <script>window.frappe = {}; frappe.csrf_token = "{{ frappe.session.csrf_token }}";</script>
@@ -63,6 +64,7 @@
         <a id="pi-go-forms" href="#" class="pi-btn pi-btn-sky pi-btn-full pi-btn-lg" style="text-decoration:none;text-align:center;">
           📋 &nbsp;Submit a Form
         </a>
+        <button onclick="if(window.SHGate)window.SHGate.clearSession();location.reload();" class="pi-btn pi-btn-ghost pi-btn-sm pi-btn-full" style="margin-top:0.25rem;">Sign Out</button>
       </div>
     </div>
   </div>
@@ -88,6 +90,7 @@
 </footer>
 
 <script src="/assets/skillshub_core/js/skillshub/s-gate.js?v=4.0"></script>
+{% raw %}
 <script>
 (function () {
   var SK_TOKEN = 'sh_pub_token';
@@ -173,5 +176,6 @@
   window.addEventListener('sh-gate-open', function () {});
 }());
 </script>
+{% endraw %}
 </body>
 </html>

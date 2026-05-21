@@ -12,6 +12,63 @@
 		function () {
 			return Promise.reject(new Error("SHGate not loaded"));
 		};
+
+	/* ---- depends_on evaluation ---- */
+	function evalDependsOn(expr, doc) {
+		if (!expr) return true;
+		try {
+			if (expr.indexOf("eval:") === 0) {
+				return !!new Function("doc", "return (" + expr.slice(5) + ")")(doc); // eslint-disable-line no-new-func
+			}
+			return !!doc[expr];
+		} catch (_e) {
+			return true;
+		}
+	}
+
+	function gatherFormDoc() {
+		var doc = {};
+		var ctx = enrolmentContext();
+		Object.keys(ctx).forEach(function (k) {
+			if (ctx[k]) doc[k] = ctx[k];
+		});
+		document
+			.querySelectorAll("#pi-form-body [data-fieldname][data-fieldtype]")
+			.forEach(function (el) {
+				var fn = el.getAttribute("data-fieldname");
+				var ft = el.getAttribute("data-fieldtype");
+				if (!fn) return;
+				if (ft === "Check") {
+					doc[fn] = el.checked;
+					return;
+				}
+				if (ft === "Rating" && el.type === "hidden") {
+					doc[fn] = el.value ? Number(el.value) : null;
+					return;
+				}
+				if (ft === "Link" && el.classList.contains("pi-link-value")) {
+					doc[fn] = el.value;
+					return;
+				}
+				if (ft === "Link" || ft === "Table") return;
+				doc[fn] = el.value;
+			});
+		return doc;
+	}
+
+	function applyFormDependsOn(root) {
+		var fields = (state.meta && state.meta.fields) || [];
+		if (!fields.length) return;
+		var doc = gatherFormDoc();
+		fields.forEach(function (field) {
+			if (!field.depends_on) return;
+			var el = root.querySelector('[data-fieldname="' + field.fieldname + '"]');
+			if (!el) return;
+			var wrapper = el.closest(".pi-field");
+			if (!wrapper) return;
+			wrapper.style.display = evalDependsOn(field.depends_on, doc) ? "" : "none";
+		});
+	}
 	var esc =
 		(window.SHGate && window.SHGate.esc) ||
 		function (v) {
@@ -463,6 +520,7 @@
 				'<div class="pi-form-grid">' + parts.filter(Boolean).join("") + "</div>";
 			root.innerHTML = ctxBar + gridHtml;
 			bindFormInteractions(root);
+			applyFormDependsOn(root);
 		});
 	}
 
@@ -536,6 +594,10 @@
 					d.hidden = true;
 				});
 			}
+		});
+
+		root.addEventListener("change", function () {
+			applyFormDependsOn(root);
 		});
 	}
 

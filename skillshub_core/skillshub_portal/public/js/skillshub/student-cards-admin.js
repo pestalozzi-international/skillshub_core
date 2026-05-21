@@ -4,7 +4,7 @@
 
 	var state = { page: 1, pageSize: 24, total: 0, filters: {} };
 
-	var api =
+	var rawApi =
 		(window.SHPortal && window.SHPortal.api) ||
 		function (path, opts) {
 			return fetch(
@@ -19,14 +19,15 @@
 					},
 					opts || {}
 				)
-			)
-				.then(function (r) {
-					return r.json();
-				})
-				.then(function (d) {
-					return d.message || d;
-				});
+			).then(function (r) {
+				return r.json();
+			});
 		};
+	var api = function (path, opts) {
+		return rawApi(path, opts).then(function (r) {
+			return r && r.message !== undefined ? r.message : r;
+		});
+	};
 	var esc =
 		(window.SHPortal && window.SHPortal.esc) ||
 		function (v) {
