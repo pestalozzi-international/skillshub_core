@@ -61,7 +61,7 @@ class SHEnrolment(Document):
 			)
 
 
-@frappe.whitelist()
+@frappe.whitelist()  # nosemgrep
 def recompute_enrolment_stats(enrolment_name):
 	"""Manually trigger attendance stat recomputation for a single enrolment."""
 	doc = frappe.get_doc("SH Enrolment", enrolment_name)

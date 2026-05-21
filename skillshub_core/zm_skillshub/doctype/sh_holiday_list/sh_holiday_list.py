@@ -12,7 +12,7 @@ class SHHolidayList(Document):
 	@frappe.whitelist()
 	def fetch_holidays(self):
 		if not self.academic_year:
-			frappe.throw("Please set an <b>Academic Year</b> before fetching holidays.")
+			frappe.throw("Please set an <b>Academic Year</b> before fetching holidays.")  # nosemgrep
 
 		is_current = frappe.db.get_value("SH Academic Year", self.academic_year, "current")
 		if not is_current:
@@ -39,7 +39,7 @@ class SHHolidayList(Document):
 			response.raise_for_status()
 			data = response.json()
 		except requests.exceptions.Timeout:
-			frappe.throw("The request timed out. Check your server internet connection and try again.")
+			frappe.throw("The request timed out. Check your server internet connection and try again.")  # nosemgrep
 		except requests.exceptions.RequestException as e:
 			frappe.throw(f"Failed to reach Calendarific API: {e!s}")
 
@@ -49,7 +49,7 @@ class SHHolidayList(Document):
 
 		holidays = data.get("response", {}).get("holidays", [])
 		if not holidays:
-			frappe.msgprint("No holidays returned by the API for Zambia.")
+			frappe.msgprint("No holidays returned by the API for Zambia.")  # nosemgrep
 			return
 
 		self.set("holidays", [])

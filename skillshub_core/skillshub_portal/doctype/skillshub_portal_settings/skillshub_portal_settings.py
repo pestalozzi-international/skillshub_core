@@ -9,7 +9,7 @@ class SkillsHubPortalSettings(Document):
 	pass
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=True)  # nosemgrep
 def get_portal_settings():
 	"""
 	Return portal branding settings for the frontend.

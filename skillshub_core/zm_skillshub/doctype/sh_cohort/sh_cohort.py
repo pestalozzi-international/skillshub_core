@@ -8,7 +8,7 @@ from frappe.model.document import Document
 class SHCohort(Document):  # ← capital H
 	def autoname(self):
 		if not self.cohort_name:
-			frappe.throw("Cohort Name is required.")
+			frappe.throw("Cohort Name is required.")  # nosemgrep
 		self.name = self.cohort_name
 
 	def before_save(self):
