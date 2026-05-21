@@ -141,10 +141,14 @@
 		keys.forEach(function (key) {
 			try {
 				window.localStorage.removeItem(key);
-			} catch (e) {}
+			} catch (_e) {
+				/* storage unavailable */
+			}
 			try {
 				window.sessionStorage.removeItem(key);
-			} catch (e) {}
+			} catch (_e) {
+				/* storage unavailable */
+			}
 		});
 	}
 

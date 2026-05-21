@@ -192,7 +192,7 @@ def _list_distinct_values(doctype, fieldname):
         """,
 		as_dict=True,
 	)
-	return [str((row.get("value") or "")).strip() for row in rows if (row.get("value") or "").strip()]
+	return [str(row.get("value") or "").strip() for row in rows if (row.get("value") or "").strip()]
 
 
 @frappe.whitelist()

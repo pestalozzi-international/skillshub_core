@@ -41,7 +41,7 @@ class SHHolidayList(Document):
 		except requests.exceptions.Timeout:
 			frappe.throw("The request timed out. Check your server internet connection and try again.")
 		except requests.exceptions.RequestException as e:
-			frappe.throw(f"Failed to reach Calendarific API: {str(e)}")
+			frappe.throw(f"Failed to reach Calendarific API: {e!s}")
 
 		if data.get("meta", {}).get("code") != 200:
 			error_detail = data.get("meta", {}).get("error_detail", "Unknown API error")

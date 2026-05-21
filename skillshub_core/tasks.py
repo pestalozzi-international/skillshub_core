@@ -15,7 +15,7 @@ from skillshub_core.skillshub_core.tasks import (
 )
 
 __all__ = [
+	"check_post_skillshub_followups",
 	"daily_attendance_alerts",
 	"weekly_attendance_summary",
-	"check_post_skillshub_followups",
 ]
