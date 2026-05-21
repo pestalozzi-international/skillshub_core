@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Forms — SkillsHub</title>
+  <link rel="stylesheet" href="/skillshub/theme.css?v=4.0">
+  <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.0">
+  <script>window.frappe = {}; frappe.csrf_token = "{{ frappe.session.csrf_token }}";</script>
+</head>
+<body data-gate-title="My Forms">
+
+<header class="pi-header">
+  <div class="pi-wrap pi-header-inner">
+    <div class="pi-logo-mark">PI</div>
+    <div>
+      <div class="pi-header-title">SkillsHub Portal</div>
+      <div class="pi-header-sub">Pestalozzi International</div>
+    </div>
+    <nav class="pi-header-nav">
+      <a href="/skillshub/s/">Home</a>
+      <a href="/skillshub/s/profile">My Profile</a>
+    </nav>
+  </div>
+</header>
+
+<div class="pi-hero" style="padding-bottom:2.5rem;">
+  <div class="pi-wrap">
+    <h1>My Forms</h1>
+    <p>Track and submit your programme feedback forms below.</p>
+  </div>
+</div>
+
+<main class="pi-wrap pi-wrap-narrow" style="padding-top:1.5rem;padding-bottom:3rem;">
+  <div id="pi-forms-body">
+    <div class="pi-skeleton" style="height:8rem;border-radius:1rem;margin-bottom:1.25rem;"></div>
+    <div class="pi-skeleton" style="height:5rem;border-radius:0.75rem;margin-bottom:0.65rem;"></div>
+    <div class="pi-skeleton" style="height:5rem;border-radius:0.75rem;margin-bottom:0.65rem;"></div>
+    <div class="pi-skeleton" style="height:5rem;border-radius:0.75rem;"></div>
+  </div>
+</main>
+
+<script src="/assets/skillshub_core/js/skillshub/s-gate.js?v=4.0"></script>
+<script src="/assets/skillshub_core/js/skillshub/s-forms.js?v=4.0"></script>
+</body>
+</html>

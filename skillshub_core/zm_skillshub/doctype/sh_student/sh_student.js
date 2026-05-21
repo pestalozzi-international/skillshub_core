@@ -6,13 +6,17 @@
 
 // 	},
 // });
-frappe.ui.form.on('SH Student', {
-    refresh(frm) {
-        if (!frm.is_new() && frm.doc.name) {
-            frm.add_custom_button(__('Open Portal Admin Profile'), function () {
-                var url = '/skillshub/admin/student?id=' + encodeURIComponent(frm.doc.name);
-                window.open(url, '_blank');
-            }, __('Actions'));
-        }
-    }
+frappe.ui.form.on("SH Student", {
+	refresh(frm) {
+		if (!frm.is_new() && frm.doc.name) {
+			frm.add_custom_button(
+				__("Open Portal Admin Profile"),
+				function () {
+					var url = "/skillshub/admin/student?id=" + encodeURIComponent(frm.doc.name);
+					window.open(url, "_blank");
+				},
+				__("Actions")
+			);
+		}
+	},
 });

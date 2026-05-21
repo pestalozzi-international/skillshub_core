@@ -5,13 +5,13 @@ import frappe
 
 
 def daily_attendance_alerts():
-    """
-    Flag students with 3+ consecutive absences in their active schedule enrolment.
-    Source of truth: tabSH Enrolment (active enrolments) +
-                     tabSH Attendance (per-day records).
-    """
-    active_enrolments = frappe.db.sql(
-        """
+	"""
+	Flag students with 3+ consecutive absences in their active schedule enrolment.
+	Source of truth: tabSH Enrolment (active enrolments) +
+	                 tabSH Attendance (per-day records).
+	"""
+	active_enrolments = frappe.db.sql(
+		"""
         SELECT
             e.name          AS enrolment,
             e.student,
@@ -22,14 +22,14 @@ def daily_attendance_alerts():
         INNER JOIN `tabSH Student` s ON s.name = e.student
         WHERE e.status = 'Enrolled'
         """,
-        as_dict=True,
-    )
+		as_dict=True,
+	)
 
-    at_risk = []
+	at_risk = []
 
-    for enrolment in active_enrolments:
-        recent = frappe.db.sql(
-            """
+	for enrolment in active_enrolments:
+		recent = frappe.db.sql(
+			"""
             SELECT status
             FROM `tabSH Attendance`
             WHERE sh_student = %s
@@ -37,42 +37,40 @@ def daily_attendance_alerts():
             ORDER BY date DESC
             LIMIT 3
             """,
-            (enrolment.student, enrolment.class_name),
-            as_list=True,
-        )
+			(enrolment.student, enrolment.class_name),
+			as_list=True,
+		)
 
-        if len(recent) >= 3 and all(row[0] == "Absent" for row in recent):
-            at_risk.append(enrolment)
+		if len(recent) >= 3 and all(row[0] == "Absent" for row in recent):
+			at_risk.append(enrolment)
 
-    if not at_risk:
-        return 0
+	if not at_risk:
+		return 0
 
-    rows = "".join(
-        f"<tr><td>{a.student}</td><td>{a.student_name}</td>"
-        f"<td>{a.class_name}</td></tr>"
-        for a in at_risk
-    )
-    body = (
-        "<h3>Students with 3+ consecutive absences</h3>"
-        "<table border='1' cellpadding='4'>"
-        "<thead><tr><th>Student ID</th><th>Name</th><th>Schedule</th></tr></thead>"
-        f"<tbody>{rows}</tbody></table>"
-    )
-    frappe.sendmail(
-        recipients=["techsupport@pestalozzi.international"],
-        subject="SkillsHub: Daily Attendance Alert — Consecutive Absences",
-        message=body,
-    )
-    return len(at_risk)
+	rows = "".join(
+		f"<tr><td>{a.student}</td><td>{a.student_name}</td><td>{a.class_name}</td></tr>" for a in at_risk
+	)
+	body = (
+		"<h3>Students with 3+ consecutive absences</h3>"
+		"<table border='1' cellpadding='4'>"
+		"<thead><tr><th>Student ID</th><th>Name</th><th>Schedule</th></tr></thead>"
+		f"<tbody>{rows}</tbody></table>"
+	)
+	frappe.sendmail(
+		recipients=["techsupport@pestalozzi.international"],
+		subject="SkillsHub: Daily Attendance Alert — Consecutive Absences",
+		message=body,
+	)
+	return len(at_risk)
 
 
 def weekly_attendance_summary():
-    """
-    Weekly digest: per-class unique student counts and average attendance rates.
-    Source of truth: tabSH Enrolment aggregated by class.
-    """
-    summary = frappe.db.sql(
-        """
+	"""
+	Weekly digest: per-class unique student counts and average attendance rates.
+	Source of truth: tabSH Enrolment aggregated by class.
+	"""
+	summary = frappe.db.sql(
+		"""
         SELECT
             e.class AS class_name,
             e.milestone,
@@ -83,39 +81,39 @@ def weekly_attendance_summary():
         GROUP BY e.class, e.milestone
         ORDER BY e.class
         """,
-        as_dict=True,
-    )
+		as_dict=True,
+	)
 
-    if not summary:
-        return
+	if not summary:
+		return
 
-    rows = "".join(
-        f"<tr><td>{r.class_name}</td><td>{r.milestone or '-'}</td>"
-        f"<td>{r.unique_students}</td>"
-        f"<td>{round(float(r.avg_attendance_rate or 0), 1)}%</td></tr>"
-        for r in summary
-    )
-    body = (
-        "<h3>Weekly Attendance Summary</h3>"
-        "<table border='1' cellpadding='4'>"
-        "<thead><tr><th>Schedule</th><th>Milestone</th>"
-        "<th>Students</th><th>Avg Attendance</th></tr></thead>"
-        f"<tbody>{rows}</tbody></table>"
-    )
-    frappe.sendmail(
-        recipients=["techsupport@pestalozzi.international"],
-        subject="SkillsHub: Weekly Attendance Summary",
-        message=body,
-    )
+	rows = "".join(
+		f"<tr><td>{r.class_name}</td><td>{r.milestone or '-'}</td>"
+		f"<td>{r.unique_students}</td>"
+		f"<td>{round(float(r.avg_attendance_rate or 0), 1)}%</td></tr>"
+		for r in summary
+	)
+	body = (
+		"<h3>Weekly Attendance Summary</h3>"
+		"<table border='1' cellpadding='4'>"
+		"<thead><tr><th>Schedule</th><th>Milestone</th>"
+		"<th>Students</th><th>Avg Attendance</th></tr></thead>"
+		f"<tbody>{rows}</tbody></table>"
+	)
+	frappe.sendmail(
+		recipients=["techsupport@pestalozzi.international"],
+		subject="SkillsHub: Weekly Attendance Summary",
+		message=body,
+	)
 
 
 def check_post_skillshub_followups():
-    """
-    Flag Alumni students whose employment_history child table has no entries.
-    Source of truth: tabSH Employment History (child table on SH Student).
-    """
-    alumni_no_employment = frappe.db.sql(
-        """
+	"""
+	Flag Alumni students whose employment_history child table has no entries.
+	Source of truth: tabSH Employment History (child table on SH Student).
+	"""
+	alumni_no_employment = frappe.db.sql(
+		"""
         SELECT
             s.name          AS student_id,
             s.student_name,
@@ -131,26 +129,26 @@ def check_post_skillshub_followups():
         ORDER BY s.graduation_completion_date DESC
         LIMIT 50
         """,
-        as_dict=True,
-    )
+		as_dict=True,
+	)
 
-    if not alumni_no_employment:
-        return
+	if not alumni_no_employment:
+		return
 
-    rows = "".join(
-        f"<tr><td>{s.student_id}</td><td>{s.student_name}</td>"
-        f"<td>{s.graduation_completion_date or '-'}</td></tr>"
-        for s in alumni_no_employment
-    )
-    body = (
-        f"<h3>Alumni with no Employment History "
-        f"({len(alumni_no_employment)} students)</h3>"
-        "<table border='1' cellpadding='4'>"
-        "<thead><tr><th>Student ID</th><th>Name</th><th>Completion Date</th></tr></thead>"
-        f"<tbody>{rows}</tbody></table>"
-    )
-    frappe.sendmail(
-        recipients=["techsupport@pestalozzi.international"],
-        subject="SkillsHub: Post-Programme Follow-up — Missing Employment Data",
-        message=body,
-    )
+	rows = "".join(
+		f"<tr><td>{s.student_id}</td><td>{s.student_name}</td>"
+		f"<td>{s.graduation_completion_date or '-'}</td></tr>"
+		for s in alumni_no_employment
+	)
+	body = (
+		f"<h3>Alumni with no Employment History "
+		f"({len(alumni_no_employment)} students)</h3>"
+		"<table border='1' cellpadding='4'>"
+		"<thead><tr><th>Student ID</th><th>Name</th><th>Completion Date</th></tr></thead>"
+		f"<tbody>{rows}</tbody></table>"
+	)
+	frappe.sendmail(
+		recipients=["techsupport@pestalozzi.international"],
+		subject="SkillsHub: Post-Programme Follow-up — Missing Employment Data",
+		message=body,
+	)

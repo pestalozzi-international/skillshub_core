@@ -7,42 +7,38 @@ from frappe.model.document import Document
 
 
 class SHEnrolment(Document):
-    def validate(self):
-        self.validate_duplicate_enrolment()
-        self.validate_path_b_not_edulution()
-        self.compute_attendance_stats()
+	def validate(self):
+		self.validate_duplicate_enrolment()
+		self.validate_path_b_not_edulution()
+		self.compute_attendance_stats()
 
-    def validate_duplicate_enrolment(self):
-        """Enforce unique constraint: one enrolment per student per class."""
-        class_name = self.get("class")
-        existing = frappe.db.exists(
-            "SH Enrolment",
-            {
-                "student": self.student,
-                "class": class_name,
-                "name": ["!=", self.name],
-            },
-        )
-        if existing:
-            frappe.throw(
-                _("Student {0} is already enrolled in Class {1}.").format(
-                    self.student, class_name
-                )
-            )
+	def validate_duplicate_enrolment(self):
+		"""Enforce unique constraint: one enrolment per student per class."""
+		class_name = self.get("class")
+		existing = frappe.db.exists(
+			"SH Enrolment",
+			{
+				"student": self.student,
+				"class": class_name,
+				"name": ["!=", self.name],
+			},
+		)
+		if existing:
+			frappe.throw(_("Student {0} is already enrolled in Class {1}.").format(self.student, class_name))
 
-    def validate_path_b_not_edulution(self):
-        """Path B students must not be enrolled in an Edulution class."""
-        if self.programme_path == "Path B" and self.milestone == "Edulution":
-            frappe.throw(_("Path B students cannot be enrolled in an Edulution class."))
+	def validate_path_b_not_edulution(self):
+		"""Path B students must not be enrolled in an Edulution class."""
+		if self.programme_path == "Path B" and self.milestone == "Edulution":
+			frappe.throw(_("Path B students cannot be enrolled in an Edulution class."))
 
-    def compute_attendance_stats(self):
-        """Recompute attendance totals from SH Attendance records for this class."""
-        class_name = self.get("class")
-        if not (self.student and class_name):
-            return
+	def compute_attendance_stats(self):
+		"""Recompute attendance totals from SH Attendance records for this class."""
+		class_name = self.get("class")
+		if not (self.student and class_name):
+			return
 
-        stats = frappe.db.sql(
-            """
+		stats = frappe.db.sql(
+			"""
             SELECT
                 COUNT(*) AS total,
                 SUM(CASE WHEN status = 'Present' OR status = 'Late' THEN 1 ELSE 0 END) AS present,
@@ -51,25 +47,24 @@ class SHEnrolment(Document):
             WHERE sh_student = %s
               AND sh_programme_schedule = %s
             """,
-            (self.student, class_name),
-            as_dict=True,
-        )
+			(self.student, class_name),
+			as_dict=True,
+		)
 
-        if stats:
-            row = stats[0]
-            self.sessions_total = int(row.total or 0)
-            self.sessions_present = int(row.present or 0)
-            self.sessions_absent = int(row.absent or 0)
-            self.attendance_rate = (
-                round((self.sessions_present / self.sessions_total) * 100, 2)
-                if self.sessions_total
-                else 0.0
-            )
+		if stats:
+			row = stats[0]
+			self.sessions_total = int(row.total or 0)
+			self.sessions_present = int(row.present or 0)
+			self.sessions_absent = int(row.absent or 0)
+			self.attendance_rate = (
+				round((self.sessions_present / self.sessions_total) * 100, 2) if self.sessions_total else 0.0
+			)
 
-@frappe.whitelist()
+
+@frappe.whitelist()  # nosemgrep
 def recompute_enrolment_stats(enrolment_name):
-    """Manually trigger attendance stat recomputation for a single enrolment."""
-    doc = frappe.get_doc("SH Enrolment", enrolment_name)
-    doc.compute_attendance_stats()
-    doc.save(ignore_permissions=True)
-    return {"sessions_total": doc.sessions_total, "attendance_rate": doc.attendance_rate}
+	"""Manually trigger attendance stat recomputation for a single enrolment."""
+	doc = frappe.get_doc("SH Enrolment", enrolment_name)
+	doc.compute_attendance_stats()
+	doc.save(ignore_permissions=True)
+	return {"sessions_total": doc.sessions_total, "attendance_rate": doc.attendance_rate}

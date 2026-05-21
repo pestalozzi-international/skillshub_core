@@ -25,16 +25,16 @@ app_license = "mit"
 # ---------------
 
 scheduler_events = {
-    "daily": [
-        # Flag students with 3+ consecutive absences
-        "skillshub_core.skillshub_core.tasks.daily_attendance_alerts",
-        # Flag alumni with no employment history data
-        "skillshub_core.skillshub_core.tasks.check_post_skillshub_followups",
-    ],
-    "weekly": [
-        # Per-schedule attendance summary digest
-        "skillshub_core.skillshub_core.tasks.weekly_attendance_summary",
-    ],
+	"daily": [
+		# Flag students with 3+ consecutive absences
+		"skillshub_core.skillshub_core.tasks.daily_attendance_alerts",
+		# Flag alumni with no employment history data
+		"skillshub_core.skillshub_core.tasks.check_post_skillshub_followups",
+	],
+	"weekly": [
+		# Per-schedule attendance summary digest
+		"skillshub_core.skillshub_core.tasks.weekly_attendance_summary",
+	],
 }
 
 # Document Events
@@ -44,10 +44,10 @@ scheduler_events = {
 # on_trash fires before deletion so stats are recalculated after a record is removed.
 
 doc_events = {
-    "SH Attendance": {
-        "on_update": "skillshub_core.skillshub_core.api._recompute_enrolment_on_attendance",
-        "on_trash": "skillshub_core.skillshub_core.api._recompute_enrolment_on_attendance",
-    }
+	"SH Attendance": {
+		"on_update": "skillshub_core.skillshub_core.api._recompute_enrolment_on_attendance",
+		"on_trash": "skillshub_core.skillshub_core.api._recompute_enrolment_on_attendance",
+	}
 }
 
 # Portal API — Whitelisted Methods
