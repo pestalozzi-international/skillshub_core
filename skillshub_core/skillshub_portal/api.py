@@ -1,4 +1,5 @@
 import json
+import secrets
 
 import frappe
 from frappe import _
@@ -708,6 +709,463 @@ def get_doctype_meta(doctype):
         "search_fields": meta.search_fields,
         "fields": fields,
         "tables": tables,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Public Portal Constants
+# ---------------------------------------------------------------------------
+
+ONCE_PER_ENROLMENT_DOCTYPES = {
+    "SH Mindset Camp Feedback",
+    "SH VT Feedback",
+    "SH Edulution Feedback",
+    "SH Attachment Feedback",
+    "SH Parent Feedback",
+}
+
+PUBLIC_PROFILE_READONLY = {
+    "name", "naming_series", "route", "published", "fullname_and_id",
+    "creation", "modified", "modified_by", "owner", "docstatus", "idx",
+    "parent", "parentfield", "parenttype", "pestalozzi_student_id",
+    "status", "portal_user_account", "enabled", "student_enrolment",
+    "intake_year", "intake_cohort", "current_schedule", "current_course",
+    "current_milestone", "programme_path", "student_name", "age",
+    "graduated", "discipline",
+}
+
+PUBLIC_LINK_ALLOWED = {
+    "SH Class", "SkillsHub Programme", "SH Enrolment", "SH Cohort",
+    "SH Academic Year", "SkillsHub Course", "SkillsHub Soft Skills",
+    "SH Student Motivation", "SH Student Resilience",
+    "SH Student Community Challenge", "SH Mindset Camp Aspect",
+    "SH VT Beneficial Programme Aspect", "SH VT Course Expectation",
+    "SH SS Course Expectation", "SH Attachment Challenge",
+    "SH Household Participation Impact", "SH Beneficiary",
+    "SH Employment Institution",
+    "Religion", "Nationality", "Gender", "Country", "Currency",
+}
+
+PUBLIC_FORM_ROUTES = {
+    "SH Baseline": "/skillshub/s/baseline",
+    "SH Soft Skills Feedback": "/skillshub/s/soft-skills",
+    "SH Mindset Camp Feedback": "/skillshub/s/mindset-camp",
+    "SH VT Feedback": "/skillshub/s/vocational-training",
+    "SH Edulution Feedback": "/skillshub/s/edulution",
+    "SH Attachment Feedback": "/skillshub/s/attachment",
+    "SH Parent Feedback": "/skillshub/s/parent",
+}
+
+PUBLIC_FORM_LIST = [
+    {"doctype": "SH Baseline",              "label": "Baseline Assessment",          "section": "assessment"},
+    {"doctype": "SH Soft Skills Feedback",  "label": "Soft Skills Feedback",         "section": "assessment"},
+    {"doctype": "SH Mindset Camp Feedback", "label": "Mindset Camp Feedback",         "section": "programme"},
+    {"doctype": "SH Edulution Feedback",    "label": "Edulution Feedback",            "section": "programme", "path_a_only": True},
+    {"doctype": "SH VT Feedback",           "label": "Vocational Training Feedback",  "section": "programme"},
+    {"doctype": "SH Attachment Feedback",   "label": "Attachment Feedback",           "section": "other"},
+    {"doctype": "SH Parent Feedback",       "label": "Parent / Guardian Feedback",    "section": "other"},
+]
+
+
+# ---------------------------------------------------------------------------
+# Token helpers (Redis-backed, 60-minute TTL)
+# ---------------------------------------------------------------------------
+
+def _get_redis():
+    cache = frappe.cache
+    if callable(cache):
+        cache = cache()
+    return cache
+
+
+def _tok_key(token):
+    return f"sh_pub:{token}"
+
+
+def _tok_set(token, student_id, ttl=3600):
+    try:
+        _get_redis().set(_tok_key(token), student_id, ex=ttl)
+    except Exception:
+        frappe.cache.set_value(_tok_key(token), student_id, expires_in_sec=ttl)
+
+
+def _tok_get(token):
+    try:
+        val = _get_redis().get(_tok_key(token))
+        if val is None:
+            return None
+        return val.decode() if isinstance(val, bytes) else str(val)
+    except Exception:
+        return frappe.cache.get_value(_tok_key(token))
+
+
+def _tok_del(token):
+    try:
+        _get_redis().delete(_tok_key(token))
+    except Exception:
+        frappe.cache.delete_value(_tok_key(token))
+
+
+def _validate_pub_token(student_id, token):
+    if not token or not student_id:
+        frappe.throw(_("Session expired. Please verify your identity again."), frappe.AuthenticationError)
+    cached = _tok_get(token)
+    if not cached or cached.strip() != (student_id or "").strip():
+        frappe.throw(_("Session expired. Please verify your identity again."), frappe.AuthenticationError)
+
+
+# ---------------------------------------------------------------------------
+# Public Portal Endpoints (allow_guest=True)
+# ---------------------------------------------------------------------------
+
+@frappe.whitelist(allow_guest=True)
+def verify_student_public(student_id, date_of_birth):
+    """Verify student identity with ID + DOB. Returns a short-lived session token."""
+    import datetime
+
+    student_id = (student_id or "").strip().upper()
+    dob_input = (date_of_birth or "").strip()
+
+    if not student_id or not dob_input:
+        frappe.throw(_("Student ID and Date of Birth are required."))
+
+    if not frappe.db.exists("SH Student", student_id):
+        frappe.throw(_("Incorrect Student ID or Date of Birth."), frappe.AuthenticationError)
+
+    student_doc = frappe.get_doc("SH Student", student_id)
+
+    stored_dob = student_doc.get("date_of_birth")
+    if stored_dob:
+        if isinstance(stored_dob, (datetime.date, datetime.datetime)):
+            stored_dob = stored_dob.strftime("%Y-%m-%d")
+        else:
+            stored_dob = str(stored_dob).strip()
+    else:
+        stored_dob = ""
+
+    if not stored_dob or dob_input != stored_dob:
+        frappe.throw(_("Incorrect Student ID or Date of Birth."), frappe.AuthenticationError)
+
+    token = secrets.token_hex(32)
+    _tok_set(token, student_id)
+
+    return {
+        "token": token,
+        "student_id": student_id,
+        "student_name": student_doc.get("student_name") or "",
+        "programme_path": student_doc.get("programme_path") or "",
+        "status": student_doc.get("status") or "",
+    }
+
+
+@frappe.whitelist(allow_guest=True)
+def get_public_profile(student_id, token):
+    """Return full SH Student doc + meta for the public profile editor."""
+    _validate_pub_token(student_id, token)
+
+    student_doc = frappe.get_doc("SH Student", student_id)
+    data = student_doc.as_dict()
+
+    meta = frappe.get_meta("SH Student")
+    fields = []
+    child_tables = {}
+
+    for field in meta.fields:
+        if field.fieldtype in {"Fold", "HTML", "Button"}:
+            continue
+        is_ro = bool(field.read_only or field.fieldname in PUBLIC_PROFILE_READONLY)
+        fd = {
+            "fieldname": field.fieldname,
+            "label": field.label or field.fieldname,
+            "fieldtype": field.fieldtype,
+            "options": field.options or "",
+            "reqd": int(field.reqd or 0),
+            "read_only": 1 if is_ro else 0,
+            "hidden": int(field.hidden or 0),
+            "default": field.default or "",
+            "description": field.description or "",
+        }
+        fields.append(fd)
+
+        if field.fieldtype == "Table" and field.options:
+            child_meta = frappe.get_meta(field.options)
+            child_fields = []
+            for cf in child_meta.fields:
+                if cf.fieldtype in {"Section Break", "Column Break", "Tab Break", "Fold", "HTML", "Button"}:
+                    continue
+                if cf.fieldname in {"idx", "parent", "parentfield", "parenttype"}:
+                    continue
+                child_fields.append({
+                    "fieldname": cf.fieldname,
+                    "label": cf.label or cf.fieldname,
+                    "fieldtype": cf.fieldtype,
+                    "options": cf.options or "",
+                    "reqd": int(cf.reqd or 0),
+                })
+            child_tables[field.fieldname] = {"doctype": field.options, "fields": child_fields}
+
+    return {
+        "student": data,
+        "fields": fields,
+        "child_tables": child_tables,
+        "readonly_fields": list(PUBLIC_PROFILE_READONLY),
+    }
+
+
+@frappe.whitelist(allow_guest=True)
+def update_public_profile(student_id, token, payload):
+    """Save editable fields of SH Student from the public profile form."""
+    _validate_pub_token(student_id, token)
+
+    payload = _json_arg(payload, {})
+    if not isinstance(payload, dict):
+        frappe.throw(_("Invalid payload."))
+
+    student_doc = frappe.get_doc("SH Student", student_id)
+    meta = frappe.get_meta("SH Student")
+
+    for field in meta.fields:
+        fn = field.fieldname
+        if fn not in payload or fn in PUBLIC_PROFILE_READONLY:
+            continue
+        value = payload[fn]
+        if field.fieldtype == "Table" and isinstance(value, list):
+            student_doc.set(fn, [])
+            for row in value:
+                if isinstance(row, dict):
+                    student_doc.append(fn, row)
+        else:
+            try:
+                student_doc.set(fn, value)
+            except Exception:
+                pass
+
+    student_doc.save(ignore_permissions=True)
+    frappe.db.commit()
+    return {"ok": True, "name": student_doc.name}
+
+
+@frappe.whitelist(allow_guest=True)
+def get_public_forms_context(student_id, token):
+    """Return the student's current enrolment + which forms are available / submitted."""
+    _validate_pub_token(student_id, token)
+
+    student_doc = frappe.get_doc("SH Student", student_id)
+    programme_path = (student_doc.get("programme_path") or "").strip()
+
+    enrolments = frappe.get_all(
+        "SH Enrolment",
+        filters={"student": student_id, "status": "Enrolled"},
+        fields=["name", "class", "course", "milestone", "cohort", "course_run", "academic_year", "programme_path"],
+        order_by="enrolment_date desc",
+        limit=1,
+    )
+    enrolment = enrolments[0] if enrolments else None
+
+    forms = []
+    for spec in PUBLIC_FORM_LIST:
+        doctype = spec["doctype"]
+        if spec.get("path_a_only") and programme_path and programme_path != "Path A":
+            continue
+        if not frappe.db.exists("DocType", doctype):
+            continue
+
+        multi_allowed = doctype not in ONCE_PER_ENROLMENT_DOCTYPES
+        submitted = False
+
+        if enrolment and not multi_allowed:
+            student_field = _feedback_student_field(doctype)
+            if student_field:
+                submitted = bool(frappe.db.exists(
+                    doctype,
+                    {student_field: student_id, "enrolment_ticket": enrolment.get("name", "")},
+                ))
+
+        forms.append({
+            "doctype": doctype,
+            "label": spec["label"],
+            "section": spec["section"],
+            "route": PUBLIC_FORM_ROUTES.get(doctype, ""),
+            "multi_allowed": multi_allowed,
+            "submitted": submitted,
+            "can_submit": multi_allowed or not submitted,
+        })
+
+    return {
+        "student": {
+            "name": student_doc.name,
+            "student_name": student_doc.get("student_name") or "",
+            "programme_path": programme_path,
+            "status": student_doc.get("status") or "",
+            "intake_cohort": str(student_doc.get("intake_cohort") or ""),
+        },
+        "enrolment": dict(enrolment) if enrolment else None,
+        "forms": forms,
+    }
+
+
+@frappe.whitelist(allow_guest=True)
+def submit_public_form(student_id, token, doctype, values):
+    """Create a feedback doc via the public portal. Expires the token on success."""
+    _validate_pub_token(student_id, token)
+
+    allowed = {row["doctype"] for row in FEEDBACK_DOCTYPES}
+    if doctype not in allowed:
+        frappe.throw(_("Form is not exposed in portal."))
+
+    values = _json_arg(values, {})
+    if not isinstance(values, dict):
+        frappe.throw(_("Invalid payload."))
+
+    student_field = _feedback_student_field(doctype)
+    if not student_field:
+        frappe.throw(_("Cannot determine student field for this form."))
+
+    values[student_field] = student_id
+
+    enrolment_ticket = (values.get("enrolment_ticket") or "").strip()
+
+    if doctype in ONCE_PER_ENROLMENT_DOCTYPES and enrolment_ticket:
+        if frappe.db.exists(doctype, {student_field: student_id, "enrolment_ticket": enrolment_ticket}):
+            frappe.throw(_("You have already submitted this form for this enrolment."))
+
+    doc = frappe.new_doc(doctype)
+    meta = frappe.get_meta(doctype)
+    for field in meta.fields:
+        fn = field.fieldname
+        if fn in {"name", "owner", "creation", "modified", "modified_by"} or fn not in values:
+            continue
+        value = values[fn]
+        if field.fieldtype == "Table" and isinstance(value, list):
+            doc.set(fn, [])
+            for row in value:
+                if isinstance(row, dict):
+                    doc.append(fn, row)
+        else:
+            doc.set(fn, value)
+
+    doc.insert(ignore_permissions=True)
+    frappe.db.commit()
+
+    _tok_del(token)
+
+    return {"name": doc.name, "doctype": doctype}
+
+
+@frappe.whitelist(allow_guest=True)
+def get_public_form_meta(doctype):
+    """Guest-accessible form schema for feedback forms."""
+    allowed = {row["doctype"] for row in FEEDBACK_DOCTYPES}
+    if doctype not in allowed:
+        frappe.throw(_("Form is not exposed in portal."))
+    if not frappe.db.exists("DocType", doctype):
+        frappe.throw(_("DocType does not exist: {0}").format(doctype))
+
+    meta = frappe.get_meta(doctype)
+    fields = []
+    child_tables = {}
+
+    for field in meta.fields:
+        if field.fieldtype in {"Section Break", "Column Break", "Tab Break", "Fold", "HTML", "Button"}:
+            continue
+        fields.append(_clean_field(field))
+
+        if field.fieldtype == "Table" and field.options:
+            child_meta = frappe.get_meta(field.options)
+            child_fields = []
+            for cf in child_meta.fields:
+                if cf.fieldtype in {"Section Break", "Column Break", "Tab Break", "Fold", "HTML", "Button"}:
+                    continue
+                if cf.fieldname in {"idx", "parent", "parentfield", "parenttype"}:
+                    continue
+                child_fields.append(_clean_field(cf))
+            child_tables[field.fieldname] = {"doctype": field.options, "fields": child_fields}
+
+    return {"doctype": doctype, "fields": fields, "child_tables": child_tables}
+
+
+@frappe.whitelist(allow_guest=True)
+def get_public_link_options(doctype, search_text=None, limit=200):
+    """Guest-accessible link options — allowlisted doctypes only."""
+    if doctype not in PUBLIC_LINK_ALLOWED:
+        frappe.throw(_("DocType not accessible."))
+    limit = min(max(int(limit or 200), 1), 500)
+    filters = {}
+    if search_text:
+        filters["name"] = ["like", f"%{search_text}%"]
+    rows = frappe.get_all(doctype, filters=filters, fields=["name"], limit=limit, order_by="name asc")
+    return [row.name for row in rows]
+
+
+@frappe.whitelist()
+def get_student_cards(filters=None, page=1, page_size=24):
+    """Admin-only paginated student card data."""
+    import datetime
+
+    if not _has_admin_access():
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    filters = _json_arg(filters, {}) or {}
+    page = max(int(page or 1), 1)
+    page_size = min(max(int(page_size or 24), 6), 100)
+    offset = (page - 1) * page_size
+
+    student_filters = {}
+    if filters.get("status"):
+        student_filters["status"] = filters["status"]
+    if filters.get("programme_path"):
+        student_filters["programme_path"] = filters["programme_path"]
+    if filters.get("intake_cohort"):
+        student_filters["intake_cohort"] = filters["intake_cohort"]
+
+    card_fields = _existing_fields("SH Student", [
+        "name", "student_name", "student_image", "date_of_birth", "status",
+        "programme_path", "intake_cohort", "intake_year", "current_schedule",
+        "current_course", "mobile", "gender",
+    ])
+
+    search = (filters.get("search") or "").strip().lower()
+
+    if search:
+        all_students = frappe.get_all(
+            "SH Student", filters=student_filters, fields=card_fields, limit=0, order_by="student_name asc"
+        )
+        search_in = _existing_fields("SH Student", ["name", "student_name"])
+        all_students = [
+            s for s in all_students
+            if any(search in (s.get(f) or "").lower() for f in search_in)
+        ]
+        total = len(all_students)
+        students = all_students[offset: offset + page_size]
+    else:
+        students = frappe.get_all(
+            "SH Student", filters=student_filters, fields=card_fields,
+            order_by="student_name asc", limit_start=offset, limit=page_size,
+        )
+        total = frappe.db.count("SH Student", student_filters)
+
+    for s in students:
+        dob = s.get("date_of_birth")
+        if dob:
+            if isinstance(dob, (datetime.date, datetime.datetime)):
+                s["date_of_birth_display"] = dob.strftime("%d %b %Y")
+                s["date_of_birth"] = dob.strftime("%Y-%m-%d")
+            else:
+                try:
+                    dt = datetime.datetime.strptime(str(dob), "%Y-%m-%d")
+                    s["date_of_birth_display"] = dt.strftime("%d %b %Y")
+                    s["date_of_birth"] = str(dob)
+                except Exception:
+                    s["date_of_birth_display"] = str(dob)
+        else:
+            s["date_of_birth_display"] = ""
+
+    return {
+        "items": students,
+        "page": page,
+        "page_size": page_size,
+        "total": total,
+        "total_pages": max((total + page_size - 1) // page_size, 1),
     }
 
 

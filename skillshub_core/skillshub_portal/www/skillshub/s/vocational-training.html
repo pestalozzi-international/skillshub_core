@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocational Training Feedback — SkillsHub</title>
+  <link rel="stylesheet" href="/skillshub/theme.css?v=4.0">
+  <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.0">
+  <script>window.frappe = {}; frappe.csrf_token = "{{ frappe.session.csrf_token }}";</script>
+</head>
+<body data-doctype="SH VT Feedback" data-title="Vocational Training Feedback" data-gate-title="Vocational Training Feedback">
+
+<header class="pi-header">
+  <div class="pi-wrap pi-header-inner">
+    <div class="pi-logo-mark">PI</div>
+    <div>
+      <div class="pi-header-title">SkillsHub Portal</div>
+      <div class="pi-header-sub">Pestalozzi International</div>
+    </div>
+    <nav class="pi-header-nav">
+      <a href="/skillshub/s/">Home</a>
+      <a href="/skillshub/s/forms">All Forms</a>
+    </nav>
+  </div>
+</header>
+
+<div class="pi-hero" style="padding-bottom:2.5rem;">
+  <div class="pi-wrap" style="display:flex;align-items:center;gap:0.75rem;">
+    <span style="font-size:2rem;">🔧</span>
+    <div>
+      <h1 style="font-size:1.6rem;margin:0 0 0.2rem;">Vocational Training Feedback</h1>
+      <p style="margin:0;opacity:0.8;font-size:0.9rem;">Fill in all sections and submit when complete.</p>
+    </div>
+  </div>
+</div>
+
+<div id="pi-form-wrap" class="pi-wrap pi-wrap-narrow" style="padding-top:1.5rem;padding-bottom:4rem;">
+  <div class="pi-card">
+    <div id="pi-form-body">
+      <div class="pi-skeleton" style="height:3rem;border-radius:0.75rem;margin-bottom:1rem;"></div>
+      <div class="pi-skeleton" style="height:3rem;border-radius:0.75rem;margin-bottom:1rem;"></div>
+      <div class="pi-skeleton" style="height:3rem;border-radius:0.75rem;"></div>
+    </div>
+    <div id="pi-form-msg" style="margin-top:1rem;"></div>
+    <div style="margin-top:1.5rem;display:flex;gap:0.75rem;flex-wrap:wrap;">
+      <a href="/skillshub/s/forms" class="pi-btn pi-btn-secondary" style="text-decoration:none;">← Back</a>
+      <button id="pi-form-submit" class="pi-btn pi-btn-primary">Submit Form</button>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/skillshub_core/js/skillshub/s-gate.js?v=4.0"></script>
+<script src="/assets/skillshub_core/js/skillshub/s-form-fill.js?v=4.0"></script>
+</body>
+</html>

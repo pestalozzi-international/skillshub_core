@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Cards — SkillsHub Admin</title>
+  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
+  <link rel="stylesheet" href="/skillshub/theme.css?v=4.0">
+  <link rel="stylesheet" href="/skillshub/admin/theme.css?v=4.0">
+  <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.0">
+  <style>
+    .pi-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    @media (max-width: 500px) { .pi-cards-grid { grid-template-columns: 1fr; } }
+  </style>
+  <script>window.frappe = {}; frappe.csrf_token = "{{ frappe.session.csrf_token }}";</script>
+</head>
+<body>
+
+<div class="sh-page-header">
+  <div class="sh-container" style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+    <div style="flex:1;">
+      <h1 style="font-size:1.7rem;margin:0 0 0.3rem;">Student Cards</h1>
+      <p style="margin:0;opacity:0.88;">Share a student's ID and Date of Birth so they can access the public portal.</p>
+    </div>
+    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+      <a href="/skillshub/admin/students" class="sh-btn-secondary" style="text-decoration:none;">← Students List</a>
+      <a href="/skillshub/s/" class="sh-btn-primary" style="text-decoration:none;background:rgba(255,255,255,0.15);">Public Portal ↗</a>
+    </div>
+  </div>
+</div>
+
+<div class="sh-container" style="margin-top:1.5rem;padding-bottom:3rem;">
+
+  <!-- Filters -->
+  <div class="pi-filters">
+    <div class="pi-filter-group" style="flex:2;min-width:200px;">
+      <label class="pi-filter-label">Search Name or ID</label>
+      <input id="pi-filter-search" class="pi-input" type="search" placeholder="Search…">
+    </div>
+    <div class="pi-filter-group">
+      <label class="pi-filter-label">Status</label>
+      <select id="pi-filter-status" class="pi-select">
+        <option value="">All</option>
+        <option value="Student">Student</option>
+        <option value="Alumni">Alumni</option>
+        <option value="Dropped">Dropped</option>
+      </select>
+    </div>
+    <div class="pi-filter-group">
+      <label class="pi-filter-label">Programme Path</label>
+      <select id="pi-filter-path" class="pi-select">
+        <option value="">All Paths</option>
+        <option value="Path A">Path A</option>
+        <option value="Path B">Path B</option>
+      </select>
+    </div>
+    <div class="pi-filter-group">
+      <label class="pi-filter-label">Cohort</label>
+      <select id="pi-filter-cohort" class="pi-select">
+        <option value="">All Cohorts</option>
+      </select>
+    </div>
+    <div class="pi-filter-group" style="min-width:100px;">
+      <label class="pi-filter-label">Per Page</label>
+      <select id="pi-filter-size" class="pi-select">
+        <option value="24" selected>24</option>
+        <option value="48">48</option>
+        <option value="96">96</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Info banner -->
+  <div class="pi-alert pi-alert-info" style="margin-bottom:1.5rem;">
+    <span>ℹ️</span>
+    <span>Each card shows the student's <strong>ID</strong> and <strong>Date of Birth</strong> — the two pieces of information they need to access the <a href="/skillshub/s/" style="color:var(--pi-red);font-weight:700;">public portal</a>.</span>
+  </div>
+
+  <!-- Loading -->
+  <div id="pi-cards-spinner" style="display:none;text-align:center;padding:2rem;color:var(--pi-muted);">Loading…</div>
+
+  <!-- Card grid -->
+  <div id="pi-cards-grid" class="pi-cards-grid"></div>
+
+  <!-- Pagination -->
+  <div id="pi-cards-pager" class="pi-pagination"></div>
+
+</div>
+
+<script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=4.0"></script>
+<script src="/assets/skillshub_core/js/skillshub/student-cards-admin.js?v=4.0"></script>
+</body>
+</html>
