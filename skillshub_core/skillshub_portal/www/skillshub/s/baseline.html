@@ -19,9 +19,7 @@
       <div class="pi-header-sub">Pestalozzi International</div>
     </div>
     <nav class="pi-header-nav">
-      <a href="/skillshub/s/">Home</a>
-      <a href="/skillshub/s/forms">All Forms</a>
-      <a href="#" onclick="event.preventDefault();if(window.SHGate)window.SHGate.clearSession();location.replace('/skillshub/s/')">Sign Out</a>
+      <a href="#" onclick="event.preventDefault();if(window.SHGate)window.SHGate.clearSession();location.reload()">Sign Out</a>
     </nav>
   </div>
 </header>
@@ -45,7 +43,6 @@
     </div>
     <div id="pi-form-msg" style="margin-top:1rem;"></div>
     <div style="margin-top:1.5rem;display:flex;gap:0.75rem;flex-wrap:wrap;">
-      <a href="/skillshub/s/forms" class="pi-btn pi-btn-secondary" style="text-decoration:none;">← Back</a>
       <button id="pi-form-submit" class="pi-btn pi-btn-primary">Submit Form</button>
     </div>
   </div>

@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillsHub — Programme Overview</title>
-  <link rel="icon" href="/assets/skillshub_core/images/favicon.png?v=3.0">
-  <link rel="stylesheet" href="/skillshub/theme.css?v=3.0">
-  <link rel="stylesheet" href="/skillshub/admin/theme.css?v=3.0">
+  <link rel="icon" href="/assets/skillshub_core/images/favicon.png">
+  <link rel="stylesheet" href="/skillshub/theme.css?v=4.0">
+  <link rel="stylesheet" href="/skillshub/admin/theme.css?v=4.0">
+  <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.0">
   <style>
     body{background:var(--color-slate-50);}
     .sh-admin-nav a{color:white;text-decoration:none;font-size:.875rem;opacity:.8;}
@@ -21,7 +22,7 @@
                border-radius:.75rem;overflow:hidden;box-shadow:var(--shadow-premium);width:fit-content;}
     .view-tab{padding:.625rem 1.5rem;font-size:.875rem;font-weight:600;cursor:pointer;
               border:none;background:none;color:var(--color-slate-500);}
-    .view-tab.active{background:var(--color-teal-700);color:white;}
+    .view-tab.active{background:var(--pi-red);color:white;}
     .view-tab:hover:not(.active){background:var(--color-slate-50);}
     .filter-bar{background:white;border:1px solid var(--color-slate-200);border-radius:1rem;
                 padding:1rem 1.25rem;box-shadow:var(--shadow-premium);
@@ -50,7 +51,7 @@
     .t-kids{padding-left:1.5rem;border-left:2px solid rgba(0,0,0,.07);
             margin-left:1.1rem;display:none;}
     .t-kids.open{display:block;}
-    .lv0>.t-row{background:#0f766e;color:white;}
+    .lv0>.t-row{background:var(--pi-red);color:white;}
     .lv0>.t-row .t-tog{color:rgba(255,255,255,.6);}
     .lv1>.t-row{background:#e0f2fe;color:#0c4a6e;}
     .lv2>.t-row{background:#ede9fe;color:#4c1d95;}
@@ -68,7 +69,7 @@
     .hc-s{background:#fdf4ff;color:#7e22ce;border-color:#e9d5ff;}
     .hc-m{background:#fffbeb;color:#b45309;border-color:#fde68a;}
     .hc-v{background:#fff7ed;color:#c2410c;border-color:#fed7aa;}
-    .hc-d{background:#f0fdfa;color:#0f766e;border-color:#99f6e4;}
+    .hc-d{background:#f0fdfa;color:var(--pi-red);border-color:#99f6e4;}
     .hc-a{background:#fef2f2;color:#b91c1c;border-color:#fecaca;}
     .h-rat{font-size:.62rem;opacity:.65;}
     .e-list{padding:.25rem .875rem .625rem 3rem;background:#fafafa;border-radius:0 0 .5rem .5rem;}
@@ -99,7 +100,7 @@
                        text-transform:uppercase;letter-spacing:.05em;
                        border-bottom:2px solid var(--color-slate-100);white-space:nowrap;
                        cursor:pointer;user-select:none;}
-    table.rpt thead th:hover{color:var(--color-teal-700);}
+    table.rpt thead th:hover{color:var(--pi-red);}
     table.rpt thead th.s-asc::after{content:' ↑';}
     table.rpt thead th.s-desc::after{content:' ↓';}
     table.rpt td{padding:.5rem .75rem;border-bottom:1px solid #f8fafc;vertical-align:middle;}
@@ -111,7 +112,7 @@
     .td-na{text-align:center;color:#e2e8f0;font-size:.7rem;}
     .prog-badge{display:inline-block;padding:2px 9px;border-radius:9999px;font-size:.72rem;font-weight:700;}
     .pg-ss{background:#fdf4ff;color:#7e22ce;}.pg-msc{background:#fffbeb;color:#b45309;}
-    .pg-vt{background:#fff7ed;color:#c2410c;}.pg-edu{background:#f0fdfa;color:#0f766e;}
+    .pg-vt{background:#fff7ed;color:#c2410c;}.pg-edu{background:#f0fdfa;color:var(--pi-red);}
     .rpt-footer{padding:.75rem 1.25rem;font-size:.75rem;color:var(--color-slate-400);
                 border-top:1px solid var(--color-slate-100);
                 display:flex;justify-content:space-between;}
@@ -121,8 +122,8 @@
     .btn-sm{background:var(--color-slate-100);border:none;border-radius:.5rem;
             padding:.4rem .875rem;font-size:.8rem;font-weight:600;color:var(--color-slate-600);cursor:pointer;}
     .btn-sm:hover{background:var(--color-slate-200);}
-    .btn-teal{background:var(--color-teal-700);color:white;}
-    .btn-teal:hover{background:var(--color-teal-800);}
+    .btn-red{background:var(--pi-red);color:white;}
+    .btn-red:hover{background:var(--pi-red-dark);}
   </style>
   <script>window.frappe=window.frappe||{};frappe.csrf_token="{{ frappe.session.csrf_token }}";</script>
 </head>
@@ -145,7 +146,7 @@
 
 <div class="sh-container" style="padding-top:1.5rem;padding-bottom:3rem;">
   <div class="sum-strip">
-    <div class="sum-pill"><div class="sum-num" id="s-yr" style="color:#0f766e">—</div><div class="sum-lbl">Intake Years</div></div>
+    <div class="sum-pill"><div class="sum-num" id="s-yr" style="color:var(--pi-red)">—</div><div class="sum-lbl">Intake Years</div></div>
     <div class="sum-pill"><div class="sum-num" id="s-ac" style="color:#0891b2">—</div><div class="sum-lbl">Active Students</div></div>
     <div class="sum-pill"><div class="sum-num" id="s-al" style="color:#7c3aed">—</div><div class="sum-lbl">Alumni</div></div>
     <div class="sum-pill"><div class="sum-num" id="s-en" style="color:#d97706">—</div><div class="sum-lbl">Enrolments</div></div>
@@ -153,7 +154,7 @@
     <div style="flex:1"></div>
     <div style="display:flex;align-items:center;gap:.625rem;">
       <button class="btn-sm" id="exp-btn" onclick="expandAll()">Expand All</button>
-      <button class="btn-sm btn-teal" onclick="loadData()">↻ Refresh</button>
+      <button class="btn-sm btn-red" onclick="loadData()">↻ Refresh</button>
       <span id="ts" style="font-size:.72rem;color:var(--color-slate-400);"></span>
     </div>
   </div>
@@ -179,7 +180,7 @@
   <div id="panel-report" style="display:none;"><div class="loading">Loading…</div></div>
 </div>
 
-<script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=3.0"></script>
+<script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=4.0"></script>
 <script>
 let DATA=null,allExp=false,currentView='tree';
 let sortCol='year',sortDir=1;
