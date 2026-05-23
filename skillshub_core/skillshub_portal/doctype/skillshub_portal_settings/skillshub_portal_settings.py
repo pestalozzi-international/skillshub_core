@@ -25,7 +25,7 @@ def get_portal_settings():
 		"landing_subtitle": doc.landing_subtitle or "",
 		"login_notice": doc.login_notice or "",
 		"support_email": doc.support_email or "",
-		"student_home_route": doc.student_home_route or "/skillshub/profile",
+		"student_home_route": doc.student_home_route or "/skillshub/s/",
 		"admin_home_route": doc.admin_home_route or "/skillshub/admin/students",
 		"primary_color": doc.primary_color or "#CA0733",
 		"secondary_color": doc.secondary_color or "#a3052a",

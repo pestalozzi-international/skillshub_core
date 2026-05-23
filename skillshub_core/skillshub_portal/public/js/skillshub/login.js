@@ -15,7 +15,7 @@
 		var notice = document.getElementById("login-notice");
 		var tagline = document.getElementById("login-tagline");
 
-		var studentRoute = (settings && settings.student_home_route) || "/skillshub/profile";
+		var studentRoute = (settings && settings.student_home_route) || "/skillshub/s/";
 		var adminRoute = (settings && settings.admin_home_route) || "/skillshub/admin/students";
 
 		if (mode === "student") {
@@ -48,7 +48,7 @@
 		if (bootstrap && bootstrap.is_logged_in) {
 			var target = bootstrap.is_admin
 				? (settings && settings.admin_home_route) || "/skillshub/admin/students"
-				: (settings && settings.student_home_route) || "/skillshub/profile";
+				: (settings && settings.student_home_route) || "/skillshub/s/";
 			window.location.replace(target);
 		}
 	});

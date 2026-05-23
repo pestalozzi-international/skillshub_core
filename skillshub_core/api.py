@@ -68,9 +68,9 @@ def get_programme_overview():
 	)
 	baseline_map = {r.programme_schedule: r.cnt for r in baselines}
 
-	# ── 3. Feedback counts keyed by programme_schedule ──────────────────────
-	def _fb_sched_field(doctype):
-		for fn in ("programme_schedule", "program_schedule", "sh_programme_schedule", "class"):
+	# ── 3. Feedback counts keyed by class (via student-JOIN) ────────────────
+	def _fb_student_field(doctype):
+		for fn in ("sh_student", "student"):
 			try:
 				if frappe.get_meta(doctype).get_field(fn):
 					return fn
@@ -87,21 +87,22 @@ def get_programme_overview():
 	}
 	feedback_maps = {}
 	for key, doctype in feedback_tables.items():
-		sched_field = _fb_sched_field(doctype)
-		if not sched_field:
+		student_field = _fb_student_field(doctype)
+		if not student_field:
 			feedback_maps[key] = {}
 			continue
 		try:
 			rows = frappe.db.sql(  # nosemgrep
 				f"""
-                SELECT `{sched_field}` AS sched_name, COUNT(*) AS cnt
-                FROM `tab{doctype}`
-                WHERE `{sched_field}` IS NOT NULL AND `{sched_field}` != ''
-                GROUP BY `{sched_field}`
-            """,
+                SELECT e.class AS class_name, COUNT(DISTINCT fb.name) AS cnt
+                FROM `tab{doctype}` fb
+                JOIN `tabSH Enrolment` e ON e.student = fb.`{student_field}`
+                WHERE e.class IS NOT NULL AND e.class != ''
+                GROUP BY e.class
+                """,
 				as_dict=True,
 			)
-			feedback_maps[key] = {r.sched_name: r.cnt for r in rows}
+			feedback_maps[key] = {r.class_name: r.cnt for r in rows}
 		except Exception:
 			feedback_maps[key] = {}
 

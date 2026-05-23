@@ -1128,6 +1128,18 @@ def submit_public_form(student_id, token, doctype, values):
 
 	values[student_field] = student_id
 
+	# Auto-set the schedule/class field from the student's current active enrolment
+	schedule_field = _feedback_schedule_field(doctype)
+	if schedule_field and not values.get(schedule_field):
+		active_enrol = frappe.db.get_value(
+			"SH Enrolment",
+			{"student": student_id, "status": "Active"},
+			"class",
+			order_by="creation desc",
+		)
+		if active_enrol:
+			values[schedule_field] = active_enrol
+
 	enrolment_ticket = (values.get("enrolment_ticket") or "").strip()
 
 	if doctype in ONCE_PER_ENROLMENT_DOCTYPES and enrolment_ticket:
