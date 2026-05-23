@@ -54,18 +54,26 @@
 		return (name || "?")
 			.split(" ")
 			.slice(0, 2)
-			.map(function (w) { return (w[0] || "").toUpperCase(); })
+			.map(function (w) {
+				return (w[0] || "").toUpperCase();
+			})
 			.join("");
 	}
 
 	function statusBadge(status) {
 		var colorMap = {
 			Student: "background:#dcfce7;color:#166534;",
-			Alumni:  "background:#dbeafe;color:#1e40af;",
+			Alumni: "background:#dbeafe;color:#1e40af;",
 			Dropped: "background:#fee2e2;color:#991b1b;",
 		};
 		var style = colorMap[status] || "background:#f1f5f9;color:#64748b;";
-		return '<span style="' + style + 'display:inline-block;border-radius:999px;padding:0.18rem 0.65rem;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;">' + esc(status || "—") + '</span>';
+		return (
+			'<span style="' +
+			style +
+			'display:inline-block;border-radius:999px;padding:0.18rem 0.65rem;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;">' +
+			esc(status || "—") +
+			"</span>"
+		);
 	}
 
 	function pathBadge(path) {
@@ -73,7 +81,13 @@
 		var style = path.includes("A")
 			? "background:var(--pi-red-light);color:var(--pi-red);"
 			: "background:var(--pi-sky);color:#0369a1;";
-		return '<span style="' + style + 'display:inline-block;border-radius:999px;padding:0.18rem 0.65rem;font-size:0.68rem;font-weight:700;">' + esc(path) + '</span>';
+		return (
+			'<span style="' +
+			style +
+			'display:inline-block;border-radius:999px;padding:0.18rem 0.65rem;font-size:0.68rem;font-weight:700;">' +
+			esc(path) +
+			"</span>"
+		);
 	}
 
 	function hasPortalAccess(row) {
@@ -101,23 +115,46 @@
 					"<tr>" +
 					"<td>" +
 					'<div style="display:flex;align-items:center;gap:0.65rem;">' +
-					'<div style="width:2.2rem;height:2.2rem;border-radius:50%;background:var(--pi-red);color:white;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">' + esc(ini) + "</div>" +
+					'<div style="width:2.2rem;height:2.2rem;border-radius:50%;background:var(--pi-red);color:white;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">' +
+					esc(ini) +
+					"</div>" +
 					"<div>" +
-					'<div style="font-weight:600;font-size:0.9rem;">' + esc(row.student_name || row.name) + loginDot + "</div>" +
-					'<div style="font-size:0.72rem;color:var(--pi-muted);font-family:monospace;">' + esc(row.name) + "</div>" +
+					'<div style="font-weight:600;font-size:0.9rem;">' +
+					esc(row.student_name || row.name) +
+					loginDot +
+					"</div>" +
+					'<div style="font-size:0.72rem;color:var(--pi-muted);font-family:monospace;">' +
+					esc(row.name) +
+					"</div>" +
 					"</div></div></td>" +
-					"<td>" + statusBadge(row.status) + "</td>" +
-					"<td>" + pathBadge(row.programme_path) + "</td>" +
-					"<td style='font-size:0.82rem;'>" + esc(row.intake_cohort || "—") + "</td>" +
 					"<td>" +
-					'<div style="font-size:0.8rem;font-weight:600;">' + esc(row.current_course || "—") + "</div>" +
-					'<div style="font-size:0.72rem;color:var(--pi-muted);">' + esc(row.current_schedule || "—") + "</div>" +
+					statusBadge(row.status) +
+					"</td>" +
+					"<td>" +
+					pathBadge(row.programme_path) +
+					"</td>" +
+					"<td style='font-size:0.82rem;'>" +
+					esc(row.intake_cohort || "—") +
+					"</td>" +
+					"<td>" +
+					'<div style="font-size:0.8rem;font-weight:600;">' +
+					esc(row.current_course || "—") +
+					"</div>" +
+					'<div style="font-size:0.72rem;color:var(--pi-muted);">' +
+					esc(row.current_schedule || "—") +
+					"</div>" +
 					"</td>" +
 					"<td style='text-align:center;'>" +
-					'<span style="font-weight:700;font-size:0.9rem;color:var(--pi-black);">' + esc(row.enrolment_count || 0) + "</span>" +
-					'<div style="font-size:0.72rem;color:var(--pi-muted);">' + esc(row.active_enrolments || 0) + " active</div>" +
+					'<span style="font-weight:700;font-size:0.9rem;color:var(--pi-black);">' +
+					esc(row.enrolment_count || 0) +
+					"</span>" +
+					'<div style="font-size:0.72rem;color:var(--pi-muted);">' +
+					esc(row.active_enrolments || 0) +
+					" active</div>" +
 					"</td>" +
-					"<td style='text-align:center;font-weight:700;font-size:0.9rem;'>" + esc(attendance) + "</td>" +
+					"<td style='text-align:center;font-weight:700;font-size:0.9rem;'>" +
+					esc(attendance) +
+					"</td>" +
 					'<td><a class="sh-btn-secondary" style="padding:0.42rem 0.85rem;font-size:0.8rem;text-decoration:none;white-space:nowrap;" href="/skillshub/admin/student?id=' +
 					encodeURIComponent(row.name) +
 					'">Open →</a></td>' +
@@ -131,7 +168,9 @@
 		var from = state.total === 0 ? 0 : (state.page - 1) * pageSize() + 1;
 		var to = Math.min(state.page * pageSize(), state.total);
 		document.getElementById("pagination-info").textContent =
-			from && to ? "Showing " + from + "–" + to + " of " + state.total + " students" : "No records";
+			from && to
+				? "Showing " + from + "–" + to + " of " + state.total + " students"
+				: "No records";
 		document.getElementById("page-label").textContent =
 			"Page " + state.page + " / " + state.totalPages;
 		document.getElementById("page-prev").disabled = state.page <= 1;

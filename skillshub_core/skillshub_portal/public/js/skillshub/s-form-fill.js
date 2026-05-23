@@ -5,7 +5,13 @@
 (function () {
 	"use strict";
 
-	var state = { session: null, doctype: document.body.getAttribute("data-doctype"), meta: null, ctx: null, linkCache: {} };
+	var state = {
+		session: null,
+		doctype: document.body.getAttribute("data-doctype"),
+		meta: null,
+		ctx: null,
+		linkCache: {},
+	};
 	var sections = [];
 	var currentSection = 0;
 
@@ -468,11 +474,18 @@
 
 	/* Fields auto-filled from enrolment context — hidden from the student form */
 	var CONTEXT_SKIP = [
-		"sh_student", "student",
-		"programme_schedule", "program_schedule", "class",
+		"sh_student",
+		"student",
+		"programme_schedule",
+		"program_schedule",
+		"class",
 		"enrolment_ticket",
-		"milestone", "course", "skillshub_course",
-		"cohort", "skillshub_cohort", "academic_year",
+		"milestone",
+		"course",
+		"skillshub_course",
+		"cohort",
+		"skillshub_cohort",
+		"academic_year",
 		"course_run",
 	];
 
@@ -482,8 +495,16 @@
 		var currentLabel = null;
 		var currentFields = [];
 		var SYS_SKIP = [
-			"name", "owner", "creation", "modified", "modified_by",
-			"idx", "parent", "parentfield", "parenttype", "docstatus",
+			"name",
+			"owner",
+			"creation",
+			"modified",
+			"modified_by",
+			"idx",
+			"parent",
+			"parentfield",
+			"parenttype",
+			"docstatus",
 		];
 
 		fields.forEach(function (field) {
@@ -491,10 +512,12 @@
 				// Save previous section if it has visible fields
 				if (currentFields.length > 0) {
 					var visible = currentFields.filter(function (f) {
-						return !f.hidden &&
+						return (
+							!f.hidden &&
 							SYS_SKIP.indexOf(f.fieldname) === -1 &&
 							CONTEXT_SKIP.indexOf(f.fieldname) === -1 &&
-							f.fieldtype !== "Section Break";
+							f.fieldtype !== "Section Break"
+						);
 					});
 					if (visible.length > 0) {
 						result.push({ label: currentLabel, fields: currentFields });
@@ -510,10 +533,12 @@
 		// Push last section
 		if (currentFields.length > 0) {
 			var visible = currentFields.filter(function (f) {
-				return !f.hidden &&
+				return (
+					!f.hidden &&
 					SYS_SKIP.indexOf(f.fieldname) === -1 &&
 					CONTEXT_SKIP.indexOf(f.fieldname) === -1 &&
-					f.fieldtype !== "Section Break";
+					f.fieldtype !== "Section Break"
+				);
 			});
 			if (visible.length > 0) {
 				result.push({ label: currentLabel, fields: currentFields });
@@ -541,7 +566,7 @@
 
 		if (prevBtn) {
 			prevBtn.style.display = "";
-			prevBtn.disabled = (currentSection === 0);
+			prevBtn.disabled = currentSection === 0;
 		}
 		if (nextBtn) {
 			nextBtn.style.display = currentSection < total - 1 ? "" : "none";
@@ -571,7 +596,10 @@
 		var root = document.getElementById("pi-form-body");
 		var ctx = enrolmentContext();
 		var fields = (state.meta && state.meta.fields) || [];
-		var studentName = (state.ctx && state.ctx.student && state.ctx.student.student_name) || ctx.student || "";
+		var studentName =
+			(state.ctx && state.ctx.student && state.ctx.student.student_name) ||
+			ctx.student ||
+			"";
 
 		/* Context bar — compact, shows student + enrolment only */
 		var ctxBar = '<div class="pi-context-bar">';
@@ -596,12 +624,27 @@
 			var allPromises = fields.map(function (field) {
 				var fn = field.fieldname;
 				if (!fn || field.hidden) return Promise.resolve("");
-				if (["name","owner","creation","modified","modified_by","idx","parent","parentfield","parenttype","docstatus"].indexOf(fn) > -1) return Promise.resolve("");
+				if (
+					[
+						"name",
+						"owner",
+						"creation",
+						"modified",
+						"modified_by",
+						"idx",
+						"parent",
+						"parentfield",
+						"parenttype",
+						"docstatus",
+					].indexOf(fn) > -1
+				)
+					return Promise.resolve("");
 				if (CONTEXT_SKIP.indexOf(fn) > -1) return Promise.resolve("");
 				return renderField(field, null, false);
 			});
 			Promise.all(allPromises).then(function (parts) {
-				var gridHtml = '<div class="pi-form-grid">' + parts.filter(Boolean).join("") + "</div>";
+				var gridHtml =
+					'<div class="pi-form-grid">' + parts.filter(Boolean).join("") + "</div>";
 				root.innerHTML = ctxBar + gridHtml;
 				bindFormInteractions(root);
 				applyFormDependsOn(root);
@@ -616,16 +659,42 @@
 			var fieldPromises = sectionFields.map(function (field) {
 				var fn = field.fieldname;
 				if (!fn || field.hidden) return Promise.resolve("");
-				if (["name","owner","creation","modified","modified_by","idx","parent","parentfield","parenttype","docstatus"].indexOf(fn) > -1) return Promise.resolve("");
+				if (
+					[
+						"name",
+						"owner",
+						"creation",
+						"modified",
+						"modified_by",
+						"idx",
+						"parent",
+						"parentfield",
+						"parenttype",
+						"docstatus",
+					].indexOf(fn) > -1
+				)
+					return Promise.resolve("");
 				if (CONTEXT_SKIP.indexOf(fn) > -1) return Promise.resolve("");
 				return renderField(field, null, false);
 			});
 			return Promise.all(fieldPromises).then(function (parts) {
-				var heading = section.label ? '<h3 style="font-size:1rem;font-weight:700;margin:0 0 1rem;color:var(--pi-black,#1a1a1a);">' + esc(section.label) + '</h3>' : '';
-				return '<div class="pi-section" id="pi-sec-' + idx + '"' + (idx > 0 ? ' style="display:none;"' : '') + '>' +
+				var heading = section.label
+					? '<h3 style="font-size:1rem;font-weight:700;margin:0 0 1rem;color:var(--pi-black,#1a1a1a);">' +
+					  esc(section.label) +
+					  "</h3>"
+					: "";
+				return (
+					'<div class="pi-section" id="pi-sec-' +
+					idx +
+					'"' +
+					(idx > 0 ? ' style="display:none;"' : "") +
+					">" +
 					heading +
-					'<div class="pi-form-grid">' + parts.filter(Boolean).join("") + '</div>' +
-					'</div>';
+					'<div class="pi-form-grid">' +
+					parts.filter(Boolean).join("") +
+					"</div>" +
+					"</div>"
+				);
 			});
 		});
 
@@ -891,8 +960,14 @@
 		if (submitBtn) submitBtn.addEventListener("click", submitForm);
 		var prevBtn = document.getElementById("pi-nav-prev");
 		var nextBtn = document.getElementById("pi-nav-next");
-		if (prevBtn) prevBtn.addEventListener("click", function () { goToSection(currentSection - 1); });
-		if (nextBtn) nextBtn.addEventListener("click", function () { goToSection(currentSection + 1); });
+		if (prevBtn)
+			prevBtn.addEventListener("click", function () {
+				goToSection(currentSection - 1);
+			});
+		if (nextBtn)
+			nextBtn.addEventListener("click", function () {
+				goToSection(currentSection + 1);
+			});
 	});
 
 	window.addEventListener("sh-gate-open", function (e) {
