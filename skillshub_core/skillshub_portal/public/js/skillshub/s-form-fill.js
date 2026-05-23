@@ -5,7 +5,7 @@
 (function () {
 	"use strict";
 
-	var state = { session: null, doctype: null, meta: null, ctx: null, linkCache: {} };
+	var state = { session: null, doctype: document.body.getAttribute("data-doctype"), meta: null, ctx: null, linkCache: {} };
 	var sections = [];
 	var currentSection = 0;
 
@@ -887,7 +887,6 @@
 	}
 
 	document.addEventListener("DOMContentLoaded", function () {
-		state.doctype = document.body.getAttribute("data-doctype");
 		var submitBtn = document.getElementById("pi-form-submit");
 		if (submitBtn) submitBtn.addEventListener("click", submitForm);
 		var prevBtn = document.getElementById("pi-nav-prev");
