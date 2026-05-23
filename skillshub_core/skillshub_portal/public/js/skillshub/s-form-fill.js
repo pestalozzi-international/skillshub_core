@@ -137,7 +137,7 @@
 		if (state.linkCache[doctype]) return Promise.resolve(state.linkCache[doctype]);
 		return api(
 			"/api/method/skillshub_core.skillshub_portal.api.get_public_link_options?doctype=" +
-				encodeURIComponent(doctype)
+				encodeURIComponent(doctype),
 		)
 			.then(function (r) {
 				state.linkCache[doctype] = r || [];
@@ -276,8 +276,8 @@
 							var r = {};
 							r[vf.fieldname] = s;
 							return r;
-						})
-					)
+						}),
+					),
 				) +
 				'">';
 			html += "</div>";
@@ -295,7 +295,7 @@
 					'<input class="pi-input" type="text" value="' +
 					esc(value) +
 					'" readonly>' +
-					"</div>"
+					"</div>",
 			);
 		}
 		return fetchLinkOpts(doctype).then(function (opts) {
@@ -371,7 +371,7 @@
 					(isRO ? " disabled" : "") +
 					">" +
 					esc(finalVal) +
-					"</textarea></div>"
+					"</textarea></div>",
 			);
 		}
 
@@ -400,16 +400,12 @@
 					esc(label) +
 					"</label>" +
 					sel +
-					"</div>"
+					"</div>",
 			);
 		}
 
 		if (ft === "Date" || ft === "Datetime") {
-			var dateVal = finalVal
-				? String(finalVal).slice(0, 10)
-				: !isRO
-				? todayISO()
-				: "";
+			var dateVal = finalVal ? String(finalVal).slice(0, 10) : !isRO ? todayISO() : "";
 			return Promise.resolve(
 				'<div class="pi-field"><label class="pi-label">' +
 					esc(label) +
@@ -421,7 +417,7 @@
 					esc(dateVal) +
 					'"' +
 					(isRO ? " readonly" : "") +
-					"></div>"
+					"></div>",
 			);
 		}
 		if (ft === "Phone")
@@ -434,7 +430,7 @@
 					esc(finalVal) +
 					'"' +
 					(isRO ? " readonly" : "") +
-					"></div>"
+					"></div>",
 			);
 		if (ft === "Int" || ft === "Float" || ft === "Currency" || ft === "Percent")
 			return Promise.resolve(
@@ -448,7 +444,7 @@
 					esc(finalVal) +
 					'"' +
 					(isRO ? " readonly" : "") +
-					"></div>"
+					"></div>",
 			);
 
 		if (ft === "Table") {
@@ -471,7 +467,7 @@
 					esc(finalVal) +
 					'"' +
 					(isRO ? " readonly" : "") +
-					"></div>"
+					"></div>",
 			);
 		}
 
@@ -485,7 +481,7 @@
 				esc(finalVal) +
 				'"' +
 				(isRO ? " readonly" : "") +
-				"></div>"
+				"></div>",
 		);
 	}
 
@@ -733,8 +729,8 @@
 			return Promise.all(fieldPromises).then(function (parts) {
 				var heading = section.label
 					? '<h3 style="font-size:1rem;font-weight:700;margin:0 0 1rem;color:var(--pi-black,#1a1a1a);">' +
-					  esc(section.label) +
-					  "</h3>"
+						esc(section.label) +
+						"</h3>"
 					: "";
 				return (
 					'<div class="pi-section" id="pi-sec-' +
@@ -773,7 +769,7 @@
 				s.classList.toggle("lit", i + 1 <= val);
 			});
 			var h = root.querySelector(
-				'input[data-fieldname="' + fn + '"][data-fieldtype="Rating"]'
+				'input[data-fieldname="' + fn + '"][data-fieldtype="Rating"]',
 			);
 			if (h) h.value = val;
 			var lbl = root.querySelector("#fsl-" + fn);
@@ -806,7 +802,7 @@
 					opt.hidden = false;
 				});
 			},
-			true
+			true,
 		);
 
 		/* Filter link options while typing */
@@ -856,17 +852,17 @@
 
 	function updateTableHidden(root, fn, vfn) {
 		var hidden = root.querySelector(
-			'input[data-fieldname="' + fn + '"][data-fieldtype="Table"]'
+			'input[data-fieldname="' + fn + '"][data-fieldtype="Table"]',
 		);
 		if (!hidden) return;
 		var rows = [];
-		root.querySelectorAll('.pi-chip-opt.selected[data-fn="' + fn + '"]').forEach(function (
-			btn
-		) {
-			var r = {};
-			r[vfn] = btn.getAttribute("data-val");
-			rows.push(r);
-		});
+		root.querySelectorAll('.pi-chip-opt.selected[data-fn="' + fn + '"]').forEach(
+			function (btn) {
+				var r = {};
+				r[vfn] = btn.getAttribute("data-val");
+				rows.push(r);
+			},
+		);
 		hidden.value = JSON.stringify(rows);
 	}
 
@@ -881,7 +877,7 @@
 			var labelText = labelEl ? labelEl.textContent.trim().replace(/\s*\*\s*$/, "") : "";
 			/* Rating */
 			var ratingHidden = fieldDiv.querySelector(
-				'input[type="hidden"][data-fieldtype="Rating"]'
+				'input[type="hidden"][data-fieldtype="Rating"]',
 			);
 			if (ratingHidden) {
 				if (!ratingHidden.value || ratingHidden.value === "0")
@@ -901,7 +897,7 @@
 			if (fieldDiv.querySelector(".pi-chip-options")) return;
 			/* Regular inputs and selects (skip readonly/disabled) */
 			var inp = fieldDiv.querySelector(
-				"input:not([type=hidden]):not([readonly]):not([disabled]), textarea:not([disabled]):not([readonly]), select:not([disabled])"
+				"input:not([type=hidden]):not([readonly]):not([disabled]), textarea:not([disabled]):not([readonly]), select:not([disabled])",
 			);
 			if (inp && (!inp.value || !inp.value.trim())) missing.push(labelText || "Field");
 		});
@@ -1052,13 +1048,13 @@
 		Promise.all([
 			api(
 				"/api/method/skillshub_core.skillshub_portal.api.get_public_form_meta?doctype=" +
-					encodeURIComponent(state.doctype)
+					encodeURIComponent(state.doctype),
 			),
 			api(
 				"/api/method/skillshub_core.skillshub_portal.api.get_public_forms_context?student_id=" +
 					encodeURIComponent(state.session.sid) +
 					"&token=" +
-					encodeURIComponent(state.session.token)
+					encodeURIComponent(state.session.token),
 			),
 		])
 			.then(function (results) {

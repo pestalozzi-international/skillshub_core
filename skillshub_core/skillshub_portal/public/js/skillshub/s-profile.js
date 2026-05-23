@@ -17,8 +17,8 @@
 							"Content-Type": "application/json",
 						},
 					},
-					opts || {}
-				)
+					opts || {},
+				),
 			)
 				.then(function (r) {
 					return r.json();
@@ -104,7 +104,7 @@
 		if (linkCache[doctype]) return Promise.resolve(linkCache[doctype]);
 		return api(
 			"/api/method/skillshub_core.skillshub_portal.api.get_public_link_options?doctype=" +
-				encodeURIComponent(doctype)
+				encodeURIComponent(doctype),
 		)
 			.then(function (r) {
 				linkCache[doctype] = r || [];
@@ -276,8 +276,8 @@
 		var label = f.label || f.fieldname;
 		var desc = f.description
 			? '<div style="font-size:0.75rem;color:var(--pi-muted);margin-top:0.2rem;">' +
-			  esc(f.description) +
-			  "</div>"
+				esc(f.description) +
+				"</div>"
 			: "";
 		var req = f.reqd ? ' <span style="color:var(--pi-red)">*</span>' : "";
 
@@ -449,8 +449,8 @@
 							var r = {};
 							r[vf.fieldname] = s;
 							return r;
-						})
-					)
+						}),
+					),
 				) +
 				'">';
 			return '<div class="pi-field pi-field-full">' + labelHtml + chips + desc + "</div>";
@@ -460,8 +460,8 @@
 				f.fieldtype === "Password"
 					? "password"
 					: f.fieldtype === "Int" || f.fieldtype === "Float"
-					? "number"
-					: "text";
+						? "number"
+						: "text";
 			input =
 				'<input type="' +
 				itype +
@@ -491,7 +491,7 @@
 				s.classList.toggle("lit", i < val);
 			});
 			var hidden = body.querySelector(
-				'[data-fieldname="' + fn + '"][data-fieldtype="Rating"]'
+				'[data-fieldname="' + fn + '"][data-fieldtype="Rating"]',
 			);
 			if (hidden) hidden.value = val;
 			var lbl = body.querySelector("#fsl-" + fn);
@@ -506,7 +506,7 @@
 			var fn = btn.getAttribute("data-table-fn");
 			var vfn = btn.getAttribute("data-vfn");
 			var hidden = body.querySelector(
-				'[data-fieldname="' + fn + '"][data-fieldtype="Table"]'
+				'[data-fieldname="' + fn + '"][data-fieldtype="Table"]',
 			);
 			if (!hidden) return;
 			var rows = Array.prototype.map.call(
@@ -515,7 +515,7 @@
 					var r = {};
 					r[vfn] = b.getAttribute("data-val");
 					return r;
-				}
+				},
 			);
 			hidden.value = JSON.stringify(rows);
 		});
@@ -540,34 +540,46 @@
 			var status = document.getElementById(iid + "-status");
 			var preview = document.getElementById(iid + "-preview");
 			var placeholder = document.getElementById(iid + "-placeholder");
-			var hidden = body.querySelector('[data-fieldname="' + fn + '"][data-fieldtype="Attach Image"]');
+			var hidden = body.querySelector(
+				'[data-fieldname="' + fn + '"][data-fieldtype="Attach Image"]',
+			);
 			if (status) status.textContent = "Uploading…";
 			var reader = new FileReader();
 			reader.onload = function (ev) {
 				var dataUrl = ev.target.result;
-				api("/api/method/skillshub_core.skillshub_portal.api.upload_public_profile_image", {
-					method: "POST",
-					body: JSON.stringify({
-						student_id: state.session && state.session.sid,
-						token: state.session && state.session.token,
-						filename: file.name,
-						filedata: dataUrl,
-					}),
-				})
+				api(
+					"/api/method/skillshub_core.skillshub_portal.api.upload_public_profile_image",
+					{
+						method: "POST",
+						body: JSON.stringify({
+							student_id: state.session && state.session.sid,
+							token: state.session && state.session.token,
+							filename: file.name,
+							filedata: dataUrl,
+						}),
+					},
+				)
 					.then(function (res) {
 						var url = res && res.file_url;
 						if (!url) throw new Error("No file URL returned");
-						if (preview) { preview.src = url; preview.style.display = ""; }
+						if (preview) {
+							preview.src = url;
+							preview.style.display = "";
+						}
 						if (placeholder) placeholder.style.display = "none";
 						if (hidden) hidden.value = url;
 						if (status) status.textContent = "Photo updated.";
 						var avatar = document.getElementById("pi-profile-avatar");
 						var avatarPh = document.getElementById("pi-profile-avatar-placeholder");
-						if (avatar) { avatar.src = url; avatar.style.display = ""; }
+						if (avatar) {
+							avatar.src = url;
+							avatar.style.display = "";
+						}
 						if (avatarPh) avatarPh.style.display = "none";
 					})
 					.catch(function (err) {
-						if (status) status.textContent = "Upload failed: " + (err.message || "error");
+						if (status)
+							status.textContent = "Upload failed: " + (err.message || "error");
 					});
 			};
 			reader.readAsDataURL(file);
@@ -588,7 +600,7 @@
 					opt.hidden = false;
 				});
 			},
-			true /* capture so non-bubbling focus reaches here */
+			true /* capture so non-bubbling focus reaches here */,
 		);
 
 		/* Filter link options while typing */
@@ -674,7 +686,10 @@
 			var avatar = document.getElementById("pi-profile-avatar");
 			var avatarPh = document.getElementById("pi-profile-avatar-placeholder");
 			if (student.student_image) {
-				if (avatar) { avatar.src = student.student_image; avatar.style.display = ""; }
+				if (avatar) {
+					avatar.src = student.student_image;
+					avatar.style.display = "";
+				}
 				if (avatarPh) avatarPh.style.display = "none";
 			} else {
 				if (avatar) avatar.style.display = "none";
@@ -741,10 +756,10 @@
 		if (!el) return;
 		el.innerHTML = msg
 			? '<div class="pi-alert ' +
-			  (isError ? "pi-alert-error" : "pi-alert-success") +
-			  '">' +
-			  esc(msg) +
-			  "</div>"
+				(isError ? "pi-alert-error" : "pi-alert-success") +
+				'">' +
+				esc(msg) +
+				"</div>"
 			: "";
 	}
 
@@ -787,7 +802,7 @@
 				"?student_id=" +
 				encodeURIComponent(session.sid) +
 				"&token=" +
-				encodeURIComponent(session.token)
+				encodeURIComponent(session.token),
 		)
 			.then(function (data) {
 				state.data = data;
