@@ -868,12 +868,7 @@ PUBLIC_FORM_LIST = [
 	{"doctype": "SH Baseline", "label": "Baseline Assessment", "section": "assessment"},
 	{"doctype": "SH Soft Skills Feedback", "label": "Soft Skills Feedback", "section": "assessment"},
 	{"doctype": "SH Mindset Camp Feedback", "label": "Mindset Camp Feedback", "section": "programme"},
-	{
-		"doctype": "SH Edulution Feedback",
-		"label": "Edulution Feedback",
-		"section": "programme",
-		"path_a_only": True,
-	},
+	{"doctype": "SH Edulution Feedback", "label": "Edulution Feedback", "section": "programme"},
 	{"doctype": "SH VT Feedback", "label": "Vocational Training Feedback", "section": "programme"},
 	{"doctype": "SH Attachment Feedback", "label": "Attachment Feedback", "section": "other"},
 	{"doctype": "SH Parent Feedback", "label": "Parent / Guardian Feedback", "section": "other"},
