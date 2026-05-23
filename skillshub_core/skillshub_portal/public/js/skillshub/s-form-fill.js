@@ -83,6 +83,13 @@
 			return String(v || "");
 		};
 
+	function todayISO() {
+		var d = new Date();
+		var mm = String(d.getMonth() + 1).padStart(2, "0");
+		var dd = String(d.getDate()).padStart(2, "0");
+		return d.getFullYear() + "-" + mm + "-" + dd;
+	}
+
 	/* ---- Context helpers ---- */
 	function enrolmentContext() {
 		var e = state.ctx && state.ctx.enrolment;
@@ -100,9 +107,14 @@
 
 	function contextDefault(fn) {
 		var c = enrolmentContext();
+		var sname =
+			(state.ctx && state.ctx.student && state.ctx.student.student_name) || c.student || "";
 		var ctx = {
 			sh_student: c.student,
 			student: c.student,
+			/* Common data fields for the student's display name */
+			student_name: sname,
+			sh_student_name: sname,
 			programme_schedule: c.schedule,
 			program_schedule: c.schedule,
 			class: c.schedule,
@@ -329,10 +341,16 @@
 		var label = field.label || fn;
 		var ft = field.fieldtype;
 		var opts = field.options;
-		var isRO = ro || field.read_only;
 		var ctxVal = contextDefault(fn);
 		var finalVal =
 			ctxVal !== null && ctxVal !== undefined && ctxVal !== "" ? ctxVal : value || "";
+		/* Link fields pointing to SH Student are auto-filled and locked */
+		var isStudentLink = ft === "Link" && opts === "SH Student";
+		if (isStudentLink && !finalVal) {
+			var sid = state.session && state.session.sid;
+			if (sid) finalVal = sid;
+		}
+		var isRO = ro || field.read_only || isStudentLink;
 
 		if (ft === "Rating") return Promise.resolve(renderStars(fn, finalVal, label, isRO));
 		if (ft === "Check") return Promise.resolve(renderCheck(fn, finalVal, label, isRO));
@@ -383,18 +401,20 @@
 			);
 		}
 
-		if (ft === "Date")
+		if (ft === "Date") {
+			var dateVal = finalVal || (!isRO ? todayISO() : "");
 			return Promise.resolve(
 				'<div class="pi-field"><label class="pi-label">' +
 					esc(label) +
 					'</label><input type="date" class="pi-input" data-fieldname="' +
 					esc(fn) +
 					'" data-fieldtype="Date" value="' +
-					esc(finalVal) +
+					esc(dateVal) +
 					'"' +
 					(isRO ? " readonly" : "") +
 					"></div>"
 			);
+		}
 		if (ft === "Datetime")
 			return Promise.resolve(
 				'<div class="pi-field"><label class="pi-label">' +
@@ -476,6 +496,8 @@
 	var CONTEXT_SKIP = [
 		"sh_student",
 		"student",
+		"student_name",
+		"sh_student_name",
 		"programme_schedule",
 		"program_schedule",
 		"class",
@@ -580,13 +602,46 @@
 		}
 	}
 
-	function goToSection(idx) {
+	function goToSection(idx, _direction) {
 		if (idx < 0 || idx >= sections.length) return;
+		var direction = _direction !== undefined ? _direction : idx > currentSection ? 1 : -1;
+
+		/* Validate before advancing forward */
+		if (direction > 0) {
+			var curEl = document.getElementById("pi-sec-" + currentSection);
+			var missing = validateSection(curEl);
+			if (missing.length) {
+				showValidationError(missing);
+				return;
+			}
+		}
+		clearValidationError();
+
 		var oldEl = document.getElementById("pi-sec-" + currentSection);
 		if (oldEl) oldEl.style.display = "none";
 		currentSection = idx;
 		var newEl = document.getElementById("pi-sec-" + currentSection);
 		if (newEl) newEl.style.display = "";
+
+		/* Re-evaluate depends_on so we can check if this section is blank */
+		var root = document.getElementById("pi-form-body");
+		applyFormDependsOn(root);
+
+		/* Skip sections where all fields are hidden */
+		var allFields = newEl
+			? Array.prototype.slice.call(newEl.querySelectorAll(".pi-field"))
+			: [];
+		var visibleFields = allFields.filter(function (f) {
+			return f.style.display !== "none";
+		});
+		if (!visibleFields.length && sections.length > 1) {
+			var nextIdx = idx + direction;
+			if (nextIdx >= 0 && nextIdx < sections.length) {
+				goToSection(nextIdx, direction);
+				return;
+			}
+		}
+
 		updateNav();
 		window.scrollTo(0, 0);
 	}
@@ -738,7 +793,25 @@
 			updateTableHidden(root, fn, vfn);
 		});
 
-		/* Link combobox */
+		/* Show link dropdown on focus/click */
+		root.addEventListener(
+			"focus",
+			function (e) {
+				var inp = e.target.closest(".pi-link-search");
+				if (!inp) return;
+				var wrap = inp.closest(".pi-link-wrap");
+				var fn = wrap && wrap.getAttribute("data-fn");
+				var dd = fn && root.querySelector("#ld-" + fn);
+				if (!dd) return;
+				dd.hidden = false;
+				dd.querySelectorAll(".pi-link-option").forEach(function (opt) {
+					opt.hidden = false;
+				});
+			},
+			true
+		);
+
+		/* Filter link options while typing */
 		root.addEventListener("input", function (e) {
 			var inp = e.target.closest(".pi-link-search");
 			if (!inp) return;
@@ -799,6 +872,66 @@
 		hidden.value = JSON.stringify(rows);
 	}
 
+	/* ---- Validation ---- */
+	function validateSection(sectionEl) {
+		var missing = [];
+		var target = sectionEl || document.getElementById("pi-form-body");
+		if (!target) return missing;
+		target.querySelectorAll(".pi-field").forEach(function (fieldDiv) {
+			if (fieldDiv.style.display === "none") return;
+			var labelEl = fieldDiv.querySelector(".pi-label, .pi-check-label");
+			var labelText = labelEl ? labelEl.textContent.trim().replace(/\s*\*\s*$/, "") : "";
+			/* Rating */
+			var ratingHidden = fieldDiv.querySelector(
+				'input[type="hidden"][data-fieldtype="Rating"]'
+			);
+			if (ratingHidden) {
+				if (!ratingHidden.value || ratingHidden.value === "0")
+					missing.push(labelText || "Rating");
+				return;
+			}
+			/* Link */
+			var linkVal = fieldDiv.querySelector(".pi-link-value");
+			if (linkVal) {
+				if (!linkVal.value || !linkVal.value.trim())
+					missing.push(labelText || "Link field");
+				return;
+			}
+			/* Checkbox — always answered */
+			if (fieldDiv.querySelector('input[type="checkbox"]')) return;
+			/* Table chips — optional, skip */
+			if (fieldDiv.querySelector(".pi-chip-options")) return;
+			/* Regular inputs and selects (skip readonly/disabled) */
+			var inp = fieldDiv.querySelector(
+				"input:not([type=hidden]):not([readonly]):not([disabled]), textarea:not([disabled]):not([readonly]), select:not([disabled])"
+			);
+			if (inp && (!inp.value || !inp.value.trim())) missing.push(labelText || "Field");
+		});
+		return missing;
+	}
+
+	function showValidationError(missing) {
+		var msg = document.getElementById("pi-form-msg");
+		if (!msg) return;
+		var names = missing
+			.slice(0, 3)
+			.map(function (m) {
+				return "<strong>" + esc(m) + "</strong>";
+			})
+			.join(", ");
+		if (missing.length > 3) names += " and " + (missing.length - 3) + " more";
+		msg.innerHTML =
+			'<div class="pi-alert pi-alert-error"><span>⚠️</span><span>Please fill in: ' +
+			names +
+			"</span></div>";
+		msg.scrollIntoView({ behavior: "smooth", block: "nearest" });
+	}
+
+	function clearValidationError() {
+		var msg = document.getElementById("pi-form-msg");
+		if (msg) msg.innerHTML = "";
+	}
+
 	/* ---- Gather payload ---- */
 	function gatherPayload() {
 		var payload = {};
@@ -846,6 +979,15 @@
 
 	/* ---- Submit ---- */
 	function submitForm() {
+		/* Validate the last visible section before submitting */
+		var curEl = document.getElementById("pi-sec-" + currentSection);
+		var missing = validateSection(curEl);
+		if (missing.length) {
+			showValidationError(missing);
+			return;
+		}
+		clearValidationError();
+
 		var btn = document.getElementById("pi-form-submit");
 		var msg = document.getElementById("pi-form-msg");
 		if (btn) {
