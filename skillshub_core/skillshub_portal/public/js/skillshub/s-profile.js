@@ -43,7 +43,6 @@
 		HTML: 1,
 		Button: 1,
 		Attach: 1,
-		"Attach Image": 1,
 	};
 
 	function fmtDate(val) {
@@ -220,6 +219,57 @@
 		);
 	}
 
+	/* ---- Attach Image field with upload button ---- */
+	function renderImageField(fn, value, label, ro) {
+		var iid = "pf-img-" + fn;
+		var hasImg = !!value;
+		var html =
+			'<div class="pi-field pi-field-full">' +
+			'<label class="pi-label">' +
+			esc(label) +
+			"</label>" +
+			'<div class="pi-img-wrap" data-fn="' +
+			esc(fn) +
+			'" style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:0.4rem;">' +
+			'<img id="' +
+			esc(iid) +
+			'-preview" src="' +
+			esc(value || "") +
+			'" alt="Photo" style="width:80px;height:80px;border-radius:50%;object-fit:cover;background:#eee;' +
+			(hasImg ? "" : "display:none;") +
+			'">' +
+			'<div id="' +
+			esc(iid) +
+			'-placeholder" style="width:80px;height:80px;border-radius:50%;background:#eee;display:' +
+			(hasImg ? "none" : "flex") +
+			';align-items:center;justify-content:center;font-size:2rem;">👤</div>';
+		if (!ro) {
+			html +=
+				'<div style="display:flex;flex-direction:column;gap:0.4rem;">' +
+				'<input type="file" id="' +
+				esc(iid) +
+				'-file" accept="image/*" style="display:none;">' +
+				'<button type="button" class="pi-btn pi-btn-secondary pi-img-upload-btn" ' +
+				'data-fn="' +
+				esc(fn) +
+				'" data-iid="' +
+				esc(iid) +
+				'" style="font-size:0.85rem;">Change Photo</button>' +
+				'<span id="' +
+				esc(iid) +
+				'-status" style="font-size:0.75rem;color:var(--pi-muted);"></span>' +
+				"</div>";
+		}
+		html +=
+			'<input type="hidden" data-fieldname="' +
+			esc(fn) +
+			'" data-fieldtype="Attach Image" value="' +
+			esc(value || "") +
+			'">' +
+			"</div></div>";
+		return html;
+	}
+
 	/* ---- Single field renderer (sync — link opts pre-fetched) ---- */
 	function renderField(f, value, childTables, linkOpts) {
 		var id = "pf-" + f.fieldname;
@@ -230,6 +280,9 @@
 			  "</div>"
 			: "";
 		var req = f.reqd ? ' <span style="color:var(--pi-red)">*</span>' : "";
+
+		if (f.fieldtype === "Attach Image")
+			return renderImageField(f.fieldname, value, label, f.read_only);
 
 		if (f.fieldtype === "Rating") return renderStars(f.fieldname, value, label, f.read_only);
 
@@ -467,6 +520,59 @@
 			hidden.value = JSON.stringify(rows);
 		});
 
+		/* Photo upload button → trigger file input */
+		body.addEventListener("click", function (e) {
+			var btn = e.target.closest(".pi-img-upload-btn");
+			if (!btn) return;
+			var iid = btn.getAttribute("data-iid");
+			var fi = iid && document.getElementById(iid + "-file");
+			if (fi) fi.click();
+		});
+
+		/* File selected → read + upload */
+		body.addEventListener("change", function (e) {
+			var fi = e.target;
+			if (!fi || fi.type !== "file" || !fi.id || !fi.id.endsWith("-file")) return;
+			var file = fi.files && fi.files[0];
+			if (!file) return;
+			var iid = fi.id.slice(0, -5); // strip "-file"
+			var fn = iid.replace("pf-img-", "");
+			var status = document.getElementById(iid + "-status");
+			var preview = document.getElementById(iid + "-preview");
+			var placeholder = document.getElementById(iid + "-placeholder");
+			var hidden = body.querySelector('[data-fieldname="' + fn + '"][data-fieldtype="Attach Image"]');
+			if (status) status.textContent = "Uploading…";
+			var reader = new FileReader();
+			reader.onload = function (ev) {
+				var dataUrl = ev.target.result;
+				api("/api/method/skillshub_core.skillshub_portal.api.upload_public_profile_image", {
+					method: "POST",
+					body: JSON.stringify({
+						student_id: state.session && state.session.sid,
+						token: state.session && state.session.token,
+						filename: file.name,
+						filedata: dataUrl,
+					}),
+				})
+					.then(function (res) {
+						var url = res && res.file_url;
+						if (!url) throw new Error("No file URL returned");
+						if (preview) { preview.src = url; preview.style.display = ""; }
+						if (placeholder) placeholder.style.display = "none";
+						if (hidden) hidden.value = url;
+						if (status) status.textContent = "Photo updated.";
+						var avatar = document.getElementById("pi-profile-avatar");
+						var avatarPh = document.getElementById("pi-profile-avatar-placeholder");
+						if (avatar) { avatar.src = url; avatar.style.display = ""; }
+						if (avatarPh) avatarPh.style.display = "none";
+					})
+					.catch(function (err) {
+						if (status) status.textContent = "Upload failed: " + (err.message || "error");
+					});
+			};
+			reader.readAsDataURL(file);
+		});
+
 		/* Show link dropdown on focus/click — reveal all options */
 		body.addEventListener(
 			"focus",
@@ -562,9 +668,18 @@
 				linkOptsMap[dt] = allOpts[i];
 			});
 
-			/* Update heading */
+			/* Update heading and hero avatar */
 			var heading = document.getElementById("pi-profile-heading");
 			if (heading && student.student_name) heading.textContent = student.student_name;
+			var avatar = document.getElementById("pi-profile-avatar");
+			var avatarPh = document.getElementById("pi-profile-avatar-placeholder");
+			if (student.student_image) {
+				if (avatar) { avatar.src = student.student_image; avatar.style.display = ""; }
+				if (avatarPh) avatarPh.style.display = "none";
+			} else {
+				if (avatar) avatar.style.display = "none";
+				if (avatarPh) avatarPh.style.display = "";
+			}
 
 			var html = "";
 			sections.forEach(function (sec) {

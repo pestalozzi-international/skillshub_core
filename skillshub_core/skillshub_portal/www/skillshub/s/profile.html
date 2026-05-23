@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Profile — SkillsHub</title>
   <link rel="icon" href="/assets/skillshub_core/images/favicon.png">
-  <link rel="stylesheet" href="/skillshub/theme.css?v=4.3">
-  <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.3">
+  <link rel="stylesheet" href="/skillshub/theme.css?v=4.4">
+  <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.4">
   <script>window.frappe = {}; frappe.csrf_token = "{{ frappe.session.csrf_token }}";</script>
 </head>
 <body data-gate-title="My Profile">
@@ -26,7 +26,10 @@
 
 <div class="pi-hero" style="padding-bottom:2.5rem;">
   <div class="pi-wrap" style="display:flex;align-items:center;gap:0.75rem;">
-    <span style="font-size:2rem;">👤</span>
+    <div style="position:relative;flex-shrink:0;">
+      <img id="pi-profile-avatar" src="" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;background:#eee;display:none;">
+      <span id="pi-profile-avatar-placeholder" style="font-size:2rem;line-height:1;">👤</span>
+    </div>
     <div>
       <h1 id="pi-profile-heading" style="font-size:1.6rem;margin:0 0 0.2rem;">My Profile</h1>
       <p style="margin:0;opacity:0.8;font-size:0.9rem;">Review and update your personal details.</p>
@@ -53,7 +56,7 @@
   </div>
 </div>
 
-<script src="/assets/skillshub_core/js/skillshub/s-gate.js?v=4.3"></script>
-<script src="/assets/skillshub_core/js/skillshub/s-profile.js?v=4.3"></script>
+<script src="/assets/skillshub_core/js/skillshub/s-gate.js?v=4.4"></script>
+<script src="/assets/skillshub_core/js/skillshub/s-profile.js?v=4.4"></script>
 </body>
 </html>

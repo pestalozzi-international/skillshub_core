@@ -115,6 +115,7 @@
 			/* Common data fields for the student's display name */
 			student_name: sname,
 			sh_student_name: sname,
+			student_full_name: sname,
 			programme_schedule: c.schedule,
 			program_schedule: c.schedule,
 			class: c.schedule,
@@ -352,6 +353,8 @@
 		}
 		var isRO = ro || field.read_only || isStudentLink;
 
+		if (ft === "Attach" || ft === "Attach Image") return Promise.resolve("");
+
 		if (ft === "Rating") return Promise.resolve(renderStars(fn, finalVal, label, isRO));
 		if (ft === "Check") return Promise.resolve(renderCheck(fn, finalVal, label, isRO));
 
@@ -401,32 +404,26 @@
 			);
 		}
 
-		if (ft === "Date") {
-			var dateVal = finalVal || (!isRO ? todayISO() : "");
+		if (ft === "Date" || ft === "Datetime") {
+			var dateVal = finalVal
+				? String(finalVal).slice(0, 10)
+				: !isRO
+				? todayISO()
+				: "";
 			return Promise.resolve(
 				'<div class="pi-field"><label class="pi-label">' +
 					esc(label) +
 					'</label><input type="date" class="pi-input" data-fieldname="' +
 					esc(fn) +
-					'" data-fieldtype="Date" value="' +
+					'" data-fieldtype="' +
+					esc(ft) +
+					'" value="' +
 					esc(dateVal) +
 					'"' +
 					(isRO ? " readonly" : "") +
 					"></div>"
 			);
 		}
-		if (ft === "Datetime")
-			return Promise.resolve(
-				'<div class="pi-field"><label class="pi-label">' +
-					esc(label) +
-					'</label><input type="datetime-local" class="pi-input" data-fieldname="' +
-					esc(fn) +
-					'" data-fieldtype="Datetime" value="' +
-					esc(String(finalVal).replace(" ", "T").slice(0, 16)) +
-					'"' +
-					(isRO ? " readonly" : "") +
-					"></div>"
-			);
 		if (ft === "Phone")
 			return Promise.resolve(
 				'<div class="pi-field"><label class="pi-label">' +
@@ -498,6 +495,7 @@
 		"student",
 		"student_name",
 		"sh_student_name",
+		"student_full_name",
 		"programme_schedule",
 		"program_schedule",
 		"class",

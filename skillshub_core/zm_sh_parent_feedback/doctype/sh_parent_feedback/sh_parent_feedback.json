@@ -204,7 +204,7 @@
    "default": "0",
    "fieldname": "household_participation_impact",
    "fieldtype": "Check",
-   "label": "Household benefited in any way from your child\u2019s participation in the program"
+   "label": "Household benefited in any way from your child’s participation in the program"
   },
   {
    "depends_on": "household_participation_impact",
@@ -226,13 +226,14 @@
   {
    "fieldname": "family_attitude",
    "fieldtype": "Select",
-   "label": "Have your family members\u2019 attitudes towards agriculture changed because of your child\u2019s training?",
+   "label": "Have your family members’ attitudes towards agriculture changed because of your child’s training?",
    "options": "\nMore interested in agriculture\nNo change\nLess interested"
   },
   {
    "fieldname": "family_attitude_description",
    "fieldtype": "Small Text",
-   "label": "Please briefly explain how your family members\u2019 attitudes towards agriculture changed because of your child\u2019s training?"
+   "label": "Please briefly explain how your family members’ attitudes towards agriculture changed because of your child’s training?",
+   "depends_on": "family_attitude"
   },
   {
    "fieldname": "section_break_xjwx",
@@ -242,12 +243,13 @@
    "default": "0",
    "fieldname": "participation_influence",
    "fieldtype": "Check",
-   "label": "Child\u2019s participation in the program influenced others in your community"
+   "label": "Child’s participation in the program influenced others in your community"
   },
   {
    "fieldname": "participation_influence_details",
    "fieldtype": "Small Text",
-   "label": "If Yes, please describe how your child's participation has influenced others in your community"
+   "label": "If Yes, please describe how your child's participation has influenced others in your community",
+   "depends_on": "participation_influence"
   },
   {
    "fieldname": "section_break_iknv",
@@ -268,7 +270,8 @@
   {
    "fieldname": "improve_community_details",
    "fieldtype": "Small Text",
-   "label": "Please explain your answer briefly regarding why you feel the program is helping reduce poverty or improve opportunities in your community"
+   "label": "Please explain your answer briefly regarding why you feel the program is helping reduce poverty or improve opportunities in your community",
+   "depends_on": "improve_community"
   },
   {
    "fieldname": "section_break_sewu",
@@ -304,7 +307,7 @@
    "fieldname": "duration_of_training_completed",
    "fieldtype": "Select",
    "label": "Duration of training completed",
-   "options": "\n3\u20136 months\nLess than 3 months\nMore than 6 months\n6 months\n3 months",
+   "options": "\n3–6 months\nLess than 3 months\nMore than 6 months\n6 months\n3 months",
    "sort_options": 1
   },
   {

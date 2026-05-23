@@ -807,8 +807,17 @@ PUBLIC_PROFILE_EXCLUDED = {
 	"published",
 	"portal_user_account",
 	"enabled",
-	"student_image",
 	"pestalozzi_student_email",
+	"naming_series",
+	"fullname_and_id",
+	"discipline",
+}
+
+# Section break fieldnames whose entire section is hidden from the profile
+EXCLUDED_SECTION_FNS = {
+	"portal_access_section",
+	"attachment_during_skillshub_section",
+	"section_break_veyp",
 }
 
 PUBLIC_LINK_ALLOWED = {
@@ -974,8 +983,7 @@ def get_public_profile(student_id, token):
 		if field.fieldtype in {"Fold", "HTML", "Button"}:
 			continue
 		if field.fieldtype == "Section Break":
-			label = (field.label or "").strip()
-			if "Portal Access" in label:
+			if field.fieldname in EXCLUDED_SECTION_FNS:
 				skip_section = True
 				continue  # omit this section break too
 			else:
@@ -1057,6 +1065,49 @@ def update_public_profile(student_id, token, payload):
 	student_doc.save(ignore_permissions=True)
 	frappe.db.commit()  # nosemgrep
 	return {"ok": True, "name": student_doc.name}
+
+
+@frappe.whitelist(allow_guest=True)  # nosemgrep
+def upload_public_profile_image(student_id, token, filename, filedata):
+	"""Upload a student profile photo. filedata must be a base64-encoded image."""
+	import base64
+
+	from frappe.utils.file_manager import save_file
+
+	_validate_pub_token(student_id, token)
+
+	filename = (filename or "photo.jpg").strip()
+	ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+	if ext not in {"jpg", "jpeg", "png", "gif", "webp"}:
+		frappe.throw(_("Invalid image type. Allowed: jpg, jpeg, png, gif, webp"))
+
+	raw = str(filedata or "")
+	if "," in raw:
+		raw = raw.split(",", 1)[1]
+
+	try:
+		content = base64.b64decode(raw)
+	except Exception:
+		frappe.throw(_("Invalid image data."))
+
+	if len(content) > 2 * 1024 * 1024:
+		frappe.throw(_("Image must be smaller than 2 MB."))
+
+	saved = save_file(
+		fname=filename,
+		content=content,
+		dt="SH Student",
+		dn=student_id,
+		folder="Home/Attachments",
+		is_private=0,
+	)
+
+	student_doc = frappe.get_doc("SH Student", student_id)
+	student_doc.student_image = saved.file_url
+	student_doc.save(ignore_permissions=True)
+	frappe.db.commit()  # nosemgrep
+
+	return {"ok": True, "file_url": saved.file_url}
 
 
 @frappe.whitelist(allow_guest=True)  # nosemgrep
