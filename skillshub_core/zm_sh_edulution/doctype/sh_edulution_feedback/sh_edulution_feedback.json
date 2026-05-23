@@ -169,8 +169,9 @@
   },
   {
    "fieldname": "what_is_your_best_soft_skill",
-   "fieldtype": "Data",
-   "label": "What is your best soft skill?"
+   "fieldtype": "Link",
+   "label": "What is your best soft skill?",
+   "options": "SkillsHub Soft Skills"
   },
   {
    "fieldname": "section_break_rosf",
@@ -230,8 +231,9 @@
   },
   {
    "fieldname": "photo",
-   "fieldtype": "Attach Image",
-   "label": "Do you have any photos or videos you would be happy for us to share with donors or on social media?"
+   "fieldtype": "Select",
+   "label": "Do you have any photos or videos you would be happy for us to share with donors or on social media?",
+   "options": "Yes\nNo"
   },
   {
    "fieldname": "section_break_vovo",
