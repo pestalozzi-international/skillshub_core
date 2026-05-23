@@ -799,6 +799,12 @@ PUBLIC_PROFILE_READONLY = {
 	"age",
 	"graduated",
 	"discipline",
+	"enrolment_date",
+	"graduation_completion_date",
+	"date_submitted_enrolment_form",
+	"applicant_record",
+	"exit_reason",
+	"last_year_of_schooling",
 }
 
 # Fields never shown to students in the public profile (hidden entirely, not just read-only)
@@ -818,6 +824,7 @@ EXCLUDED_SECTION_FNS = {
 	"portal_access_section",
 	"attachment_during_skillshub_section",
 	"section_break_veyp",
+	"section_break_lzmy",  # Employment Post SkillsHub
 }
 
 PUBLIC_LINK_ALLOWED = {
