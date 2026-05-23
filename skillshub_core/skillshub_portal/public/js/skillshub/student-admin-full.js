@@ -369,7 +369,7 @@
 				"<td>" +
 				esc(fmtDate(row.creation)) +
 				"</td>" +
-				'<td>' +
+				"<td>" +
 				'<a class="sh-btn-secondary" style="font-size:0.78rem;padding:0.38rem 0.7rem;text-decoration:none;" target="_blank" href="' +
 				feedbackDesk +
 				'">View in Desk ↗</a>' +

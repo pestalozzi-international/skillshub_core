@@ -9,12 +9,42 @@
 			icon: "🏷️",
 			desc: "Name, tagline and support contact displayed across all portal pages.",
 			fields: [
-				{ key: "portal_name", label: "Portal Name", type: "text", placeholder: "SkillsHub Portal" },
-				{ key: "portal_tagline", label: "Tagline", type: "text", placeholder: "Pestalozzi International" },
-				{ key: "landing_title", label: "Landing Title", type: "text", placeholder: "Welcome to SkillsHub" },
-				{ key: "landing_subtitle", label: "Landing Subtitle", type: "text", placeholder: "" },
-				{ key: "login_notice", label: "Login Notice", type: "textarea", placeholder: "Shown on the login page." },
-				{ key: "support_email", label: "Support Email", type: "email", placeholder: "support@example.org" },
+				{
+					key: "portal_name",
+					label: "Portal Name",
+					type: "text",
+					placeholder: "SkillsHub Portal",
+				},
+				{
+					key: "portal_tagline",
+					label: "Tagline",
+					type: "text",
+					placeholder: "Pestalozzi International",
+				},
+				{
+					key: "landing_title",
+					label: "Landing Title",
+					type: "text",
+					placeholder: "Welcome to SkillsHub",
+				},
+				{
+					key: "landing_subtitle",
+					label: "Landing Subtitle",
+					type: "text",
+					placeholder: "",
+				},
+				{
+					key: "login_notice",
+					label: "Login Notice",
+					type: "textarea",
+					placeholder: "Shown on the login page.",
+				},
+				{
+					key: "support_email",
+					label: "Support Email",
+					type: "email",
+					placeholder: "support@example.org",
+				},
 			],
 		},
 		{
@@ -24,7 +54,12 @@
 			desc: "Logo, favicon and colour palette. Upload images or paste a URL.",
 			fields: [
 				{ key: "logo", label: "Logo", type: "image", placeholder: "Upload or paste URL" },
-				{ key: "favicon", label: "Favicon", type: "image", placeholder: "Upload or paste URL (.ico, .png)" },
+				{
+					key: "favicon",
+					label: "Favicon",
+					type: "image",
+					placeholder: "Upload or paste URL (.ico, .png)",
+				},
 				{ key: "primary_color", label: "Primary Colour", type: "color" },
 				{ key: "secondary_color", label: "Secondary / Dark Colour", type: "color" },
 				{ key: "accent_color", label: "Accent Colour", type: "color" },
@@ -32,7 +67,12 @@
 				{ key: "surface_color", label: "Surface / Card Colour", type: "color" },
 				{ key: "text_color", label: "Text Colour", type: "color" },
 				{ key: "muted_text_color", label: "Muted Text Colour", type: "color" },
-				{ key: "header_gradient", label: "Header Gradient (CSS)", type: "text", placeholder: "linear-gradient(135deg, #CA0733 0%, #a3052a 100%)" },
+				{
+					key: "header_gradient",
+					label: "Header Gradient (CSS)",
+					type: "text",
+					placeholder: "linear-gradient(135deg, #CA0733 0%, #a3052a 100%)",
+				},
 			],
 		},
 		{
@@ -41,8 +81,18 @@
 			icon: "🗺️",
 			desc: "Where users land after logging in. Admin route: /skillshub/admin/students (default). Student route: /skillshub/s/ (default).",
 			fields: [
-				{ key: "admin_home_route", label: "Admin Home Route", type: "text", placeholder: "/skillshub/admin/students" },
-				{ key: "student_home_route", label: "Student Home Route", type: "text", placeholder: "/skillshub/s/" },
+				{
+					key: "admin_home_route",
+					label: "Admin Home Route",
+					type: "text",
+					placeholder: "/skillshub/admin/students",
+				},
+				{
+					key: "student_home_route",
+					label: "Student Home Route",
+					type: "text",
+					placeholder: "/skillshub/s/",
+				},
 			],
 		},
 		{
@@ -51,9 +101,24 @@
 			icon: "⚙️",
 			desc: "Pre-filled values for the enrolment form and session context.",
 			fields: [
-				{ key: "current_cohort", label: "Current Cohort", type: "text", placeholder: "e.g. Cohort 7" },
-				{ key: "default_academic_year", label: "Default Academic Year", type: "text", placeholder: "e.g. 2026" },
-				{ key: "default_programme", label: "Default Programme", type: "text", placeholder: "e.g. Soft Skills Programme" },
+				{
+					key: "current_cohort",
+					label: "Current Cohort",
+					type: "text",
+					placeholder: "e.g. Cohort 7",
+				},
+				{
+					key: "default_academic_year",
+					label: "Default Academic Year",
+					type: "text",
+					placeholder: "e.g. 2026",
+				},
+				{
+					key: "default_programme",
+					label: "Default Programme",
+					type: "text",
+					placeholder: "e.g. Soft Skills Programme",
+				},
 			],
 		},
 	];
@@ -102,7 +167,9 @@
 			headers: csrf && !String(csrf).includes("{{") ? { "X-Frappe-CSRF-Token": csrf } : {},
 			body: formData,
 		})
-			.then(function (r) { return r.json(); })
+			.then(function (r) {
+				return r.json();
+			})
 			.then(function (data) {
 				var url = data && data.message && data.message.file_url;
 				if (url) onSuccess(url);
@@ -114,31 +181,63 @@
 	function buildColorSwatch(key, value) {
 		return (
 			'<div class="s-field s-field-color">' +
-			'<label class="s-label">' + esc((SECTIONS.reduce(function(a,s){return a.concat(s.fields);},[]).find(function(f){return f.key===key;})||{label:key}).label) + '</label>' +
+			'<label class="s-label">' +
+			esc(
+				(
+					SECTIONS.reduce(function (a, s) {
+						return a.concat(s.fields);
+					}, []).find(function (f) {
+						return f.key === key;
+					}) || { label: key }
+				).label
+			) +
+			"</label>" +
 			'<div class="s-color-row">' +
-			'<input type="color" class="s-color-pick" data-key="' + esc(key) + '" value="' + esc(value || "#000000") + '">' +
-			'<input type="text" class="s-input s-color-text" data-key-text="' + esc(key) + '" value="' + esc(value || "") + '" placeholder="#rrggbb">' +
-			'</div></div>'
+			'<input type="color" class="s-color-pick" data-key="' +
+			esc(key) +
+			'" value="' +
+			esc(value || "#000000") +
+			'">' +
+			'<input type="text" class="s-input s-color-text" data-key-text="' +
+			esc(key) +
+			'" value="' +
+			esc(value || "") +
+			'" placeholder="#rrggbb">' +
+			"</div></div>"
 		);
 	}
 
 	function buildImageField(key, label, value, placeholder) {
 		var preview = value
-			? '<img id="prev-' + esc(key) + '" src="' + esc(value) + '" alt="" style="max-height:56px;max-width:120px;border-radius:0.4rem;object-fit:contain;border:1px solid var(--pi-border);padding:2px;background:#fff;">'
+			? '<img id="prev-' +
+			  esc(key) +
+			  '" src="' +
+			  esc(value) +
+			  '" alt="" style="max-height:56px;max-width:120px;border-radius:0.4rem;object-fit:contain;border:1px solid var(--pi-border);padding:2px;background:#fff;">'
 			: '<span id="prev-' + esc(key) + '" style="display:none;"></span>';
 		return (
 			'<div class="s-field">' +
-			'<label class="s-label">' + esc(label) + '</label>' +
+			'<label class="s-label">' +
+			esc(label) +
+			"</label>" +
 			'<div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">' +
 			preview +
 			'<div style="flex:1;min-width:160px;">' +
-			'<input type="text" class="s-input" data-key="' + esc(key) + '" value="' + esc(value || "") + '" placeholder="' + esc(placeholder || "") + '">' +
+			'<input type="text" class="s-input" data-key="' +
+			esc(key) +
+			'" value="' +
+			esc(value || "") +
+			'" placeholder="' +
+			esc(placeholder || "") +
+			'">' +
 			'<label class="s-upload-btn" style="margin-top:0.35rem;display:inline-flex;align-items:center;gap:0.35rem;cursor:pointer;font-size:0.78rem;color:var(--pi-red);font-weight:600;">' +
-			'<input type="file" accept="image/*" data-upload-for="' + esc(key) + '" style="display:none;">' +
-			'⬆ Upload image' +
-			'</label>' +
-			'</div>' +
-			'</div></div>'
+			'<input type="file" accept="image/*" data-upload-for="' +
+			esc(key) +
+			'" style="display:none;">' +
+			"⬆ Upload image" +
+			"</label>" +
+			"</div>" +
+			"</div></div>"
 		);
 	}
 
@@ -146,16 +245,34 @@
 		if (type === "textarea") {
 			return (
 				'<div class="s-field s-field-full">' +
-				'<label class="s-label">' + esc(label) + '</label>' +
-				'<textarea class="s-input s-textarea" data-key="' + esc(key) + '" placeholder="' + esc(placeholder || "") + '">' + esc(value || "") + '</textarea>' +
-				'</div>'
+				'<label class="s-label">' +
+				esc(label) +
+				"</label>" +
+				'<textarea class="s-input s-textarea" data-key="' +
+				esc(key) +
+				'" placeholder="' +
+				esc(placeholder || "") +
+				'">' +
+				esc(value || "") +
+				"</textarea>" +
+				"</div>"
 			);
 		}
 		return (
 			'<div class="s-field">' +
-			'<label class="s-label">' + esc(label) + '</label>' +
-			'<input type="' + esc(type || "text") + '" class="s-input" data-key="' + esc(key) + '" value="' + esc(value || "") + '" placeholder="' + esc(placeholder || "") + '">' +
-			'</div>'
+			'<label class="s-label">' +
+			esc(label) +
+			"</label>" +
+			'<input type="' +
+			esc(type || "text") +
+			'" class="s-input" data-key="' +
+			esc(key) +
+			'" value="' +
+			esc(value || "") +
+			'" placeholder="' +
+			esc(placeholder || "") +
+			'">' +
+			"</div>"
 		);
 	}
 
@@ -168,10 +285,10 @@
 		SECTIONS.forEach(function (section) {
 			html += '<div class="s-section">';
 			html += '<div class="s-section-head">';
-			html += '<span class="s-section-icon">' + section.icon + '</span>';
-			html += '<div><div class="s-section-title">' + esc(section.title) + '</div>';
-			html += '<div class="s-section-desc">' + esc(section.desc) + '</div></div>';
-			html += '</div>';
+			html += '<span class="s-section-icon">' + section.icon + "</span>";
+			html += '<div><div class="s-section-title">' + esc(section.title) + "</div>";
+			html += '<div class="s-section-desc">' + esc(section.desc) + "</div></div>";
+			html += "</div>";
 			html += '<div class="s-section-body">';
 
 			section.fields.forEach(function (field) {
@@ -181,7 +298,13 @@
 				} else if (field.type === "image") {
 					html += buildImageField(field.key, field.label, val, field.placeholder);
 				} else {
-					html += buildTextField(field.key, field.label, field.type, val, field.placeholder);
+					html += buildTextField(
+						field.key,
+						field.label,
+						field.type,
+						val,
+						field.placeholder
+					);
 				}
 			});
 
@@ -225,12 +348,23 @@
 					file,
 					function (url) {
 						if (urlInput) urlInput.value = url;
-						if (preview) { preview.src = url; preview.style.display = ""; }
-						if (label) label.innerHTML = '<input type="file" accept="image/*" data-upload-for="' + esc(key) + '" style="display:none;">⬆ Upload image';
+						if (preview) {
+							preview.src = url;
+							preview.style.display = "";
+						}
+						if (label)
+							label.innerHTML =
+								'<input type="file" accept="image/*" data-upload-for="' +
+								esc(key) +
+								'" style="display:none;">⬆ Upload image';
 						bindFileUploads();
 					},
 					function (err) {
-						if (label) label.innerHTML = '<input type="file" accept="image/*" data-upload-for="' + esc(key) + '" style="display:none;">⬆ Upload image';
+						if (label)
+							label.innerHTML =
+								'<input type="file" accept="image/*" data-upload-for="' +
+								esc(key) +
+								'" style="display:none;">⬆ Upload image';
 						alert("Upload failed: " + (err && err.message));
 						bindFileUploads();
 					}
@@ -252,7 +386,9 @@
 	function setMessage(html, type) {
 		var el = document.getElementById("settings-message");
 		if (!el) return;
-		el.innerHTML = html ? '<div class="pi-alert pi-alert-' + (type || "info") + '">' + html + '</div>' : "";
+		el.innerHTML = html
+			? '<div class="pi-alert pi-alert-' + (type || "info") + '">' + html + "</div>"
+			: "";
 	}
 
 	function setButtonState(saving) {
