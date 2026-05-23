@@ -71,6 +71,7 @@
 			settings.header_gradient || "linear-gradient(135deg, #CA0733 0%, #a3052a 100%)",
 			"important"
 		);
+		root.style.setProperty("--pi-red", settings.primary_color || "#CA0733", "important");
 
 		if (settings.favicon) setFavicon(settings.favicon);
 

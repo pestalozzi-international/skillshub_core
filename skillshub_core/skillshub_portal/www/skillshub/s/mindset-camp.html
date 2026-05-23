@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mindset Camp Feedback — SkillsHub</title>
   <link rel="icon" href="/assets/skillshub_core/images/favicon.png">
-  <link rel="stylesheet" href="/skillshub/theme.css?v=4.0">
-  <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.0">
+  <link rel="stylesheet" href="/skillshub/theme.css?v=4.1">
+  <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.1">
   <script>window.frappe = {}; frappe.csrf_token = "{{ frappe.session.csrf_token }}";</script>
 </head>
 <body data-doctype="SH Mindset Camp Feedback" data-title="Mindset Camp Feedback" data-gate-title="Mindset Camp Feedback">
@@ -35,6 +35,9 @@
 </div>
 
 <div id="pi-form-wrap" class="pi-wrap pi-wrap-narrow" style="padding-top:1.5rem;padding-bottom:4rem;">
+  <div style="margin-bottom:0.75rem;">
+    <a href="/skillshub/s/" class="pi-btn pi-btn-secondary" style="text-decoration:none;font-size:0.85rem;">← All Forms</a>
+  </div>
   <div class="pi-card">
     <div id="pi-form-body">
       <div class="pi-skeleton" style="height:3rem;border-radius:0.75rem;margin-bottom:1rem;"></div>
@@ -42,13 +45,18 @@
       <div class="pi-skeleton" style="height:3rem;border-radius:0.75rem;"></div>
     </div>
     <div id="pi-form-msg" style="margin-top:1rem;"></div>
-    <div style="margin-top:1.5rem;display:flex;gap:0.75rem;flex-wrap:wrap;">
-      <button id="pi-form-submit" class="pi-btn pi-btn-primary">Submit Form</button>
+    <div style="margin-top:1.5rem;display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:space-between;align-items:center;">
+      <button id="pi-nav-prev" class="pi-btn pi-btn-secondary" style="display:none;">← Previous</button>
+      <span id="pi-section-counter" style="font-size:0.8rem;color:var(--pi-muted);display:none;"></span>
+      <div style="display:flex;gap:0.75rem;">
+        <button id="pi-nav-next" class="pi-btn pi-btn-secondary" style="display:none;">Next →</button>
+        <button id="pi-form-submit" class="pi-btn pi-btn-primary">Submit Form</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script src="/assets/skillshub_core/js/skillshub/s-gate.js?v=4.1"></script>
-<script src="/assets/skillshub_core/js/skillshub/s-form-fill.js?v=4.0"></script>
+<script src="/assets/skillshub_core/js/skillshub/s-form-fill.js?v=4.1"></script>
 </body>
 </html>

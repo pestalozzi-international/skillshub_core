@@ -118,7 +118,7 @@ h1, h2, h3 {
 
 /* === Buttons === */
 .sh-btn-primary {
-    background-color: var(--color-teal-700);
+    background-color: var(--pi-red, var(--color-teal-700));
     color: white;
     border: none;
     border-radius: 0.75rem;

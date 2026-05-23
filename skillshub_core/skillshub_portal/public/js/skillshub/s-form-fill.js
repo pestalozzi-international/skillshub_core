@@ -587,35 +587,53 @@
 				"</span></span>";
 		ctxBar += "</div>";
 
-		var promises = fields.map(function (field) {
-			var fn = field.fieldname;
-			if (!fn || field.hidden) return Promise.resolve("");
-			if (
-				[
-					"name",
-					"owner",
-					"creation",
-					"modified",
-					"modified_by",
-					"idx",
-					"parent",
-					"parentfield",
-					"parenttype",
-					"docstatus",
-				].indexOf(fn) > -1
-			)
-				return Promise.resolve("");
-			/* Skip context-filled fields — they go in the payload automatically */
-			if (CONTEXT_SKIP.indexOf(fn) > -1) return Promise.resolve("");
-			return renderField(field, null, false);
+		/* Group fields into sections */
+		sections = groupSections(fields);
+		currentSection = 0;
+
+		/* If no sections, fall back to flat rendering */
+		if (!sections.length) {
+			var allPromises = fields.map(function (field) {
+				var fn = field.fieldname;
+				if (!fn || field.hidden) return Promise.resolve("");
+				if (["name","owner","creation","modified","modified_by","idx","parent","parentfield","parenttype","docstatus"].indexOf(fn) > -1) return Promise.resolve("");
+				if (CONTEXT_SKIP.indexOf(fn) > -1) return Promise.resolve("");
+				return renderField(field, null, false);
+			});
+			Promise.all(allPromises).then(function (parts) {
+				var gridHtml = '<div class="pi-form-grid">' + parts.filter(Boolean).join("") + "</div>";
+				root.innerHTML = ctxBar + gridHtml;
+				bindFormInteractions(root);
+				applyFormDependsOn(root);
+				updateNav();
+			});
+			return;
+		}
+
+		/* Render all sections into DOM, only first is visible */
+		var sectionPromises = sections.map(function (section, idx) {
+			var sectionFields = section.fields;
+			var fieldPromises = sectionFields.map(function (field) {
+				var fn = field.fieldname;
+				if (!fn || field.hidden) return Promise.resolve("");
+				if (["name","owner","creation","modified","modified_by","idx","parent","parentfield","parenttype","docstatus"].indexOf(fn) > -1) return Promise.resolve("");
+				if (CONTEXT_SKIP.indexOf(fn) > -1) return Promise.resolve("");
+				return renderField(field, null, false);
+			});
+			return Promise.all(fieldPromises).then(function (parts) {
+				var heading = section.label ? '<h3 style="font-size:1rem;font-weight:700;margin:0 0 1rem;color:var(--pi-black,#1a1a1a);">' + esc(section.label) + '</h3>' : '';
+				return '<div class="pi-section" id="pi-sec-' + idx + '"' + (idx > 0 ? ' style="display:none;"' : '') + '>' +
+					heading +
+					'<div class="pi-form-grid">' + parts.filter(Boolean).join("") + '</div>' +
+					'</div>';
+			});
 		});
 
-		Promise.all(promises).then(function (parts) {
-			var gridHtml =
-				'<div class="pi-form-grid">' + parts.filter(Boolean).join("") + "</div>";
-			root.innerHTML = ctxBar + gridHtml;
+		Promise.all(sectionPromises).then(function (sectionHtmls) {
+			root.innerHTML = ctxBar + sectionHtmls.join("");
 			bindFormInteractions(root);
 			applyFormDependsOn(root);
+			updateNav();
 		});
 	}
 
@@ -872,6 +890,10 @@
 		state.doctype = document.body.getAttribute("data-doctype");
 		var submitBtn = document.getElementById("pi-form-submit");
 		if (submitBtn) submitBtn.addEventListener("click", submitForm);
+		var prevBtn = document.getElementById("pi-nav-prev");
+		var nextBtn = document.getElementById("pi-nav-next");
+		if (prevBtn) prevBtn.addEventListener("click", function () { goToSection(currentSection - 1); });
+		if (nextBtn) nextBtn.addEventListener("click", function () { goToSection(currentSection + 1); });
 	});
 
 	window.addEventListener("sh-gate-open", function (e) {

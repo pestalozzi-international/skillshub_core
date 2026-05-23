@@ -5,9 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillsHub — My Forms</title>
   <link rel="icon" href="/assets/skillshub_core/images/favicon.png">
-  <link rel="stylesheet" href="/skillshub/theme.css?v=4.0">
-  <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.0">
+  <link rel="stylesheet" href="/skillshub/theme.css?v=4.1">
+  <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.1">
   <script>window.frappe = {}; frappe.csrf_token = "{{ frappe.session.csrf_token }}";</script>
+  <style>
+    .pi-enrolment-card { background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem; }
+    .pi-enrolment-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--pi-muted); margin-bottom: 0.5rem; }
+    .pi-enrolment-item { font-size: 0.875rem; color: var(--pi-black); margin-bottom: 0.25rem; }
+  </style>
 </head>
 <body data-gate-title="SkillsHub Portal">
 
@@ -86,6 +91,15 @@
       html += '<p style="font-size:0.85rem;color:var(--pi-muted);margin-bottom:1.5rem;">Cohort: <strong>' + esc(student.intake_cohort) + '</strong>';
       if (student.programme_path) html += '&nbsp;·&nbsp;' + esc(student.programme_path);
       html += '</p>';
+    }
+
+    var enrolment = ctx.enrolment || {};
+    if (enrolment.name) {
+      html += '<div class="pi-enrolment-card">';
+      html += '<div class="pi-enrolment-label">Current Enrolment</div>';
+      if (enrolment['class']) html += '<div class="pi-enrolment-item">📚 <strong>Class:</strong> ' + esc(enrolment['class']) + '</div>';
+      if (enrolment.course) html += '<div class="pi-enrolment-item">📖 <strong>Course:</strong> ' + esc(enrolment.course) + '</div>';
+      html += '</div>';
     }
 
     if (!forms.length) {
