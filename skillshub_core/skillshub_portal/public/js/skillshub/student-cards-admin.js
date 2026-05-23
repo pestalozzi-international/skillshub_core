@@ -296,16 +296,21 @@
 	}
 
 	document.addEventListener("DOMContentLoaded", function () {
-		if (window.SHPortal) {
-			window.addEventListener("sh-portal-ready", function (e) {
-				if (!e.detail.bootstrap.is_admin) {
-					window.location.replace("/skillshub");
-					return;
-				}
-				init();
-			});
-		} else {
+		/* Handle the case where sh-portal-ready already fired before this listener was set up */
+		if (window.SHPortal && window.SHPortal.bootstrap) {
+			if (!window.SHPortal.bootstrap.is_admin) {
+				window.location.replace("/skillshub");
+				return;
+			}
 			init();
+			return;
 		}
+		window.addEventListener("sh-portal-ready", function (e) {
+			if (!e.detail.bootstrap.is_admin) {
+				window.location.replace("/skillshub");
+				return;
+			}
+			init();
+		});
 	});
 })();

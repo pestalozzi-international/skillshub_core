@@ -207,7 +207,7 @@
 
 		/* Build overlay */
 		var pageTitle = document.querySelector("[data-gate-title]");
-		var overlay = buildOverlay(pageTitle ? pageTitle.textContent : null);
+		var overlay = buildOverlay(pageTitle ? pageTitle.getAttribute("data-gate-title") : null);
 		document.body.appendChild(overlay);
 
 		/* Bind verify button */

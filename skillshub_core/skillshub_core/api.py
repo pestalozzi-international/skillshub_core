@@ -17,13 +17,13 @@ ADMIN_ROLES = {
 }
 
 FEEDBACK_ROUTE_MAP = {
-	"SH Baseline": "/skillshub/baseline",
-	"SH Soft Skills Feedback": "/skillshub/feedback/soft-skills",
-	"SH Mindset Camp Feedback": "/skillshub/feedback/mindset-camp",
-	"SH Edulution Feedback": "/skillshub/feedback/edulution",
-	"SH VT Feedback": "/skillshub/feedback/vocational-training",
-	"SH Attachment Feedback": "/skillshub/feedback/attachment",
-	"SH Parent Feedback": "/skillshub/feedback/parent",
+	"SH Baseline": "/skillshub/s/baseline",
+	"SH Soft Skills Feedback": "/skillshub/s/soft-skills",
+	"SH Mindset Camp Feedback": "/skillshub/s/mindset-camp",
+	"SH Edulution Feedback": "/skillshub/s/edulution",
+	"SH VT Feedback": "/skillshub/s/vocational-training",
+	"SH Attachment Feedback": "/skillshub/s/attachment",
+	"SH Parent Feedback": "/skillshub/s/parent",
 }
 
 STUDENT_LOGIN_FIELDS = [

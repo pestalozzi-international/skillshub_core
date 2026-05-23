@@ -2,33 +2,33 @@
 	"use strict";
 
 	var FEEDBACK_FORMS = [
-		{ doctype: "SH Baseline", label: "Baseline", route: "/skillshub/baseline" },
+		{ doctype: "SH Baseline", label: "Baseline", route: "/skillshub/s/baseline" },
 		{
 			doctype: "SH Soft Skills Feedback",
 			label: "Soft Skills",
-			route: "/skillshub/feedback/soft-skills",
+			route: "/skillshub/s/soft-skills",
 		},
 		{
 			doctype: "SH Mindset Camp Feedback",
 			label: "Mindset Camp",
-			route: "/skillshub/feedback/mindset-camp",
+			route: "/skillshub/s/mindset-camp",
 		},
 		{
 			doctype: "SH Edulution Feedback",
 			label: "Edulution",
-			route: "/skillshub/feedback/edulution",
+			route: "/skillshub/s/edulution",
 		},
 		{
 			doctype: "SH VT Feedback",
 			label: "Vocational Training",
-			route: "/skillshub/feedback/vocational-training",
+			route: "/skillshub/s/vocational-training",
 		},
 		{
 			doctype: "SH Attachment Feedback",
 			label: "Attachment",
-			route: "/skillshub/feedback/attachment",
+			route: "/skillshub/s/attachment",
 		},
-		{ doctype: "SH Parent Feedback", label: "Parent", route: "/skillshub/feedback/parent" },
+		{ doctype: "SH Parent Feedback", label: "Parent", route: "/skillshub/s/parent" },
 	];
 
 	var state = {
@@ -354,16 +354,6 @@
 			"<th>Form</th><th>Doc</th><th>Class</th><th>Submitted</th><th>View</th>" +
 			"</tr></thead><tbody>";
 		rows.forEach(function (row) {
-			var viewUrl =
-				"/skillshub/form-view?doctype=" +
-				encodeURIComponent(row.doctype) +
-				"&name=" +
-				encodeURIComponent(row.name) +
-				"&student=" +
-				encodeURIComponent(state.studentId) +
-				"&return_to=" +
-				encodeURIComponent(adminReturnUrl()) +
-				"&from=admin";
 			var feedbackDesk = deskUrl(row.doctype, row.name);
 			html +=
 				"<tr>" +
@@ -379,13 +369,10 @@
 				"<td>" +
 				esc(fmtDate(row.creation)) +
 				"</td>" +
-				'<td style="display:flex;gap:0.35rem;flex-wrap:wrap;">' +
-				'<a class="sh-btn-secondary" style="font-size:0.78rem;padding:0.38rem 0.7rem;text-decoration:none;" href="' +
-				viewUrl +
-				'">Open</a>' +
+				'<td>' +
 				'<a class="sh-btn-secondary" style="font-size:0.78rem;padding:0.38rem 0.7rem;text-decoration:none;" target="_blank" href="' +
 				feedbackDesk +
-				'">Desk ↗</a>' +
+				'">View in Desk ↗</a>' +
 				"</td>" +
 				"</tr>";
 		});

@@ -242,6 +242,17 @@
 	window.SHPortal.logout = logout;
 	bindLogoutLinks();
 
+	function updateAdminUserBadge(bootstrap) {
+		var el = document.getElementById("sh-admin-user-name");
+		if (el && bootstrap && bootstrap.user && bootstrap.user !== "Guest") {
+			el.textContent = bootstrap.user.split("@")[0];
+		}
+		var wrap = document.getElementById("sh-admin-user-wrap");
+		if (wrap && bootstrap && bootstrap.is_logged_in) {
+			wrap.style.display = "";
+		}
+	}
+
 	Promise.all([
 		api(
 			"/api/method/skillshub_core.skillshub_portal.doctype.skillshub_portal_settings.skillshub_portal_settings.get_portal_settings"
@@ -261,6 +272,7 @@
 			window.SHPortal.bootstrap = bootstrap;
 			applyBranding(settings);
 			enforceAccess(bootstrap);
+			updateAdminUserBadge(bootstrap);
 
 			var roleClass =
 				bootstrap && bootstrap.is_admin

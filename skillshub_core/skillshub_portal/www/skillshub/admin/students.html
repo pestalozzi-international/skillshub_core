@@ -23,9 +23,12 @@
         </div>
         <div class="sh-admin-nav">
           <a href="/skillshub/admin/students" class="active">Students</a>
+          <a href="/skillshub/admin/student-cards">Cards</a>
           <a href="/skillshub/admin/attendance">Attendance</a>
           <a href="/skillshub/admin/programme-overview">Programme</a>
           <a href="/skillshub/admin/settings">Settings</a>
+          <a href="/app" target="_blank">Desk ↗</a>
+          <span id="sh-admin-user-wrap" style="display:none;font-size:0.78rem;opacity:0.75;padding:0.25rem 0.5rem;background:rgba(255,255,255,0.15);border-radius:0.4rem;" title="Logged in as"><span id="sh-admin-user-name"></span></span>
           <a href="/api/method/skillshub_core.skillshub_portal.api.portal_logout?redirect_to=%2Fskillshub" data-sh-logout="1">Logout</a>
         </div>
       </div>
@@ -79,23 +82,23 @@
     </section>
 
     <section class="sh-card" style="margin-top:1rem;">
-      <div id="students-meta" style="font-size:0.84rem;color:var(--muted-text-color);margin-bottom:0.8rem;"></div>
-      <div class="table-wrap">
-        <table class="sh-admin-table" id="students-table">
+      <div id="students-meta" style="font-size:0.82rem;color:var(--pi-muted);margin-bottom:0.6rem;min-height:1.2rem;"></div>
+      <div class="table-wrap" style="overflow-x:auto;">
+        <table class="sh-admin-table" id="students-table" style="min-width:700px;">
           <thead>
             <tr>
-              <th>Student</th>
+              <th style="min-width:180px;">Student <span style="font-weight:400;opacity:0.6;font-size:0.68rem;">● = portal login</span></th>
               <th>Status</th>
               <th>Path</th>
               <th>Cohort</th>
               <th>Current</th>
-              <th>Enrolments</th>
-              <th>Attendance</th>
-              <th>Actions</th>
+              <th style="text-align:center;">Enrolments</th>
+              <th style="text-align:center;">Attendance</th>
+              <th></th>
             </tr>
           </thead>
           <tbody id="students-body">
-            <tr><td colspan="8" class="sh-empty-cell">Loading students...</td></tr>
+            <tr><td colspan="8" class="sh-empty-cell" style="padding:2rem;text-align:center;">Loading students…</td></tr>
           </tbody>
         </table>
       </div>

@@ -56,8 +56,7 @@
     .lv1>.t-row{background:#e0f2fe;color:#0c4a6e;}
     .lv2>.t-row{background:#ede9fe;color:#4c1d95;}
     .lv3>.t-row{background:#fef3c7;color:#78350f;}
-    .lv4>.t-row{background:#d1fae5;color:#064e3b;}
-    .lv5>.t-row{background:white;border:1px solid var(--color-slate-200);
+    .lv4>.t-row{background:white;border:1px solid var(--color-slate-200);
                 color:var(--color-slate-800);box-shadow:var(--shadow-premium);}
     .h-strip{display:flex;gap:.5rem;flex-wrap:wrap;padding:.5rem .875rem .625rem 3rem;
              background:#fafafa;border-top:1px solid var(--color-slate-100);
@@ -133,12 +132,17 @@
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <div>
         <h1>Programme Overview</h1>
-        <p>Live data health · Intake Year → Path → Programme → Course → Course Run → Class → Enrolments</p>
+        <p>Live data health · Intake Year → Cohort → Path → Programme → Class → Enrolments</p>
       </div>
       <div class="sh-admin-nav" style="display:flex;gap:1.25rem;align-items:center;">
-        <a href="/app">Desk</a><a href="/skillshub/admin/students">Students</a>
+        <a href="/skillshub/admin/students">Students</a>
+        <a href="/skillshub/admin/student-cards">Cards</a>
+        <a href="/skillshub/admin/attendance">Attendance</a>
         <a href="/skillshub/admin/programme-overview" class="active">Programme</a>
-        <a href="/skillshub/admin/attendance">Attendance</a><a href="/skillshub/admin/settings">Settings</a><a href="/api/method/skillshub_core.skillshub_portal.api.portal_logout?redirect_to=%2Fskillshub" data-sh-logout="1">Logout</a>
+        <a href="/skillshub/admin/settings">Settings</a>
+        <a href="/app" target="_blank">Desk ↗</a>
+        <span id="sh-admin-user-wrap" style="display:none;font-size:0.78rem;opacity:0.75;padding:0.25rem 0.5rem;background:rgba(255,255,255,0.15);border-radius:0.4rem;" title="Logged in as"><span id="sh-admin-user-name"></span></span>
+        <a href="/api/method/skillshub_core.skillshub_portal.api.portal_logout?redirect_to=%2Fskillshub" data-sh-logout="1">Logout</a>
       </div>
     </div>
   </div>
@@ -211,7 +215,8 @@ const PROG_SHORT={
   'Soft Skills Programme':'Soft Skills',
   'Vocational Training':'Vocational Training'
 };
-const NEXT_NOUN=['','path','programme','course run','class','student'];
+/* Tree levels: 0=Year 1=IntakeCohort 2=Path 3=Programme 4=Class(leaf) */
+const NEXT_NOUN=['','path','programme','class','student'];
 
 /* Sort keys for report default: year desc, then programme order, then course alpha, then course run numeric */
 function reportSortKey(r){
@@ -295,6 +300,7 @@ function onFilter(){render();}
 function render(){currentView==='tree'?renderTree():renderReport();}
 
 /* ══ TREE ══ */
+/* New hierarchy: Year → IntakeCohort → Path → Programme → Class(leaf) */
 function stableKey(parts){return parts.join('|||').replace(/[^a-zA-Z0-9|_\-]/g,'_');}
 
 function renderTree(){
@@ -303,40 +309,40 @@ function renderTree(){
   if(!rows.length){panel.innerHTML='<div class="loading">No data matches filters.</div>';return;}
   const T={};
   rows.forEach(r=>{
-    [r.year,r.path,r.programme,r.course,r.cohort].reduce((n,k)=>{if(!n[k])n[k]={};return n[k];},T);
-    const leaf=T[r.year][r.path][r.programme][r.course][r.cohort];
-    if(!leaf[r.schedule]){
-      const orig=(DATA.tree[r.year]||{})[r.path]?.[r.programme]?.[r.course]?.[r.cohort]?.[r.schedule]||{};
-      leaf[r.schedule]={...orig,enrolments:[],programme:r.programme,
+    const cohort=r.student_cohort||'Unknown Cohort';
+    if(!T[r.year])T[r.year]={};
+    if(!T[r.year][cohort])T[r.year][cohort]={};
+    if(!T[r.year][cohort][r.path])T[r.year][cohort][r.path]={};
+    if(!T[r.year][cohort][r.path][r.programme])T[r.year][cohort][r.path][r.programme]={};
+    const progNode=T[r.year][cohort][r.path][r.programme];
+    if(!progNode[r.schedule]){
+      progNode[r.schedule]={enrolments:[],programme:r.programme,schedule:r.schedule,
         baseline_count:r.baselines||0,
         feedback:{soft_skills:0,mindset_camp:0,vocational:0,edulution:0,attachment:0}};
     }
-    const sc=leaf[r.schedule];
+    const sc=progNode[r.schedule];
     sc.enrolments.push({id:r.enrolment,student:r.student,name:r.name,status:r.status});
     sc.feedback.soft_skills+=r.fb_ss||0;sc.feedback.mindset_camp+=r.fb_msc||0;
     sc.feedback.vocational+=r.fb_vt||0;sc.feedback.edulution+=r.fb_edu||0;
     sc.feedback.attachment+=r.fb_att||0;
   });
   const wrap=document.createElement('div');wrap.className='tree-wrap';
-  /* Years: newest first */
   Object.keys(T).sort().reverse().forEach(yr=>{
     const key=stableKey([yr]);
-    wrap.appendChild(makeBranch(yr,T[yr],0,key,'📅 Intake '+yr,Object.keys(T[yr]).length+' path(s)'));
+    wrap.appendChild(makeBranch(yr,T[yr],0,key,'📅 Intake '+yr,Object.keys(T[yr]).length+' cohort(s)'));
   });
   panel.innerHTML='';panel.appendChild(wrap);
 }
 
 function sortKeys(keys,level){
   return keys.slice().sort((a,b)=>{
-    if(level===1){ /* programme: use PROG_ORDER */
+    if(level===1)return cohortSort(a,b);          /* cohorts: natural numeric */
+    if(level===2)return a.localeCompare(b);       /* paths: alpha */
+    if(level===3){                                /* programmes: defined order */
       const ai=PROG_ORDER.indexOf(a),bi=PROG_ORDER.indexOf(b);
       return(ai<0?99:ai)-(bi<0?99:bi);
     }
-    if(level===2) /* course: alphabetical */
-      return a.localeCompare(b);
-    if(level===3) /* course run: numeric */
-      return cohortSort(a,b);
-    /* year (0), path (−1) or schedule (4): default alpha/numeric */
+    if(level===4)return cohortSort(a,b);          /* classes/schedules: natural numeric */
     return a.localeCompare(b,undefined,{numeric:true});
   });
 }
@@ -357,7 +363,7 @@ function makeBranch(key,children,level,stKey,label,sub){
   sortKeys(Object.keys(children),nextLevel).forEach(ck=>{
     const cv=children[ck];
     const csk=stKey+'|||'+ck.replace(/[^a-zA-Z0-9|_\-]/g,'_');
-    if(nextLevel===5){
+    if(nextLevel===4){
       kids.appendChild(makeLeaf(ck,cv,csk));
     }else{
       const noun=NEXT_NOUN[nextLevel]||'item';
@@ -371,7 +377,7 @@ function makeBranch(key,children,level,stKey,label,sub){
 }
 
 function makeLeaf(key,val,stKey){
-  const node=document.createElement('div');node.className='t-node lv5';
+  const node=document.createElement('div');node.className='t-node lv4';
   const enrols=val.enrolments||[],bl=val.baseline_count||0,fb=val.feedback||{};
   const prog=val.programme||'';const isVT=prog==='Vocational Training';
   const isOpen=openNodes.has(stKey);
@@ -407,10 +413,9 @@ function makeLeaf(key,val,stKey){
 }
 
 function levelLabel(level,key){
-  if(level===1)return'🗺️ '+key;
-  if(level===2)return(PROG_ICON[key]||'📋')+' '+key;
-  if(level===3)return'📚 '+key;
-  if(level===4)return'🔄 '+key;
+  if(level===1)return'👥 '+key;                              /* cohort */
+  if(level===2)return'🗺️ '+key;                             /* path */
+  if(level===3)return(PROG_ICON[key]||'📋')+' '+key;        /* programme */
   return key;
 }
 function togNode(stKey){
