@@ -21,14 +21,22 @@
 <body>
 
 <div class="sh-page-header">
-  <div class="sh-container" style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
-    <div style="flex:1;">
-      <h1 style="font-size:1.7rem;margin:0 0 0.3rem;">Student Cards</h1>
-      <p style="margin:0;opacity:0.88;">Share a student's ID and Date of Birth so they can access the public portal.</p>
-    </div>
-    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-      <a href="/skillshub/admin/students" class="sh-btn-secondary" style="text-decoration:none;">← Students List</a>
-      <a href="/skillshub/s/" class="sh-btn-primary" style="text-decoration:none;background:rgba(255,255,255,0.15);">Public Portal ↗</a>
+  <div class="sh-container">
+    <div class="sh-admin-header-row">
+      <div>
+        <h1>Student Cards</h1>
+        <p>Share a student's ID and Date of Birth so they can access the public portal.</p>
+      </div>
+      <div class="sh-admin-nav">
+        <a href="/skillshub/admin/students">Students</a>
+        <a href="/skillshub/admin/student-cards" class="active">Cards</a>
+        <a href="/skillshub/admin/attendance">Attendance</a>
+        <a href="/skillshub/admin/programme-overview">Programme</a>
+        <a href="/skillshub/admin/settings">Settings</a>
+        <a href="/app" target="_blank">Desk ↗</a>
+        <span id="sh-admin-user-wrap" style="display:none;font-size:0.78rem;opacity:0.75;padding:0.25rem 0.5rem;background:rgba(255,255,255,0.15);border-radius:0.4rem;" title="Logged in as"><span id="sh-admin-user-name"></span></span>
+        <a href="/api/method/skillshub_core.skillshub_portal.api.portal_logout?redirect_to=%2Fskillshub" data-sh-logout="1">Logout</a>
+      </div>
     </div>
   </div>
 </div>

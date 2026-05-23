@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillsHub — My Forms</title>
+  <link rel="icon" href="/assets/skillshub_core/images/favicon.png">
+  <link rel="stylesheet" href="/skillshub/theme.css?v=4.0">
+  <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.0">
+  <script>window.frappe = {}; frappe.csrf_token = "{{ frappe.session.csrf_token }}";</script>
+</head>
+<body data-gate-title="SkillsHub Portal">
+
+<header class="pi-header">
+  <div class="pi-wrap pi-header-inner">
+    <div class="pi-logo-mark">PI</div>
+    <div>
+      <div class="pi-header-title">SkillsHub Portal</div>
+      <div class="pi-header-sub">Pestalozzi International</div>
+    </div>
+    <nav class="pi-header-nav">
+      <a href="#" onclick="event.preventDefault();if(window.SHGate)window.SHGate.clearSession();location.reload()">Sign Out</a>
+    </nav>
+  </div>
+</header>
+
+<div class="pi-hero" style="padding-bottom:2.5rem;">
+  <div class="pi-wrap" style="display:flex;align-items:center;gap:0.75rem;">
+    <span style="font-size:2rem;">📋</span>
+    <div>
+      <h1 id="hub-greeting" style="font-size:1.6rem;margin:0 0 0.2rem;">My Forms</h1>
+      <p style="margin:0;opacity:0.8;font-size:0.9rem;">Select a form to complete. Submit each form when ready.</p>
+    </div>
+  </div>
+</div>
+
+<div class="pi-wrap pi-wrap-narrow" style="padding-top:1.5rem;padding-bottom:4rem;">
+  <div id="hub-loading" class="pi-skeleton" style="height:4rem;border-radius:0.75rem;margin-bottom:1rem;"></div>
+  <div id="hub-content" style="display:none;"></div>
+  <div id="hub-error" style="display:none;"></div>
+</div>
+
+<script src="/assets/skillshub_core/js/skillshub/s-gate.js?v=4.0"></script>
+<script>
+(function () {
+  "use strict";
+
+  var FORM_ICONS = {
+    "SH Baseline": "📝",
+    "SH Soft Skills Feedback": "🧠",
+    "SH Mindset Camp Feedback": "⛺",
+    "SH VT Feedback": "🔧",
+    "SH Edulution Feedback": "📖",
+    "SH Attachment Feedback": "🏢",
+    "SH Parent Feedback": "👨‍👩‍👧"
+  };
+
+  var FORM_HINTS = {
+    "SH Baseline": "Complete at the start of your programme.",
+    "SH Soft Skills Feedback": "Rate your experience in soft skills training.",
+    "SH Mindset Camp Feedback": "Share your Mindset Camp experience.",
+    "SH VT Feedback": "Evaluate your Vocational Training.",
+    "SH Edulution Feedback": "Rate the Edulution (Remedial) programme.",
+    "SH Attachment Feedback": "Reflect on your workplace attachment.",
+    "SH Parent Feedback": "For parents and guardians."
+  };
+
+  function esc(v) {
+    var d = document.createElement("div");
+    d.textContent = String(v || "");
+    return d.innerHTML;
+  }
+
+  function render(ctx) {
+    var student = ctx.student || {};
+    var forms = ctx.forms || [];
+
+    var greetEl = document.getElementById("hub-greeting");
+    if (greetEl && student.student_name) {
+      greetEl.textContent = "Hello, " + student.student_name.split(" ")[0];
+    }
+
+    var html = "";
+
+    if (student.intake_cohort) {
+      html += '<p style="font-size:0.85rem;color:var(--pi-muted);margin-bottom:1.5rem;">Cohort: <strong>' + esc(student.intake_cohort) + '</strong>';
+      if (student.programme_path) html += '&nbsp;·&nbsp;' + esc(student.programme_path);
+      html += '</p>';
+    }
+
+    if (!forms.length) {
+      html += '<div class="pi-alert pi-alert-info"><span>ℹ️</span><span>No forms are currently available for your enrolment.</span></div>';
+    } else {
+      forms.forEach(function (form) {
+        var icon = FORM_ICONS[form.doctype] || "📋";
+        var hint = FORM_HINTS[form.doctype] || "";
+        var done = form.submitted && !form.multi_allowed;
+        var cantSubmit = !form.can_submit;
+
+        html += '<div class="pi-form-item' + (done ? " done" : "") + '">';
+        html += '<div class="pi-form-item-icon">' + icon + '</div>';
+        html += '<div class="pi-form-item-info">';
+        html += '<div class="pi-form-item-name">' + esc(form.label) + '</div>';
+        if (hint) html += '<div class="pi-form-item-hint">' + esc(hint) + '</div>';
+        html += '</div>';
+
+        if (cantSubmit) {
+          html += '<span class="pi-badge pi-badge-green" style="flex-shrink:0;">✓ Done</span>';
+        } else {
+          html += '<a href="' + esc(form.route) + '" class="pi-btn pi-btn-primary pi-btn-sm" style="flex-shrink:0;text-decoration:none;">Open →</a>';
+        }
+        html += '</div>';
+      });
+    }
+
+    document.getElementById("hub-loading").style.display = "none";
+    var content = document.getElementById("hub-content");
+    content.innerHTML = html;
+    content.style.display = "";
+  }
+
+  window.addEventListener("sh-gate-open", function (e) {
+    var session = e.detail;
+
+    window.SHGate.api(
+      "/api/method/skillshub_core.skillshub_portal.api.get_public_forms_context" +
+        "?student_id=" + encodeURIComponent(session.sid) +
+        "&token=" + encodeURIComponent(session.token)
+    )
+      .then(function (ctx) { render(ctx); })
+      .catch(function (err) {
+        if (err.message && err.message.toLowerCase().includes("expired")) {
+          window.SHGate.clearSession();
+          location.reload();
+          return;
+        }
+        document.getElementById("hub-loading").style.display = "none";
+        var errEl = document.getElementById("hub-error");
+        errEl.innerHTML = '<div class="pi-alert pi-alert-error"><span>⚠️</span><span>' + esc(err.message) + '</span></div>';
+        errEl.style.display = "";
+      });
+  });
+})();
+</script>
+</body>
+</html>

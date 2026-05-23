@@ -27,33 +27,33 @@ STUDENT_LOGIN_FIELDS = [
 ]
 
 FEEDBACK_DOCTYPES = [
-	{"doctype": "SH Baseline", "label": "Baseline Assessment", "route": "/skillshub/baseline"},
+	{"doctype": "SH Baseline", "label": "Baseline Assessment", "route": "/skillshub/s/baseline"},
 	{
 		"doctype": "SH Soft Skills Feedback",
 		"label": "Soft Skills Feedback",
-		"route": "/skillshub/feedback/soft-skills",
+		"route": "/skillshub/s/soft-skills",
 	},
 	{
 		"doctype": "SH Mindset Camp Feedback",
 		"label": "Mindset Camp Feedback",
-		"route": "/skillshub/feedback/mindset-camp",
+		"route": "/skillshub/s/mindset-camp",
 	},
 	{
 		"doctype": "SH VT Feedback",
 		"label": "Vocational Training Feedback",
-		"route": "/skillshub/feedback/vocational-training",
+		"route": "/skillshub/s/vocational-training",
 	},
 	{
 		"doctype": "SH Edulution Feedback",
 		"label": "Edulution Feedback",
-		"route": "/skillshub/feedback/edulution",
+		"route": "/skillshub/s/edulution",
 	},
 	{
 		"doctype": "SH Attachment Feedback",
 		"label": "Attachment Feedback",
-		"route": "/skillshub/feedback/attachment",
+		"route": "/skillshub/s/attachment",
 	},
-	{"doctype": "SH Parent Feedback", "label": "Parent Feedback", "route": "/skillshub/feedback/parent"},
+	{"doctype": "SH Parent Feedback", "label": "Parent Feedback", "route": "/skillshub/s/parent"},
 ]
 
 
@@ -836,6 +836,7 @@ PUBLIC_FORM_ROUTES = {
 	"SH Attachment Feedback": "/skillshub/s/attachment",
 	"SH Parent Feedback": "/skillshub/s/parent",
 }
+
 
 PUBLIC_FORM_LIST = [
 	{"doctype": "SH Baseline", "label": "Baseline Assessment", "section": "assessment"},

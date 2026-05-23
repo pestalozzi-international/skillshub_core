@@ -8,11 +8,18 @@
   <link rel="stylesheet" href="/skillshub/theme.css?v=4.0">
   <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.0">
   <style>
-    .landing-wrap { min-height: 100vh; display: grid; place-items: center; padding: 2rem; background: var(--pi-red); }
-    .landing-card { width: min(480px, 100%); background: rgba(255,255,255,0.96); border: 1px solid rgba(255,255,255,0.36); border-radius: 1rem; box-shadow: 0 8px 32px rgba(0,0,0,0.18); padding: 2rem; }
-    .landing-btn { display: flex; flex-direction: column; gap: 0.3rem; text-decoration: none; border: 1px solid var(--pi-red); border-radius: 0.85rem; padding: 1rem 1.25rem; color: #fff; background: var(--pi-red); margin-top: 1.25rem; font-weight: 600; font-size: 1rem; text-align: center; }
-    .landing-btn:hover { background: var(--pi-red-dark); }
-    .landing-btn span { font-size: 0.82rem; font-weight: 400; opacity: 0.85; margin-top: 0.15rem; }
+    .landing-wrap { min-height:100vh; display:grid; place-items:center; padding:2rem; background:var(--pi-red); }
+    .landing-card { width:min(460px,100%); background:rgba(255,255,255,0.96); border-radius:1.25rem; box-shadow:0 12px 40px rgba(0,0,0,0.22); padding:2.5rem 2rem; text-align:center; }
+    .pi-circle-logo { width:4rem; height:4rem; background:var(--pi-red); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-size:1.3rem; margin:0 auto 1.25rem; }
+    .landing-title { font-size:1.75rem; font-weight:800; color:var(--pi-red); margin:0 0 0.35rem; font-family:'Helvetica Neue',Arial,sans-serif; }
+    .landing-org   { font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--pi-muted); margin:0 0 1.75rem; }
+    .landing-btn   { display:block; text-decoration:none; border-radius:0.85rem; padding:1rem 1.5rem; font-weight:700; font-size:1rem; text-align:center; transition:all 0.18s; margin-top:0.75rem; }
+    .landing-btn-primary { background:var(--pi-red); color:white; }
+    .landing-btn-primary:hover { background:var(--pi-red-dark); transform:translateY(-1px); box-shadow:0 4px 14px rgba(202,7,51,0.35); }
+    .landing-btn-ghost { background:transparent; color:var(--pi-red); border:1.5px solid var(--pi-red); }
+    .landing-btn-ghost:hover { background:var(--pi-red-light); }
+    .landing-divider { display:flex; align-items:center; gap:0.75rem; margin:1.25rem 0; color:var(--pi-muted); font-size:0.8rem; }
+    .landing-divider::before,.landing-divider::after { content:''; flex:1; height:1px; background:var(--pi-border); }
   </style>
   <script>
     window.frappe = {};
@@ -22,28 +29,29 @@
 <body>
   <main class="landing-wrap">
     <section class="landing-card">
-      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
-        <img class="sh-logo" style="display:none;max-height:44px;" alt="SkillsHub">
-        <div>
-          <h1 style="margin:0;font-size:1.6rem;" data-portal-name>SkillsHub Portal</h1>
-          <p style="margin:0.2rem 0 0;font-size:0.85rem;color:var(--pi-muted);" data-portal-tagline>Pestalozzi International</p>
-        </div>
-      </div>
-      <p style="margin:0 0 0.5rem;font-size:0.9rem;color:var(--pi-muted);">Staff &amp; administrator access.</p>
-      <a class="landing-btn" href="/skillshub/login">
+      <div class="pi-circle-logo">PI</div>
+      <h1 class="landing-title">SkillsHub Portal</h1>
+      <p class="landing-org">Pestalozzi International</p>
+
+      <a class="landing-btn landing-btn-primary" href="/login?redirect-to=/skillshub/admin/students">
         Staff Login
-        <span>Manage students, attendance and programme data</span>
+      </a>
+
+      <div class="landing-divider">Student Access</div>
+
+      <a class="landing-btn landing-btn-ghost" href="/skillshub/s/">
+        Open Student Forms
       </a>
     </section>
   </main>
+
   <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=4.0"></script>
   <script>
     window.addEventListener('sh-portal-ready', function (event) {
-      var settings = event.detail && event.detail.settings ? event.detail.settings : {};
       var bootstrap = event.detail && event.detail.bootstrap ? event.detail.bootstrap : {};
-      if (bootstrap && bootstrap.is_logged_in && bootstrap.is_admin) {
-        var target = settings.admin_home_route || '/skillshub/admin/students';
-        window.location.replace(target);
+      if (bootstrap.is_logged_in && bootstrap.is_admin) {
+        var settings = event.detail.settings || {};
+        window.location.replace(settings.admin_home_route || '/skillshub/admin/students');
       }
     });
   </script>

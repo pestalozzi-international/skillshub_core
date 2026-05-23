@@ -464,33 +464,34 @@
 		);
 	}
 
+	/* Fields auto-filled from enrolment context — hidden from the student form */
+	var CONTEXT_SKIP = [
+		"sh_student", "student",
+		"programme_schedule", "program_schedule", "class",
+		"enrolment_ticket",
+		"milestone", "course", "skillshub_course",
+		"cohort", "skillshub_cohort", "academic_year",
+		"course_run",
+	];
+
 	/* ---- Render form body ---- */
 	function renderForm() {
 		var root = document.getElementById("pi-form-body");
 		var ctx = enrolmentContext();
 		var fields = (state.meta && state.meta.fields) || [];
+		var studentName = (state.ctx && state.ctx.student && state.ctx.student.student_name) || ctx.student || "";
 
-		/* Context bar */
+		/* Context bar — compact, shows student + enrolment only */
 		var ctxBar = '<div class="pi-context-bar">';
-		if (ctx.student)
+		if (studentName)
 			ctxBar +=
 				'<span class="pi-context-item"><strong>Student:</strong> <span>' +
-				esc(ctx.student) +
+				esc(studentName) +
 				"</span></span>";
 		if (ctx.enrolment_ticket)
 			ctxBar +=
 				'<span class="pi-context-item"><strong>Enrolment:</strong> <span>' +
 				esc(ctx.enrolment_ticket) +
-				"</span></span>";
-		if (ctx.schedule)
-			ctxBar +=
-				'<span class="pi-context-item"><strong>Class:</strong> <span>' +
-				esc(ctx.schedule) +
-				"</span></span>";
-		if (ctx.course)
-			ctxBar +=
-				'<span class="pi-context-item"><strong>Course:</strong> <span>' +
-				esc(ctx.course) +
 				"</span></span>";
 		ctxBar += "</div>";
 
@@ -512,6 +513,8 @@
 				].indexOf(fn) > -1
 			)
 				return Promise.resolve("");
+			/* Skip context-filled fields — they go in the payload automatically */
+			if (CONTEXT_SKIP.indexOf(fn) > -1) return Promise.resolve("");
 			return renderField(field, null, false);
 		});
 
@@ -715,8 +718,7 @@
 			esc(refName) +
 			"</strong></p>" +
 			'<div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">' +
-			'<a href="/skillshub/s/" class="pi-btn pi-btn-secondary">← Back to Portal</a>' +
-			'<a href="/skillshub/s/forms" class="pi-btn pi-btn-primary">Submit Another Form</a>' +
+			'<a href="/skillshub/s/" class="pi-btn pi-btn-secondary">← All Forms</a>' +
 			"</div>" +
 			"</div>";
 	}

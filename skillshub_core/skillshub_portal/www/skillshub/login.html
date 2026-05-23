@@ -3,52 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkillsHub Login</title>
-  <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
-  <link rel="stylesheet" href="/skillshub/theme.css?v=3.0">
-  <style>
-    .login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 1rem; background: var(--header-gradient); }
-    .login-card { width: min(560px, 100%); background: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.4); border-radius: 1rem; box-shadow: var(--shadow-premium); padding: 1.5rem; }
-    .mode-pill { display:inline-flex; align-items:center; gap:0.45rem; font-size:0.8rem; border-radius:999px; padding:0.22rem 0.65rem; background:var(--color-slate-100); color:var(--color-slate-700); margin-bottom:0.9rem; }
-    .login-actions { display:grid; gap:0.75rem; margin-top:1rem; }
-    .login-link { text-decoration:none; border-radius:0.75rem; border:1px solid var(--color-slate-200); background:#fff; padding:0.9rem 1rem; color:var(--text-color); display:block; }
-    .login-link strong { display:block; }
-    .login-link span { color:var(--muted-text-color); font-size:0.82rem; }
-    .login-link:hover { border-color: var(--color-accent-500); }
-  </style>
-  <script>
-    window.frappe = {};
-    frappe.csrf_token = "{{ frappe.session.csrf_token }}";
-  </script>
+  <title>SkillsHub — Redirecting…</title>
+  <script>window.location.replace('/login?redirect-to=' + encodeURIComponent('/skillshub/admin/students'));</script>
 </head>
-<body>
-  <main class="login-wrap">
-    <section class="login-card">
-      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.8rem;">
-        <img class="sh-logo" style="display:none;max-height:40px;" alt="SkillsHub">
-        <div>
-          <h1 style="margin:0;font-size:1.4rem;" data-portal-name>SkillsHub Portal</h1>
-          <p style="margin:0.2rem 0 0;color:var(--muted-text-color);" id="login-tagline">Sign in using the official Frappe login.</p>
-        </div>
-      </div>
-
-      <div class="mode-pill" id="mode-pill">Mode: Portal</div>
-      <p id="login-notice" style="margin:0.2rem 0 0.9rem;color:var(--muted-text-color);"></p>
-
-      <div class="login-actions">
-        <a id="primary-login-link" class="login-link" href="/login?redirect-to=/skillshub">
-          <strong>Open Login</strong>
-          <span>Use your existing username/email and password.</span>
-        </a>
-        <a class="login-link" href="/skillshub">
-          <strong>Back to Landing</strong>
-          <span>Choose student or administrator flow.</span>
-        </a>
-      </div>
-    </section>
-  </main>
-
-  <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=3.0"></script>
-  <script src="/assets/skillshub_core/js/skillshub/login.js?v=3.0"></script>
-</body>
+<body></body>
 </html>

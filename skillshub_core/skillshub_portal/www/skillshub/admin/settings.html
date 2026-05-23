@@ -3,11 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkillsHub Admin - Portal Settings</title>
+  <title>SkillsHub Admin — Portal Settings</title>
   <link rel="icon" id="sh-favicon" href="/assets/skillshub_core/images/favicon.png">
   <link rel="stylesheet" href="/skillshub/theme.css?v=4.0">
   <link rel="stylesheet" href="/skillshub/admin/theme.css?v=4.0">
   <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.0">
+  <style>
+    /* Settings sections */
+    .s-section {
+      background: #fff;
+      border: 1px solid var(--pi-border);
+      border-radius: 1rem;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .s-section-head {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      background: var(--pi-sand);
+      border-bottom: 1px solid var(--pi-border);
+    }
+    .s-section-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .s-section-title { font-weight: 700; font-size: 1rem; color: var(--pi-black); margin-bottom: 0.2rem; }
+    .s-section-desc  { font-size: 0.82rem; color: var(--pi-muted); }
+    .s-section-body  {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+      padding: 1.5rem;
+    }
+    .s-field        { display: flex; flex-direction: column; gap: 0.3rem; }
+    .s-field-full   { grid-column: 1 / -1; }
+    .s-field-color  { max-width: 260px; }
+    .s-label        { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--pi-muted); }
+    .s-input        {
+      border: 1.5px solid var(--pi-border); border-radius: 0.55rem;
+      padding: 0.6rem 0.9rem; font-family: inherit; font-size: 0.9rem; color: var(--pi-black);
+      background: #fff; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%; box-sizing: border-box;
+    }
+    .s-input:focus  { border-color: var(--pi-red); box-shadow: 0 0 0 3px rgba(202,7,51,0.12); }
+    .s-textarea     { min-height: 6rem; resize: vertical; }
+    .s-color-row    { display: flex; align-items: center; gap: 0.5rem; }
+    .s-color-pick   {
+      width: 2.75rem; height: 2.75rem; border: 2px solid var(--pi-border);
+      border-radius: 0.5rem; cursor: pointer; padding: 0.1rem; background: none; flex-shrink: 0;
+    }
+    .s-color-text   { flex: 1; font-family: monospace; font-size: 0.85rem; }
+    .s-upload-btn   { color: var(--pi-red); font-weight: 600; font-size: 0.78rem; cursor: pointer; }
+    .s-upload-btn:hover { text-decoration: underline; }
+    .s-save-bar {
+      position: sticky; bottom: 0; z-index: 50;
+      background: rgba(255,255,255,0.96); backdrop-filter: blur(8px);
+      border-top: 1px solid var(--pi-border);
+      padding: 1rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      box-shadow: 0 -4px 20px rgba(52,56,55,0.07);
+    }
+  </style>
   <script>
     window.frappe = {};
     frappe.csrf_token = "{{ frappe.session.csrf_token }}";
@@ -19,29 +72,35 @@
       <div class="sh-admin-header-row">
         <div>
           <h1>Portal Settings</h1>
-          <p>Branding and UX controls for all external pages.</p>
+          <p>Configure branding, navigation and programme defaults.</p>
         </div>
         <div class="sh-admin-nav">
           <a href="/skillshub/admin/students">Students</a>
+          <a href="/skillshub/admin/student-cards">Cards</a>
           <a href="/skillshub/admin/attendance">Attendance</a>
           <a href="/skillshub/admin/programme-overview">Programme</a>
           <a href="/skillshub/admin/settings" class="active">Settings</a>
+          <a href="/app" target="_blank">Desk ↗</a>
+          <span id="sh-admin-user-wrap" style="display:none;font-size:0.78rem;opacity:0.75;padding:0.25rem 0.5rem;background:rgba(255,255,255,0.15);border-radius:0.4rem;" title="Logged in as"><span id="sh-admin-user-name"></span></span>
           <a href="/api/method/skillshub_core.skillshub_portal.api.portal_logout?redirect_to=%2Fskillshub" data-sh-logout="1">Logout</a>
         </div>
       </div>
     </div>
   </div>
 
-  <main class="sh-container" style="margin-top:-1.8rem;padding-bottom:2rem;">
-    <section class="sh-card">
-      <div id="settings-message"></div>
-      <div class="sh-form-grid" id="settings-form"></div>
-      <div style="margin-top:1rem;display:flex;gap:0.5rem;">
-        <button id="settings-save" class="sh-btn-primary">Save Settings</button>
-        <button id="settings-reload" class="sh-btn-secondary">Reload</button>
-      </div>
-    </section>
+  <main class="sh-container" style="margin-top:1.5rem;padding-bottom:6rem;">
+    <div id="settings-message" style="margin-bottom:1rem;"></div>
+    <div id="settings-sections"></div>
   </main>
+
+  <div class="s-save-bar">
+    <span style="font-size:0.85rem;color:var(--pi-muted);">Changes take effect immediately for all portal visitors.</span>
+    <div style="display:flex;gap:0.5rem;">
+      <button id="settings-reload" class="sh-btn-secondary">↺ Reload</button>
+      <button id="settings-save" class="sh-btn-primary">Save Settings</button>
+    </div>
+  </div>
+
   <script src="/assets/skillshub_core/js/skillshub/portal-settings.js?v=4.0"></script>
   <script src="/assets/skillshub_core/js/skillshub/admin-settings.js?v=4.0"></script>
 </body>
