@@ -39,7 +39,7 @@
 			id: "routes",
 			title: "Navigation Routes",
 			icon: "🗺️",
-			desc: "Where users land after login. Defaults are correct for most setups.",
+			desc: "Where users land after logging in. Admin route: /skillshub/admin/students (default). Student route: /skillshub/s/ (default).",
 			fields: [
 				{ key: "admin_home_route", label: "Admin Home Route", type: "text", placeholder: "/skillshub/admin/students" },
 				{ key: "student_home_route", label: "Student Home Route", type: "text", placeholder: "/skillshub/s/" },
@@ -49,7 +49,7 @@
 			id: "defaults",
 			title: "Programme Defaults",
 			icon: "⚙️",
-			desc: "Pre-select values used in new enrolments and forms.",
+			desc: "Pre-filled values for the enrolment form and session context.",
 			fields: [
 				{ key: "current_cohort", label: "Current Cohort", type: "text", placeholder: "e.g. Cohort 7" },
 				{ key: "default_academic_year", label: "Default Academic Year", type: "text", placeholder: "e.g. 2026" },
@@ -114,7 +114,7 @@
 	function buildColorSwatch(key, value) {
 		return (
 			'<div class="s-field s-field-color">' +
-			'<label class="s-label">' + esc(SECTIONS.reduce(function(a,s){return a.concat(s.fields);},[]).find(function(f){return f.key===key;})||{label:key}).label + '</label>' +
+			'<label class="s-label">' + esc((SECTIONS.reduce(function(a,s){return a.concat(s.fields);},[]).find(function(f){return f.key===key;})||{label:key}).label) + '</label>' +
 			'<div class="s-color-row">' +
 			'<input type="color" class="s-color-pick" data-key="' + esc(key) + '" value="' + esc(value || "#000000") + '">' +
 			'<input type="text" class="s-input s-color-text" data-key-text="' + esc(key) + '" value="' + esc(value || "") + '" placeholder="#rrggbb">' +
