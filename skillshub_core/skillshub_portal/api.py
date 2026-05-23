@@ -925,7 +925,7 @@ def verify_student_public(student_id, date_of_birth):
 
 	stored_dob = student_doc.get("date_of_birth")
 	if stored_dob:
-		if isinstance(stored_dob, (datetime.date, datetime.datetime)):
+		if isinstance(stored_dob, datetime.date | datetime.datetime):
 			stored_dob = stored_dob.strftime("%Y-%m-%d")
 		else:
 			stored_dob = str(stored_dob).strip()
@@ -1277,7 +1277,7 @@ def get_student_cards(filters=None, page=1, page_size=24):
 	for s in students:
 		dob = s.get("date_of_birth")
 		if dob:
-			if isinstance(dob, (datetime.date, datetime.datetime)):
+			if isinstance(dob, datetime.date | datetime.datetime):
 				s["date_of_birth_display"] = dob.strftime("%d %b %Y")
 				s["date_of_birth"] = dob.strftime("%Y-%m-%d")
 			else:
