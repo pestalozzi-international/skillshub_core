@@ -827,6 +827,10 @@ EXCLUDED_SECTION_FNS = {
 	"section_break_lzmy",  # Employment Post SkillsHub
 }
 
+# Fields that must appear even if they fall inside an excluded section
+# (needed when live-server doctype customisations move fields between sections)
+FORCE_INCLUDE_FNS = {"number_of_siblings"}
+
 PUBLIC_LINK_ALLOWED = {
 	"SH Class",
 	"SkillsHub Programme",
@@ -995,7 +999,7 @@ def get_public_profile(student_id, token):
 				continue  # omit this section break too
 			else:
 				skip_section = False
-		if skip_section:
+		if skip_section and field.fieldname not in FORCE_INCLUDE_FNS:
 			continue
 		if field.fieldname in PUBLIC_PROFILE_EXCLUDED:
 			continue
