@@ -386,12 +386,17 @@
 			f.fieldtype === "Currency" ||
 			f.fieldtype === "Percent"
 		) {
+			var isInt = f.fieldtype === "Int";
 			input =
 				'<input type="number" id="' +
 				esc(id) +
 				'" class="pi-input" data-fieldname="' +
 				esc(f.fieldname) +
-				'" value="' +
+				'" data-fieldtype="' +
+				esc(f.fieldtype) +
+				'"' +
+				(isInt ? ' step="1"' : "") +
+				' value="' +
 				esc(value || "") +
 				'">';
 		} else if (f.fieldtype === "Table") {
@@ -459,8 +464,10 @@
 			var itype =
 				f.fieldtype === "Password"
 					? "password"
-					: f.fieldtype === "Int" || f.fieldtype === "Float"
-					? "number"
+					: f.fieldtype === "Phone"
+					? "tel"
+					: f.fieldtype === "Email"
+					? "email"
 					: "text";
 			input =
 				'<input type="' +
@@ -744,6 +751,10 @@
 				}
 			} else if (ft === "Check") {
 				payload[fn] = el.checked ? 1 : 0;
+			} else if (ft === "Int") {
+				payload[fn] = el.value !== "" ? parseInt(el.value, 10) : null;
+			} else if (ft === "Float" || ft === "Currency" || ft === "Percent") {
+				payload[fn] = el.value !== "" ? parseFloat(el.value) : null;
 			} else {
 				payload[fn] = el.value;
 			}

@@ -483,7 +483,7 @@
   },
   {
    "fieldname": "number_of_siblings",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
    "label": "Number of Siblings"
   },
   {
