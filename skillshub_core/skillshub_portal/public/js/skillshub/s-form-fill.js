@@ -6,6 +6,8 @@
 	"use strict";
 
 	var state = { session: null, doctype: null, meta: null, ctx: null, linkCache: {} };
+	var sections = [];
+	var currentSection = 0;
 
 	var api =
 		(window.SHGate && window.SHGate.api) ||
@@ -473,6 +475,96 @@
 		"cohort", "skillshub_cohort", "academic_year",
 		"course_run",
 	];
+
+	/* ---- Section navigation helpers ---- */
+	function groupSections(fields) {
+		var result = [];
+		var currentLabel = null;
+		var currentFields = [];
+		var SYS_SKIP = [
+			"name", "owner", "creation", "modified", "modified_by",
+			"idx", "parent", "parentfield", "parenttype", "docstatus",
+		];
+
+		fields.forEach(function (field) {
+			if (field.fieldtype === "Section Break") {
+				// Save previous section if it has visible fields
+				if (currentFields.length > 0) {
+					var visible = currentFields.filter(function (f) {
+						return !f.hidden &&
+							SYS_SKIP.indexOf(f.fieldname) === -1 &&
+							CONTEXT_SKIP.indexOf(f.fieldname) === -1 &&
+							f.fieldtype !== "Section Break";
+					});
+					if (visible.length > 0) {
+						result.push({ label: currentLabel, fields: currentFields });
+					}
+				}
+				currentLabel = field.label || null;
+				currentFields = [];
+			} else {
+				currentFields.push(field);
+			}
+		});
+
+		// Push last section
+		if (currentFields.length > 0) {
+			var visible = currentFields.filter(function (f) {
+				return !f.hidden &&
+					SYS_SKIP.indexOf(f.fieldname) === -1 &&
+					CONTEXT_SKIP.indexOf(f.fieldname) === -1 &&
+					f.fieldtype !== "Section Break";
+			});
+			if (visible.length > 0) {
+				result.push({ label: currentLabel, fields: currentFields });
+			}
+		}
+
+		return result;
+	}
+
+	function updateNav() {
+		var prevBtn = document.getElementById("pi-nav-prev");
+		var nextBtn = document.getElementById("pi-nav-next");
+		var submitBtn = document.getElementById("pi-form-submit");
+		var counter = document.getElementById("pi-section-counter");
+
+		var total = sections.length;
+		if (total <= 1) {
+			// No navigation needed — hide prev/next, show submit
+			if (prevBtn) prevBtn.style.display = "none";
+			if (nextBtn) nextBtn.style.display = "none";
+			if (submitBtn) submitBtn.style.display = "";
+			if (counter) counter.style.display = "none";
+			return;
+		}
+
+		if (prevBtn) {
+			prevBtn.style.display = "";
+			prevBtn.disabled = (currentSection === 0);
+		}
+		if (nextBtn) {
+			nextBtn.style.display = currentSection < total - 1 ? "" : "none";
+		}
+		if (submitBtn) {
+			submitBtn.style.display = currentSection === total - 1 ? "" : "none";
+		}
+		if (counter) {
+			counter.style.display = "";
+			counter.textContent = "Step " + (currentSection + 1) + " of " + total;
+		}
+	}
+
+	function goToSection(idx) {
+		if (idx < 0 || idx >= sections.length) return;
+		var oldEl = document.getElementById("pi-sec-" + currentSection);
+		if (oldEl) oldEl.style.display = "none";
+		currentSection = idx;
+		var newEl = document.getElementById("pi-sec-" + currentSection);
+		if (newEl) newEl.style.display = "";
+		updateNav();
+		window.scrollTo(0, 0);
+	}
 
 	/* ---- Render form body ---- */
 	function renderForm() {

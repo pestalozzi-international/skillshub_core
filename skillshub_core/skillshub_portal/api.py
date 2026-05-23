@@ -1171,9 +1171,9 @@ def get_public_form_meta(doctype):
 	child_tables = {}
 
 	for field in meta.fields:
-		if field.fieldtype in {"Section Break", "Column Break", "Tab Break", "Fold", "HTML", "Button"}:
-			continue
-		fields.append(_clean_field(field))
+		if field.fieldtype in {"Column Break", "Tab Break", "Fold", "HTML", "Button"}:
+			continue  # skip these only
+		fields.append(_clean_field(field))  # include Section Break
 
 		if field.fieldtype == "Table" and field.options:
 			child_meta = frappe.get_meta(field.options)

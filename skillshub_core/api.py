@@ -68,7 +68,16 @@ def get_programme_overview():
 	)
 	baseline_map = {r.programme_schedule: r.cnt for r in baselines}
 
-	# ── 3. Feedback counts keyed by enrolment_ticket ────────────────────────
+	# ── 3. Feedback counts keyed by programme_schedule ──────────────────────
+	def _fb_sched_field(doctype):
+		for fn in ("programme_schedule", "program_schedule", "sh_programme_schedule", "class"):
+			try:
+				if frappe.get_meta(doctype).get_field(fn):
+					return fn
+			except Exception:
+				pass
+		return None
+
 	feedback_tables = {
 		"soft_skills": "SH Soft Skills Feedback",
 		"mindset_camp": "SH Mindset Camp Feedback",
@@ -78,17 +87,21 @@ def get_programme_overview():
 	}
 	feedback_maps = {}
 	for key, doctype in feedback_tables.items():
+		sched_field = _fb_sched_field(doctype)
+		if not sched_field:
+			feedback_maps[key] = {}
+			continue
 		try:
 			rows = frappe.db.sql(  # nosemgrep
 				f"""
-                SELECT enrolment_ticket, COUNT(*) AS cnt
+                SELECT `{sched_field}` AS sched_name, COUNT(*) AS cnt
                 FROM `tab{doctype}`
-                WHERE enrolment_ticket IS NOT NULL AND enrolment_ticket != ''
-                GROUP BY enrolment_ticket
+                WHERE `{sched_field}` IS NOT NULL AND `{sched_field}` != ''
+                GROUP BY `{sched_field}`
             """,
 				as_dict=True,
 			)
-			feedback_maps[key] = {r.enrolment_ticket: r.cnt for r in rows}
+			feedback_maps[key] = {r.sched_name: r.cnt for r in rows}
 		except Exception:
 			feedback_maps[key] = {}
 
@@ -126,14 +139,12 @@ def get_programme_overview():
 					"complete": bool(e.sched_complete),
 					"enrolments": [],
 					"baseline_count": baseline_map.get(sched, 0),
-					"feedback": {k: 0 for k in feedback_tables},
+					"feedback": {k: feedback_maps[k].get(sched, 0) for k in feedback_tables},
 				},
 			)
 		)
 
 		node = tree[year][path][programme][course][course_run][sched]
-		for key in feedback_tables:
-			node["feedback"][key] += feedback_maps[key].get(e.enrolment, 0)
 
 		node["enrolments"].append(
 			{
@@ -159,11 +170,11 @@ def get_programme_overview():
 				"schedule": sched,
 				"status": e.status,
 				"baselines": baseline_map.get(sched, 0),
-				"fb_ss": feedback_maps["soft_skills"].get(e.enrolment, 0),
-				"fb_msc": feedback_maps["mindset_camp"].get(e.enrolment, 0),
-				"fb_vt": feedback_maps["vocational"].get(e.enrolment, 0),
-				"fb_edu": feedback_maps["edulution"].get(e.enrolment, 0),
-				"fb_att": feedback_maps["attachment"].get(e.enrolment, 0),
+				"fb_ss": feedback_maps["soft_skills"].get(sched, 0),
+				"fb_msc": feedback_maps["mindset_camp"].get(sched, 0),
+				"fb_vt": feedback_maps["vocational"].get(sched, 0),
+				"fb_edu": feedback_maps["edulution"].get(sched, 0),
+				"fb_att": feedback_maps["attachment"].get(sched, 0),
 			}
 		)
 

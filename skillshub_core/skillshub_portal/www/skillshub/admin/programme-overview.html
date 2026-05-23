@@ -318,13 +318,11 @@ function renderTree(){
     if(!progNode[r.schedule]){
       progNode[r.schedule]={enrolments:[],programme:r.programme,schedule:r.schedule,
         baseline_count:r.baselines||0,
-        feedback:{soft_skills:0,mindset_camp:0,vocational:0,edulution:0,attachment:0}};
+        feedback:{soft_skills:r.fb_ss||0,mindset_camp:r.fb_msc||0,
+            vocational:r.fb_vt||0,edulution:r.fb_edu||0,attachment:r.fb_att||0}};
     }
     const sc=progNode[r.schedule];
     sc.enrolments.push({id:r.enrolment,student:r.student,name:r.name,status:r.status});
-    sc.feedback.soft_skills+=r.fb_ss||0;sc.feedback.mindset_camp+=r.fb_msc||0;
-    sc.feedback.vocational+=r.fb_vt||0;sc.feedback.edulution+=r.fb_edu||0;
-    sc.feedback.attachment+=r.fb_att||0;
   });
   const wrap=document.createElement('div');wrap.className='tree-wrap';
   Object.keys(T).sort().reverse().forEach(yr=>{
@@ -445,11 +443,10 @@ function renderReport(){
     if(!SM[r.schedule]){
       SM[r.schedule]={year:r.year,path:r.path,programme:r.programme,course:r.course,
         cohort:r.cohort,schedule:r.schedule,en:0,el:0,co:0,dr:0,
-        bl:r.baselines||0,ss:0,mc:0,vt:0,edu:0,att:0};
+        bl:r.baselines||0,ss:r.fb_ss||0,mc:r.fb_msc||0,vt:r.fb_vt||0,edu:r.fb_edu||0,att:r.fb_att||0};
     }
     const s=SM[r.schedule];s.en++;
     if(r.status==='Enrolled')s.el++;else if(r.status==='Completed')s.co++;else s.dr++;
-    s.ss+=r.fb_ss||0;s.mc+=r.fb_msc||0;s.vt+=r.fb_vt||0;s.edu+=r.fb_edu||0;s.att+=r.fb_att||0;
   });
 
   /* Default sort: year desc, programme order, course alpha, course run numeric, schedule alpha */
