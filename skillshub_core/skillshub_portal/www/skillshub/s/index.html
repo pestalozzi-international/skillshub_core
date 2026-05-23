@@ -87,6 +87,15 @@
 
     var html = "";
 
+    html += '<div class="pi-form-item" style="margin-bottom:1.5rem;">' +
+      '<div class="pi-form-item-icon">👤</div>' +
+      '<div class="pi-form-item-info">' +
+        '<div class="pi-form-item-name">My Profile</div>' +
+        '<div class="pi-form-item-hint">View and update your personal details.</div>' +
+      '</div>' +
+      '<a href="/skillshub/s/profile" class="pi-btn pi-btn-secondary pi-btn-sm" style="flex-shrink:0;text-decoration:none;">Open →</a>' +
+    '</div>';
+
     if (student.intake_cohort) {
       html += '<p style="font-size:0.85rem;color:var(--pi-muted);margin-bottom:1.5rem;">Cohort: <strong>' + esc(student.intake_cohort) + '</strong>';
       if (student.programme_path) html += '&nbsp;·&nbsp;' + esc(student.programme_path);
