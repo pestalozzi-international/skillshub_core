@@ -801,6 +801,16 @@ PUBLIC_PROFILE_READONLY = {
 	"discipline",
 }
 
+# Fields never shown to students in the public profile (hidden entirely, not read-only)
+PUBLIC_PROFILE_EXCLUDED = {
+	"route",
+	"published",
+	"portal_user_account",
+	"enabled",
+	"student_image",
+	"pestalozzi_student_email",
+}
+
 PUBLIC_LINK_ALLOWED = {
 	"SH Class",
 	"SkillsHub Programme",
@@ -959,8 +969,20 @@ def get_public_profile(student_id, token):
 	fields = []
 	child_tables = {}
 
+	skip_section = False
 	for field in meta.fields:
 		if field.fieldtype in {"Fold", "HTML", "Button"}:
+			continue
+		if field.fieldtype == "Section Break":
+			label = (field.label or "").strip()
+			if "Portal Access" in label:
+				skip_section = True
+				continue  # omit the section break itself too
+			else:
+				skip_section = False
+		if skip_section:
+			continue
+		if field.fieldname in PUBLIC_PROFILE_EXCLUDED:
 			continue
 		is_ro = bool(field.read_only or field.fieldname in PUBLIC_PROFILE_READONLY)
 		fd = {

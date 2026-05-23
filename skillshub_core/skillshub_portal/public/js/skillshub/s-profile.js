@@ -47,7 +47,69 @@
 		}
 	}
 
-	/* Build section groups from flat field list */
+	/* ---- depends_on evaluation ---- */
+	function evalDependsOn(expr, doc) {
+		if (!expr) return true;
+		try {
+			if (expr.indexOf("eval:") === 0) {
+				// eslint-disable-next-line no-new-func
+				return !!new Function("doc", "return (" + expr.slice(5) + ")")(doc);
+			}
+			return !!doc[expr];
+		} catch (_e) {
+			return true;
+		}
+	}
+
+	function gatherCurrentDoc(body) {
+		var doc = {};
+		body.querySelectorAll("[data-fieldname]").forEach(function (el) {
+			var fn = el.getAttribute("data-fieldname");
+			if (el.classList.contains("pi-link-search")) return;
+			var ft = el.getAttribute("data-fieldtype");
+			if (ft === "Check") {
+				doc[fn] = el.checked ? 1 : 0;
+			} else if (ft === "Table") {
+				try {
+					doc[fn] = JSON.parse(el.value);
+				} catch (_e) {
+					doc[fn] = [];
+				}
+			} else {
+				doc[fn] = el.value || "";
+			}
+		});
+		return doc;
+	}
+
+	function applyDependsOn(body) {
+		var doc = gatherCurrentDoc(body);
+		body.querySelectorAll("[data-depends-on]").forEach(function (wrap) {
+			var expr = wrap.getAttribute("data-depends-on");
+			wrap.style.display = evalDependsOn(expr, doc) ? "" : "none";
+		});
+	}
+
+	/* ---- Link options cache ---- */
+	var linkCache = {};
+	function fetchLinkOpts(doctype) {
+		if (!doctype) return Promise.resolve([]);
+		if (linkCache[doctype]) return Promise.resolve(linkCache[doctype]);
+		return api(
+			"/api/method/skillshub_core.skillshub_portal.api.get_public_link_options?doctype=" +
+				encodeURIComponent(doctype)
+		)
+			.then(function (r) {
+				linkCache[doctype] = r || [];
+				return linkCache[doctype];
+			})
+			.catch(function () {
+				linkCache[doctype] = [];
+				return [];
+			});
+	}
+
+	/* ---- Build section groups from flat field list ---- */
 	function buildSections(fields) {
 		var sections = [];
 		var cur = { label: null, fields: [] };
@@ -65,8 +127,93 @@
 		return sections;
 	}
 
-	/* Render a single editable field as HTML */
-	function renderField(f, value, childTables) {
+	/* ---- Star rating widget ---- */
+	function renderStars(fn, value, label, ro) {
+		var val = parseInt(value) || 0;
+		var html =
+			'<div class="pi-field pi-field-full"><label class="pi-label">' +
+			esc(label) +
+			"</label>";
+		if (ro) {
+			html += '<div class="pi-stars">';
+			for (var i = 1; i <= 5; i++)
+				html += '<span class="pi-star' + (i <= val ? " lit" : "") + '">★</span>';
+			html += "</div>";
+		} else {
+			html += '<div class="pi-stars" data-fn="' + esc(fn) + '">';
+			for (var j = 1; j <= 5; j++)
+				html +=
+					'<span class="pi-star' +
+					(j <= val ? " lit" : "") +
+					'" data-v="' +
+					j +
+					'">★</span>';
+			html +=
+				'</div><input type="hidden" data-fieldname="' +
+				esc(fn) +
+				'" data-fieldtype="Rating" value="' +
+				val +
+				'">' +
+				'<span class="pi-star-label" id="fsl-' +
+				esc(fn) +
+				'">' +
+				(val ? val + " / 5" : "Tap to rate") +
+				"</span>";
+		}
+		return html + "</div>";
+	}
+
+	/* ---- Link combobox (sync — opts pre-fetched) ---- */
+	function renderLink(fn, value, opts, label, ro) {
+		if (ro) {
+			return (
+				'<div class="pi-field"><label class="pi-label">' +
+				esc(label) +
+				"</label>" +
+				'<div style="padding:0.55rem 0;font-size:0.9rem;color:var(--pi-black);">' +
+				esc(value || "—") +
+				"</div></div>"
+			);
+		}
+		var dd = opts
+			.map(function (o) {
+				return (
+					'<div class="pi-link-option" data-fn="' +
+					esc(fn) +
+					'" data-val="' +
+					esc(o) +
+					'">' +
+					esc(o) +
+					"</div>"
+				);
+			})
+			.join("");
+		return (
+			'<div class="pi-field"><label class="pi-label">' +
+			esc(label) +
+			"</label>" +
+			'<div class="pi-link-wrap" data-fn="' +
+			esc(fn) +
+			'">' +
+			'<input type="text" class="pi-input pi-link-search" placeholder="Search…" autocomplete="off" value="' +
+			esc(value || "") +
+			'">' +
+			'<div class="pi-link-dropdown" id="ld-' +
+			esc(fn) +
+			'" hidden>' +
+			dd +
+			"</div>" +
+			'<input type="hidden" class="pi-link-value" data-fieldname="' +
+			esc(fn) +
+			'" data-fieldtype="Link" value="' +
+			esc(value || "") +
+			'">' +
+			"</div></div>"
+		);
+	}
+
+	/* ---- Single field renderer (sync — link opts pre-fetched) ---- */
+	function renderField(f, value, childTables, linkOpts) {
 		var id = "pf-" + f.fieldname;
 		var label =
 			'<label class="pi-label" for="' +
@@ -80,6 +227,13 @@
 			  esc(f.description) +
 			  "</div>"
 			: "";
+
+		if (f.fieldtype === "Rating") return renderStars(f.fieldname, value, f.label, f.read_only);
+
+		if (f.fieldtype === "Link") {
+			var opts = (linkOpts && linkOpts[f.options]) || [];
+			return renderLink(f.fieldname, value, opts, f.label, f.read_only) + desc;
+		}
 
 		if (f.read_only) {
 			var disp = value;
@@ -117,7 +271,7 @@
 				esc(value || "") +
 				"</textarea>";
 		} else if (f.fieldtype === "Select") {
-			var opts = String(f.options || "")
+			var selopts = String(f.options || "")
 				.split("\n")
 				.filter(Boolean);
 			input =
@@ -127,7 +281,7 @@
 				esc(f.fieldname) +
 				'">';
 			input += '<option value=""></option>';
-			opts.forEach(function (o) {
+			selopts.forEach(function (o) {
 				input +=
 					'<option value="' +
 					esc(o) +
@@ -151,7 +305,6 @@
 				'<span style="font-size:0.9rem;">' +
 				esc(f.label || f.fieldname) +
 				"</span></label>";
-			/* checkbox already shows its own label — skip the outer label */
 			return '<div class="pi-field">' + input + desc + "</div>";
 		} else if (f.fieldtype === "Date") {
 			var dateVal = value ? String(value).slice(0, 10) : "";
@@ -189,9 +342,12 @@
 					);
 				}) || childMeta.fields[0];
 			if (!vf) return "";
-			var opts2 = String(vf.options || "")
-				.split("\n")
-				.filter(Boolean);
+			var tableOpts =
+				vf.fieldtype === "Link"
+					? (linkOpts && linkOpts[vf.options]) || []
+					: String(vf.options || "")
+							.split("\n")
+							.filter(Boolean);
 			var selected = Array.isArray(value)
 				? value
 						.map(function (r) {
@@ -200,7 +356,7 @@
 						.filter(Boolean)
 				: [];
 			var chips = '<div class="pi-chip-options" id="' + esc(id) + '-chips">';
-			opts2.forEach(function (o) {
+			tableOpts.forEach(function (o) {
 				chips +=
 					'<button type="button" class="pi-chip-opt' +
 					(selected.indexOf(o) > -1 ? " selected" : "") +
@@ -235,7 +391,7 @@
 				'">';
 			return '<div class="pi-field pi-field-full">' + label + chips + desc + "</div>";
 		} else {
-			/* Data, Link, Phone, Email, etc. */
+			/* Data, Phone, Email, etc. */
 			input =
 				'<input type="text" id="' +
 				esc(id) +
@@ -249,47 +405,39 @@
 		return '<div class="pi-field">' + label + input + desc + "</div>";
 	}
 
-	function renderProfile(data) {
-		var fields = data.fields || [];
-		var student = data.student || {};
-		var childTables = data.child_tables || {};
-		var sections = buildSections(fields);
-
-		/* Update page heading */
-		var heading = document.getElementById("pi-profile-heading");
-		if (heading && student.student_name) heading.textContent = student.student_name;
-
-		var html = "";
-		sections.forEach(function (sec) {
-			if (!sec.fields.length) return;
-			if (sec.label) {
-				html +=
-					'<h3 style="font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--pi-muted);margin:1.5rem 0 0.75rem;padding-bottom:0.4rem;border-bottom:1px solid var(--pi-border);">' +
-					esc(sec.label) +
-					"</h3>";
-			}
-			html += '<div class="pi-form-grid">';
-			sec.fields.forEach(function (f) {
-				html += renderField(f, student[f.fieldname], childTables);
+	/* ---- Wire all interactive events on the profile body ---- */
+	function wireEvents(body) {
+		/* Star rating */
+		body.addEventListener("click", function (e) {
+			var star = e.target.closest(".pi-stars .pi-star");
+			if (!star) return;
+			var wrap = star.closest(".pi-stars");
+			var fn = wrap && wrap.getAttribute("data-fn");
+			if (!fn) return;
+			var val = parseInt(star.getAttribute("data-v")) || 0;
+			wrap.querySelectorAll(".pi-star").forEach(function (s, i) {
+				s.classList.toggle("lit", i < val);
 			});
-			html += "</div>";
+			var hidden = body.querySelector(
+				'[data-fieldname="' + fn + '"][data-fieldtype="Rating"]'
+			);
+			if (hidden) hidden.value = val;
+			var lbl = body.querySelector("#fsl-" + fn);
+			if (lbl) lbl.textContent = val + " / 5";
 		});
 
-		var body = document.getElementById("pi-profile-body");
-		body.innerHTML = html;
-
-		/* Wire up chip-option toggles */
+		/* Chip toggles */
 		body.addEventListener("click", function (e) {
 			var btn = e.target.closest(".pi-chip-opt[data-table-fn]");
 			if (!btn) return;
 			btn.classList.toggle("selected");
 			var fn = btn.getAttribute("data-table-fn");
 			var vfn = btn.getAttribute("data-vfn");
-			var hidden = document.querySelector(
+			var hidden = body.querySelector(
 				'[data-fieldname="' + fn + '"][data-fieldtype="Table"]'
 			);
 			if (!hidden) return;
-			var selected = Array.prototype.map.call(
+			var rows = Array.prototype.map.call(
 				body.querySelectorAll('.pi-chip-opt[data-table-fn="' + fn + '"].selected'),
 				function (b) {
 					var r = {};
@@ -297,20 +445,151 @@
 					return r;
 				}
 			);
-			hidden.value = JSON.stringify(selected);
+			hidden.value = JSON.stringify(rows);
 		});
 
-		document.getElementById("pi-profile-loading").style.display = "none";
-		body.style.display = "";
-		var actions = document.getElementById("pi-profile-actions");
-		actions.style.display = "flex";
+		/* Show link dropdown on focus/click — show all options */
+		body.addEventListener(
+			"focus",
+			function (e) {
+				var inp = e.target.closest(".pi-link-search");
+				if (!inp) return;
+				var wrap = inp.closest(".pi-link-wrap");
+				var fn = wrap && wrap.getAttribute("data-fn");
+				var dd = fn && body.querySelector("#ld-" + fn);
+				if (!dd) return;
+				dd.hidden = false;
+				dd.querySelectorAll(".pi-link-option").forEach(function (opt) {
+					opt.hidden = false;
+				});
+			},
+			true /* capture so focus (non-bubbling) reaches here */
+		);
+
+		/* Filter link options while typing */
+		body.addEventListener("input", function (e) {
+			var inp = e.target.closest(".pi-link-search");
+			if (!inp) return;
+			var wrap = inp.closest(".pi-link-wrap");
+			var fn = wrap && wrap.getAttribute("data-fn");
+			var dd = fn && body.querySelector("#ld-" + fn);
+			if (!dd) return;
+			dd.hidden = false;
+			var q = inp.value.toLowerCase();
+			dd.querySelectorAll(".pi-link-option").forEach(function (opt) {
+				opt.hidden = !opt.textContent.toLowerCase().includes(q);
+			});
+			/* Clear the stored value while the user is editing */
+			var hv = wrap.querySelector(".pi-link-value");
+			if (hv) hv.value = "";
+		});
+
+		/* Select a link option */
+		body.addEventListener("click", function (e) {
+			var opt = e.target.closest(".pi-link-option");
+			if (!opt) return;
+			var fn = opt.getAttribute("data-fn");
+			var val = opt.getAttribute("data-val");
+			var wrap = body.querySelector('.pi-link-wrap[data-fn="' + fn + '"]');
+			if (!wrap) return;
+			var inp = wrap.querySelector(".pi-link-search");
+			var hv = wrap.querySelector(".pi-link-value");
+			var dd = body.querySelector("#ld-" + fn);
+			if (inp) inp.value = val;
+			if (hv) hv.value = val;
+			if (dd) dd.hidden = true;
+			/* Re-evaluate depends_on in case a Link field controls visibility */
+			applyDependsOn(body);
+		});
+
+		/* Close all dropdowns on outside click */
+		document.addEventListener("click", function (e) {
+			if (!e.target.closest(".pi-link-wrap")) {
+				body.querySelectorAll(".pi-link-dropdown").forEach(function (d) {
+					d.hidden = true;
+				});
+			}
+		});
+
+		/* Re-evaluate depends_on when any value changes */
+		body.addEventListener("change", function () {
+			applyDependsOn(body);
+		});
 	}
 
+	/* ---- Render full profile ---- */
+	function renderProfile(data) {
+		var fields = data.fields || [];
+		var student = data.student || {};
+		var childTables = data.child_tables || {};
+		var sections = buildSections(fields);
+
+		/* Collect unique Link doctypes that need options fetched (editable only) */
+		var linkDoctypes = [];
+		fields.forEach(function (f) {
+			if (f.read_only || f.hidden) return;
+			var dt = null;
+			if (f.fieldtype === "Link" && f.options) dt = f.options;
+			if (f.fieldtype === "Table" && childTables[f.fieldname]) {
+				var vf = (childTables[f.fieldname].fields || []).find(function (cf) {
+					return cf.fieldtype === "Link";
+				});
+				if (vf && vf.options) dt = vf.options;
+			}
+			if (dt && linkDoctypes.indexOf(dt) === -1) linkDoctypes.push(dt);
+		});
+
+		/* Fetch all link options in parallel, then render synchronously */
+		Promise.all(linkDoctypes.map(fetchLinkOpts)).then(function (allOpts) {
+			var linkOptsMap = {};
+			linkDoctypes.forEach(function (dt, i) {
+				linkOptsMap[dt] = allOpts[i];
+			});
+
+			/* Update heading */
+			var heading = document.getElementById("pi-profile-heading");
+			if (heading && student.student_name) heading.textContent = student.student_name;
+
+			var html = "";
+			sections.forEach(function (sec) {
+				if (!sec.fields.length) return;
+				if (sec.label) {
+					html +=
+						'<h3 style="font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--pi-muted);margin:1.5rem 0 0.75rem;padding-bottom:0.4rem;border-bottom:1px solid var(--pi-border);">' +
+						esc(sec.label) +
+						"</h3>";
+				}
+				html += '<div class="pi-form-grid">';
+				sec.fields.forEach(function (f) {
+					var fieldHtml = renderField(f, student[f.fieldname], childTables, linkOptsMap);
+					if (!fieldHtml) return;
+					var attrs = 'data-field-wrap="' + esc(f.fieldname) + '"';
+					if (f.depends_on) attrs += ' data-depends-on="' + esc(f.depends_on) + '"';
+					html += "<div " + attrs + ">" + fieldHtml + "</div>";
+				});
+				html += "</div>";
+			});
+
+			var body = document.getElementById("pi-profile-body");
+			body.innerHTML = html;
+			wireEvents(body);
+			applyDependsOn(body);
+
+			document.getElementById("pi-profile-loading").style.display = "none";
+			body.style.display = "";
+			var actions = document.getElementById("pi-profile-actions");
+			if (actions) actions.style.display = "flex";
+		});
+	}
+
+	/* ---- Collect payload for save ---- */
 	function gatherPayload() {
 		var payload = {};
 		document.querySelectorAll("#pi-profile-body [data-fieldname]").forEach(function (el) {
 			var fn = el.getAttribute("data-fieldname");
 			var ft = el.getAttribute("data-fieldtype");
+			/* Skip the visible search input — only read the hidden value */
+			if (el.classList.contains("pi-link-search")) return;
 			if (ft === "Table") {
 				try {
 					payload[fn] = JSON.parse(el.value);
