@@ -55,6 +55,49 @@
 		}
 	}
 
+	/* ---- depends_on evaluation ---- */
+	function evalDependsOn(expr, doc) {
+		if (!expr) return true;
+		try {
+			if (expr.indexOf("eval:") === 0) {
+				// eslint-disable-next-line no-new-func
+				return !!new Function("doc", "return (" + expr.slice(5) + ")")(doc);
+			}
+			return !!doc[expr];
+		} catch (_e) {
+			return true;
+		}
+	}
+
+	function gatherCurrentDoc(body) {
+		var doc = {};
+		body.querySelectorAll("[data-fieldname]").forEach(function (el) {
+			var fn = el.getAttribute("data-fieldname");
+			if (el.classList.contains("pi-link-search")) return;
+			var ft = el.getAttribute("data-fieldtype");
+			if (ft === "Check") {
+				doc[fn] = el.checked ? 1 : 0;
+			} else if (ft === "Table") {
+				try {
+					doc[fn] = JSON.parse(el.value);
+				} catch (_e) {
+					doc[fn] = [];
+				}
+			} else {
+				doc[fn] = el.value || "";
+			}
+		});
+		return doc;
+	}
+
+	function applyDependsOn(body) {
+		var doc = gatherCurrentDoc(body);
+		body.querySelectorAll("[data-depends-on]").forEach(function (wrap) {
+			var expr = wrap.getAttribute("data-depends-on");
+			wrap.style.display = evalDependsOn(expr, doc) ? "" : "none";
+		});
+	}
+
 	/* ---- Link options cache ---- */
 	var linkCache = {};
 	function fetchLinkOpts(doctype) {
@@ -424,7 +467,25 @@
 			hidden.value = JSON.stringify(rows);
 		});
 
-		/* Link search filter */
+		/* Show link dropdown on focus/click — reveal all options */
+		body.addEventListener(
+			"focus",
+			function (e) {
+				var inp = e.target.closest(".pi-link-search");
+				if (!inp) return;
+				var wrap = inp.closest(".pi-link-wrap");
+				var fn = wrap && wrap.getAttribute("data-fn");
+				var dd = fn && body.querySelector("#ld-" + fn);
+				if (!dd) return;
+				dd.hidden = false;
+				dd.querySelectorAll(".pi-link-option").forEach(function (opt) {
+					opt.hidden = false;
+				});
+			},
+			true /* capture so non-bubbling focus reaches here */
+		);
+
+		/* Filter link options while typing */
 		body.addEventListener("input", function (e) {
 			var inp = e.target.closest(".pi-link-search");
 			if (!inp) return;
@@ -464,6 +525,11 @@
 					d.hidden = true;
 				});
 			}
+		});
+
+		/* Re-evaluate depends_on when any value changes */
+		body.addEventListener("change", function () {
+			applyDependsOn(body);
 		});
 	}
 
@@ -511,7 +577,11 @@
 				}
 				html += '<div class="pi-form-grid">';
 				sec.fields.forEach(function (f) {
-					html += renderField(f, student[f.fieldname], childTables, linkOptsMap);
+					var fieldHtml = renderField(f, student[f.fieldname], childTables, linkOptsMap);
+					if (!fieldHtml) return;
+					var attrs = 'data-field-wrap="' + esc(f.fieldname) + '"';
+					if (f.depends_on) attrs += ' data-depends-on="' + esc(f.depends_on) + '"';
+					html += "<div " + attrs + ">" + fieldHtml + "</div>";
 				});
 				html += "</div>";
 			});
@@ -519,6 +589,7 @@
 			var body = document.getElementById("pi-profile-body");
 			body.innerHTML = html;
 			wireEvents(body);
+			applyDependsOn(body);
 
 			document.getElementById("pi-profile-loading").style.display = "none";
 			body.style.display = "";
