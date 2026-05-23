@@ -36,7 +36,15 @@
 			return d.innerHTML;
 		};
 
-	var SKIP_TYPES = { "Column Break": 1, "Tab Break": 1, Fold: 1, HTML: 1, Button: 1 };
+	var SKIP_TYPES = {
+		"Column Break": 1,
+		"Tab Break": 1,
+		Fold: 1,
+		HTML: 1,
+		Button: 1,
+		Attach: 1,
+		"Attach Image": 1,
+	};
 
 	function fmtDate(val) {
 		if (!val) return "";
@@ -47,7 +55,26 @@
 		}
 	}
 
-	/* Build section groups from flat field list */
+	/* ---- Link options cache ---- */
+	var linkCache = {};
+	function fetchLinkOpts(doctype) {
+		if (!doctype) return Promise.resolve([]);
+		if (linkCache[doctype]) return Promise.resolve(linkCache[doctype]);
+		return api(
+			"/api/method/skillshub_core.skillshub_portal.api.get_public_link_options?doctype=" +
+				encodeURIComponent(doctype)
+		)
+			.then(function (r) {
+				linkCache[doctype] = r || [];
+				return linkCache[doctype];
+			})
+			.catch(function () {
+				linkCache[doctype] = [];
+				return [];
+			});
+	}
+
+	/* ---- Section grouping ---- */
 	function buildSections(fields) {
 		var sections = [];
 		var cur = { label: null, fields: [] };
@@ -65,21 +92,111 @@
 		return sections;
 	}
 
-	/* Render a single editable field as HTML */
-	function renderField(f, value, childTables) {
-		var id = "pf-" + f.fieldname;
-		var label =
-			'<label class="pi-label" for="' +
-			esc(id) +
-			'">' +
-			esc(f.label || f.fieldname) +
-			(f.reqd ? ' <span style="color:var(--pi-red)">*</span>' : "") +
+	/* ---- Star rating (read-only display) ---- */
+	function renderStars(fn, value, label, ro) {
+		var val = parseInt(value) || 0;
+		var html =
+			'<div class="pi-field pi-field-full"><label class="pi-label">' +
+			esc(label) +
 			"</label>";
+		if (ro) {
+			html += '<div class="pi-stars">';
+			for (var i = 1; i <= 5; i++)
+				html += '<span class="pi-star' + (i <= val ? " lit" : "") + '">★</span>';
+			html += "</div>";
+		} else {
+			html += '<div class="pi-stars" data-fn="' + esc(fn) + '">';
+			for (var j = 1; j <= 5; j++)
+				html +=
+					'<span class="pi-star' +
+					(j <= val ? " lit" : "") +
+					'" data-v="' +
+					j +
+					'">★</span>';
+			html +=
+				'</div><input type="hidden" data-fieldname="' +
+				esc(fn) +
+				'" data-fieldtype="Rating" value="' +
+				val +
+				'">' +
+				'<span class="pi-star-label" id="fsl-' +
+				esc(fn) +
+				'">' +
+				(val ? val + " / 5" : "Tap to rate") +
+				"</span>";
+		}
+		return html + "</div>";
+	}
+
+	/* ---- Link combobox (sync, uses pre-fetched opts) ---- */
+	function renderLink(fn, value, opts, label, ro) {
+		if (ro) {
+			return (
+				'<div class="pi-field"><label class="pi-label">' +
+				esc(label) +
+				"</label>" +
+				'<div style="padding:0.55rem 0;font-size:0.9rem;color:var(--pi-black);">' +
+				esc(value || "—") +
+				"</div></div>"
+			);
+		}
+		var dd = opts
+			.map(function (o) {
+				return (
+					'<div class="pi-link-option" data-fn="' +
+					esc(fn) +
+					'" data-val="' +
+					esc(o) +
+					'">' +
+					esc(o) +
+					"</div>"
+				);
+			})
+			.join("");
+		return (
+			'<div class="pi-field"><label class="pi-label">' +
+			esc(label) +
+			"</label>" +
+			'<div class="pi-link-wrap" data-fn="' +
+			esc(fn) +
+			'">' +
+			'<input type="text" class="pi-input pi-link-search" placeholder="Search…" autocomplete="off" value="' +
+			esc(value || "") +
+			'">' +
+			'<div class="pi-link-dropdown" id="ld-' +
+			esc(fn) +
+			'" hidden>' +
+			dd +
+			"</div>" +
+			'<input type="hidden" class="pi-link-value" data-fieldname="' +
+			esc(fn) +
+			'" data-fieldtype="Link" value="' +
+			esc(value || "") +
+			'">' +
+			"</div></div>"
+		);
+	}
+
+	/* ---- Single field renderer (sync — link opts pre-fetched) ---- */
+	function renderField(f, value, childTables, linkOpts) {
+		var id = "pf-" + f.fieldname;
+		var label = f.label || f.fieldname;
 		var desc = f.description
 			? '<div style="font-size:0.75rem;color:var(--pi-muted);margin-top:0.2rem;">' +
 			  esc(f.description) +
 			  "</div>"
 			: "";
+		var req = f.reqd ? ' <span style="color:var(--pi-red)">*</span>' : "";
+
+		if (f.fieldtype === "Rating") return renderStars(f.fieldname, value, label, f.read_only);
+
+		if (f.fieldtype === "Link") {
+			var opts = linkOpts[f.options] || [];
+			return renderLink(f.fieldname, value, opts, label, f.read_only) + desc;
+		}
+
+		var labelHtml =
+			'<label class="pi-label" for="' + esc(id) + '">' + esc(label) + req + "</label>";
 
 		if (f.read_only) {
 			var disp = value;
@@ -93,7 +210,7 @@
 					.join(", ");
 			return (
 				'<div class="pi-field">' +
-				label +
+				labelHtml +
 				'<div style="padding:0.55rem 0;font-size:0.9rem;color:var(--pi-black);">' +
 				esc(disp || "—") +
 				"</div>" +
@@ -103,10 +220,12 @@
 		}
 
 		var input = "";
+
 		if (
 			f.fieldtype === "Small Text" ||
 			f.fieldtype === "Text" ||
-			f.fieldtype === "Long Text"
+			f.fieldtype === "Long Text" ||
+			f.fieldtype === "Text Editor"
 		) {
 			input =
 				'<textarea id="' +
@@ -117,7 +236,7 @@
 				esc(value || "") +
 				"</textarea>";
 		} else if (f.fieldtype === "Select") {
-			var opts = String(f.options || "")
+			var selopts = String(f.options || "")
 				.split("\n")
 				.filter(Boolean);
 			input =
@@ -127,7 +246,7 @@
 				esc(f.fieldname) +
 				'">';
 			input += '<option value=""></option>';
-			opts.forEach(function (o) {
+			selopts.forEach(function (o) {
 				input +=
 					'<option value="' +
 					esc(o) +
@@ -139,7 +258,8 @@
 			});
 			input += "</select>";
 		} else if (f.fieldtype === "Check") {
-			input =
+			return (
+				'<div class="pi-field">' +
 				'<label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">' +
 				'<input type="checkbox" id="' +
 				esc(id) +
@@ -148,11 +268,12 @@
 				'" data-fieldtype="Check"' +
 				(value ? " checked" : "") +
 				">" +
-				'<span style="font-size:0.9rem;">' +
-				esc(f.label || f.fieldname) +
-				"</span></label>";
-			/* checkbox already shows its own label — skip the outer label */
-			return '<div class="pi-field">' + input + desc + "</div>";
+				'<span class="pi-label" style="margin:0;">' +
+				esc(label) +
+				"</span></label>" +
+				desc +
+				"</div>"
+			);
 		} else if (f.fieldtype === "Date") {
 			var dateVal = value ? String(value).slice(0, 10) : "";
 			input =
@@ -189,9 +310,12 @@
 					);
 				}) || childMeta.fields[0];
 			if (!vf) return "";
-			var opts2 = String(vf.options || "")
-				.split("\n")
-				.filter(Boolean);
+			var tableOpts =
+				vf.fieldtype === "Link"
+					? linkOpts[vf.options] || []
+					: String(vf.options || "")
+							.split("\n")
+							.filter(Boolean);
 			var selected = Array.isArray(value)
 				? value
 						.map(function (r) {
@@ -200,7 +324,7 @@
 						.filter(Boolean)
 				: [];
 			var chips = '<div class="pi-chip-options" id="' + esc(id) + '-chips">';
-			opts2.forEach(function (o) {
+			tableOpts.forEach(function (o) {
 				chips +=
 					'<button type="button" class="pi-chip-opt' +
 					(selected.indexOf(o) > -1 ? " selected" : "") +
@@ -233,11 +357,19 @@
 					)
 				) +
 				'">';
-			return '<div class="pi-field pi-field-full">' + label + chips + desc + "</div>";
+			return '<div class="pi-field pi-field-full">' + labelHtml + chips + desc + "</div>";
 		} else {
-			/* Data, Link, Phone, Email, etc. */
+			/* Data, Phone, Email, Password, etc. */
+			var itype =
+				f.fieldtype === "Password"
+					? "password"
+					: f.fieldtype === "Int" || f.fieldtype === "Float"
+					? "number"
+					: "text";
 			input =
-				'<input type="text" id="' +
+				'<input type="' +
+				itype +
+				'" id="' +
 				esc(id) +
 				'" class="pi-input" data-fieldname="' +
 				esc(f.fieldname) +
@@ -246,50 +378,42 @@
 				'">';
 		}
 
-		return '<div class="pi-field">' + label + input + desc + "</div>";
+		return '<div class="pi-field">' + labelHtml + input + desc + "</div>";
 	}
 
-	function renderProfile(data) {
-		var fields = data.fields || [];
-		var student = data.student || {};
-		var childTables = data.child_tables || {};
-		var sections = buildSections(fields);
-
-		/* Update page heading */
-		var heading = document.getElementById("pi-profile-heading");
-		if (heading && student.student_name) heading.textContent = student.student_name;
-
-		var html = "";
-		sections.forEach(function (sec) {
-			if (!sec.fields.length) return;
-			if (sec.label) {
-				html +=
-					'<h3 style="font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--pi-muted);margin:1.5rem 0 0.75rem;padding-bottom:0.4rem;border-bottom:1px solid var(--pi-border);">' +
-					esc(sec.label) +
-					"</h3>";
-			}
-			html += '<div class="pi-form-grid">';
-			sec.fields.forEach(function (f) {
-				html += renderField(f, student[f.fieldname], childTables);
+	/* ---- Wire interactive events on the profile body ---- */
+	function wireEvents(body) {
+		/* Star rating */
+		body.addEventListener("click", function (e) {
+			var star = e.target.closest(".pi-stars .pi-star");
+			if (!star) return;
+			var wrap = star.closest(".pi-stars");
+			var fn = wrap && wrap.getAttribute("data-fn");
+			if (!fn) return;
+			var val = parseInt(star.getAttribute("data-v")) || 0;
+			wrap.querySelectorAll(".pi-star").forEach(function (s, i) {
+				s.classList.toggle("lit", i < val);
 			});
-			html += "</div>";
+			var hidden = body.querySelector(
+				'[data-fieldname="' + fn + '"][data-fieldtype="Rating"]'
+			);
+			if (hidden) hidden.value = val;
+			var lbl = body.querySelector("#fsl-" + fn);
+			if (lbl) lbl.textContent = val + " / 5";
 		});
 
-		var body = document.getElementById("pi-profile-body");
-		body.innerHTML = html;
-
-		/* Wire up chip-option toggles */
+		/* Chip toggles */
 		body.addEventListener("click", function (e) {
 			var btn = e.target.closest(".pi-chip-opt[data-table-fn]");
 			if (!btn) return;
 			btn.classList.toggle("selected");
 			var fn = btn.getAttribute("data-table-fn");
 			var vfn = btn.getAttribute("data-vfn");
-			var hidden = document.querySelector(
+			var hidden = body.querySelector(
 				'[data-fieldname="' + fn + '"][data-fieldtype="Table"]'
 			);
 			if (!hidden) return;
-			var selected = Array.prototype.map.call(
+			var rows = Array.prototype.map.call(
 				body.querySelectorAll('.pi-chip-opt[data-table-fn="' + fn + '"].selected'),
 				function (b) {
 					var r = {};
@@ -297,20 +421,120 @@
 					return r;
 				}
 			);
-			hidden.value = JSON.stringify(selected);
+			hidden.value = JSON.stringify(rows);
 		});
 
-		document.getElementById("pi-profile-loading").style.display = "none";
-		body.style.display = "";
-		var actions = document.getElementById("pi-profile-actions");
-		actions.style.display = "flex";
+		/* Link search filter */
+		body.addEventListener("input", function (e) {
+			var inp = e.target.closest(".pi-link-search");
+			if (!inp) return;
+			var wrap = inp.closest(".pi-link-wrap");
+			var fn = wrap && wrap.getAttribute("data-fn");
+			var dd = fn && body.querySelector("#ld-" + fn);
+			if (!dd) return;
+			dd.hidden = false;
+			var q = inp.value.toLowerCase();
+			dd.querySelectorAll(".pi-link-option").forEach(function (opt) {
+				opt.hidden = !opt.textContent.toLowerCase().includes(q);
+			});
+			var hv = wrap.querySelector(".pi-link-value");
+			if (hv) hv.value = "";
+		});
+
+		/* Link option select */
+		body.addEventListener("click", function (e) {
+			var opt = e.target.closest(".pi-link-option");
+			if (!opt) return;
+			var fn = opt.getAttribute("data-fn");
+			var val = opt.getAttribute("data-val");
+			var wrap = body.querySelector('.pi-link-wrap[data-fn="' + fn + '"]');
+			if (!wrap) return;
+			var inp = wrap.querySelector(".pi-link-search");
+			var hv = wrap.querySelector(".pi-link-value");
+			var dd = body.querySelector("#ld-" + fn);
+			if (inp) inp.value = val;
+			if (hv) hv.value = val;
+			if (dd) dd.hidden = true;
+		});
+
+		/* Close dropdowns on outside click */
+		document.addEventListener("click", function (e) {
+			if (!e.target.closest(".pi-link-wrap")) {
+				body.querySelectorAll(".pi-link-dropdown").forEach(function (d) {
+					d.hidden = true;
+				});
+			}
+		});
 	}
 
+	/* ---- Render full profile ---- */
+	function renderProfile(data) {
+		var fields = data.fields || [];
+		var student = data.student || {};
+		var childTables = data.child_tables || {};
+		var sections = buildSections(fields);
+
+		/* Collect all unique Link doctypes (editable only) */
+		var linkDoctypes = [];
+		fields.forEach(function (f) {
+			if (f.read_only || f.hidden) return;
+			var dt = null;
+			if (f.fieldtype === "Link" && f.options) dt = f.options;
+			if (f.fieldtype === "Table" && childTables[f.fieldname]) {
+				var vf = (childTables[f.fieldname].fields || []).find(function (cf) {
+					return cf.fieldtype === "Link";
+				});
+				if (vf && vf.options) dt = vf.options;
+			}
+			if (dt && linkDoctypes.indexOf(dt) === -1) linkDoctypes.push(dt);
+		});
+
+		/* Fetch all link options in parallel, then render */
+		Promise.all(linkDoctypes.map(fetchLinkOpts)).then(function (allOpts) {
+			var linkOptsMap = {};
+			linkDoctypes.forEach(function (dt, i) {
+				linkOptsMap[dt] = allOpts[i];
+			});
+
+			/* Update heading */
+			var heading = document.getElementById("pi-profile-heading");
+			if (heading && student.student_name) heading.textContent = student.student_name;
+
+			var html = "";
+			sections.forEach(function (sec) {
+				if (!sec.fields.length) return;
+				if (sec.label) {
+					html +=
+						'<h3 style="font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--pi-muted);margin:1.5rem 0 0.75rem;padding-bottom:0.4rem;border-bottom:1px solid var(--pi-border);">' +
+						esc(sec.label) +
+						"</h3>";
+				}
+				html += '<div class="pi-form-grid">';
+				sec.fields.forEach(function (f) {
+					html += renderField(f, student[f.fieldname], childTables, linkOptsMap);
+				});
+				html += "</div>";
+			});
+
+			var body = document.getElementById("pi-profile-body");
+			body.innerHTML = html;
+			wireEvents(body);
+
+			document.getElementById("pi-profile-loading").style.display = "none";
+			body.style.display = "";
+			var actions = document.getElementById("pi-profile-actions");
+			if (actions) actions.style.display = "flex";
+		});
+	}
+
+	/* ---- Collect payload for save ---- */
 	function gatherPayload() {
 		var payload = {};
 		document.querySelectorAll("#pi-profile-body [data-fieldname]").forEach(function (el) {
 			var fn = el.getAttribute("data-fieldname");
 			var ft = el.getAttribute("data-fieldtype");
+			/* Skip the visible search input — only read the hidden value */
+			if (el.classList.contains("pi-link-search")) return;
 			if (ft === "Table") {
 				try {
 					payload[fn] = JSON.parse(el.value);
