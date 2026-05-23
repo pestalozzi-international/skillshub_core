@@ -4,8 +4,10 @@
  */
 
 :root {
-  --color-teal-700: #0f766e;
-  --color-teal-800: #115e59;
+  --pi-red: #CA0733;
+  --pi-red-dark: #a3052a;
+  --color-teal-700: #CA0733;
+  --color-teal-800: #a3052a;
   --color-accent-500: #0ea5a4;
   --color-slate-50: #f8fafc;
   --color-slate-100: #f1f5f9;
@@ -128,7 +130,7 @@ h1, h2, h3 {
     cursor: pointer;
     transition: background-color 0.2s, transform 0.1s;
 }
-.sh-btn-primary:hover:not(:disabled) { background-color: var(--color-teal-800); }
+.sh-btn-primary:hover:not(:disabled) { background-color: var(--pi-red-dark, var(--color-teal-800)); }
 .sh-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .sh-btn-secondary {
