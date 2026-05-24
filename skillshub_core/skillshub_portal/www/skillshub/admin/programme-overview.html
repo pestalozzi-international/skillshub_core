@@ -18,12 +18,6 @@
               padding:.875rem 1.25rem;box-shadow:var(--shadow-premium);min-width:110px;text-align:center;}
     .sum-num{font-size:1.75rem;font-weight:800;line-height:1;}
     .sum-lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--color-slate-500);margin-top:3px;}
-    .view-tabs{display:flex;margin-bottom:1.5rem;background:white;border:1px solid var(--color-slate-200);
-               border-radius:.75rem;overflow:hidden;box-shadow:var(--shadow-premium);width:fit-content;}
-    .view-tab{padding:.625rem 1.5rem;font-size:.875rem;font-weight:600;cursor:pointer;
-              border:none;background:none;color:var(--color-slate-500);}
-    .view-tab.active{background:var(--pi-red);color:white;}
-    .view-tab:hover:not(.active){background:var(--color-slate-50);}
     .filter-bar{background:white;border:1px solid var(--color-slate-200);border-radius:1rem;
                 padding:1rem 1.25rem;box-shadow:var(--shadow-premium);
                 display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.5rem;}
@@ -81,42 +75,14 @@
     .es-en{background:#dbeafe;color:#1e40af;}
     .es-co{background:#d1fae5;color:#065f46;}
     .es-dr{background:#fee2e2;color:#991b1b;}
-    .report-wrap{background:white;border:1px solid var(--color-slate-200);
-                 border-radius:1rem;box-shadow:var(--shadow-premium);overflow-x:auto;}
-    .legend-box{padding:1rem 1.25rem;border-bottom:2px solid var(--color-slate-100);}
-    .legend-title{font-size:.7rem;font-weight:700;text-transform:uppercase;
-                  letter-spacing:.06em;color:var(--color-slate-500);margin-bottom:.625rem;}
-    .legend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.5rem;}
-    .leg-item{display:flex;align-items:flex-start;gap:.5rem;font-size:.78rem;}
-    .leg-dot{width:26px;height:20px;border-radius:9999px;border:1px solid;
-             display:flex;align-items:center;justify-content:center;font-size:.72rem;
-             flex-shrink:0;margin-top:1px;}
-    .leg-desc{color:var(--color-slate-700);line-height:1.3;}
-    .leg-na{margin-top:.5rem;font-size:.72rem;color:var(--color-slate-400);font-style:italic;}
-    table.rpt{width:100%;border-collapse:collapse;font-size:.78rem;min-width:900px;}
-    table.rpt thead th{background:var(--color-slate-50);padding:.625rem .75rem;text-align:left;
-                       font-weight:700;color:var(--color-slate-500);font-size:.68rem;
-                       text-transform:uppercase;letter-spacing:.05em;
-                       border-bottom:2px solid var(--color-slate-100);white-space:nowrap;
-                       cursor:pointer;user-select:none;}
-    table.rpt thead th:hover{color:var(--pi-red);}
-    table.rpt thead th.s-asc::after{content:' ↑';}
-    table.rpt thead th.s-desc::after{content:' ↓';}
-    table.rpt td{padding:.5rem .75rem;border-bottom:1px solid #f8fafc;vertical-align:middle;}
-    table.rpt tbody tr:last-child td{border-bottom:none;}
-    table.rpt tbody tr:hover td{background:#f8fafc;}
-    .td-mono{font-family:monospace;font-size:.7rem;color:var(--color-slate-500);}
-    .td-num{text-align:center;font-weight:700;font-size:.82rem;}
-    .td-good{color:#059669;}.td-part{color:#d97706;}.td-zero{color:#cbd5e1;font-weight:400;}
-    .td-na{text-align:center;color:#e2e8f0;font-size:.7rem;}
-    .prog-badge{display:inline-block;padding:2px 9px;border-radius:9999px;font-size:.72rem;font-weight:700;}
-    .pg-ss{background:#fdf4ff;color:#7e22ce;}.pg-msc{background:#fffbeb;color:#b45309;}
-    .pg-vt{background:#fff7ed;color:#c2410c;}.pg-edu{background:#f0fdfa;color:var(--pi-red);}
-    .rpt-footer{padding:.75rem 1.25rem;font-size:.75rem;color:var(--color-slate-400);
-                border-top:1px solid var(--color-slate-100);
-                display:flex;justify-content:space-between;}
-    .totals-row td{background:var(--color-slate-50)!important;font-weight:700;
-                   border-top:2px solid var(--color-slate-200)!important;}
+    .desk-links{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.625rem;margin-bottom:1.5rem;}
+    .desk-link{display:flex;align-items:center;gap:.5rem;background:white;
+               border:1px solid var(--color-slate-200);border-radius:.75rem;
+               padding:.625rem .875rem;font-size:.8rem;font-weight:600;
+               color:var(--color-slate-700);text-decoration:none;
+               box-shadow:var(--shadow-premium);transition:border-color .15s,color .15s;}
+    .desk-link:hover{border-color:var(--pi-red);color:var(--pi-red);}
+    .desk-link-icon{font-size:1rem;flex-shrink:0;}
     .loading{text-align:center;padding:4rem;color:var(--color-slate-400);font-size:.9rem;}
     .btn-sm{background:var(--color-slate-100);border:none;border-radius:.5rem;
             padding:.4rem .875rem;font-size:.8rem;font-weight:600;color:var(--color-slate-600);cursor:pointer;}
@@ -163,6 +129,19 @@
          style="text-decoration:none;">📊 Full Report ↗</a>
       <span id="ts" style="font-size:.72rem;color:var(--color-slate-400);"></span>
     </div>
+  </div>
+  <div class="desk-links">
+    <a class="desk-link" href="/app/query-report/SH%20Programme%20Overview" target="_blank"><span class="desk-link-icon">📊</span>Programme Report</a>
+    <a class="desk-link" href="/app/sh-student" target="_blank"><span class="desk-link-icon">👤</span>Students</a>
+    <a class="desk-link" href="/app/sh-class" target="_blank"><span class="desk-link-icon">🏫</span>Classes</a>
+    <a class="desk-link" href="/app/sh-enrolment" target="_blank"><span class="desk-link-icon">📋</span>Enrolments</a>
+    <a class="desk-link" href="/app/sh-baseline" target="_blank"><span class="desk-link-icon">📝</span>Baselines</a>
+    <a class="desk-link" href="/app/sh-soft-skills-feedback" target="_blank"><span class="desk-link-icon">🧠</span>Soft Skills Feedback</a>
+    <a class="desk-link" href="/app/sh-mindset-camp-feedback" target="_blank"><span class="desk-link-icon">⛺</span>Mindset Camp Feedback</a>
+    <a class="desk-link" href="/app/sh-vt-feedback" target="_blank"><span class="desk-link-icon">🔧</span>VT Feedback</a>
+    <a class="desk-link" href="/app/sh-edulution-feedback" target="_blank"><span class="desk-link-icon">📖</span>Edulution Feedback</a>
+    <a class="desk-link" href="/app/sh-attachment-feedback" target="_blank"><span class="desk-link-icon">🏢</span>Attachment Feedback</a>
+    <a class="desk-link" href="/app/sh-graduate-feedback" target="_blank"><span class="desk-link-icon">🎓</span>Graduate Feedback</a>
   </div>
   <div class="filter-bar">
     <div class="fg"><label>Intake Year</label><select id="f-yr" onchange="onFilter()"><option value="">All</option></select></div>
