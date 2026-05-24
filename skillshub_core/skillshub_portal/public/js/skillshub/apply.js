@@ -38,6 +38,21 @@
 	var portalSettings = {};
 	var vokalCourses = [];
 
+	// Auto-fill year_left_school based on highest_level_of_schooling selection
+	var SCHOOLING_TO_YEAR = {
+		"Grades 1 to 7": "Grade 7",
+		"Grades 8 to 9": "Grade 9",
+		"Grades 10 to 12": "Grade 12",
+		"University or Diploma": "Undergraduate/Bachelor's",
+	};
+
+	function hasAttendedSchool(d) {
+		return (
+			!!d.highest_level_of_schooling &&
+			d.highest_level_of_schooling !== "Never attended school"
+		);
+	}
+
 	// ---------------------------------------------------------------------------
 	// Section / field definitions
 	// ---------------------------------------------------------------------------
@@ -199,11 +214,17 @@
 						"University or Diploma",
 					],
 				},
-				{ name: "last_school_attended", label: "Last School Attended", type: "Data" },
+				{
+					name: "last_school_attended",
+					label: "Last School Attended",
+					type: "Data",
+					showIf: hasAttendedSchool,
+				},
 				{
 					name: "year_left_school",
-					label: "Last Year of School Attended",
+					label: "Last Grade / Year Completed",
 					type: "Select",
+					showIf: hasAttendedSchool,
 					options: [
 						"Grade 1",
 						"Grade 2",
@@ -226,6 +247,7 @@
 					name: "reason_for_leaving_school",
 					label: "Reason for Leaving School",
 					type: "Select",
+					showIf: hasAttendedSchool,
 					options: [
 						"Financial difficulties",
 						"Early parenthood",
@@ -665,6 +687,12 @@
 				formData[fn] = el.value;
 			}
 
+			// Auto-fill year_left_school from highest_level_of_schooling
+			if (fn === "highest_level_of_schooling") {
+				var mapped = SCHOOLING_TO_YEAR[el.value] || "";
+				formData.year_left_school = mapped;
+			}
+
 			// Re-render section if it has any conditional fields
 			var sec = SECTIONS[current];
 			var hasConditional = sec.fields.some(function (f) {
@@ -818,7 +846,7 @@
 	function fetchVocalCourses() {
 		var url =
 			"/api/resource/SkillsHub%20Course" +
-			'?filters=[["course_type","=","Vocational"]]&fields=["name"]&limit=100&order_by=name+asc';
+			'?filters=[["program_category","=","Vocational Training"]]&fields=["name"]&limit=100&order_by=name+asc';
 		return fetch(url, { credentials: "include" })
 			.then(function (r) {
 				return r.json();

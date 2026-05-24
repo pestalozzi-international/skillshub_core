@@ -12,7 +12,6 @@
   "column_break_bgeh",
   "course_image",
   "section_break_qlrn",
-  "course_type",
   "program_category",
   "section_break_tdnh",
   "description"
@@ -54,14 +53,6 @@
   {
    "fieldname": "section_break_qlrn",
    "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "course_type",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Course Type",
-   "options": "\nVocational\nSoft Skills\nMindset\nEduluton\nOther"
   },
   {
    "description": "Set automatically from the Programme record (via the Programme\u2019s Courses table). Do not edit directly \u2014 use the SkillsHub Programme form to assign this course to a programme.",

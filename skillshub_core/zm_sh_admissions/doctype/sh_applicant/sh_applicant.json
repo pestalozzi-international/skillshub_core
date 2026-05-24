@@ -325,7 +325,8 @@
   {
    "fieldname": "last_school_attended",
    "fieldtype": "Data",
-   "label": "Last School Attended"
+   "label": "Last School Attended",
+   "depends_on": "eval:doc.highest_level_of_schooling && doc.highest_level_of_schooling !== 'Never attended school'"
   },
   {
    "fieldname": "col_school_1",
@@ -335,13 +336,15 @@
    "fieldname": "year_left_school",
    "fieldtype": "Select",
    "label": "Year Left School",
-   "options": "\nGrade 1\nGrade 2\nGrade 3\nGrade 4\nGrade 5\nGrade 6\nGrade 7\nGrade 8\nGrade 9\nGrade 10\nGrade 11\nGrade 12\nUndergraduate/Bachelor's\nGraduate/Master's\nDoctoral/PhD"
+   "options": "\nGrade 1\nGrade 2\nGrade 3\nGrade 4\nGrade 5\nGrade 6\nGrade 7\nGrade 8\nGrade 9\nGrade 10\nGrade 11\nGrade 12\nUndergraduate/Bachelor's\nGraduate/Master's\nDoctoral/PhD",
+   "depends_on": "eval:doc.highest_level_of_schooling && doc.highest_level_of_schooling !== 'Never attended school'"
   },
   {
    "fieldname": "reason_for_leaving_school",
    "fieldtype": "Select",
    "label": "Reason for Leaving School",
-   "options": "\nFinancial difficulties\nEarly parenthood\nFamily responsibilities\nHealth issues\nLack of access to education\nGraduated\nOther"
+   "options": "\nFinancial difficulties\nEarly parenthood\nFamily responsibilities\nHealth issues\nLack of access to education\nGraduated\nOther",
+   "depends_on": "eval:doc.highest_level_of_schooling && doc.highest_level_of_schooling !== 'Never attended school'"
   },
   {
    "fieldname": "literacy_section",
