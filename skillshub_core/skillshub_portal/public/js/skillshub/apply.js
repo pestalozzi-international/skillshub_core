@@ -38,19 +38,28 @@
 	var portalSettings = {};
 	var vokalCourses = [];
 
-	// Auto-fill year_left_school based on highest_level_of_schooling selection
-	var SCHOOLING_TO_YEAR = {
-		"Grades 1 to 7": "Grade 7",
-		"Grades 8 to 9": "Grade 9",
-		"Grades 10 to 12": "Grade 12",
-		"University or Diploma": "Undergraduate/Bachelor's",
+	// Specific grade → broad schooling range (used to auto-fill highest_level_of_schooling)
+	var YEAR_TO_SCHOOLING = {
+		"Never attended school": "Never attended school",
+		"Grade 1": "Grades 1 to 7",
+		"Grade 2": "Grades 1 to 7",
+		"Grade 3": "Grades 1 to 7",
+		"Grade 4": "Grades 1 to 7",
+		"Grade 5": "Grades 1 to 7",
+		"Grade 6": "Grades 1 to 7",
+		"Grade 7": "Grades 1 to 7",
+		"Grade 8": "Grades 8 to 9",
+		"Grade 9": "Grades 8 to 9",
+		"Grade 10": "Grades 10 to 12",
+		"Grade 11": "Grades 10 to 12",
+		"Grade 12": "Grades 10 to 12",
+		"Undergraduate/Bachelor's": "University or Diploma",
+		"Graduate/Master's": "University or Diploma",
+		"Doctoral/PhD": "University or Diploma",
 	};
 
 	function hasAttendedSchool(d) {
-		return (
-			!!d.highest_level_of_schooling &&
-			d.highest_level_of_schooling !== "Never attended school"
-		);
+		return !!d.year_left_school && d.year_left_school !== "Never attended school";
 	}
 
 	// ---------------------------------------------------------------------------
@@ -202,30 +211,12 @@
 			title: "Education & Background",
 			fields: [
 				{
-					name: "highest_level_of_schooling",
-					label: "Highest Level of Education Completed",
+					name: "year_left_school",
+					label: "What is the highest grade or qualification you completed?",
 					type: "Select",
 					reqd: true,
 					options: [
 						"Never attended school",
-						"Grades 1 to 7",
-						"Grades 8 to 9",
-						"Grades 10 to 12",
-						"University or Diploma",
-					],
-				},
-				{
-					name: "last_school_attended",
-					label: "Last School Attended",
-					type: "Data",
-					showIf: hasAttendedSchool,
-				},
-				{
-					name: "year_left_school",
-					label: "Last Grade / Year Completed",
-					type: "Select",
-					showIf: hasAttendedSchool,
-					options: [
 						"Grade 1",
 						"Grade 2",
 						"Grade 3",
@@ -242,6 +233,12 @@
 						"Graduate/Master's",
 						"Doctoral/PhD",
 					],
+				},
+				{
+					name: "last_school_attended",
+					label: "Last School Attended",
+					type: "Data",
+					showIf: hasAttendedSchool,
 				},
 				{
 					name: "reason_for_leaving_school",
@@ -687,10 +684,9 @@
 				formData[fn] = el.value;
 			}
 
-			// Auto-fill year_left_school from highest_level_of_schooling
-			if (fn === "highest_level_of_schooling") {
-				var mapped = SCHOOLING_TO_YEAR[el.value] || "";
-				formData.year_left_school = mapped;
+			// Auto-fill highest_level_of_schooling from year_left_school
+			if (fn === "year_left_school") {
+				formData.highest_level_of_schooling = YEAR_TO_SCHOOLING[el.value] || "";
 			}
 
 			// Re-render section if it has any conditional fields
