@@ -1413,6 +1413,12 @@ def update_portal_settings(values):
 		"favicon",
 		"current_cohort",
 		"default_academic_year",
+		"application_portal_enabled",
+		"application_open_from",
+		"application_open_until",
+		"application_default_cohort",
+		"application_default_year",
+		"application_closed_message",
 	}
 
 	doc = frappe.get_single("SkillsHub Portal Settings")
@@ -1459,6 +1465,9 @@ _APPLICATION_ALLOWED_FIELDS = {
 	"vocational_training_details",
 	"special_talents",
 	"community_participation",
+	"has_volunteering_history",
+	"details_of_volunteering",
+	"parents_marital_status",
 	"currently_employed",
 	"employment_type",
 	"students_occupation",
@@ -1500,9 +1509,24 @@ _APPLICATION_REQUIRED_FIELDS = [
 @frappe.whitelist(allow_guest=True)  # nosemgrep
 def submit_application(payload):
 	"""Create an SH Applicant record from the public application form."""
+	from frappe.utils import getdate, today
+
 	data = _json_arg(payload, {})
 	if not isinstance(data, dict):
 		frappe.throw(_("Invalid application data."))
+
+	# Check application portal status
+	settings = get_portal_settings()
+	if not settings.get("application_portal_enabled"):
+		frappe.throw(_(settings.get("application_closed_message") or "Applications are currently closed."))
+
+	today_date = getdate(today())
+	open_from = settings.get("application_open_from")
+	open_until = settings.get("application_open_until")
+	if open_from and getdate(open_from) > today_date:
+		frappe.throw(_(settings.get("application_closed_message") or "Applications are not yet open."))
+	if open_until and getdate(open_until) < today_date:
+		frappe.throw(_(settings.get("application_closed_message") or "The application period has closed."))
 
 	clean = {k: v for k, v in data.items() if k in _APPLICATION_ALLOWED_FIELDS}
 
@@ -1514,9 +1538,15 @@ def submit_application(payload):
 		frappe.throw(_("You must accept the declaration to submit your application."))
 
 	clean["status"] = "Submitted"
-	clean["application_date"] = frappe.utils.today()
+	clean["application_date"] = today()
 	clean["application_source"] = "Online Portal"
 	clean["naming_series"] = "SA.YY.####"
+
+	# Auto-fill cohort and year from portal settings (always authoritative)
+	if settings.get("application_default_cohort"):
+		clean["intake_cohort"] = settings["application_default_cohort"]
+	if settings.get("application_default_year"):
+		clean["intake_year"] = settings["application_default_year"]
 
 	doc = frappe.get_doc({"doctype": "SH Applicant", **clean})
 	doc.insert(ignore_permissions=True)

@@ -32,25 +32,11 @@
 	}
 
 	// ---------------------------------------------------------------------------
-	// Courses constant
+	// Portal settings + vocational courses (populated at init)
 	// ---------------------------------------------------------------------------
 
-	var COURSES = [
-		"General Agriculture",
-		"Electrical Engineering",
-		"Electronics Engineering",
-		"Cosmetology",
-		"Food Production",
-		"Solar Installation",
-		"Accelerated Learning (Edulution)",
-		"Fashion and Designing",
-		"Basic Mechanics",
-		"Plumbing and Sheet Metal",
-		"Automotive Mechanics",
-		"Bricklaying and Plastering",
-		"Photography",
-		"Other",
-	];
+	var portalSettings = {};
+	var vokalCourses = [];
 
 	// ---------------------------------------------------------------------------
 	// Section / field definitions
@@ -135,10 +121,19 @@
 					options: [
 						"Mother",
 						"Father",
-						"Uncle",
-						"Aunt",
+						"Stepmother",
+						"Stepfather",
+						"Grandmother",
+						"Grandfather",
 						"Grandparent",
-						"Sibling",
+						"Aunt",
+						"Uncle",
+						"Brother",
+						"Sister",
+						"Cousin",
+						"Legal Guardian",
+						"Foster Parent",
+						"Adoptive Parent",
 						"Spouse",
 						"Other",
 					],
@@ -168,9 +163,15 @@
 					name: "housing_status",
 					label: "Living Conditions",
 					type: "Select",
-					options: ["Owned Home", "Rented Home", "Other"],
+					options: ["Rented Home", "Owned Home", "Government", "Other"],
 				},
 				{ name: "number_of_siblings", label: "Number of Siblings", type: "Int" },
+				{
+					name: "parents_marital_status",
+					label: "Parents' Marital Status",
+					type: "Select",
+					options: ["Married", "Divorced", "Widowed", "Separated", "Single Parent"],
+				},
 				{ name: "is_parent", label: "Are you a parent or guardian?", type: "Check" },
 				{
 					name: "number_of_children",
@@ -191,18 +192,35 @@
 					type: "Select",
 					reqd: true,
 					options: [
-						"Never attended School",
-						"Grade 1 to 7",
-						"Grade 8 to 9",
-						"Grade 10 to 12",
+						"Never attended school",
+						"Grades 1 to 7",
+						"Grades 8 to 9",
+						"Grades 10 to 12",
+						"University or Diploma",
 					],
 				},
 				{ name: "last_school_attended", label: "Last School Attended", type: "Data" },
 				{
 					name: "year_left_school",
-					label: "Year Left School",
-					type: "Int",
-					desc: "e.g. 2022",
+					label: "Last Year of School Attended",
+					type: "Select",
+					options: [
+						"Grade 1",
+						"Grade 2",
+						"Grade 3",
+						"Grade 4",
+						"Grade 5",
+						"Grade 6",
+						"Grade 7",
+						"Grade 8",
+						"Grade 9",
+						"Grade 10",
+						"Grade 11",
+						"Grade 12",
+						"Undergraduate/Bachelor's",
+						"Graduate/Master's",
+						"Doctoral/PhD",
+					],
 				},
 				{
 					name: "reason_for_leaving_school",
@@ -248,6 +266,19 @@
 					name: "community_participation",
 					label: "Community Activities or Organisations",
 					type: "Small Text",
+				},
+				{
+					name: "has_volunteering_history",
+					label: "Have you done any volunteering?",
+					type: "Check",
+				},
+				{
+					name: "details_of_volunteering",
+					label: "Volunteering Details",
+					type: "Small Text",
+					showIf: function (d) {
+						return !!d.has_volunteering_history;
+					},
 					desc: "Yes or No — if yes, please describe",
 				},
 				{
@@ -282,14 +313,14 @@
 					label: "First Course Preference",
 					type: "Select",
 					reqd: true,
-					options: COURSES,
+					options: vokalCourses,
 					desc: "Choose the course you are most interested in",
 				},
 				{
 					name: "second_preference_course",
 					label: "Second Course Preference (Optional)",
 					type: "Select",
-					options: COURSES,
+					options: vokalCourses,
 				},
 				{
 					name: "why_join_skillshub",
@@ -768,12 +799,92 @@
 	}
 
 	// ---------------------------------------------------------------------------
+	// Application portal checks
+	// ---------------------------------------------------------------------------
+
+	function fetchPortalSettings() {
+		var url =
+			"/api/method/skillshub_core.skillshub_portal.doctype" +
+			".skillshub_portal_settings.skillshub_portal_settings.get_portal_settings";
+		return fetch(url, { credentials: "include" })
+			.then(function (r) {
+				return r.json();
+			})
+			.then(function (d) {
+				return (d && d.message) || {};
+			});
+	}
+
+	function fetchVocalCourses() {
+		var url =
+			"/api/resource/SkillsHub%20Course" +
+			'?filters=[["course_type","=","Vocational"]]&fields=["name"]&limit=100&order_by=name+asc';
+		return fetch(url, { credentials: "include" })
+			.then(function (r) {
+				return r.json();
+			})
+			.then(function (d) {
+				var docs = (d && d.data) || [];
+				return docs.map(function (c) {
+					return c.name;
+				});
+			})
+			.catch(function () {
+				return [];
+			});
+	}
+
+	function isApplicationOpen(settings) {
+		if (!settings.application_portal_enabled) return false;
+		var today = new Date().toISOString().slice(0, 10);
+		if (settings.application_open_from && settings.application_open_from > today) return false;
+		if (settings.application_open_until && settings.application_open_until < today)
+			return false;
+		return true;
+	}
+
+	function showClosed(settings) {
+		var wrap = $id("pi-apply-wrap");
+		var prog = $id("pi-apply-progress");
+		var closed = $id("pi-apply-closed");
+		var msgEl = $id("pi-closed-message");
+		if (wrap) wrap.style.display = "none";
+		if (prog) prog.style.display = "none";
+		if (closed) closed.style.display = "";
+		if (msgEl) {
+			msgEl.textContent =
+				settings.application_closed_message ||
+				"Applications are currently closed. Please check back later.";
+		}
+		window.scrollTo(0, 0);
+	}
+
+	function showApplicationBanner(settings) {
+		var banner = $id("pi-apply-banner");
+		if (!banner) return;
+		var parts = [];
+		if (settings.application_default_cohort) parts.push(settings.application_default_cohort);
+		if (settings.application_default_year) parts.push(settings.application_default_year);
+		if (settings.application_open_until) {
+			parts.push("Closes: " + settings.application_open_until);
+		}
+		if (parts.length) {
+			banner.innerHTML =
+				'<div class="pi-context-bar" style="margin-bottom:1rem;">' +
+				parts
+					.map(function (p) {
+						return "<span><strong>" + esc(p) + "</strong></span>";
+					})
+					.join('<span style="color:var(--pi-muted);">·</span>') +
+				"</div>";
+		}
+	}
+
+	// ---------------------------------------------------------------------------
 	// Init
 	// ---------------------------------------------------------------------------
 
 	document.addEventListener("DOMContentLoaded", function () {
-		showSection(0);
-
 		var nextBtn = $id("pi-nav-next");
 		var prevBtn = $id("pi-nav-prev");
 		var submitBtn = $id("pi-nav-submit");
@@ -781,5 +892,39 @@
 		if (nextBtn) nextBtn.addEventListener("click", goNext);
 		if (prevBtn) prevBtn.addEventListener("click", goPrev);
 		if (submitBtn) submitBtn.addEventListener("click", doSubmit);
+
+		// Show skeleton loader while fetching
+		var body = $id("pi-apply-body");
+		if (body) {
+			body.innerHTML =
+				'<div class="pi-skeleton" style="height:2.5rem;border-radius:0.5rem;margin-bottom:0.75rem;"></div>' +
+				'<div class="pi-skeleton" style="height:2.5rem;border-radius:0.5rem;margin-bottom:0.75rem;"></div>' +
+				'<div class="pi-skeleton" style="height:2.5rem;border-radius:0.5rem;"></div>';
+		}
+
+		Promise.all([fetchPortalSettings(), fetchVocalCourses()]).then(function (results) {
+			var settings = results[0];
+			var courses = results[1];
+
+			portalSettings = settings;
+
+			if (!isApplicationOpen(settings)) {
+				showClosed(settings);
+				return;
+			}
+
+			// Store fetched courses in the SECTIONS options arrays so renderField uses them
+			vokalCourses.length = 0;
+			courses.forEach(function (c) {
+				vokalCourses.push(c);
+			});
+			// Fallback: if no courses configured yet, show a generic message
+			if (!vokalCourses.length) {
+				vokalCourses.push("No courses available — contact the office");
+			}
+
+			showApplicationBanner(settings);
+			showSection(0);
+		});
 	});
 })();

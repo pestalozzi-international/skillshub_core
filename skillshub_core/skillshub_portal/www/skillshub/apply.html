@@ -45,8 +45,22 @@
   </div>
 </div>
 
+<!-- Closed screen (shown when applications are disabled or outside active window) -->
+<div id="pi-apply-closed" style="display:none;">
+  <div class="pi-wrap pi-wrap-narrow" style="padding-top:2rem;padding-bottom:6rem;">
+    <div class="pi-card" style="text-align:center;padding:2.5rem 2rem;">
+      <div style="font-size:3.5rem;margin-bottom:1rem;">🔒</div>
+      <h2 style="color:var(--pi-black);margin:0 0 0.75rem;">Applications Closed</h2>
+      <p id="pi-closed-message" style="color:var(--pi-muted);margin:0 0 1.5rem;font-size:1rem;"></p>
+      <a href="/skillshub/" class="pi-btn pi-btn-secondary" style="text-decoration:none;display:inline-block;">← Back to Portal</a>
+    </div>
+  </div>
+</div>
+
 <!-- Main form area -->
 <div id="pi-apply-wrap" class="pi-wrap pi-wrap-narrow" style="padding-top:1.5rem;padding-bottom:6rem;">
+  <!-- Application info banner (cohort / year / closing date) -->
+  <div id="pi-apply-banner"></div>
   <!-- Progress -->
   <div id="pi-apply-progress" style="margin-bottom:1.5rem;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
@@ -54,7 +68,7 @@
       <span id="pi-section-counter" style="font-size:0.8rem;color:var(--pi-muted);"></span>
     </div>
     <div style="height:4px;background:var(--pi-border);border-radius:2px;overflow:hidden;">
-      <div id="pi-progress-bar" style="height:100%;background:var(--pi-blue);border-radius:2px;transition:width 0.3s;width:0%;"></div>
+      <div id="pi-progress-bar" style="height:100%;background:var(--pi-red,#CA0733);border-radius:2px;transition:width 0.3s;width:0%;"></div>
     </div>
   </div>
 

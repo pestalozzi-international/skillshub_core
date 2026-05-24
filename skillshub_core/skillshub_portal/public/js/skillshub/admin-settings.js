@@ -76,6 +76,47 @@
 			],
 		},
 		{
+			id: "application",
+			title: "Application Portal",
+			icon: "📝",
+			desc: "Control the public application form at /skillshub/apply. Set the active cohort and year — these are auto-filled on every submitted application.",
+			fields: [
+				{
+					key: "application_portal_enabled",
+					label: "Applications Open",
+					type: "check",
+				},
+				{
+					key: "application_open_from",
+					label: "Open From (optional)",
+					type: "date",
+				},
+				{
+					key: "application_open_until",
+					label: "Open Until (optional)",
+					type: "date",
+				},
+				{
+					key: "application_default_cohort",
+					label: "Application Cohort",
+					type: "link",
+					doctype: "SH Cohort",
+				},
+				{
+					key: "application_default_year",
+					label: "Application Academic Year",
+					type: "link",
+					doctype: "SH Academic Year",
+				},
+				{
+					key: "application_closed_message",
+					label: "Applications Closed Message",
+					type: "textarea",
+					placeholder: "Applications are currently closed. Please check back later.",
+				},
+			],
+		},
+		{
 			id: "routes",
 			title: "Navigation Routes",
 			icon: "🗺️",
@@ -277,6 +318,20 @@
 		);
 	}
 
+	function buildCheckField(key, label, value) {
+		return (
+			'<div class="s-field">' +
+			'<label class="s-label" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">' +
+			'<input type="checkbox" data-key="' +
+			esc(key) +
+			'" style="width:1.1rem;height:1.1rem;accent-color:var(--pi-red,#CA0733);"' +
+			(value ? " checked" : "") +
+			">" +
+			esc(label) +
+			"</label></div>"
+		);
+	}
+
 	function buildLinkField(key, label, doctype, value) {
 		return (
 			'<div class="s-field">' +
@@ -353,13 +408,16 @@
 			html += '<div class="s-section-body">';
 
 			section.fields.forEach(function (field) {
-				var val = settings[field.key] || "";
+				var val = settings[field.key];
+				if (val === undefined || val === null) val = "";
 				if (field.type === "color") {
 					html += buildColorSwatch(field.key, val);
 				} else if (field.type === "image") {
 					html += buildImageField(field.key, field.label, val, field.placeholder);
 				} else if (field.type === "link") {
 					html += buildLinkField(field.key, field.label, field.doctype, val);
+				} else if (field.type === "check") {
+					html += buildCheckField(field.key, field.label, val);
 				} else {
 					html += buildTextField(
 						field.key,
@@ -443,7 +501,11 @@
 		document.querySelectorAll("[data-key]").forEach(function (input) {
 			var key = input.getAttribute("data-key");
 			if (!key) return;
-			payload[key] = input.value;
+			if (input.type === "checkbox") {
+				payload[key] = input.checked ? 1 : 0;
+			} else {
+				payload[key] = input.value;
+			}
 		});
 		return payload;
 	}

@@ -34,7 +34,15 @@
   "current_cohort",
   "default_academic_year",
   "column_break_defaults",
-  "default_programme"
+  "default_programme",
+  "section_application",
+  "application_portal_enabled",
+  "application_open_from",
+  "application_open_until",
+  "column_break_application",
+  "application_default_cohort",
+  "application_default_year",
+  "application_closed_message"
  ],
  "fields": [
   {
@@ -201,6 +209,48 @@
    "fieldtype": "Link",
    "label": "Default Programme",
    "options": "SkillsHub Programme"
+  },
+  {
+   "fieldname": "section_application",
+   "fieldtype": "Section Break",
+   "label": "Application Portal"
+  },
+  {
+   "default": "0",
+   "fieldname": "application_portal_enabled",
+   "fieldtype": "Check",
+   "label": "Applications Open"
+  },
+  {
+   "fieldname": "application_open_from",
+   "fieldtype": "Date",
+   "label": "Open From (optional)"
+  },
+  {
+   "fieldname": "application_open_until",
+   "fieldtype": "Date",
+   "label": "Open Until (optional)"
+  },
+  {
+   "fieldname": "column_break_application",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "application_default_cohort",
+   "fieldtype": "Link",
+   "label": "Default Cohort",
+   "options": "SH Cohort"
+  },
+  {
+   "fieldname": "application_default_year",
+   "fieldtype": "Link",
+   "label": "Default Academic Year",
+   "options": "SH Academic Year"
+  },
+  {
+   "fieldname": "application_closed_message",
+   "fieldtype": "Small Text",
+   "label": "Applications Closed Message"
   }
  ],
  "index_web_pages_for_search": 0,

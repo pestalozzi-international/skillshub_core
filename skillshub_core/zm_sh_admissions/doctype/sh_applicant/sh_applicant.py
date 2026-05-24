@@ -76,22 +76,25 @@ class SHApplicant(Document):
 			"number_of_siblings": "number_of_siblings",
 			"highest_level_of_schooling": "highest_level_of_schooling",
 			"last_school_attended": "last_school_attended",
+			"year_left_school": "last_year_of_schooling",
 			"can_read_and_write": "can_read_and_write",
 			"has_vocational_training_history": "has_vocational_training_history",
 			"vocational_training_details": "vocational_training_received",
+			"has_volunteering_history": "has_volunteering_history",
+			"details_of_volunteering": "details_of_volunteering",
+			"parents_marital_status": "parents_marital_status",
 			"nrc_number": "nrc_number",
 			"intake_year": "intake_year",
 			"intake_cohort": "intake_cohort",
 			"date_of_birth": "date_of_birth",
 		}
 
+		_check_fields = {"has_vocational_training_history", "has_volunteering_history"}
 		for applicant_field, student_field in field_map.items():
 			value = getattr(self, applicant_field, None)
-			if (
-				value is not None and value != "" and value != 0
-			) or applicant_field == "has_vocational_training_history":
+			if (value is not None and value != "" and value != 0) or applicant_field in _check_fields:
 				# For Check fields, include even when 0 so the value is explicit
-				if applicant_field == "has_vocational_training_history":
+				if applicant_field in _check_fields:
 					student_doc[student_field] = cint(value)
 				else:
 					if value is not None and value != "":

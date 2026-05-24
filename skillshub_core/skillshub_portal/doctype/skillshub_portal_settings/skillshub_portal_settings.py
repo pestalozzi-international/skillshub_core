@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+from frappe.utils import cint
 
 
 class SkillsHubPortalSettings(Document):
@@ -39,4 +40,11 @@ def get_portal_settings():
 		"favicon": doc.favicon or "",
 		"current_cohort": doc.current_cohort or "",
 		"default_academic_year": doc.default_academic_year or "",
+		"application_portal_enabled": cint(doc.application_portal_enabled),
+		"application_open_from": str(doc.application_open_from) if doc.application_open_from else "",
+		"application_open_until": str(doc.application_open_until) if doc.application_open_until else "",
+		"application_default_cohort": doc.application_default_cohort or "",
+		"application_default_year": doc.application_default_year or "",
+		"application_closed_message": doc.application_closed_message
+		or "Applications are currently closed. Please check back later.",
 	}
