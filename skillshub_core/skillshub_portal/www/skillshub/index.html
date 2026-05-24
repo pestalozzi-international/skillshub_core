@@ -8,20 +8,20 @@
   <link rel="stylesheet" href="/skillshub/theme.css?v=4.2">
   <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.2">
   <style>
-    .landing-wrap { min-height:100vh; display:grid; place-items:center; padding:2rem; background:var(--pi-red); }
-    .landing-card { width:min(460px,100%); background:rgba(255,255,255,0.96); border-radius:1.25rem; box-shadow:0 12px 40px rgba(0,0,0,0.22); padding:2.5rem 2rem; text-align:center; }
-    .pi-circle-logo { width:4rem; height:4rem; background:var(--pi-red); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-size:1.3rem; margin:0 auto 1.25rem; }
-    .landing-title { font-size:1.75rem; font-weight:800; color:var(--pi-red); margin:0 0 0.35rem; font-family:'Helvetica Neue',Arial,sans-serif; }
-    .landing-org   { font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--pi-muted); margin:0 0 1.75rem; }
+    .landing-wrap { min-height:100vh; display:grid; place-items:center; padding:2rem; background:var(--color-slate-50,#F1E8DA); }
+    .landing-card { width:min(460px,100%); background:#ffffff; border-radius:1.25rem; box-shadow:0 12px 40px rgba(52,56,55,0.14); padding:2.5rem 2rem; text-align:center; }
+    .pi-circle-logo { width:4rem; height:4rem; background:var(--pi-red,#CA0733); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-size:1.3rem; margin:0 auto 1.25rem; }
+    .landing-title { font-size:1.75rem; font-weight:800; color:var(--pi-red,#CA0733); margin:0 0 0.35rem; font-family:'Helvetica Neue',Arial,sans-serif; }
+    .landing-org   { font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--pi-muted,#6b6f6e); margin:0 0 1.75rem; }
     .landing-btn   { display:block; text-decoration:none; border-radius:0.85rem; padding:1rem 1.5rem; font-weight:700; font-size:1rem; text-align:center; transition:all 0.18s; margin-top:0.75rem; }
-    .landing-btn-primary { background:var(--pi-red); color:white; }
-    .landing-btn-primary:hover { background:var(--pi-red-dark); transform:translateY(-1px); box-shadow:0 4px 14px rgba(202,7,51,0.35); }
-    .landing-btn-ghost { background:transparent; color:var(--pi-red); border:1.5px solid var(--pi-red); }
-    .landing-btn-ghost:hover { background:var(--pi-red-light); }
-    .landing-btn-apply { background:#16a34a; color:white; }
-    .landing-btn-apply:hover { background:#15803d; transform:translateY(-1px); box-shadow:0 4px 14px rgba(22,163,74,0.32); }
-    .landing-divider { display:flex; align-items:center; gap:0.75rem; margin:1.25rem 0; color:var(--pi-muted); font-size:0.8rem; }
-    .landing-divider::before,.landing-divider::after { content:''; flex:1; height:1px; background:var(--pi-border); }
+    .landing-btn-primary { background:var(--pi-red,#CA0733); color:white; }
+    .landing-btn-primary:hover { background:var(--pi-red-dark,#a3052a); transform:translateY(-1px); box-shadow:0 4px 14px rgba(202,7,51,0.3); }
+    .landing-btn-ghost { background:transparent; color:var(--pi-red,#CA0733); border:1.5px solid var(--pi-red,#CA0733); }
+    .landing-btn-ghost:hover { background:var(--pi-red-light,#f7d0da); }
+    .landing-btn-apply { background:var(--color-accent-500,#C6F1F6); color:var(--pi-black,#343837); }
+    .landing-btn-apply:hover { background:var(--pi-sky-dark,#9de3eb); transform:translateY(-1px); box-shadow:0 4px 14px rgba(52,56,55,0.12); }
+    .landing-divider { display:flex; align-items:center; gap:0.75rem; margin:1.25rem 0; color:var(--pi-muted,#6b6f6e); font-size:0.8rem; }
+    .landing-divider::before,.landing-divider::after { content:''; flex:1; height:1px; background:var(--pi-border,#e8ddd0); }
   </style>
   <script>
     window.frappe = {};
