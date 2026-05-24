@@ -39,5 +39,4 @@ def get_portal_settings():
 		"favicon": doc.favicon or "",
 		"current_cohort": doc.current_cohort or "",
 		"default_academic_year": doc.default_academic_year or "",
-		"default_programme": doc.default_programme or "",
 	}

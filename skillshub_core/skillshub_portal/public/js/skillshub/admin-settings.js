@@ -79,19 +79,21 @@
 			id: "routes",
 			title: "Navigation Routes",
 			icon: "🗺️",
-			desc: "Where users land after logging in. Admin route: /skillshub/admin/students (default). Student route: /skillshub/s/ (default).",
+			desc: "Where users land after logging in. These values are set by the system — do not change them.",
 			fields: [
 				{
 					key: "admin_home_route",
 					label: "Admin Home Route",
 					type: "text",
 					placeholder: "/skillshub/admin/students",
+					readonly: true,
 				},
 				{
 					key: "student_home_route",
 					label: "Student Home Route",
 					type: "text",
 					placeholder: "/skillshub/s/",
+					readonly: true,
 				},
 			],
 		},
@@ -99,25 +101,19 @@
 			id: "defaults",
 			title: "Programme Defaults",
 			icon: "⚙️",
-			desc: "Pre-filled values for the enrolment form and session context.",
+			desc: "Current cohort shown on student profile cards and used as the default in enrolment forms.",
 			fields: [
 				{
 					key: "current_cohort",
 					label: "Current Cohort",
-					type: "text",
-					placeholder: "e.g. Cohort 7",
+					type: "link",
+					doctype: "SH Cohort",
 				},
 				{
 					key: "default_academic_year",
 					label: "Default Academic Year",
-					type: "text",
-					placeholder: "e.g. 2026",
-				},
-				{
-					key: "default_programme",
-					label: "Default Programme",
-					type: "text",
-					placeholder: "e.g. Soft Skills Programme",
+					type: "link",
+					doctype: "SH Academic Year",
 				},
 			],
 		},
@@ -241,7 +237,7 @@
 		);
 	}
 
-	function buildTextField(key, label, type, value, placeholder) {
+	function buildTextField(key, label, type, value, placeholder, readonly) {
 		if (type === "textarea") {
 			return (
 				'<div class="s-field s-field-full">' +
@@ -258,6 +254,9 @@
 				"</div>"
 			);
 		}
+		var readonlyAttr = readonly
+			? ' readonly style="opacity:0.6;cursor:default;background:var(--pi-sand,#F1E8DA);"'
+			: "";
 		return (
 			'<div class="s-field">' +
 			'<label class="s-label">' +
@@ -271,9 +270,71 @@
 			esc(value || "") +
 			'" placeholder="' +
 			esc(placeholder || "") +
-			'">' +
+			'"' +
+			readonlyAttr +
+			">" +
 			"</div>"
 		);
+	}
+
+	function buildLinkField(key, label, doctype, value) {
+		return (
+			'<div class="s-field">' +
+			'<label class="s-label">' +
+			esc(label) +
+			"</label>" +
+			'<select class="s-input" data-key="' +
+			esc(key) +
+			'" data-doctype="' +
+			esc(doctype) +
+			'">' +
+			'<option value="">— Loading… —</option>' +
+			(value
+				? '<option value="' + esc(value) + '" selected>' + esc(value) + "</option>"
+				: "") +
+			"</select>" +
+			"</div>"
+		);
+	}
+
+	function populateLinkFields() {
+		document.querySelectorAll("select[data-doctype]").forEach(function (sel) {
+			var doctype = sel.getAttribute("data-doctype");
+			var key = sel.getAttribute("data-key");
+			var currentVal = (key && currentSettings[key]) || "";
+			fetch(
+				"/api/resource/" +
+					encodeURIComponent(doctype) +
+					'?fields=["name"]&limit=100&order_by=name+asc',
+				{ credentials: "include", headers: headers() }
+			)
+				.then(function (r) {
+					return r.json();
+				})
+				.then(function (data) {
+					var docs = (data && data.data) || [];
+					var html = '<option value="">— Select —</option>';
+					docs.forEach(function (d) {
+						html +=
+							'<option value="' +
+							esc(d.name) +
+							'"' +
+							(d.name === currentVal ? " selected" : "") +
+							">" +
+							esc(d.name) +
+							"</option>";
+					});
+					sel.innerHTML = html;
+				})
+				.catch(function () {
+					sel.innerHTML =
+						'<option value="' +
+						esc(currentVal) +
+						'">' +
+						esc(currentVal || "— unable to load —") +
+						"</option>";
+				});
+		});
 	}
 
 	function renderSettings(settings) {
@@ -297,13 +358,16 @@
 					html += buildColorSwatch(field.key, val);
 				} else if (field.type === "image") {
 					html += buildImageField(field.key, field.label, val, field.placeholder);
+				} else if (field.type === "link") {
+					html += buildLinkField(field.key, field.label, field.doctype, val);
 				} else {
 					html += buildTextField(
 						field.key,
 						field.label,
 						field.type,
 						val,
-						field.placeholder
+						field.placeholder,
+						field.readonly
 					);
 				}
 			});
@@ -314,6 +378,7 @@
 		container.innerHTML = html;
 		bindColorSync();
 		bindFileUploads();
+		populateLinkFields();
 	}
 
 	function bindColorSync() {

@@ -1413,7 +1413,6 @@ def update_portal_settings(values):
 		"favicon",
 		"current_cohort",
 		"default_academic_year",
-		"default_programme",
 	}
 
 	doc = frappe.get_single("SkillsHub Portal Settings")
