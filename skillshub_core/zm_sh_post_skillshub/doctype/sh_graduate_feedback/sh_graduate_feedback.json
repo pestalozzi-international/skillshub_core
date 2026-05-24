@@ -1,0 +1,307 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "SH-GF-.YY.-.####",
+ "creation": "2026-05-24 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "feedback_details_tab",
+  "section_student_info",
+  "sh_student",
+  "date_submitted",
+  "section_employment",
+  "employment_status",
+  "employment_type",
+  "column_break_employment",
+  "current_occupation",
+  "monthly_income_range",
+  "income_from_skillshub_skills",
+  "section_business",
+  "started_own_business",
+  "business_description",
+  "column_break_business",
+  "number_of_employees",
+  "section_impact",
+  "skills_are_being_applied",
+  "most_useful_aspects",
+  "impact_on_livelihood",
+  "impact_on_family",
+  "impact_on_community",
+  "section_community",
+  "has_shared_skills_with_others",
+  "skills_sharing_details",
+  "community_involvement",
+  "community_involvement_details",
+  "section_challenges",
+  "main_challenges_since_graduation",
+  "needs_further_support",
+  "support_type_needed",
+  "section_feedback",
+  "overall_satisfaction",
+  "would_recommend_skillshub",
+  "recommendation_message",
+  "programme_strengths",
+  "programme_improvements",
+  "additional_comments"
+ ],
+ "fields": [
+  {
+   "fieldname": "feedback_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Graduate Feedback"
+  },
+  {
+   "fieldname": "section_student_info",
+   "fieldtype": "Section Break",
+   "label": "Student"
+  },
+  {
+   "fieldname": "sh_student",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Student",
+   "options": "SH Student",
+   "read_only": 1,
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "date_submitted",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date Submitted",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_employment",
+   "fieldtype": "Section Break",
+   "label": "Current Status"
+  },
+  {
+   "fieldname": "employment_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Current Employment Status",
+   "options": "\nEmployed\nSelf-employed / Own Business\nFarming / Agriculture\nUnemployed (looking for work)\nUnemployed (not looking for work)\nIn further education or training\nOther",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval: doc.employment_status === 'Employed' || doc.employment_status === 'Self-employed / Own Business'",
+   "fieldname": "employment_type",
+   "fieldtype": "Select",
+   "label": "Type of Employment",
+   "options": "\nFull-time\nPart-time\nContract\nCasual / Seasonal\nFreelance / Gig work"
+  },
+  {
+   "fieldname": "column_break_employment",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "current_occupation",
+   "fieldtype": "Data",
+   "label": "Current Role or Business Name"
+  },
+  {
+   "fieldname": "monthly_income_range",
+   "fieldtype": "Select",
+   "label": "Monthly Income Range (ZMW)",
+   "options": "\nNo income\nLess than 500\n500 to 1,000\n1,000 to 2,000\n2,000 to 3,500\n3,500+"
+  },
+  {
+   "fieldname": "income_from_skillshub_skills",
+   "fieldtype": "Check",
+   "label": "My income is directly related to skills I learned at SkillsHub"
+  },
+  {
+   "fieldname": "section_business",
+   "fieldtype": "Section Break",
+   "label": "Business & Enterprise"
+  },
+  {
+   "fieldname": "started_own_business",
+   "fieldtype": "Check",
+   "label": "I have started my own business since graduating"
+  },
+  {
+   "depends_on": "eval: doc.started_own_business",
+   "fieldname": "business_description",
+   "fieldtype": "Small Text",
+   "label": "Describe your business (what you do, where, how long)"
+  },
+  {
+   "fieldname": "column_break_business",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval: doc.started_own_business",
+   "fieldname": "number_of_employees",
+   "fieldtype": "Int",
+   "label": "Number of people your business has employed"
+  },
+  {
+   "fieldname": "section_impact",
+   "fieldtype": "Section Break",
+   "label": "Programme Impact"
+  },
+  {
+   "fieldname": "skills_are_being_applied",
+   "fieldtype": "Select",
+   "label": "Are you actively applying the skills you learned at SkillsHub?",
+   "options": "\nYes, regularly\nYes, sometimes\nNot yet, but planning to\nNo",
+   "reqd": 1
+  },
+  {
+   "fieldname": "most_useful_aspects",
+   "fieldtype": "Small Text",
+   "label": "Which skills or courses have been most useful to you?"
+  },
+  {
+   "fieldname": "impact_on_livelihood",
+   "fieldtype": "Long Text",
+   "label": "How has the programme impacted your livelihood and income?"
+  },
+  {
+   "fieldname": "impact_on_family",
+   "fieldtype": "Long Text",
+   "label": "How has the programme impacted your family?"
+  },
+  {
+   "fieldname": "impact_on_community",
+   "fieldtype": "Small Text",
+   "label": "How has the programme contributed to your community?"
+  },
+  {
+   "fieldname": "section_community",
+   "fieldtype": "Section Break",
+   "label": "Knowledge Sharing & Community"
+  },
+  {
+   "fieldname": "has_shared_skills_with_others",
+   "fieldtype": "Check",
+   "label": "I have taught or mentored others using skills I learned at SkillsHub"
+  },
+  {
+   "depends_on": "eval: doc.has_shared_skills_with_others",
+   "fieldname": "skills_sharing_details",
+   "fieldtype": "Small Text",
+   "label": "Describe how you have shared your skills (who, what, where)"
+  },
+  {
+   "fieldname": "community_involvement",
+   "fieldtype": "Check",
+   "label": "I am actively involved in community organisations or activities"
+  },
+  {
+   "depends_on": "eval: doc.community_involvement",
+   "fieldname": "community_involvement_details",
+   "fieldtype": "Small Text",
+   "label": "Describe your community involvement"
+  },
+  {
+   "fieldname": "section_challenges",
+   "fieldtype": "Section Break",
+   "label": "Challenges & Support"
+  },
+  {
+   "fieldname": "main_challenges_since_graduation",
+   "fieldtype": "Long Text",
+   "label": "What main challenges have you faced since completing the programme?"
+  },
+  {
+   "fieldname": "needs_further_support",
+   "fieldtype": "Check",
+   "label": "I need further support from Pestalozzi International"
+  },
+  {
+   "depends_on": "eval: doc.needs_further_support",
+   "fieldname": "support_type_needed",
+   "fieldtype": "Small Text",
+   "label": "What type of support would be most helpful?"
+  },
+  {
+   "fieldname": "section_feedback",
+   "fieldtype": "Section Break",
+   "label": "Programme Feedback"
+  },
+  {
+   "fieldname": "overall_satisfaction",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Overall, how satisfied are you with your SkillsHub experience?",
+   "options": "\nExcellent\nVery Good\nGood\nFair\nPoor",
+   "reqd": 1
+  },
+  {
+   "fieldname": "would_recommend_skillshub",
+   "fieldtype": "Select",
+   "label": "Would you recommend SkillsHub to someone in similar circumstances?",
+   "options": "\nYes, definitely\nProbably yes\nNot sure\nProbably not\nNo",
+   "reqd": 1
+  },
+  {
+   "fieldname": "recommendation_message",
+   "fieldtype": "Small Text",
+   "label": "What would you tell them about the programme?"
+  },
+  {
+   "fieldname": "programme_strengths",
+   "fieldtype": "Small Text",
+   "label": "What did you appreciate most about the programme?"
+  },
+  {
+   "fieldname": "programme_improvements",
+   "fieldtype": "Small Text",
+   "label": "What could be improved in the programme?"
+  },
+  {
+   "fieldname": "additional_comments",
+   "fieldtype": "Long Text",
+   "label": "Any other thoughts or feedback?"
+  }
+ ],
+ "modified": "2026-05-24 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "ZM SH Post SkillsHub",
+ "name": "SH Graduate Feedback",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "PI Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Administrator",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -54,6 +54,11 @@ FEEDBACK_DOCTYPES = [
 		"route": "/skillshub/s/attachment",
 	},
 	{"doctype": "SH Parent Feedback", "label": "Parent Feedback", "route": "/skillshub/s/parent"},
+	{
+		"doctype": "SH Graduate Feedback",
+		"label": "Graduate Feedback",
+		"route": "/skillshub/s/graduate-feedback",
+	},
 ]
 
 
@@ -865,6 +870,7 @@ PUBLIC_FORM_ROUTES = {
 	"SH Edulution Feedback": "/skillshub/s/edulution",
 	"SH Attachment Feedback": "/skillshub/s/attachment",
 	"SH Parent Feedback": "/skillshub/s/parent",
+	"SH Graduate Feedback": "/skillshub/s/graduate-feedback",
 }
 
 
@@ -881,6 +887,12 @@ PUBLIC_FORM_LIST = [
 	{"doctype": "SH VT Feedback", "label": "Vocational Training Feedback", "section": "programme"},
 	{"doctype": "SH Attachment Feedback", "label": "Attachment Feedback", "section": "other"},
 	{"doctype": "SH Parent Feedback", "label": "Parent / Guardian Feedback", "section": "other"},
+	{
+		"doctype": "SH Graduate Feedback",
+		"label": "Graduate Feedback",
+		"section": "alumni",
+		"alumni_only": True,
+	},
 ]
 
 
@@ -1148,9 +1160,13 @@ def get_public_forms_context(student_id, token):
 	enrolment = enrolments[0] if enrolments else None
 
 	forms = []
+	student_status = (student_doc.get("status") or "").strip()
+
 	for spec in PUBLIC_FORM_LIST:
 		doctype = spec["doctype"]
 		if spec.get("path_a_only") and programme_path and programme_path != "Path A":
+			continue
+		if spec.get("alumni_only") and student_status != "Alumni":
 			continue
 		if not frappe.db.exists("DocType", doctype):
 			continue
@@ -1205,6 +1221,12 @@ def submit_public_form(student_id, token, doctype, values):
 	values = _json_arg(values, {})
 	if not isinstance(values, dict):
 		frappe.throw(_("Invalid payload."))
+
+	# Alumni-only server-side guard
+	if doctype == "SH Graduate Feedback":
+		student_status = frappe.db.get_value("SH Student", student_id, "status") or ""
+		if student_status != "Alumni":
+			frappe.throw(_("Graduate Feedback is only available for alumni."))
 
 	student_field = _feedback_student_field(doctype)
 	if not student_field:
