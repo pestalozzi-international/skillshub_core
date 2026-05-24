@@ -14,7 +14,7 @@
     /* Layout */
     .guide-wrap {
       display: grid;
-      grid-template-columns: 240px 1fr;
+      grid-template-columns: 220px 1fr;
       gap: 2rem;
       align-items: start;
       padding: 2rem 0 4rem;
@@ -46,14 +46,14 @@
       display: block;
       padding: 0.3rem 0.5rem;
       border-radius: 0.4rem;
-      color: var(--pi-black);
-      text-decoration: none;
+      color: var(--pi-black) !important;
+      text-decoration: none !important;
       line-height: 1.3;
       margin-bottom: 0.1rem;
     }
-    .guide-toc a:hover { background: var(--pi-sand); color: var(--pi-red); }
-    .guide-toc a.sub { padding-left: 1.1rem; font-size: 0.78rem; color: var(--pi-muted); }
-    .guide-toc a.sub:hover { color: var(--pi-red); }
+    .guide-toc a:hover { background: var(--pi-sand); color: var(--pi-red) !important; }
+    .guide-toc a.sub { padding-left: 1.1rem; font-size: 0.78rem; color: var(--pi-muted) !important; }
+    .guide-toc a.sub:hover { color: var(--pi-red) !important; }
 
     /* Sections */
     .guide-section {
@@ -92,9 +92,9 @@
       line-height: 1.65;
       color: var(--pi-black);
     }
-    .guide-section-body li { margin-bottom: 0.2rem; }
+    .guide-section-body li { margin-bottom: 0.25rem; }
     .guide-section-body strong { color: var(--pi-black); }
-    .guide-section-body a { color: var(--pi-red); }
+    .guide-section-body a { color: var(--pi-red) !important; }
     .guide-section-body code {
       background: var(--pi-sand);
       border: 1px solid var(--pi-border);
@@ -102,18 +102,24 @@
       padding: 0.1rem 0.4rem;
       font-size: 0.83rem;
       font-family: monospace;
+      color: var(--pi-black);
     }
 
-    /* Steps */
-    .steps { counter-reset: step; margin: 0 0 0.9rem; padding: 0; list-style: none; }
+    /* Steps — numbered list with red circles.
+       The li is flex so ::before (the circle) and the text content sit side-by-side.
+       Each li's text MUST be wrapped in a single <span> so it stays as one flex item
+       and doesn't fragment into one flex item per inline element. */
+    .steps {
+      counter-reset: step;
+      margin: 0 0 0.9rem;
+      padding: 0;
+      list-style: none;
+    }
     .steps li {
       display: flex;
       gap: 0.875rem;
       align-items: flex-start;
-      margin-bottom: 0.75rem;
-      font-size: 0.9rem;
-      line-height: 1.6;
-      color: var(--pi-black);
+      margin-bottom: 0.8rem;
     }
     .steps li::before {
       counter-increment: step;
@@ -128,10 +134,17 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 0.1rem;
+      margin-top: 0.15rem;
+    }
+    /* The span inside each li is the sole second flex item — wraps all text content */
+    .steps li > span {
+      flex: 1;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      color: var(--pi-black);
     }
 
-    /* Info / tip boxes */
+    /* Info / tip / warn boxes */
     .guide-tip, .guide-warn, .guide-info {
       display: flex;
       gap: 0.75rem;
@@ -144,7 +157,9 @@
     .guide-tip  { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
     .guide-warn { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; }
     .guide-info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
-    .guide-tip  .gi, .guide-warn .gi, .guide-info .gi { flex-shrink: 0; font-size: 1.1rem; }
+    .guide-tip  .gi, .guide-warn .gi, .guide-info .gi { flex-shrink: 0; font-size: 1.1rem; line-height: 1; margin-top: 0.1rem; }
+    .guide-tip  strong, .guide-warn strong, .guide-info strong { color: inherit; }
+    .guide-tip  a, .guide-warn a, .guide-info a { color: inherit !important; }
 
     /* Key-value pills */
     .kv-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.9rem; }
@@ -152,40 +167,62 @@
       display: flex; flex-direction: column;
       background: var(--pi-sand); border: 1px solid var(--pi-border);
       border-radius: 0.6rem; padding: 0.45rem 0.75rem;
-      min-width: 140px;
+      min-width: 130px;
     }
     .kv-pill-key { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: var(--pi-muted); margin-bottom: 0.15rem; }
     .kv-pill-val { font-size: 0.88rem; font-weight: 700; color: var(--pi-black); }
 
-    /* Page nav links */
+    /* Buttons / links */
     .page-link {
       display: inline-flex; align-items: center; gap: 0.35rem;
-      background: var(--pi-red); color: white;
-      text-decoration: none; border-radius: 0.5rem;
-      padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 700;
+      background: var(--pi-red);
+      color: white !important;
+      text-decoration: none !important;
+      border-radius: 0.5rem;
+      padding: 0.4rem 0.875rem;
+      font-size: 0.82rem; font-weight: 700;
+      border: none;
     }
-    .page-link:hover { background: var(--pi-red-dark); }
+    .page-link:hover { background: var(--pi-red-dark); color: white !important; }
     .page-link-sec {
       display: inline-flex; align-items: center; gap: 0.35rem;
-      background: white; color: var(--pi-black);
+      background: white;
+      color: var(--pi-black) !important;
       border: 1px solid var(--pi-border);
-      text-decoration: none; border-radius: 0.5rem;
-      padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 700;
+      text-decoration: none !important;
+      border-radius: 0.5rem;
+      padding: 0.4rem 0.875rem;
+      font-size: 0.82rem; font-weight: 700;
     }
-    .page-link-sec:hover { border-color: var(--pi-red); color: var(--pi-red); }
+    .page-link-sec:hover { border-color: var(--pi-red); color: var(--pi-red) !important; }
     .link-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.9rem; }
 
     /* Divider */
-    .guide-divider { border: none; border-top: 1px solid var(--pi-border); margin: 1rem 0; }
+    .guide-divider { border: none; border-top: 1px solid var(--pi-border); margin: 1.25rem 0; }
 
     /* Table */
     .guide-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; margin-bottom: 0.9rem; }
-    .guide-table th { text-align: left; padding: 0.5rem 0.75rem; background: var(--pi-sand); font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--pi-muted); border-bottom: 1px solid var(--pi-border); }
-    .guide-table td { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--pi-border); vertical-align: top; color: var(--pi-black); }
+    .guide-table th {
+      text-align: left; padding: 0.5rem 0.75rem;
+      background: var(--pi-sand);
+      font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--pi-muted);
+      border-bottom: 1px solid var(--pi-border);
+    }
+    .guide-table td {
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid var(--pi-border);
+      vertical-align: top; color: var(--pi-black);
+      font-size: 0.875rem; line-height: 1.5;
+    }
     .guide-table tr:last-child td { border-bottom: none; }
 
-    /* Badge */
-    .badge { display: inline-block; padding: 1px 8px; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; }
+    /* Status badges */
+    .badge {
+      display: inline-block;
+      padding: 1px 9px; border-radius: 9999px;
+      font-size: 0.72rem; font-weight: 700; white-space: nowrap;
+    }
     .badge-green  { background: #d1fae5; color: #065f46; }
     .badge-blue   { background: #dbeafe; color: #1e40af; }
     .badge-red    { background: #fee2e2; color: #991b1b; }
@@ -259,13 +296,35 @@
 
           <h3>Key record types</h3>
           <table class="guide-table">
-            <thead><tr><th>Record</th><th>What it is</th><th>Where you create it</th></tr></thead>
+            <thead>
+              <tr><th>Record</th><th>What it is</th><th>Where you create it</th></tr>
+            </thead>
             <tbody>
-              <tr><td><strong>SH Student</strong></td><td>The core person record. Holds name, DOB, contact details, guardian info, photo. The student's ID (e.g. <code>SH.26.0001</code>) comes from this record.</td><td>Desk</td></tr>
-              <tr><td><strong>SH Applicant</strong></td><td>Created when someone submits the online application form. Reviewed before a Student record is made.</td><td>Online form / Desk</td></tr>
-              <tr><td><strong>SH Class</strong></td><td>A specific run of a course — e.g. "VT-R1A". Holds dates, instructors, and max strength.</td><td>Desk</td></tr>
-              <tr><td><strong>SH Enrolment</strong></td><td>Links one student to one class. Tracks attendance totals, status, and whether forms have been submitted.</td><td>Desk</td></tr>
-              <tr><td><strong>SH Academic Year</strong></td><td>Container for a cohort year, used for filtering in reports.</td><td>Desk</td></tr>
+              <tr>
+                <td><strong>SH Student</strong></td>
+                <td>The core person record. Holds name, DOB, contact details, guardian info, and photo. The student's ID (e.g. <code>SH.26.0001</code>) comes from this record.</td>
+                <td>Desk</td>
+              </tr>
+              <tr>
+                <td><strong>SH Applicant</strong></td>
+                <td>Created when someone submits the online application form. Reviewed before a Student record is made.</td>
+                <td>Online form / Desk</td>
+              </tr>
+              <tr>
+                <td><strong>SH Class</strong></td>
+                <td>A specific run of a course — e.g. <code>VT-R1A</code>. Holds dates, instructors, and max strength.</td>
+                <td>Desk</td>
+              </tr>
+              <tr>
+                <td><strong>SH Enrolment</strong></td>
+                <td>Links one student to one class. Tracks attendance totals, status, and whether forms have been submitted.</td>
+                <td>Desk</td>
+              </tr>
+              <tr>
+                <td><strong>SH Academic Year</strong></td>
+                <td>Container for a cohort year, used for filtering in reports.</td>
+                <td>Desk</td>
+              </tr>
             </tbody>
           </table>
 
@@ -294,7 +353,10 @@
         <div class="guide-section-body">
           <h3>Admin portal</h3>
           <p>Navigate to <code>/skillshub/admin/students</code>. You will be redirected to the Frappe login page if you are not already signed in. Log in with your Pestalozzi staff email and password.</p>
-          <div class="guide-info"><span class="gi">ℹ️</span><span>You need the <strong>PI Admin</strong>, <strong>SH Admin</strong>, or <strong>System Manager</strong> role to see the admin portal. Contact your system administrator if you get a "Not permitted" error.</span></div>
+          <div class="guide-info">
+            <span class="gi">ℹ️</span>
+            <span>You need the <strong>PI Admin</strong>, <strong>SH Admin</strong>, or <strong>System Manager</strong> role to see the admin portal. Contact your system administrator if you get a "Not permitted" error.</span>
+          </div>
 
           <h3>The Desk</h3>
           <p>Click <strong>Desk ↗</strong> in the top navigation to open the Frappe back-office in a new tab. The same login credentials apply.</p>
@@ -315,15 +377,15 @@
         </div>
         <div class="guide-section-body">
           <ol class="steps">
-            <li><strong>Application submitted</strong> — via the online portal (<code>/skillshub/apply</code>) or entered manually as an <em>SH Applicant</em> record in the Desk. Status is <span class="badge badge-orange">Submitted</span>.</li>
-            <li><strong>Review &amp; interview</strong> — the admissions team reviews the applicant in the Desk. After interview, the record is updated (notes, outcome).</li>
-            <li><strong>Student record created</strong> — once accepted, a new <em>SH Student</em> record is created in the Desk. The system assigns a Student ID automatically (see next section).</li>
-            <li><strong>Enrolment created</strong> — the student is enrolled in their first class by creating an <em>SH Enrolment</em> record linking them to an <em>SH Class</em>. Status is <span class="badge badge-blue">Enrolled</span>.</li>
-            <li><strong>Baseline form</strong> — the student completes the Baseline Assessment via the student portal. This captures their starting point.</li>
-            <li><strong>Programme delivery</strong> — classes run. Attendance is recorded daily using the portal Attendance page.</li>
-            <li><strong>Feedback forms</strong> — at the end of each programme segment, the student completes the relevant feedback form in the portal.</li>
-            <li><strong>Graduation</strong> — when all enrolments are completed, the student's status is changed to <span class="badge badge-green">Alumni</span> in the Desk.</li>
-            <li><strong>Graduate Feedback</strong> — alumni can complete the Graduate Feedback form at any time to report on their post-programme outcomes.</li>
+            <li><span><strong>Application submitted</strong> — via the online portal (<code>/skillshub/apply</code>) or entered manually as an SH Applicant record in the Desk. Status is <span class="badge badge-orange">Submitted</span>.</span></li>
+            <li><span><strong>Review &amp; interview</strong> — the admissions team reviews the applicant in the Desk. After interview, the record is updated with notes and outcome.</span></li>
+            <li><span><strong>Student record created</strong> — once accepted, a new SH Student record is created in the Desk. The system assigns a Student ID automatically (see next section).</span></li>
+            <li><span><strong>Enrolment created</strong> — the student is enrolled in their first class via an SH Enrolment record linking them to an SH Class. Status is <span class="badge badge-blue">Enrolled</span>.</span></li>
+            <li><span><strong>Baseline form</strong> — the student completes the Baseline Assessment via the student portal. This captures their starting point.</span></li>
+            <li><span><strong>Programme delivery</strong> — classes run. Attendance is recorded daily using the portal Attendance page.</span></li>
+            <li><span><strong>Feedback forms</strong> — at the end of each programme segment, the student completes the relevant feedback form in the portal.</span></li>
+            <li><span><strong>Graduation</strong> — when all enrolments are completed, the student's status is changed to <span class="badge badge-green">Alumni</span> in the Desk.</span></li>
+            <li><span><strong>Graduate Feedback</strong> — alumni can complete the Graduate Feedback form at any time to report on their post-programme outcomes.</span></li>
           </ol>
         </div>
       </section>
@@ -339,41 +401,50 @@
         </div>
         <div class="guide-section-body">
           <h3>How the ID is generated</h3>
-          <p>Every <em>SH Student</em> record is assigned an ID automatically when it is saved. The format follows the naming series:</p>
+          <p>Every SH Student record is assigned an ID automatically when it is saved for the first time. The format follows the naming series:</p>
           <div class="kv-row">
             <div class="kv-pill"><span class="kv-pill-key">Format</span><span class="kv-pill-val"><code>SH.YY.####</code></span></div>
             <div class="kv-pill"><span class="kv-pill-key">Example</span><span class="kv-pill-val"><code>SH.26.0001</code></span></div>
             <div class="kv-pill"><span class="kv-pill-key">YY</span><span class="kv-pill-val">Last 2 digits of current year</span></div>
             <div class="kv-pill"><span class="kv-pill-key">####</span><span class="kv-pill-val">Sequential 4-digit counter</span></div>
           </div>
-          <p>The counter resets each year, so the first student of 2027 will be <code>SH.27.0001</code>. <strong>You do not need to enter the ID manually</strong> — the system assigns it on save.</p>
+          <p>The counter resets each year, so the first student created in 2027 will be <code>SH.27.0001</code>. <strong>You do not need to enter the ID manually</strong> — the system assigns it on save.</p>
 
-          <div class="guide-tip"><span class="gi">✅</span><span>The ID is case-sensitive when students log in to the portal. It is always uppercase: <strong>SH.26.0001</strong>, never <em>sh.26.0001</em>.</span></div>
+          <div class="guide-tip">
+            <span class="gi">✅</span>
+            <span>The ID is case-sensitive when students log in to the portal. It is always uppercase: <strong>SH.26.0001</strong> — never <em>sh.26.0001</em>.</span>
+          </div>
 
           <hr class="guide-divider" id="create-student">
           <h3>Creating a student record in the Desk</h3>
           <ol class="steps">
-            <li>Open the Desk (<a href="/app" target="_blank">/app ↗</a>) and search for <strong>SH Student</strong> in the search bar, or navigate to <strong>ZM SkillsHub → SH Student</strong>.</li>
-            <li>Click <strong>New</strong> (top right).</li>
-            <li>Fill in at minimum: <strong>First Name</strong>, <strong>Last Name</strong>, <strong>Date of Birth</strong>, and <strong>Gender</strong>. These are required for portal login.</li>
-            <li>Enter the student's mobile number and personal email if known.</li>
-            <li>Set <strong>Status</strong> to <span class="badge badge-blue">Student</span>.</li>
-            <li>Link the <strong>Applicant Record</strong> if one exists.</li>
-            <li>Click <strong>Save</strong>. The ID (e.g. <code>SH.26.0047</code>) is assigned immediately and shown in the title bar and the <em>Full Name and ID</em> field.</li>
+            <li><span>Open the Desk (<a href="/app" target="_blank">/app ↗</a>) and search for <strong>SH Student</strong> in the search bar, or navigate to <strong>ZM SkillsHub → SH Student</strong>.</span></li>
+            <li><span>Click <strong>New</strong> (top right).</span></li>
+            <li><span>Fill in at minimum: <strong>First Name</strong>, <strong>Last Name</strong>, <strong>Date of Birth</strong>, and <strong>Gender</strong>. These fields are required for portal login.</span></li>
+            <li><span>Enter the student's mobile number and personal email if known.</span></li>
+            <li><span>Set <strong>Status</strong> to <span class="badge badge-blue">Student</span>.</span></li>
+            <li><span>Link the <strong>Applicant Record</strong> if one exists.</span></li>
+            <li><span>Click <strong>Save</strong>. The ID (e.g. <code>SH.26.0047</code>) is assigned immediately and shown in the title bar and the <em>Full Name and ID</em> field.</span></li>
           </ol>
 
-          <div class="guide-warn"><span class="gi">⚠️</span><span>Do <strong>not</strong> change the naming series field. Doing so will break the sequential numbering and could create duplicate or out-of-order IDs.</span></div>
+          <div class="guide-warn">
+            <span class="gi">⚠️</span>
+            <span>Do <strong>not</strong> change the Naming Series field. Doing so will break the sequential numbering and could create duplicate or out-of-order IDs.</span>
+          </div>
 
           <hr class="guide-divider" id="sharing-id">
           <h3>Sharing the Student ID with the student</h3>
           <p>Students need their ID to log into the portal. Communicate it clearly — by letter, text message, or verbally during orientation:</p>
           <ul>
-            <li>Tell them their <strong>Student ID</strong> (e.g. <code>SH.26.0047</code>) and remind them it is case-sensitive.</li>
-            <li>They will also need their <strong>Date of Birth</strong> (which they know) — this is what they use as their "password".</li>
+            <li>Tell them their <strong>Student ID</strong> (e.g. <code>SH.26.0047</code>) and that it is case-sensitive.</li>
+            <li>They will also need their <strong>Date of Birth</strong> (which they know) — this acts as their password.</li>
             <li>The portal login page is at <code>/skillshub/s/</code>.</li>
           </ul>
 
-          <div class="guide-info"><span class="gi">ℹ️</span><span>You can view all student IDs from the <a href="/skillshub/admin/students">Students page</a> or print physical student cards from the <a href="/skillshub/admin/student-cards">Student Cards page</a>.</span></div>
+          <div class="guide-info">
+            <span class="gi">ℹ️</span>
+            <span>You can view all student IDs from the <a href="/skillshub/admin/students">Students page</a> or print physical student cards from the <a href="/skillshub/admin/student-cards">Student Cards page</a>.</span>
+          </div>
         </div>
       </section>
 
@@ -387,16 +458,16 @@
           </div>
         </div>
         <div class="guide-section-body">
-          <p>An <em>SH Enrolment</em> connects one student to one class. A student will have one enrolment per programme segment they participate in.</p>
+          <p>An SH Enrolment connects one student to one class. A student will have one enrolment per programme segment they participate in.</p>
 
           <h3>Creating an enrolment</h3>
           <ol class="steps">
-            <li>In the Desk, navigate to <strong>SH Enrolment → New</strong>.</li>
-            <li>Select the <strong>Student</strong> (type the student ID or name to search).</li>
-            <li>Select the <strong>Class</strong> (e.g. <code>VT-R1A</code>). The course, programme, and path fields will populate automatically.</li>
-            <li>Set the <strong>Enrolment Date</strong>.</li>
-            <li>Leave <strong>Status</strong> as <span class="badge badge-blue">Enrolled</span>.</li>
-            <li>Save.</li>
+            <li><span>In the Desk, navigate to <strong>SH Enrolment → New</strong>.</span></li>
+            <li><span>Select the <strong>Student</strong> — type the student ID or name to search.</span></li>
+            <li><span>Select the <strong>Class</strong> (e.g. <code>VT-R1A</code>). The course, programme, and path fields populate automatically.</span></li>
+            <li><span>Set the <strong>Enrolment Date</strong>.</span></li>
+            <li><span>Leave <strong>Status</strong> as <span class="badge badge-blue">Enrolled</span>.</span></li>
+            <li><span>Save.</span></li>
           </ol>
 
           <h3>Enrolment statuses</h3>
@@ -409,7 +480,10 @@
             </tbody>
           </table>
 
-          <div class="guide-tip"><span class="gi">✅</span><span>The student's <strong>Programme Path</strong> on their student record is synced automatically from their most recent active enrolment. You don't need to set it manually.</span></div>
+          <div class="guide-tip">
+            <span class="gi">✅</span>
+            <span>The student's <strong>Programme Path</strong> field is synced automatically from their most recent active enrolment — you don't need to set it manually.</span>
+          </div>
         </div>
       </section>
 
@@ -426,14 +500,17 @@
           <p>Attendance is recorded per class, per day. Use the portal Attendance page — no Desk access needed.</p>
 
           <ol class="steps">
-            <li>Go to <a href="/skillshub/admin/attendance">Admin → Attendance</a>.</li>
-            <li>Select the <strong>Class</strong> from the dropdown.</li>
-            <li>Select the <strong>Date</strong>.</li>
-            <li>The roster loads showing all enrolled students. Mark each student <strong>Present</strong> or <strong>Absent</strong>.</li>
-            <li>Click <strong>Save Attendance</strong>. The totals on each enrolment record update automatically.</li>
+            <li><span>Go to <a href="/skillshub/admin/attendance">Admin → Attendance</a>.</span></li>
+            <li><span>Select the <strong>Class</strong> from the dropdown.</span></li>
+            <li><span>Select the <strong>Date</strong>.</span></li>
+            <li><span>The roster loads showing all enrolled students. Mark each student <strong>Present</strong> or <strong>Absent</strong>.</span></li>
+            <li><span>Click <strong>Save Attendance</strong>. The totals on each enrolment record update automatically.</span></li>
           </ol>
 
-          <div class="guide-info"><span class="gi">ℹ️</span><span>Attendance totals (Sessions Present / Absent / Rate) are stored on each <em>SH Enrolment</em> record and visible in the Programme Overview and student profile.</span></div>
+          <div class="guide-info">
+            <span class="gi">ℹ️</span>
+            <span>Attendance totals (Sessions Present / Absent / Rate) are stored on each SH Enrolment record and visible in the Programme Overview and on each student's profile.</span>
+          </div>
         </div>
       </section>
 
@@ -447,27 +524,31 @@
           </div>
         </div>
         <div class="guide-section-body">
-          <p>Students log into <code>/skillshub/s/</code> with their Student ID and Date of Birth. They see only the forms relevant to their current enrolment. Forms are submitted directly into the Desk.</p>
+          <p>Students log into <code>/skillshub/s/</code> with their Student ID and Date of Birth. They see only the forms relevant to their current enrolment. Submitted forms go directly into the Desk.</p>
 
           <table class="guide-table">
-            <thead><tr><th>Form</th><th>When to complete</th><th>Who sees it</th></tr></thead>
+            <thead>
+              <tr><th>Form</th><th>When to complete</th><th>Who sees it</th></tr>
+            </thead>
             <tbody>
               <tr><td>📝 <strong>Baseline Assessment</strong></td><td>At the very start of the programme</td><td>All enrolled students</td></tr>
-              <tr><td>⛺ <strong>Mindset Camp Feedback</strong></td><td>After Mindset Camp</td><td>Students enrolled in a Mindset Camp class</td></tr>
-              <tr><td>📖 <strong>Edulution Feedback</strong></td><td>After the Remedial programme</td><td>Students enrolled in Edulution</td></tr>
-              <tr><td>🧠 <strong>Soft Skills Feedback</strong></td><td>After the Soft Skills programme</td><td>Students enrolled in Soft Skills</td></tr>
-              <tr><td>🔧 <strong>VT Feedback</strong></td><td>After Vocational Training</td><td>Students enrolled in VT</td></tr>
-              <tr><td>🏢 <strong>Attachment Feedback</strong></td><td>After workplace attachment</td><td>Students enrolled in Attachment</td></tr>
+              <tr><td>⛺ <strong>Mindset Camp Feedback</strong></td><td>After Mindset Camp</td><td>Students in a Mindset Camp class</td></tr>
+              <tr><td>📖 <strong>Edulution Feedback</strong></td><td>After the Remedial programme</td><td>Students in Edulution</td></tr>
+              <tr><td>🧠 <strong>Soft Skills Feedback</strong></td><td>After the Soft Skills programme</td><td>Students in Soft Skills</td></tr>
+              <tr><td>🔧 <strong>VT Feedback</strong></td><td>After Vocational Training</td><td>Students in VT</td></tr>
+              <tr><td>🏢 <strong>Attachment Feedback</strong></td><td>After workplace attachment</td><td>Students in Attachment</td></tr>
               <tr><td>👨‍👩‍👧 <strong>Parent Feedback</strong></td><td>Any time during the programme</td><td>All enrolled students</td></tr>
-              <tr><td>🎓 <strong>Graduate Feedback</strong></td><td>After graduation — can resubmit</td><td>Alumni only</td></tr>
+              <tr><td>🎓 <strong>Graduate Feedback</strong></td><td>After graduation — can resubmit any time</td><td>Alumni only</td></tr>
             </tbody>
           </table>
 
-          <div class="guide-tip"><span class="gi">✅</span><span>Most feedback forms are <strong>once per enrolment</strong> — once submitted, the button changes to "Done". Graduate Feedback can be submitted multiple times over the years.</span></div>
+          <div class="guide-tip">
+            <span class="gi">✅</span>
+            <span>Most feedback forms are <strong>once per enrolment</strong> — once submitted, the button changes to "Done". Graduate Feedback can be submitted multiple times over the years.</span>
+          </div>
 
-          <h3>Reminding students to complete forms</h3>
-          <p>Check completion rates on the <a href="/skillshub/admin/programme-overview">Programme Overview</a> page. Each class shows a count of baselines and feedback submissions. You can see which students haven't completed forms by opening the class in the Programme Report on the Desk.</p>
-
+          <h3>Checking completion rates</h3>
+          <p>Use the Programme Overview to see which classes have low baseline or feedback completion. Open the desk report for per-student detail.</p>
           <div class="link-row">
             <a href="/skillshub/admin/programme-overview" class="page-link-sec">📊 Programme Overview</a>
             <a href="/app/query-report/SH%20Programme%20Overview" target="_blank" class="page-link-sec">📊 Detailed Report ↗</a>
@@ -486,11 +567,11 @@
         </div>
         <div class="guide-section-body">
           <h3>Portal tree view</h3>
-          <p>The <a href="/skillshub/admin/programme-overview">Programme Overview</a> page shows a collapsible tree: <strong>Intake Year → Cohort → Path → Programme → Class</strong>. Each class leaf shows enrolment counts, baseline count, and feedback submission counts for that class's programme type.</p>
+          <p>The <a href="/skillshub/admin/programme-overview">Programme Overview</a> page shows a collapsible tree: <strong>Intake Year → Cohort → Path → Programme → Class</strong>. Each class leaf shows enrolment counts, baseline count, and feedback counts for that class's programme type.</p>
           <p>Use the filter bar to narrow by year, cohort, path, programme, course, or course run. Click <strong>Expand All</strong> to see all students within each class.</p>
 
           <h3>Desk report</h3>
-          <p>For exports, sorting, and per-student detail, use the Desk report:</p>
+          <p>For exports, sorting, and per-student detail, use the full desk report:</p>
           <div class="link-row">
             <a href="/app/query-report/SH%20Programme%20Overview" target="_blank" class="page-link">📊 Open Full Report ↗</a>
           </div>
@@ -516,18 +597,21 @@
 
           <h3>How to graduate a student</h3>
           <ol class="steps">
-            <li>Find the student in the <a href="/skillshub/admin/students">Students page</a> and open their profile.</li>
-            <li>Click the <strong>Edit Record</strong> tab.</li>
-            <li>Change <strong>Status</strong> to <code>Alumni</code>.</li>
-            <li>Click <strong>Save Changes</strong>.</li>
+            <li><span>Find the student in the <a href="/skillshub/admin/students">Students page</a> and open their profile.</span></li>
+            <li><span>Click the <strong>Edit Record</strong> tab.</span></li>
+            <li><span>Change <strong>Status</strong> to <code>Alumni</code>.</span></li>
+            <li><span>Click <strong>Save Changes</strong>.</span></li>
           </ol>
 
-          <p>Alternatively, update the status directly in the Desk via <strong>SH Student</strong>.</p>
+          <p>Alternatively, update the status directly in the Desk via SH Student.</p>
 
-          <div class="guide-info"><span class="gi">ℹ️</span><span>Alumni students no longer see in-programme feedback forms. Only the Graduate Feedback form appears in their portal. They can log in as normal with their Student ID and Date of Birth.</span></div>
+          <div class="guide-info">
+            <span class="gi">ℹ️</span>
+            <span>Alumni students no longer see in-programme feedback forms. Only the Graduate Feedback form appears in their portal. They can continue to log in as normal with their Student ID and Date of Birth.</span>
+          </div>
 
-          <h3>What happens to enrolments</h3>
-          <p>Completing all enrolments does <em>not</em> automatically change the student status to Alumni — you must do this manually. Before graduating a student, make sure all their <em>SH Enrolment</em> records are set to <span class="badge badge-green">Completed</span>.</p>
+          <h3>Before graduating</h3>
+          <p>Completing all enrolments does <em>not</em> automatically set the student to Alumni — you must do this manually. Before graduating, make sure all their SH Enrolment records are set to <span class="badge badge-green">Completed</span>.</p>
         </div>
       </section>
 
