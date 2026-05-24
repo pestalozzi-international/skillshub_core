@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+from frappe.utils import cint
 
 
 class SHApplicant(Document):
@@ -15,10 +16,10 @@ class SHApplicant(Document):
 		-----
 		* Applicant status must be 'Accepted'.
 		* Cannot convert twice (converted_to_student must be empty).
-		* Tries to split full_name into first / last name on the first space;
+		* Splits full_name into first / last name on the first space;
 		  if only one word, puts it all in first_name.
-		* Copies email → personal_email, center → notes the center in a
-		  description field if SH Student ever gains one (for now ignored).
+		* Copies a comprehensive set of fields from the applicant to the
+		  new SH Student record where values are present.
 		* Sets applicant_record on the new SH Student back to this applicant.
 		* Marks this applicant as Converted and stores the new student name.
 
@@ -37,11 +38,11 @@ class SHApplicant(Document):
 			)
 
 		# Check if a student with the same email already exists
-		if self.email:
-			existing = frappe.db.get_value("SH Student", {"personal_email": self.email}, "name")
+		if self.personal_email:
+			existing = frappe.db.get_value("SH Student", {"personal_email": self.personal_email}, "name")
 			if existing:
 				frappe.throw(
-					f"A student with email <b>{self.email}</b> already exists: "
+					f"A student with email <b>{self.personal_email}</b> already exists: "
 					f"<a href='/app/sh-student/{existing}'>{existing}</a>. "
 					f"Link the applicant manually if needed."
 				)
@@ -51,18 +52,58 @@ class SHApplicant(Document):
 		first_name = name_parts[0] if name_parts else ""
 		last_name = name_parts[1] if len(name_parts) > 1 else ""
 
+		# Build the base student document
+		student_doc = {
+			"doctype": "SH Student",
+			"naming_series": "SH.YY.####",
+			"first_name": first_name,
+			"last_name": last_name,
+			"status": "Student",
+			"applicant_record": self.name,
+		}
+
+		# Direct field mappings: applicant_fieldname -> student_fieldname
+		field_map = {
+			"mobile": "mobile",
+			"personal_email": "personal_email",
+			"residential_area": "address_line_1",
+			"guardian_name": "guardian_name",
+			"guardian_mobile": "guardian_mobile_number",
+			"guardian_occupation": "guardian_occupation",
+			"guardian_relationship": "relationship",
+			"household_income": "household_income",
+			"housing_status": "housing_status",
+			"number_of_siblings": "number_of_siblings",
+			"highest_level_of_schooling": "highest_level_of_schooling",
+			"last_school_attended": "last_school_attended",
+			"can_read_and_write": "can_read_and_write",
+			"has_vocational_training_history": "has_vocational_training_history",
+			"vocational_training_details": "vocational_training_received",
+			"nrc_number": "nrc_number",
+			"intake_year": "intake_year",
+			"intake_cohort": "intake_cohort",
+			"date_of_birth": "date_of_birth",
+		}
+
+		for applicant_field, student_field in field_map.items():
+			value = getattr(self, applicant_field, None)
+			if (
+				value is not None and value != "" and value != 0
+			) or applicant_field == "has_vocational_training_history":
+				# For Check fields, include even when 0 so the value is explicit
+				if applicant_field == "has_vocational_training_history":
+					student_doc[student_field] = cint(value)
+				else:
+					if value is not None and value != "":
+						student_doc[student_field] = value
+
+		# Map household_receives_financial_aid (Yes/No/Maybe) to integer (1/0/0)
+		financial_aid = getattr(self, "household_receives_financial_aid", None)
+		if financial_aid is not None:
+			student_doc["household_receives_financial_aid"] = 1 if financial_aid == "Yes" else 0
+
 		# Create the SH Student document
-		student = frappe.get_doc(
-			{
-				"doctype": "SH Student",
-				"first_name": first_name,
-				"last_name": last_name,
-				"personal_email": self.email or "",
-				"status": "Student",
-				"applicant_record": self.name,
-				"naming_series": "SH.YY.####",
-			}
-		)
+		student = frappe.get_doc(student_doc)
 		student.insert(ignore_permissions=True)
 
 		# Mark applicant as converted

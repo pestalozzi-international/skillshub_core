@@ -1,37 +1,553 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2026-01-26 10:37:30.090365",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
+  "personal_tab",
+  "name_section",
   "full_name",
-  "email",
-  "center",
+  "date_of_birth",
+  "col_name_1",
+  "gender",
+  "nationality",
+  "nrc_number",
+  "marital_status",
+  "contact_section",
+  "mobile",
+  "personal_email",
+  "col_contact_1",
+  "emergency_contact",
+  "address_section",
+  "residential_area",
+  "address_line_1",
+  "col_addr_1",
+  "city",
+  "household_tab",
+  "guardian_section",
+  "guardian_name",
+  "guardian_relationship",
+  "col_guardian_1",
+  "guardian_mobile",
+  "guardian_occupation",
+  "household_section",
+  "household_income",
+  "household_receives_financial_aid",
+  "col_household_1",
+  "housing_status",
+  "number_of_siblings",
+  "dependants_section",
+  "is_parent",
+  "number_of_children",
+  "education_tab",
+  "school_section",
+  "highest_level_of_schooling",
+  "last_school_attended",
+  "col_school_1",
+  "year_left_school",
+  "reason_for_leaving_school",
+  "literacy_section",
+  "can_read_and_write",
+  "has_vocational_training_history",
+  "vocational_training_details",
+  "col_literacy_1",
+  "special_talents",
+  "community_participation",
+  "employment_section",
+  "currently_employed",
+  "employment_type",
+  "students_occupation",
+  "programme_tab",
+  "course_section",
+  "preferred_course",
+  "second_preference_course",
+  "col_course_1",
+  "intake_year",
+  "intake_cohort",
+  "motivation_section",
+  "why_join_skillshub",
+  "career_goals",
+  "how_skill_benefits_community",
+  "how_skill_improves_livelihood",
+  "commitment_section",
+  "available_to_start",
+  "fully_committed",
+  "participation_challenges",
+  "health_tab",
+  "health_section",
+  "has_health_conditions",
+  "health_conditions_details",
+  "declaration_section",
+  "declaration_consent",
+  "media_consent",
+  "contact_consent",
+  "declaration_name",
+  "col_decl_1",
+  "application_date",
+  "status_tab",
+  "status_section",
   "status",
-  "section_break_conv",
+  "application_source",
+  "col_status_1",
+  "reviewer_notes",
+  "conversion_section",
   "converted_to_student"
  ],
  "fields": [
   {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "SA.YY.####\n"
+  },
+  {
+   "fieldname": "personal_tab",
+   "fieldtype": "Tab Break",
+   "label": "Personal Information"
+  },
+  {
+   "fieldname": "name_section",
+   "fieldtype": "Section Break",
+   "label": "Name and Identity"
+  },
+  {
+   "bold": 1,
    "fieldname": "full_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Full Name"
+   "label": "Full Name",
+   "reqd": 1
   },
   {
-   "fieldname": "email",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Email",
-   "options": "Email",
-   "unique": 1
+   "fieldname": "date_of_birth",
+   "fieldtype": "Date",
+   "label": "Date of Birth",
+   "reqd": 1
   },
   {
-   "fieldname": "center",
+   "fieldname": "col_name_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "gender",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Gender",
+   "options": "\nMale\nFemale",
+   "reqd": 1
+  },
+  {
+   "fieldname": "nationality",
+   "fieldtype": "Select",
+   "label": "Nationality",
+   "options": "\nZambian\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "nrc_number",
    "fieldtype": "Data",
+   "label": "NRC Number"
+  },
+  {
+   "fieldname": "marital_status",
+   "fieldtype": "Select",
+   "label": "Marital Status",
+   "options": "\nSingle\nMarried\nDivorced\nWidowed\nOther"
+  },
+  {
+   "fieldname": "contact_section",
+   "fieldtype": "Section Break",
+   "label": "Contact Details"
+  },
+  {
+   "fieldname": "mobile",
+   "fieldtype": "Phone",
    "in_list_view": 1,
-   "label": "Center"
+   "label": "Mobile",
+   "reqd": 1
+  },
+  {
+   "fieldname": "personal_email",
+   "fieldtype": "Data",
+   "label": "Email Address",
+   "options": "Email"
+  },
+  {
+   "fieldname": "col_contact_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "emergency_contact",
+   "fieldtype": "Data",
+   "label": "Emergency Contact (Name & Number)"
+  },
+  {
+   "fieldname": "address_section",
+   "fieldtype": "Section Break",
+   "label": "Address"
+  },
+  {
+   "fieldname": "residential_area",
+   "fieldtype": "Data",
+   "label": "Residential Area / Community",
+   "reqd": 1
+  },
+  {
+   "fieldname": "address_line_1",
+   "fieldtype": "Data",
+   "label": "Address / Plot Number"
+  },
+  {
+   "fieldname": "col_addr_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Lusaka",
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "household_tab",
+   "fieldtype": "Tab Break",
+   "label": "Household"
+  },
+  {
+   "fieldname": "guardian_section",
+   "fieldtype": "Section Break",
+   "label": "Parent / Guardian"
+  },
+  {
+   "fieldname": "guardian_name",
+   "fieldtype": "Data",
+   "label": "Parent / Guardian Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "guardian_relationship",
+   "fieldtype": "Select",
+   "label": "Relationship to Applicant",
+   "options": "\nMother\nFather\nUncle\nAunt\nGrandparent\nSibling\nSpouse\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_guardian_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "guardian_mobile",
+   "fieldtype": "Phone",
+   "label": "Guardian Phone Number"
+  },
+  {
+   "fieldname": "guardian_occupation",
+   "fieldtype": "Data",
+   "label": "Guardian Occupation"
+  },
+  {
+   "fieldname": "household_section",
+   "fieldtype": "Section Break",
+   "label": "Household Situation"
+  },
+  {
+   "fieldname": "household_income",
+   "fieldtype": "Select",
+   "label": "Total Household Income (ZMW/month)",
+   "options": "\nLess than 500\n500 to 1000\n1000 to 1500\n1500 to 2000\n2000+",
+   "reqd": 1
+  },
+  {
+   "fieldname": "household_receives_financial_aid",
+   "fieldtype": "Select",
+   "label": "Does the Household Receive Financial Aid?",
+   "options": "\nYes\nNo\nMaybe"
+  },
+  {
+   "fieldname": "col_household_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "housing_status",
+   "fieldtype": "Select",
+   "label": "Living Conditions",
+   "options": "\nOwned Home\nRented Home\nOther"
+  },
+  {
+   "fieldname": "number_of_siblings",
+   "fieldtype": "Int",
+   "label": "Number of Siblings"
+  },
+  {
+   "fieldname": "dependants_section",
+   "fieldtype": "Section Break",
+   "label": "Dependants"
+  },
+  {
+   "fieldname": "is_parent",
+   "fieldtype": "Check",
+   "label": "Are you a parent or guardian?"
+  },
+  {
+   "depends_on": "eval:doc.is_parent",
+   "fieldname": "number_of_children",
+   "fieldtype": "Int",
+   "label": "Number of Children"
+  },
+  {
+   "fieldname": "education_tab",
+   "fieldtype": "Tab Break",
+   "label": "Education & Background"
+  },
+  {
+   "fieldname": "school_section",
+   "fieldtype": "Section Break",
+   "label": "School History"
+  },
+  {
+   "fieldname": "highest_level_of_schooling",
+   "fieldtype": "Select",
+   "label": "Highest Level of Education Completed",
+   "options": "\nNever attended School\nGrade 1 to 7\nGrade 8 to 9\nGrade 10 to 12",
+   "reqd": 1
+  },
+  {
+   "fieldname": "last_school_attended",
+   "fieldtype": "Data",
+   "label": "Last School Attended"
+  },
+  {
+   "fieldname": "col_school_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "year_left_school",
+   "fieldtype": "Int",
+   "label": "Year Left School"
+  },
+  {
+   "fieldname": "reason_for_leaving_school",
+   "fieldtype": "Select",
+   "label": "Reason for Leaving School",
+   "options": "\nFinancial difficulties\nEarly parenthood\nFamily responsibilities\nHealth issues\nLack of access to education\nGraduated\nOther"
+  },
+  {
+   "fieldname": "literacy_section",
+   "fieldtype": "Section Break",
+   "label": "Literacy & Skills"
+  },
+  {
+   "fieldname": "can_read_and_write",
+   "fieldtype": "Select",
+   "label": "Can You Read and Write?",
+   "options": "\nYes\nNo\nBasic (limited)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "has_vocational_training_history",
+   "fieldtype": "Check",
+   "label": "Have you participated in any vocational training before?"
+  },
+  {
+   "depends_on": "eval:doc.has_vocational_training_history",
+   "fieldname": "vocational_training_details",
+   "fieldtype": "Small Text",
+   "label": "Vocational Training Details"
+  },
+  {
+   "fieldname": "col_literacy_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "special_talents",
+   "fieldtype": "Small Text",
+   "label": "Special Talents or Abilities"
+  },
+  {
+   "fieldname": "community_participation",
+   "fieldtype": "Small Text",
+   "label": "Community Activities or Organisations"
+  },
+  {
+   "fieldname": "employment_section",
+   "fieldtype": "Section Break",
+   "label": "Employment"
+  },
+  {
+   "fieldname": "currently_employed",
+   "fieldtype": "Check",
+   "label": "Are you currently employed or engaged in any activity?"
+  },
+  {
+   "depends_on": "eval:doc.currently_employed",
+   "fieldname": "employment_type",
+   "fieldtype": "Select",
+   "label": "Employment Type",
+   "options": "\nFull-time\nPart-time"
+  },
+  {
+   "fieldname": "students_occupation",
+   "fieldtype": "Data",
+   "label": "Current Occupation / Activity"
+  },
+  {
+   "fieldname": "programme_tab",
+   "fieldtype": "Tab Break",
+   "label": "Programme & Motivation"
+  },
+  {
+   "fieldname": "course_section",
+   "fieldtype": "Section Break",
+   "label": "Course Selection"
+  },
+  {
+   "fieldname": "preferred_course",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "First Course Preference",
+   "options": "\nGeneral Agriculture\nElectrical Engineering\nElectronics Engineering\nCosmetology\nFood Production\nSolar Installation\nAccelerated Learning (Edulution)\nFashion and Designing\nBasic Mechanics\nPlumbing and Sheet Metal\nAutomotive Mechanics\nBricklaying and Plastering\nPhotography\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "second_preference_course",
+   "fieldtype": "Select",
+   "label": "Second Course Preference (Optional)",
+   "options": "\nGeneral Agriculture\nElectrical Engineering\nElectronics Engineering\nCosmetology\nFood Production\nSolar Installation\nAccelerated Learning (Edulution)\nFashion and Designing\nBasic Mechanics\nPlumbing and Sheet Metal\nAutomotive Mechanics\nBricklaying and Plastering\nPhotography\nOther"
+  },
+  {
+   "fieldname": "col_course_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "intake_year",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Intake Year",
+   "options": "SH Academic Year"
+  },
+  {
+   "fieldname": "intake_cohort",
+   "fieldtype": "Link",
+   "label": "Intake Cohort",
+   "options": "SH Cohort"
+  },
+  {
+   "fieldname": "motivation_section",
+   "fieldtype": "Section Break",
+   "label": "Motivation Statement"
+  },
+  {
+   "fieldname": "why_join_skillshub",
+   "fieldtype": "Long Text",
+   "label": "Why do you want to join the Skills Hub Programme?",
+   "reqd": 1
+  },
+  {
+   "fieldname": "career_goals",
+   "fieldtype": "Long Text",
+   "label": "What are your career goals after completing training?",
+   "reqd": 1
+  },
+  {
+   "fieldname": "how_skill_benefits_community",
+   "fieldtype": "Small Text",
+   "label": "How will the skill benefit you, your family, and your community?"
+  },
+  {
+   "fieldname": "how_skill_improves_livelihood",
+   "fieldtype": "Small Text",
+   "label": "How will the skill improve your livelihood?"
+  },
+  {
+   "fieldname": "commitment_section",
+   "fieldtype": "Section Break",
+   "label": "Availability & Commitment"
+  },
+  {
+   "fieldname": "available_to_start",
+   "fieldtype": "Check",
+   "label": "I am available and ready to start training when selected"
+  },
+  {
+   "fieldname": "fully_committed",
+   "fieldtype": "Check",
+   "label": "I will be fully committed to attend all sessions and participate actively"
+  },
+  {
+   "fieldname": "participation_challenges",
+   "fieldtype": "Small Text",
+   "label": "Challenges that may affect participation (e.g. childcare, transport)"
+  },
+  {
+   "fieldname": "health_tab",
+   "fieldtype": "Tab Break",
+   "label": "Health & Declaration"
+  },
+  {
+   "fieldname": "health_section",
+   "fieldtype": "Section Break",
+   "label": "Health"
+  },
+  {
+   "fieldname": "has_health_conditions",
+   "fieldtype": "Select",
+   "label": "Do you have any underlying health conditions?",
+   "options": "\nNo\nYes"
+  },
+  {
+   "depends_on": "eval:doc.has_health_conditions==='Yes'",
+   "fieldname": "health_conditions_details",
+   "fieldtype": "Small Text",
+   "label": "If Yes, Please Explain"
+  },
+  {
+   "fieldname": "declaration_section",
+   "fieldtype": "Section Break",
+   "label": "Declaration & Consent"
+  },
+  {
+   "fieldname": "declaration_consent",
+   "fieldtype": "Check",
+   "label": "I declare that the information provided is true and complete to the best of my knowledge"
+  },
+  {
+   "fieldname": "media_consent",
+   "fieldtype": "Check",
+   "label": "I give consent for Pestalozzi International to capture and share my stories and photos on media platforms and with donors"
+  },
+  {
+   "fieldname": "contact_consent",
+   "fieldtype": "Check",
+   "label": "I give consent for Pestalozzi International and its partners to contact me for follow-up"
+  },
+  {
+   "fieldname": "declaration_name",
+   "fieldtype": "Data",
+   "label": "Full Name (write to confirm declaration)"
+  },
+  {
+   "fieldname": "col_decl_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "application_date",
+   "fieldtype": "Date",
+   "label": "Application Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "status_tab",
+   "fieldtype": "Tab Break",
+   "label": "Application Status"
+  },
+  {
+   "fieldname": "status_section",
+   "fieldtype": "Section Break",
+   "label": "Status"
   },
   {
    "fieldname": "status",
@@ -39,10 +555,25 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "\nApplied\nInterviewed\nAccepted\nRejected\nConverted"
+   "options": "\nDraft\nSubmitted\nUnder Review\nAccepted\nRejected\nWaitlisted\nConverted"
   },
   {
-   "fieldname": "section_break_conv",
+   "fieldname": "application_source",
+   "fieldtype": "Select",
+   "label": "Application Source",
+   "options": "\nOnline Portal\nWalk-in\nReferral\nOther"
+  },
+  {
+   "fieldname": "col_status_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reviewer_notes",
+   "fieldtype": "Small Text",
+   "label": "Reviewer Notes"
+  },
+  {
+   "fieldname": "conversion_section",
    "fieldtype": "Section Break",
    "label": "Conversion"
   },
@@ -63,7 +594,7 @@
    "link_fieldname": "applicant_record"
   }
  ],
- "modified": "2026-04-17 00:00:00.000000",
+ "modified": "2026-05-23 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "ZM SH Admissions",
  "name": "SH Applicant",

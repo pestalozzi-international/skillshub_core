@@ -29,10 +29,12 @@ frappe.ui.form.on("SH Applicant", {
 
 function _update_intro(frm) {
 	const STATUS_COLORS = {
-		Applied: "blue",
-		Interviewed: "yellow",
+		Draft: "gray",
+		Submitted: "blue",
+		"Under Review": "yellow",
 		Accepted: "green",
 		Rejected: "red",
+		Waitlisted: "orange",
 		Converted: "purple",
 	};
 	if (frm.doc.status && !frm.doc.converted_to_student) {

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply — SkillsHub by Pestalozzi International</title>
+  <link rel="icon" href="/assets/skillshub_core/images/favicon.png">
+  <link rel="stylesheet" href="/skillshub/theme.css?v=4.4">
+  <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.4">
+  <script>window.frappe = {}; frappe.csrf_token = "{{ frappe.session.csrf_token }}";</script>
+</head>
+<body>
+
+<header class="pi-header">
+  <div class="pi-wrap pi-header-inner">
+    <div class="pi-logo-mark">PI</div>
+    <div>
+      <div class="pi-header-title">SkillsHub Portal</div>
+      <div class="pi-header-sub">Pestalozzi International</div>
+    </div>
+    <nav class="pi-header-nav">
+      <a href="/skillshub/">Portal Login</a>
+    </nav>
+  </div>
+</header>
+
+<div class="pi-hero" style="padding-bottom:2.5rem;">
+  <div class="pi-wrap" style="display:flex;align-items:center;gap:0.75rem;">
+    <span style="font-size:2rem;">📝</span>
+    <div>
+      <h1 style="font-size:1.6rem;margin:0 0 0.2rem;">Skills Hub Application</h1>
+      <p style="margin:0;opacity:0.8;font-size:0.9rem;">Apply to join the Pestalozzi International SkillsHub Programme.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Main form area -->
+<div id="pi-apply-wrap" class="pi-wrap pi-wrap-narrow" style="padding-top:1.5rem;padding-bottom:6rem;">
+  <!-- Progress -->
+  <div id="pi-apply-progress" style="margin-bottom:1.5rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+      <span id="pi-section-title" style="font-weight:600;font-size:1rem;color:var(--pi-black);"></span>
+      <span id="pi-section-counter" style="font-size:0.8rem;color:var(--pi-muted);"></span>
+    </div>
+    <div style="height:4px;background:var(--pi-border);border-radius:2px;overflow:hidden;">
+      <div id="pi-progress-bar" style="height:100%;background:var(--pi-blue);border-radius:2px;transition:width 0.3s;width:0%;"></div>
+    </div>
+  </div>
+
+  <div class="pi-card">
+    <div id="pi-apply-body"></div>
+    <div id="pi-apply-msg" style="margin-top:1rem;"></div>
+    <div id="pi-apply-nav" style="margin-top:1.5rem;display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:space-between;align-items:center;">
+      <button id="pi-nav-prev" class="pi-btn pi-btn-secondary" style="display:none;">← Previous</button>
+      <div style="flex:1;"></div>
+      <button id="pi-nav-next" class="pi-btn pi-btn-primary">Next →</button>
+      <button id="pi-nav-submit" class="pi-btn pi-btn-primary" style="display:none;">Submit Application</button>
+    </div>
+  </div>
+</div>
+
+<!-- Success screen -->
+<div id="pi-apply-success" style="display:none;">
+  <div class="pi-wrap pi-wrap-narrow" style="padding-top:2rem;padding-bottom:6rem;">
+    <div class="pi-card" style="text-align:center;padding:2.5rem 2rem;">
+      <div style="font-size:3.5rem;margin-bottom:1rem;">✅</div>
+      <h2 style="color:var(--pi-green,#16a34a);margin:0 0 0.5rem;">Application Submitted!</h2>
+      <p style="color:var(--pi-muted);margin:0 0 1.5rem;">Thank you — your application has been received.</p>
+      <div id="pi-success-ref" style="font-size:1.1rem;font-weight:700;color:var(--pi-black);margin-bottom:1.5rem;background:var(--pi-bg,#f8f8f8);padding:0.75rem 1.5rem;border-radius:0.5rem;display:inline-block;"></div>
+      <p style="margin:0 0 1rem;font-size:0.9rem;color:var(--pi-black);">Please save or screenshot your reference number above. We will contact you to let you know if your application has been successful.</p>
+      <p style="margin:0;font-size:0.8rem;color:var(--pi-muted);">Pestalozzi International Zambia · SkillsHub Programme</p>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/skillshub_core/js/skillshub/apply.js?v=4.4"></script>
+</body>
+</html>

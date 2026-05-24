@@ -1423,3 +1423,104 @@ def update_portal_settings(values):
 	doc.save(ignore_permissions=True)
 	frappe.db.commit()  # nosemgrep
 	return get_portal_settings()
+
+
+# ── Public Application Form ──────────────────────────────────────────────────
+
+
+_APPLICATION_ALLOWED_FIELDS = {
+	"full_name",
+	"date_of_birth",
+	"gender",
+	"nationality",
+	"nrc_number",
+	"marital_status",
+	"mobile",
+	"personal_email",
+	"emergency_contact",
+	"residential_area",
+	"address_line_1",
+	"city",
+	"guardian_name",
+	"guardian_relationship",
+	"guardian_mobile",
+	"guardian_occupation",
+	"household_income",
+	"household_receives_financial_aid",
+	"housing_status",
+	"number_of_siblings",
+	"is_parent",
+	"number_of_children",
+	"highest_level_of_schooling",
+	"last_school_attended",
+	"year_left_school",
+	"reason_for_leaving_school",
+	"can_read_and_write",
+	"has_vocational_training_history",
+	"vocational_training_details",
+	"special_talents",
+	"community_participation",
+	"currently_employed",
+	"employment_type",
+	"students_occupation",
+	"preferred_course",
+	"second_preference_course",
+	"why_join_skillshub",
+	"career_goals",
+	"how_skill_benefits_community",
+	"how_skill_improves_livelihood",
+	"available_to_start",
+	"fully_committed",
+	"participation_challenges",
+	"has_health_conditions",
+	"health_conditions_details",
+	"declaration_consent",
+	"media_consent",
+	"contact_consent",
+	"declaration_name",
+}
+
+_APPLICATION_REQUIRED_FIELDS = [
+	"full_name",
+	"date_of_birth",
+	"gender",
+	"mobile",
+	"residential_area",
+	"guardian_name",
+	"guardian_relationship",
+	"household_income",
+	"highest_level_of_schooling",
+	"can_read_and_write",
+	"preferred_course",
+	"why_join_skillshub",
+	"career_goals",
+	"declaration_name",
+]
+
+
+@frappe.whitelist(allow_guest=True)  # nosemgrep
+def submit_application(payload):
+	"""Create an SH Applicant record from the public application form."""
+	data = _json_arg(payload, {})
+	if not isinstance(data, dict):
+		frappe.throw(_("Invalid application data."))
+
+	clean = {k: v for k, v in data.items() if k in _APPLICATION_ALLOWED_FIELDS}
+
+	for fn in _APPLICATION_REQUIRED_FIELDS:
+		if not clean.get(fn):
+			frappe.throw(_(fn.replace("_", " ").title() + " is required."))
+
+	if not clean.get("declaration_consent"):
+		frappe.throw(_("You must accept the declaration to submit your application."))
+
+	clean["status"] = "Submitted"
+	clean["application_date"] = frappe.utils.today()
+	clean["application_source"] = "Online Portal"
+	clean["naming_series"] = "SA.YY.####"
+
+	doc = frappe.get_doc({"doctype": "SH Applicant", **clean})
+	doc.insert(ignore_permissions=True)
+	frappe.db.commit()  # nosemgrep
+
+	return {"ok": True, "name": doc.name}
