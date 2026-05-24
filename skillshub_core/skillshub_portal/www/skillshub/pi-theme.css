@@ -510,4 +510,37 @@ select.pi-select {
   font-size: 0.8rem;
 }
 .pi-context-item strong { color: var(--pi-black); font-weight: 700; }
+
+/* ================================================================
+ * RESPONSIVE / MOBILE
+ * ================================================================ */
+
+/* Tablet — 768px */
+@media (max-width: 768px) {
+  .pi-hero { padding: 1.75rem 0 2.75rem; }
+  .pi-hero h1 { font-size: 1.55rem; }
+  .pi-hero p  { font-size: 0.95rem; }
+  .pi-card { padding: 1.25rem; }
+  .pi-save-bar { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+  .pi-save-bar .pi-btn { width: 100%; }
+}
+
+/* Phone — 480px */
+@media (max-width: 480px) {
+  .pi-hero { padding: 1.25rem 0 2.25rem; }
+  .pi-hero h1 { font-size: 1.3rem; letter-spacing: -0.01em; }
+  .pi-hero p  { font-size: 0.88rem; }
+  .pi-header-sub { display: none; }
+  .pi-header-title { font-size: 1rem; }
+  .pi-card { padding: 1rem; border-radius: 0.85rem; }
+  .pi-btn { padding: 0.65rem 1.1rem; font-size: 0.9rem; }
+  .pi-btn-lg { padding: 0.75rem 1.5rem; font-size: 0.95rem; }
+  .pi-wrap        { padding: 0 1rem; }
+  .pi-wrap-narrow { padding: 0 1rem; }
+  .pi-filters { padding: 0.85rem 1rem; }
+  .pi-filter-group { min-width: 100%; }
+  .pi-kv { grid-template-columns: 1fr 1fr; }
+  /* Form grids already collapse at 600px — reinforce for small phones */
+  .pi-form-grid { grid-template-columns: 1fr !important; }
+}
 .pi-context-item span   { color: #0c4a6e; }

@@ -8,6 +8,17 @@
   <link rel="stylesheet" href="/skillshub/theme.css?v=4.4">
   <link rel="stylesheet" href="/skillshub/pi-theme.css?v=4.4">
   <script>window.frappe = {}; frappe.csrf_token = "{{ frappe.session.csrf_token }}";</script>
+  <style>
+    /* ---- Apply-form specific mobile tweaks ---- */
+    #pi-apply-nav { display:flex; gap:0.75rem; align-items:center; margin-top:1.5rem; }
+    #pi-nav-prev  { margin-right:auto; }
+    @media (max-width: 480px) {
+      #pi-apply-nav { flex-wrap:wrap; }
+      #pi-nav-prev  { width:100%; margin-right:0; order:2; }
+      #pi-nav-next, #pi-nav-submit { flex:1; order:1; }
+      #pi-apply-progress { margin-bottom:1rem; }
+    }
+  </style>
 </head>
 <body>
 
@@ -50,9 +61,8 @@
   <div class="pi-card">
     <div id="pi-apply-body"></div>
     <div id="pi-apply-msg" style="margin-top:1rem;"></div>
-    <div id="pi-apply-nav" style="margin-top:1.5rem;display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:space-between;align-items:center;">
+    <div id="pi-apply-nav">
       <button id="pi-nav-prev" class="pi-btn pi-btn-secondary" style="display:none;">← Previous</button>
-      <div style="flex:1;"></div>
       <button id="pi-nav-next" class="pi-btn pi-btn-primary">Next →</button>
       <button id="pi-nav-submit" class="pi-btn pi-btn-primary" style="display:none;">Submit Application</button>
     </div>

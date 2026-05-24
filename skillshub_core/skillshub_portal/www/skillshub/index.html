@@ -18,6 +18,8 @@
     .landing-btn-primary:hover { background:var(--pi-red-dark); transform:translateY(-1px); box-shadow:0 4px 14px rgba(202,7,51,0.35); }
     .landing-btn-ghost { background:transparent; color:var(--pi-red); border:1.5px solid var(--pi-red); }
     .landing-btn-ghost:hover { background:var(--pi-red-light); }
+    .landing-btn-apply { background:#16a34a; color:white; }
+    .landing-btn-apply:hover { background:#15803d; transform:translateY(-1px); box-shadow:0 4px 14px rgba(22,163,74,0.32); }
     .landing-divider { display:flex; align-items:center; gap:0.75rem; margin:1.25rem 0; color:var(--pi-muted); font-size:0.8rem; }
     .landing-divider::before,.landing-divider::after { content:''; flex:1; height:1px; background:var(--pi-border); }
   </style>
@@ -41,6 +43,12 @@
 
       <a class="landing-btn landing-btn-ghost" href="/skillshub/s/">
         Open Student Forms
+      </a>
+
+      <div class="landing-divider">New Applicant?</div>
+
+      <a class="landing-btn landing-btn-apply" href="/skillshub/apply">
+        Apply to SkillsHub
       </a>
     </section>
   </main>
