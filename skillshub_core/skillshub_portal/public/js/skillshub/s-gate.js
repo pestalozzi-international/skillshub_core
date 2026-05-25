@@ -69,7 +69,7 @@
 		if (csrf) headers["X-Frappe-CSRF-Token"] = csrf;
 		return fetch(
 			path,
-			Object.assign({ credentials: "include", headers: headers }, opts || {}),
+			Object.assign({ credentials: "include", headers: headers }, opts || {})
 		).then(function (r) {
 			return r.json().then(function (d) {
 				if (!r.ok) {

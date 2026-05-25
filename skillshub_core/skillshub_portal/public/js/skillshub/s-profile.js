@@ -17,8 +17,8 @@
 							"Content-Type": "application/json",
 						},
 					},
-					opts || {},
-				),
+					opts || {}
+				)
 			)
 				.then(function (r) {
 					return r.json();
@@ -104,7 +104,7 @@
 		if (linkCache[doctype]) return Promise.resolve(linkCache[doctype]);
 		return api(
 			"/api/method/skillshub_core.skillshub_portal.api.get_public_link_options?doctype=" +
-				encodeURIComponent(doctype),
+				encodeURIComponent(doctype)
 		)
 			.then(function (r) {
 				linkCache[doctype] = r || [];
@@ -276,8 +276,8 @@
 		var label = f.label || f.fieldname;
 		var desc = f.description
 			? '<div style="font-size:0.75rem;color:var(--pi-muted);margin-top:0.2rem;">' +
-				esc(f.description) +
-				"</div>"
+			  esc(f.description) +
+			  "</div>"
 			: "";
 		var req = f.reqd ? ' <span style="color:var(--pi-red)">*</span>' : "";
 
@@ -454,8 +454,8 @@
 							var r = {};
 							r[vf.fieldname] = s;
 							return r;
-						}),
-					),
+						})
+					)
 				) +
 				'">';
 			return '<div class="pi-field pi-field-full">' + labelHtml + chips + desc + "</div>";
@@ -465,10 +465,10 @@
 				f.fieldtype === "Password"
 					? "password"
 					: f.fieldtype === "Phone"
-						? "tel"
-						: f.fieldtype === "Email"
-							? "email"
-							: "text";
+					? "tel"
+					: f.fieldtype === "Email"
+					? "email"
+					: "text";
 			input =
 				'<input type="' +
 				itype +
@@ -498,7 +498,7 @@
 				s.classList.toggle("lit", i < val);
 			});
 			var hidden = body.querySelector(
-				'[data-fieldname="' + fn + '"][data-fieldtype="Rating"]',
+				'[data-fieldname="' + fn + '"][data-fieldtype="Rating"]'
 			);
 			if (hidden) hidden.value = val;
 			var lbl = body.querySelector("#fsl-" + fn);
@@ -513,7 +513,7 @@
 			var fn = btn.getAttribute("data-table-fn");
 			var vfn = btn.getAttribute("data-vfn");
 			var hidden = body.querySelector(
-				'[data-fieldname="' + fn + '"][data-fieldtype="Table"]',
+				'[data-fieldname="' + fn + '"][data-fieldtype="Table"]'
 			);
 			if (!hidden) return;
 			var rows = Array.prototype.map.call(
@@ -522,7 +522,7 @@
 					var r = {};
 					r[vfn] = b.getAttribute("data-val");
 					return r;
-				},
+				}
 			);
 			hidden.value = JSON.stringify(rows);
 		});
@@ -548,7 +548,7 @@
 			var preview = document.getElementById(iid + "-preview");
 			var placeholder = document.getElementById(iid + "-placeholder");
 			var hidden = body.querySelector(
-				'[data-fieldname="' + fn + '"][data-fieldtype="Attach Image"]',
+				'[data-fieldname="' + fn + '"][data-fieldtype="Attach Image"]'
 			);
 			if (status) status.textContent = "Uploading…";
 			var reader = new FileReader();
@@ -564,7 +564,7 @@
 							filename: file.name,
 							filedata: dataUrl,
 						}),
-					},
+					}
 				)
 					.then(function (res) {
 						var url = res && res.file_url;
@@ -607,7 +607,7 @@
 					opt.hidden = false;
 				});
 			},
-			true /* capture so non-bubbling focus reaches here */,
+			true /* capture so non-bubbling focus reaches here */
 		);
 
 		/* Filter link options while typing */
@@ -767,10 +767,10 @@
 		if (!el) return;
 		el.innerHTML = msg
 			? '<div class="pi-alert ' +
-				(isError ? "pi-alert-error" : "pi-alert-success") +
-				'">' +
-				esc(msg) +
-				"</div>"
+			  (isError ? "pi-alert-error" : "pi-alert-success") +
+			  '">' +
+			  esc(msg) +
+			  "</div>"
 			: "";
 	}
 
@@ -813,7 +813,7 @@
 				"?student_id=" +
 				encodeURIComponent(session.sid) +
 				"&token=" +
-				encodeURIComponent(session.token),
+				encodeURIComponent(session.token)
 		)
 			.then(function (data) {
 				state.data = data;

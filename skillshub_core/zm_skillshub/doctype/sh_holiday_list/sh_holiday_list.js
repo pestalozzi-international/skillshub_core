@@ -11,7 +11,7 @@ frappe.ui.form.on("SH Holiday List", {
 					frappe.confirm(
 						__(
 							"This will <b>clear all existing holidays</b> and re-fetch from Calendarific for <b>{0}</b>.<br><br>Continue?",
-							[frm.doc.academic_year],
+							[frm.doc.academic_year]
 						),
 						function () {
 							frappe.call({
@@ -19,16 +19,16 @@ frappe.ui.form.on("SH Holiday List", {
 								doc: frm.doc,
 								freeze: true,
 								freeze_message: __(
-									"Fetching Zambia public holidays from Calendarific...",
+									"Fetching Zambia public holidays from Calendarific..."
 								),
 								callback: function () {
 									frm.reload_doc();
 								},
 							});
-						},
+						}
 					);
 				},
-				__("Tools"),
+				__("Tools")
 			);
 		}
 	},

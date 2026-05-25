@@ -110,7 +110,7 @@ frappe.query_reports["SH Programme Overview"] = {
 			const c = colors[data.status];
 			if (c)
 				return `<span style="color:${c};font-weight:600">${frappe.utils.escape_html(
-					data.status || "",
+					data.status || ""
 				)}</span>`;
 		}
 		return value;

@@ -38,38 +38,38 @@
 		root.style.setProperty(
 			"--color-teal-700",
 			settings.primary_color || "#CA0733",
-			"important",
+			"important"
 		);
 		root.style.setProperty(
 			"--color-teal-800",
 			settings.secondary_color || "#a3052a",
-			"important",
+			"important"
 		);
 		root.style.setProperty(
 			"--color-accent-500",
 			settings.accent_color || "#9de3eb",
-			"important",
+			"important"
 		);
 		root.style.setProperty(
 			"--color-slate-50",
 			settings.background_color || "#F1E8DA",
-			"important",
+			"important"
 		);
 		root.style.setProperty(
 			"--surface-color",
 			settings.surface_color || "#ffffff",
-			"important",
+			"important"
 		);
 		root.style.setProperty("--text-color", settings.text_color || "#343837", "important");
 		root.style.setProperty(
 			"--muted-text-color",
 			settings.muted_text_color || "#6b6f6e",
-			"important",
+			"important"
 		);
 		root.style.setProperty(
 			"--header-gradient",
 			settings.header_gradient || "linear-gradient(135deg, #CA0733 0%, #a3052a 100%)",
-			"important",
+			"important"
 		);
 		root.style.setProperty("--pi-red", settings.primary_color || "#CA0733", "important");
 
@@ -156,7 +156,7 @@
 	function attemptLogoutRequest(url, options) {
 		return fetch(
 			url,
-			Object.assign({ credentials: "include", cache: "no-store" }, options || {}),
+			Object.assign({ credentials: "include", cache: "no-store" }, options || {})
 		).then(function (response) {
 			if (!response.ok) throw new Error("HTTP " + response.status);
 			return response;
@@ -174,7 +174,7 @@
 		var target = normalizePath(redirectTo || "/skillshub");
 		return attemptLogoutRequest(
 			"/api/method/skillshub_core.skillshub_portal.api.portal_logout",
-			{ method: "POST", headers: getHeaders() },
+			{ method: "POST", headers: getHeaders() }
 		)
 			.then(function () {
 				return fetch("/api/method/frappe.auth.get_logged_user", {
@@ -223,7 +223,7 @@
 	function api(path, options) {
 		return fetch(
 			path,
-			Object.assign({ credentials: "include", headers: getHeaders() }, options || {}),
+			Object.assign({ credentials: "include", headers: getHeaders() }, options || {})
 		).then(function (r) {
 			if (!r.ok) throw new Error("HTTP " + r.status + " (" + path + ")");
 			return r.json();
@@ -256,14 +256,14 @@
 
 	Promise.all([
 		api(
-			"/api/method/skillshub_core.skillshub_portal.doctype.skillshub_portal_settings.skillshub_portal_settings.get_portal_settings",
+			"/api/method/skillshub_core.skillshub_portal.doctype.skillshub_portal_settings.skillshub_portal_settings.get_portal_settings"
 		).catch(function () {
 			return { message: {} };
 		}),
 		api("/api/method/skillshub_core.skillshub_portal.api.get_portal_bootstrap").catch(
 			function () {
 				return { message: {} };
-			},
+			}
 		),
 	])
 		.then(function (results) {
@@ -279,13 +279,13 @@
 				bootstrap && bootstrap.is_admin
 					? "sh-role-admin"
 					: bootstrap && bootstrap.is_logged_in
-						? "sh-role-student"
-						: "sh-role-guest";
+					? "sh-role-student"
+					: "sh-role-guest";
 			document.body.classList.add(roleClass);
 			window.dispatchEvent(
 				new CustomEvent("sh-portal-ready", {
 					detail: { settings: settings, bootstrap: bootstrap },
-				}),
+				})
 			);
 		})
 		.catch(function (err) {

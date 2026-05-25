@@ -26,7 +26,7 @@
 	function api(path, options) {
 		return fetch(
 			path,
-			Object.assign({ credentials: "include", headers: getHeaders() }, options || {}),
+			Object.assign({ credentials: "include", headers: getHeaders() }, options || {})
 		)
 			.then(function (response) {
 				if (!response.ok) throw new Error("HTTP " + response.status);

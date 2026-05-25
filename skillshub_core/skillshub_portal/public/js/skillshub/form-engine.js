@@ -47,7 +47,7 @@
 	function api(path, options) {
 		return fetch(
 			path,
-			Object.assign({ credentials: "include", headers: headers() }, options || {}),
+			Object.assign({ credentials: "include", headers: headers() }, options || {})
 		)
 			.then(function (response) {
 				if (!response.ok) throw new Error("HTTP " + response.status + " for " + path);
@@ -241,7 +241,7 @@
 		if (state.linkCache[doctype]) return Promise.resolve(state.linkCache[doctype]);
 		return api(
 			"/api/method/skillshub_core.skillshub_portal.api.get_link_options?doctype=" +
-				encodeURIComponent(doctype),
+				encodeURIComponent(doctype)
 		)
 			.then(function (rows) {
 				state.linkCache[doctype] = rows || [];
@@ -284,7 +284,7 @@
 					fieldname +
 					'" data-fieldtype="Check" ' +
 					(current ? "checked" : "") +
-					">",
+					">"
 			);
 		}
 		if (field.fieldtype === "Select") {
@@ -311,7 +311,7 @@
 					fieldname +
 					'" data-fieldtype="Date" value="' +
 					esc(current) +
-					'">',
+					'">'
 			);
 		}
 		if (field.fieldtype === "Datetime") {
@@ -320,7 +320,7 @@
 					fieldname +
 					'" data-fieldtype="Datetime" value="' +
 					esc(current) +
-					'">',
+					'">'
 			);
 		}
 		if (
@@ -336,7 +336,7 @@
 					esc(field.fieldtype) +
 					'" value="' +
 					esc(current) +
-					'">',
+					'">'
 			);
 		}
 		if (field.fieldtype === "Rating") {
@@ -345,7 +345,7 @@
 					fieldname +
 					'" data-fieldtype="Rating" value="' +
 					esc(current || 3) +
-					'">',
+					'">'
 			);
 		}
 		if (
@@ -361,7 +361,7 @@
 					esc(field.fieldtype) +
 					'">' +
 					esc(current) +
-					"</textarea>",
+					"</textarea>"
 			);
 		}
 		if (field.fieldtype === "Link") {
@@ -374,7 +374,7 @@
 				esc(field.fieldtype) +
 				'" value="' +
 				esc(current) +
-				'">',
+				'">'
 		);
 	}
 
@@ -398,7 +398,7 @@
 		var rowField = tableValueField(meta);
 		if (!rowField) {
 			return Promise.resolve(
-				'<div style="font-size:0.8rem;color:var(--muted-text-color);">No editable child fields.</div>',
+				'<div style="font-size:0.8rem;color:var(--muted-text-color);">No editable child fields.</div>'
 			);
 		}
 		var selected = (value || [])
@@ -486,7 +486,7 @@
 						esc(field.fieldtype) +
 						'" value="' +
 						esc(initialValue || "") +
-						'" readonly></div>',
+						'" readonly></div>'
 				);
 			}
 
@@ -669,7 +669,7 @@
 			"/api/method/skillshub_core.skillshub_core.api.get_portal_student_context" +
 				(params.get("student")
 					? "?student=" + encodeURIComponent(params.get("student"))
-					: ""),
+					: "")
 		).catch(function () {
 			return {};
 		});
@@ -677,7 +677,7 @@
 		Promise.all([
 			api(
 				"/api/method/skillshub_core.skillshub_portal.api.get_form_meta?doctype=" +
-					encodeURIComponent(state.doctype),
+					encodeURIComponent(state.doctype)
 			),
 			summaryPromise,
 		])
@@ -692,7 +692,7 @@
 						"/api/method/skillshub_core.skillshub_portal.api.get_portal_form_doc?doctype=" +
 							encodeURIComponent(state.doctype) +
 							"&name=" +
-							encodeURIComponent(readName),
+							encodeURIComponent(readName)
 					).then(function (doc) {
 						renderReadOnly(doc || {});
 						setContextCard();

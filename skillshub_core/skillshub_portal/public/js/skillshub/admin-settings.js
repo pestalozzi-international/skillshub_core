@@ -181,7 +181,7 @@
 	function api(path, options) {
 		return fetch(
 			path,
-			Object.assign({ credentials: "include", headers: headers() }, options || {}),
+			Object.assign({ credentials: "include", headers: headers() }, options || {})
 		)
 			.then(function (response) {
 				if (!response.ok) throw new Error("HTTP " + response.status);
@@ -226,7 +226,7 @@
 					}, []).find(function (f) {
 						return f.key === key;
 					}) || { label: key }
-				).label,
+				).label
 			) +
 			"</label>" +
 			'<div class="s-color-row">' +
@@ -247,10 +247,10 @@
 	function buildImageField(key, label, value, placeholder) {
 		var preview = value
 			? '<img id="prev-' +
-				esc(key) +
-				'" src="' +
-				esc(value) +
-				'" alt="" style="max-height:56px;max-width:120px;border-radius:0.4rem;object-fit:contain;border:1px solid var(--pi-border);padding:2px;background:#fff;">'
+			  esc(key) +
+			  '" src="' +
+			  esc(value) +
+			  '" alt="" style="max-height:56px;max-width:120px;border-radius:0.4rem;object-fit:contain;border:1px solid var(--pi-border);padding:2px;background:#fff;">'
 			: '<span id="prev-' + esc(key) + '" style="display:none;"></span>';
 		return (
 			'<div class="s-field">' +
@@ -361,7 +361,7 @@
 				"/api/resource/" +
 					encodeURIComponent(doctype) +
 					'?fields=["name"]&limit=100&order_by=name+asc',
-				{ credentials: "include", headers: headers() },
+				{ credentials: "include", headers: headers() }
 			)
 				.then(function (r) {
 					return r.json();
@@ -425,7 +425,7 @@
 						field.type,
 						val,
 						field.placeholder,
-						field.readonly,
+						field.readonly
 					);
 				}
 			});
@@ -490,7 +490,7 @@
 								'" style="display:none;">⬆ Upload image';
 						alert("Upload failed: " + (err && err.message));
 						bindFileUploads();
-					},
+					}
 				);
 			});
 		});
@@ -528,7 +528,7 @@
 	function loadSettings() {
 		setMessage("");
 		api(
-			"/api/method/skillshub_core.skillshub_portal.doctype.skillshub_portal_settings.skillshub_portal_settings.get_portal_settings",
+			"/api/method/skillshub_core.skillshub_portal.doctype.skillshub_portal_settings.skillshub_portal_settings.get_portal_settings"
 		)
 			.then(function (settings) {
 				renderSettings(settings || {});
