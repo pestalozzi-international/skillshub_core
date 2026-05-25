@@ -568,11 +568,11 @@ def _counts_via_enrolment(doctype, class_names):
 	placeholders = ", ".join(["%s"] * len(class_names))
 	try:
 		rows = frappe.db.sql(  # nosemgrep
-			f"SELECT e.class AS class_name, COUNT(*) AS cnt "
+			f"SELECT e.`class` AS class_name, COUNT(*) AS cnt "
 			f"FROM `tab{doctype}` fb "
 			f"JOIN `tabSH Enrolment` e ON e.name = fb.enrolment_ticket "
-			f"WHERE e.class IN ({placeholders}) "
-			f"GROUP BY e.class",
+			f"WHERE e.`class` IN ({placeholders}) "
+			f"GROUP BY e.`class`",
 			class_names,
 			as_dict=True,
 		)
