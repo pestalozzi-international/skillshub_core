@@ -15,7 +15,7 @@ frappe.ui.form.on("SH Student", {
 					var url = "/skillshub/admin/student?id=" + encodeURIComponent(frm.doc.name);
 					window.open(url, "_blank");
 				},
-				__("Actions")
+				__("Actions"),
 			);
 		}
 	},
