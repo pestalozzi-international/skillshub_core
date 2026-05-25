@@ -64,7 +64,7 @@
 	function api(path, options) {
 		return fetch(
 			path,
-			Object.assign({ credentials: "include", headers: headers() }, options || {})
+			Object.assign({ credentials: "include", headers: headers() }, options || {}),
 		)
 			.then(function (response) {
 				if (!response.ok) throw new Error("HTTP " + response.status);
@@ -81,7 +81,7 @@
 		return api(
 			"/api/method/skillshub_core.skillshub_portal.api.get_link_options?doctype=" +
 				encodeURIComponent(doctype) +
-				"&limit=300"
+				"&limit=300",
 		)
 			.then(function (rows) {
 				state.linkCache[doctype] = rows || [];
@@ -94,7 +94,7 @@
 
 	function hydrateLinkFields() {
 		var fields = document.querySelectorAll(
-			'#tab-edit select[data-fieldtype="Link"][data-link-doctype]'
+			'#tab-edit select[data-fieldtype="Link"][data-link-doctype]',
 		);
 		Array.prototype.forEach.call(fields, function (select) {
 			var doctype = select.getAttribute("data-link-doctype") || "";
@@ -230,8 +230,8 @@
 				"</div>" +
 				(row.class
 					? '<div style="margin-top:0.22rem;"><a href="' +
-					  classDesk +
-					  '" style="font-size:0.74rem;text-decoration:none;" target="_blank">Class ↗</a></div>'
+						classDesk +
+						'" style="font-size:0.74rem;text-decoration:none;" target="_blank">Class ↗</a></div>'
 					: "") +
 				"</td>" +
 				"<td>" +
@@ -256,8 +256,8 @@
 				"<td>" +
 				(row.name
 					? '<a class="sh-btn-secondary" style="font-size:0.76rem;padding:0.32rem 0.62rem;text-decoration:none;" href="' +
-					  enrolmentDesk +
-					  '" target="_blank">Enrolment</a>'
+						enrolmentDesk +
+						'" target="_blank">Enrolment</a>'
 					: "—") +
 				"</td>" +
 				"</tr>";
@@ -299,8 +299,8 @@
 				"<td>" +
 				(row.name
 					? '<a class="sh-btn-secondary" style="font-size:0.76rem;padding:0.32rem 0.62rem;text-decoration:none;" href="' +
-					  attDesk +
-					  '" target="_blank">Attendance</a>'
+						attDesk +
+						'" target="_blank">Attendance</a>'
 					: "—") +
 				"</td>" +
 				"</tr>";
@@ -446,7 +446,7 @@
 
 	function selectedFromChecklist(keyPrefix, keyName) {
 		var nodes = document.querySelectorAll(
-			'input[type="checkbox"][data-multi-group="' + keyPrefix + '"]:checked'
+			'input[type="checkbox"][data-multi-group="' + keyPrefix + '"]:checked',
 		);
 		return Array.prototype.map.call(nodes, function (node) {
 			var row = {};
@@ -461,7 +461,7 @@
 		if (
 			!field.fieldname ||
 			["name", "owner", "modified", "modified_by", "creation", "doctype"].indexOf(
-				field.fieldname
+				field.fieldname,
 			) > -1
 		)
 			return "";
@@ -767,13 +767,13 @@
 			"admin-motivation-options",
 			editable.motivation_options || [],
 			selectedValues(student.motivations, "motivation"),
-			"admin-motivation"
+			"admin-motivation",
 		);
 		renderChecklist(
 			"admin-resilience-options",
 			editable.resilience_options || [],
 			selectedValues(student.resilience_links, "resilience_statement"),
-			"admin-resilience"
+			"admin-resilience",
 		);
 		hydrateLinkFields();
 	}
@@ -810,7 +810,7 @@
 		payload.motivations = selectedFromChecklist("admin-motivation", "motivation");
 		payload.resilience_links = selectedFromChecklist(
 			"admin-resilience",
-			"resilience_statement"
+			"resilience_statement",
 		);
 
 		var saveBtn = document.getElementById("student-save-btn");
@@ -822,7 +822,7 @@
 			{
 				method: "POST",
 				body: JSON.stringify({ payload: payload }),
-			}
+			},
 		)
 			.then(function () {
 				saveBtn.textContent = "Saved";
@@ -839,15 +839,15 @@
 		return Promise.all([
 			api(
 				"/api/method/skillshub_core.skillshub_portal.api.get_student_admin_bundle?student=" +
-					encodeURIComponent(state.studentId)
+					encodeURIComponent(state.studentId),
 			),
 			api(
 				"/api/method/skillshub_core.skillshub_portal.api.get_doctype_meta?doctype=" +
-					encodeURIComponent("SH Student")
+					encodeURIComponent("SH Student"),
 			),
 			api(
 				"/api/method/skillshub_core.skillshub_core.api.get_student_editable?student=" +
-					encodeURIComponent(state.studentId)
+					encodeURIComponent(state.studentId),
 			).catch(function () {
 				return {};
 			}),

@@ -17,8 +17,8 @@
 							"Content-Type": "application/json",
 						},
 					},
-					opts || {}
-				)
+					opts || {},
+				),
 			).then(function (r) {
 				return r.json();
 			});
@@ -61,33 +61,33 @@
 	function buildCard(s) {
 		var avatar = s.student_image
 			? '<img src="' +
-			  esc(s.student_image) +
-			  '" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
+				esc(s.student_image) +
+				'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
 			: esc(initials(s.student_name));
 
 		var dobRow = s.date_of_birth_display
 			? '<div style="margin:0.5rem 0;padding:0.5rem 0.65rem;background:var(--pi-sand);border-radius:0.5rem;border:1px dashed var(--pi-border);">' +
-			  '<div class="pi-card-dob-label">Date of Birth</div>' +
-			  '<div class="pi-card-dob-val">' +
-			  esc(s.date_of_birth_display) +
-			  "</div>" +
-			  "</div>"
+				'<div class="pi-card-dob-label">Date of Birth</div>' +
+				'<div class="pi-card-dob-val">' +
+				esc(s.date_of_birth_display) +
+				"</div>" +
+				"</div>"
 			: "";
 
 		var path = s.programme_path
 			? '<span class="pi-badge ' +
-			  pathClass(s.programme_path) +
-			  '">' +
-			  esc(s.programme_path) +
-			  "</span> "
+				pathClass(s.programme_path) +
+				'">' +
+				esc(s.programme_path) +
+				"</span> "
 			: "";
 		var status = s.status
 			? '<span class="pi-badge ' + statusClass(s.status) + '">' + esc(s.status) + "</span>"
 			: "";
 		var cohort = s.intake_cohort
 			? '<div class="pi-text-xs pi-text-muted" style="margin-top:0.25rem;">Cohort: <strong>' +
-			  esc(s.intake_cohort) +
-			  "</strong></div>"
+				esc(s.intake_cohort) +
+				"</strong></div>"
 			: "";
 
 		return (
@@ -254,7 +254,7 @@
 					}
 					applyFilters();
 				});
-			}
+			},
 		);
 
 		/* Pagination */

@@ -32,7 +32,7 @@
 	function api(path, options) {
 		return fetch(
 			path,
-			Object.assign({ credentials: "include", headers: headers() }, options || {})
+			Object.assign({ credentials: "include", headers: headers() }, options || {}),
 		)
 			.then(function (response) {
 				if (!response.ok) throw new Error("HTTP " + response.status);
@@ -93,7 +93,7 @@
 
 	function selectedFromChecklist(keyPrefix, keyName) {
 		var nodes = document.querySelectorAll(
-			'input[type="checkbox"][data-multi-select="' + keyPrefix + '"]:checked'
+			'input[type="checkbox"][data-multi-select="' + keyPrefix + '"]:checked',
 		);
 		return Array.prototype.map.call(nodes, function (node) {
 			var row = {};
@@ -133,13 +133,13 @@
 			"edit-motivations-options",
 			editable.motivation_options || [],
 			selectedValues(editable.motivations, "motivation"),
-			"motivation"
+			"motivation",
 		);
 		renderChecklist(
 			"edit-resilience-options",
 			editable.resilience_options || [],
 			selectedValues(editable.resilience_links, "resilience_statement"),
-			"resilience"
+			"resilience",
 		);
 	}
 
@@ -267,13 +267,13 @@
 					encodeURIComponent(
 						(activeEnrolment && activeEnrolment.class) ||
 							student.current_schedule ||
-							""
+							"",
 					) +
 					"&enrolment_ticket=" +
 					encodeURIComponent(
 						(activeEnrolment && activeEnrolment.name) ||
 							student.current_enrolment ||
-							""
+							"",
 					);
 				var status =
 					summary.feedback_status && summary.feedback_status[form.doctype]
@@ -361,15 +361,15 @@
 		return Promise.all([
 			api(
 				"/api/method/skillshub_core.skillshub_core.api.get_portal_student_context?student=" +
-					encodeURIComponent(studentName)
+					encodeURIComponent(studentName),
 			),
 			api(
 				"/api/method/skillshub_core.skillshub_portal.api.get_feedback_records?student=" +
-					encodeURIComponent(studentName)
+					encodeURIComponent(studentName),
 			),
 			api(
 				"/api/method/skillshub_core.skillshub_core.api.get_student_editable?student=" +
-					encodeURIComponent(studentName)
+					encodeURIComponent(studentName),
 			).catch(function () {
 				return {};
 			}),
@@ -404,7 +404,7 @@
 				setEditStatus(
 					"Failed to save profile: " +
 						(error && error.message ? error.message : "Unknown error"),
-					true
+					true,
 				);
 			})
 			.finally(function () {

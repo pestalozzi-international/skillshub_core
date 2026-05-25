@@ -28,7 +28,7 @@
 	function api(path, options) {
 		return fetch(
 			path,
-			Object.assign({ credentials: "include", headers: headers() }, options || {})
+			Object.assign({ credentials: "include", headers: headers() }, options || {}),
 		)
 			.then(function (response) {
 				if (!response.ok) throw new Error("HTTP " + response.status);
@@ -99,8 +99,8 @@
 					esc(row.student) +
 					(recordName
 						? ' · <a href="' +
-						  deskUrl("SH Attendance", recordName) +
-						  '" target="_blank" style="text-decoration:none;">Desk ↗</a>'
+							deskUrl("SH Attendance", recordName) +
+							'" target="_blank" style="text-decoration:none;">Desk ↗</a>'
 						: "") +
 					"</div>" +
 					"</div>" +
@@ -115,7 +115,7 @@
 
 	function loadClassOptions() {
 		api(
-			'/api/resource/SH Class?fields=["name","skillshub_course","course_run","class_no"]&limit_page_length=1000'
+			'/api/resource/SH Class?fields=["name","skillshub_course","course_run","class_no"]&limit_page_length=1000',
 		)
 			.then(function (response) {
 				var classes = (response && response.data) || [];
@@ -148,13 +148,13 @@
 		Promise.all([
 			api(
 				"/api/method/skillshub_core.skillshub_portal.api.get_attendance_roster?schedule=" +
-					encodeURIComponent(selection.schedule)
+					encodeURIComponent(selection.schedule),
 			),
 			api(
 				"/api/method/skillshub_core.skillshub_portal.api.get_attendance_records?schedule=" +
 					encodeURIComponent(selection.schedule) +
 					"&date=" +
-					encodeURIComponent(selection.date)
+					encodeURIComponent(selection.date),
 			),
 		])
 			.then(function (results) {
@@ -214,7 +214,7 @@
 						(result.created || 0) +
 						", updated: " +
 						(result.updated || 0) +
-						"."
+						".",
 				);
 			})
 			.catch(function (error) {
