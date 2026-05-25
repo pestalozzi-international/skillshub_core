@@ -72,9 +72,16 @@ frappe.query_reports["SH Programme Overview"] = {
 
 	formatter: function (value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
-		if (!data) return value;
 
-		// Detect total row: has no primary key field set
+		// Total row: data is null — suppress meaningless averaged percentages
+		if (!data) {
+			if (column.fieldname === "baseline_pct" || column.fieldname === "feedback_pct") {
+				return "";
+			}
+			return value;
+		}
+
+		// Detect total row when data object exists but has no primary key
 		const isTotalRow = !data.class_name && !data.student;
 
 		if (

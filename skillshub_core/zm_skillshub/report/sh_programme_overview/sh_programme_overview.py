@@ -5,10 +5,9 @@ import frappe
 from frappe import _
 
 # (doctype, class_link_field, programme_name)
-# SH Soft Skills Feedback uses "program_schedule" (American spelling); all others use "programme_schedule"
 _FB = {
 	"mindset_camp": ("SH Mindset Camp Feedback", "programme_schedule", "Mindset Camp"),
-	"soft_skills": ("SH Soft Skills Feedback", "program_schedule", "Soft Skills Programme"),
+	"soft_skills": ("SH Soft Skills Feedback", "programme_schedule", "Soft Skills Programme"),
 	"vocational": ("SH VT Feedback", "programme_schedule", "Vocational Training"),
 	"edulution": (
 		"SH Edulution Feedback",
