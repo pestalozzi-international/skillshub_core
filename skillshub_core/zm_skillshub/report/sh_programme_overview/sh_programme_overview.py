@@ -305,12 +305,16 @@ def _get_class_data(filters):
 	# Baseline counts — query SH Baseline directly by programme_schedule (= SH Class name)
 	bl_map = _counts_by_class("SH Baseline", "programme_schedule", class_names)
 
-	# Feedback counts — each type queries its own table directly by the class link field
-	# This avoids the student-JOIN double-counting bug: a student in both VT and SS
-	# won't have their SS feedback counted against their VT class or vice versa.
+	# Feedback counts
+	# Most feedback types link directly to SH Class via programme_schedule.
+	# SH Soft Skills Feedback uses the retired program_schedule field (old Programme Schedule
+	# names) so it must be counted via enrolment_ticket → SH Enrolment.class instead.
 	fb_maps = {}
 	for key, (doctype, class_field, _prog) in _FB.items():
-		fb_maps[key] = _counts_by_class(doctype, class_field, class_names)
+		if key == "soft_skills":
+			fb_maps[key] = _counts_via_enrolment(doctype, class_names)
+		else:
+			fb_maps[key] = _counts_by_class(doctype, class_field, class_names)
 
 	# Programme → which fb key drives the primary feedback % column
 	_prog_to_primary_fb = {
@@ -551,6 +555,30 @@ def _where(filters, include_student=False):
 		values["student"] = filters.student
 
 	return " AND ".join(conditions), values
+
+
+def _counts_via_enrolment(doctype, class_names):
+	"""Count feedback records per SH Class by joining through enrolment_ticket.
+
+	Used for doctypes where the direct class link field stores retired Programme Schedule
+	names rather than current SH Class names (e.g. SH Soft Skills Feedback).
+	"""
+	if not class_names:
+		return {}
+	placeholders = ", ".join(["%s"] * len(class_names))
+	try:
+		rows = frappe.db.sql(  # nosemgrep
+			f"SELECT e.class AS class_name, COUNT(*) AS cnt "
+			f"FROM `tab{doctype}` fb "
+			f"JOIN `tabSH Enrolment` e ON e.name = fb.enrolment_ticket "
+			f"WHERE e.class IN ({placeholders}) "
+			f"GROUP BY e.class",
+			class_names,
+			as_dict=True,
+		)
+		return {r.class_name: r.cnt for r in rows}
+	except Exception:
+		return {}
 
 
 def _counts_by_class(doctype, class_field, class_names):
