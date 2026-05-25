@@ -172,20 +172,20 @@
     .kv-pill-key { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: var(--pi-muted); margin-bottom: 0.15rem; }
     .kv-pill-val { font-size: 0.88rem; font-weight: 700; color: var(--pi-black); }
 
-    /* Buttons / links */
-    .page-link {
-      display: inline-flex; align-items: center; gap: 0.35rem;
-      background: var(--pi-red);
-      color: white !important;
+    /* Buttons / links — use .guide-btn* to avoid conflict with Bootstrap .page-link */
+    .guide-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: white;
+      color: var(--pi-red) !important;
+      border: 1.5px solid var(--pi-red);
       text-decoration: none !important;
       border-radius: 0.5rem;
       padding: 0.4rem 0.875rem;
       font-size: 0.82rem; font-weight: 700;
-      border: none;
     }
-    .page-link:hover { background: var(--pi-red-dark); color: white !important; }
-    .page-link-sec {
-      display: inline-flex; align-items: center; gap: 0.35rem;
+    .guide-btn:hover { background: var(--pi-red); color: white !important; }
+    .guide-btn-sec {
+      display: inline-flex; align-items: center; gap: 0.4rem;
       background: white;
       color: var(--pi-black) !important;
       border: 1px solid var(--pi-border);
@@ -194,7 +194,7 @@
       padding: 0.4rem 0.875rem;
       font-size: 0.82rem; font-weight: 700;
     }
-    .page-link-sec:hover { border-color: var(--pi-red); color: var(--pi-red) !important; }
+    .guide-btn-sec:hover { border-color: var(--pi-red); color: var(--pi-red) !important; }
     .link-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.9rem; }
 
     /* Divider */
@@ -550,8 +550,8 @@
           <h3>Checking completion rates</h3>
           <p>Use the Programme Overview to see which classes have low baseline or feedback completion. Open the desk report for per-student detail.</p>
           <div class="link-row">
-            <a href="/skillshub/admin/programme-overview" class="page-link-sec">📊 Programme Overview</a>
-            <a href="/app/query-report/SH%20Programme%20Overview" target="_blank" class="page-link-sec">📊 Detailed Report ↗</a>
+            <a href="/skillshub/admin/programme-overview" class="guide-btn-sec">📊 Programme Overview</a>
+            <a href="/app/query-report/SH%20Programme%20Overview" target="_blank" class="guide-btn-sec">📊 Detailed Report ↗</a>
           </div>
         </div>
       </section>
@@ -573,7 +573,7 @@
           <h3>Desk report</h3>
           <p>For exports, sorting, and per-student detail, use the full desk report:</p>
           <div class="link-row">
-            <a href="/app/query-report/SH%20Programme%20Overview" target="_blank" class="page-link">📊 Open Full Report ↗</a>
+            <a href="/app/query-report/SH%20Programme%20Overview" target="_blank" class="guide-btn">📊 Open Full Report ↗</a>
           </div>
           <ul>
             <li><strong>Class Summary view</strong> — one row per class. Colour-coded percentage columns show baseline and feedback completion rates.</li>
@@ -626,24 +626,24 @@
         </div>
         <div class="guide-section-body">
           <div class="link-row">
-            <a href="/app/sh-student" target="_blank" class="page-link-sec">👤 Students</a>
-            <a href="/app/sh-applicant" target="_blank" class="page-link-sec">📄 Applicants</a>
-            <a href="/app/sh-class" target="_blank" class="page-link-sec">🏫 Classes</a>
-            <a href="/app/sh-enrolment" target="_blank" class="page-link-sec">📋 Enrolments</a>
-            <a href="/app/sh-academic-year" target="_blank" class="page-link-sec">📅 Academic Years</a>
-            <a href="/app/skillshub-course" target="_blank" class="page-link-sec">📚 Courses</a>
+            <a href="/app/sh-student" target="_blank" class="guide-btn-sec">👤 Students</a>
+            <a href="/app/sh-applicant" target="_blank" class="guide-btn-sec">📄 Applicants</a>
+            <a href="/app/sh-class" target="_blank" class="guide-btn-sec">🏫 Classes</a>
+            <a href="/app/sh-enrolment" target="_blank" class="guide-btn-sec">📋 Enrolments</a>
+            <a href="/app/sh-academic-year" target="_blank" class="guide-btn-sec">📅 Academic Years</a>
+            <a href="/app/skillshub-course" target="_blank" class="guide-btn-sec">📚 Courses</a>
           </div>
           <div class="link-row">
-            <a href="/app/sh-baseline" target="_blank" class="page-link-sec">📝 Baselines</a>
-            <a href="/app/sh-soft-skills-feedback" target="_blank" class="page-link-sec">🧠 Soft Skills Feedback</a>
-            <a href="/app/sh-mindset-camp-feedback" target="_blank" class="page-link-sec">⛺ Mindset Camp Feedback</a>
-            <a href="/app/sh-vt-feedback" target="_blank" class="page-link-sec">🔧 VT Feedback</a>
-            <a href="/app/sh-edulution-feedback" target="_blank" class="page-link-sec">📖 Edulution Feedback</a>
-            <a href="/app/sh-attachment-feedback" target="_blank" class="page-link-sec">🏢 Attachment Feedback</a>
-            <a href="/app/sh-graduate-feedback" target="_blank" class="page-link-sec">🎓 Graduate Feedback</a>
+            <a href="/app/sh-baseline" target="_blank" class="guide-btn-sec">📝 Baselines</a>
+            <a href="/app/sh-soft-skills-feedback" target="_blank" class="guide-btn-sec">🧠 Soft Skills Feedback</a>
+            <a href="/app/sh-mindset-camp-feedback" target="_blank" class="guide-btn-sec">⛺ Mindset Camp Feedback</a>
+            <a href="/app/sh-vt-feedback" target="_blank" class="guide-btn-sec">🔧 VT Feedback</a>
+            <a href="/app/sh-edulution-feedback" target="_blank" class="guide-btn-sec">📖 Edulution Feedback</a>
+            <a href="/app/sh-attachment-feedback" target="_blank" class="guide-btn-sec">🏢 Attachment Feedback</a>
+            <a href="/app/sh-graduate-feedback" target="_blank" class="guide-btn-sec">🎓 Graduate Feedback</a>
           </div>
           <div class="link-row">
-            <a href="/app/query-report/SH%20Programme%20Overview" target="_blank" class="page-link">📊 Programme Overview Report ↗</a>
+            <a href="/app/query-report/SH%20Programme%20Overview" target="_blank" class="guide-btn">📊 Programme Overview Report ↗</a>
           </div>
         </div>
       </section>
