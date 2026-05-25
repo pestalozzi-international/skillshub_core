@@ -67,6 +67,10 @@ frappe.query_reports["SH Programme Overview"] = {
 	formatter: function (value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
 		if (!data) return value;
+
+		// Detect total row: has no primary key field set
+		const isTotalRow = !data.class_name && !data.student;
+
 		if (
 			[
 				"fb_mindset_camp",
@@ -80,6 +84,8 @@ frappe.query_reports["SH Programme Overview"] = {
 			return '<span style="color:#cbd5e1;">—</span>';
 		}
 		if (column.fieldname === "baseline_pct" || column.fieldname === "feedback_pct") {
+			// Suppress averaged total-row percentage — it's mathematically meaningless
+			if (isTotalRow) return "";
 			const v = parseFloat(value);
 			if (!isNaN(v)) {
 				const color = v >= 90 ? "#15803d" : v >= 60 ? "#d97706" : "#dc2626";
@@ -98,6 +104,6 @@ frappe.query_reports["SH Programme Overview"] = {
 	},
 
 	get_datatable_options: function (options) {
-		return Object.assign(options, { showTotalRow: true });
+		return Object.assign(options, { showTotalRow: true, frozenColumnsNumber: 1 });
 	},
 };
