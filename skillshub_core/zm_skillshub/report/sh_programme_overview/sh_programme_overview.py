@@ -316,6 +316,10 @@ def _get_class_data(filters):
 		else:
 			fb_maps[key] = _counts_by_class(doctype, class_field, class_names)
 
+	# Distinct-student counts for the feedback % column — SS students submit multiple forms
+	# per session so raw record count / enrolments would exceed 100%.
+	ss_distinct = _distinct_students_via_enrolment("SH Soft Skills Feedback", class_names)
+
 	# Programme → which fb key drives the primary feedback % column
 	_prog_to_primary_fb = {
 		"Mindset Camp": "mindset_camp",
@@ -342,7 +346,11 @@ def _get_class_data(filters):
 		r.fb_attachment = fb_maps["attachment"].get(cn, 0) if prog == "Vocational Training" else None
 
 		primary_key = _prog_to_primary_fb.get(prog)
-		primary_count = fb_maps[primary_key].get(cn, 0) if primary_key else 0
+		if prog == "Soft Skills Programme":
+			# Use distinct student count so % reflects coverage, not submission volume
+			primary_count = ss_distinct.get(cn, 0)
+		else:
+			primary_count = fb_maps[primary_key].get(cn, 0) if primary_key else 0
 		r.feedback_pct = _pct(primary_count, r.total_enrolments)
 
 	return rows
@@ -569,6 +577,30 @@ def _counts_via_enrolment(doctype, class_names):
 	try:
 		rows = frappe.db.sql(  # nosemgrep
 			f"SELECT e.`class` AS class_name, COUNT(*) AS cnt "
+			f"FROM `tab{doctype}` fb "
+			f"JOIN `tabSH Enrolment` e ON e.name = fb.enrolment_ticket "
+			f"WHERE e.`class` IN ({placeholders}) "
+			f"GROUP BY e.`class`",
+			class_names,
+			as_dict=True,
+		)
+		return {r.class_name: r.cnt for r in rows}
+	except Exception:
+		return {}
+
+
+def _distinct_students_via_enrolment(doctype, class_names):
+	"""Count distinct students who submitted at least one feedback record, per SH Class.
+
+	Used for the Feedback % column on doctypes like SH Soft Skills Feedback where students
+	submit multiple records per class (one per session), so COUNT(*) would exceed enrolments.
+	"""
+	if not class_names:
+		return {}
+	placeholders = ", ".join(["%s"] * len(class_names))
+	try:
+		rows = frappe.db.sql(  # nosemgrep
+			f"SELECT e.`class` AS class_name, COUNT(DISTINCT fb.enrolment_ticket) AS cnt "
 			f"FROM `tab{doctype}` fb "
 			f"JOIN `tabSH Enrolment` e ON e.name = fb.enrolment_ticket "
 			f"WHERE e.`class` IN ({placeholders}) "
