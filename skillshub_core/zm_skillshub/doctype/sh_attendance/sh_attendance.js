@@ -15,7 +15,7 @@ frappe.ui.form.on("SH Attendance", {
 				`<b>Status:</b> <span style="color:${color};font-weight:bold;">${
 					frm.doc.status || "—"
 				}</span>`,
-				color,
+				color
 			);
 		}
 	},

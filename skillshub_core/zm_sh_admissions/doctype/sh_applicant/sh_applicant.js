@@ -19,9 +19,9 @@ frappe.ui.form.on("SH Applicant", {
 		if (frm.doc.converted_to_student) {
 			frm.set_intro(
 				`Already converted — <a href="/app/sh-student/${encodeURIComponent(
-					frm.doc.converted_to_student,
+					frm.doc.converted_to_student
 				)}">${frm.doc.converted_to_student}</a>`,
-				"green",
+				"green"
 			);
 		}
 	},
@@ -47,7 +47,7 @@ function _do_conversion(frm) {
 		__(
 			`Convert <b>${frm.doc.full_name}</b> to an SH Student record?<br><br>` +
 				`This will create a new student with status <b>Student</b> ` +
-				`and mark this applicant as <b>Converted</b>.`,
+				`and mark this applicant as <b>Converted</b>.`
 		),
 		function () {
 			frappe.call({
@@ -62,12 +62,12 @@ function _do_conversion(frm) {
 						setTimeout(function () {
 							window.open(
 								`/app/sh-student/${encodeURIComponent(r.message)}`,
-								"_blank",
+								"_blank"
 							);
 						}, 800);
 					}
 				},
 			});
-		},
+		}
 	);
 }
