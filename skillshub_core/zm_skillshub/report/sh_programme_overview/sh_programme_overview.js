@@ -66,6 +66,7 @@ frappe.query_reports["SH Programme Overview"] = {
 
 	formatter: function (value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
+		if (!data) return value;
 		if (
 			[
 				"fb_mindset_camp",
