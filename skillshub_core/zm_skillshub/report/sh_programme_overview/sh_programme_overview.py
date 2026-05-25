@@ -64,6 +64,13 @@ def _class_columns():
 			"width": 110,
 		},
 		{
+			"label": _("Cohort"),
+			"fieldname": "cohort",
+			"fieldtype": "Link",
+			"options": "SH Cohort",
+			"width": 130,
+		},
+		{
 			"label": _("Programme"),
 			"fieldname": "programme",
 			"fieldtype": "Data",
@@ -269,6 +276,7 @@ def _get_class_data(filters):
             sc.skillshub_course             AS course,
             sc.course_run                   AS course_run,
             sc.academic_year                AS academic_year,
+            MIN(e.cohort)                   AS cohort,
             sc.complete                     AS complete,
             COUNT(DISTINCT e.name)          AS total_enrolments,
             SUM(e.status = 'Enrolled')      AS enrolled,
@@ -513,6 +521,10 @@ def _where(filters, include_student=False):
 	if filters.get("intake_year"):
 		conditions.append("s.intake_year = %(intake_year)s")
 		values["intake_year"] = filters.intake_year
+
+	if filters.get("cohort"):
+		conditions.append("e.cohort = %(cohort)s")
+		values["cohort"] = filters.cohort
 
 	if filters.get("programme"):
 		conditions.append("sc.skillshub_programme = %(programme)s")

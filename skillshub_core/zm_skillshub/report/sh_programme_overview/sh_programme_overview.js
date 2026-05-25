@@ -21,6 +21,12 @@ frappe.query_reports["SH Programme Overview"] = {
 			options: "SH Academic Year",
 		},
 		{
+			fieldname: "cohort",
+			label: __("Cohort"),
+			fieldtype: "Link",
+			options: "SH Cohort",
+		},
+		{
 			fieldname: "intake_year",
 			label: __("Intake Year (Student)"),
 			fieldtype: "Data",
