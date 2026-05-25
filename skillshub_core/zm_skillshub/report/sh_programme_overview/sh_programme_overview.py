@@ -50,6 +50,13 @@ def execute(filters=None):
 def _class_columns():
 	return [
 		{
+			"label": _("Class"),
+			"fieldname": "class_name",
+			"fieldtype": "Link",
+			"options": "SH Class",
+			"width": 160,
+		},
+		{
 			"label": _("Academic Year"),
 			"fieldname": "academic_year",
 			"fieldtype": "Link",
@@ -60,27 +67,20 @@ def _class_columns():
 			"label": _("Programme"),
 			"fieldname": "programme",
 			"fieldtype": "Data",
-			"width": 240,
+			"width": 200,
 		},
 		{
 			"label": _("Course"),
 			"fieldname": "course",
 			"fieldtype": "Link",
 			"options": "SkillsHub Course",
-			"width": 200,
+			"width": 180,
 		},
 		{
 			"label": _("Course Run"),
 			"fieldname": "course_run",
 			"fieldtype": "Data",
-			"width": 90,
-		},
-		{
-			"label": _("Class"),
-			"fieldname": "class_name",
-			"fieldtype": "Link",
-			"options": "SH Class",
-			"width": 160,
+			"width": 80,
 		},
 		{
 			"label": _("Complete"),
