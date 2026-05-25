@@ -320,13 +320,14 @@ def _get_class_data(filters):
 		r.baseline_pct = _pct(r.baselines, r.total_enrolments)
 
 		# Show each feedback column only for the relevant programme; None = N/A (renders as —)
-		r.fb_mindset_camp = fb_maps["mindset_camp"].get(cn) if prog == "Mindset Camp" else None
-		r.fb_soft_skills = fb_maps["soft_skills"].get(cn) if prog == "Soft Skills Programme" else None
-		r.fb_vocational = fb_maps["vocational"].get(cn) if prog == "Vocational Training" else None
+		# Use .get(cn, 0) so applicable types with zero submissions show 0, not —
+		r.fb_mindset_camp = fb_maps["mindset_camp"].get(cn, 0) if prog == "Mindset Camp" else None
+		r.fb_soft_skills = fb_maps["soft_skills"].get(cn, 0) if prog == "Soft Skills Programme" else None
+		r.fb_vocational = fb_maps["vocational"].get(cn, 0) if prog == "Vocational Training" else None
 		r.fb_edulution = (
-			fb_maps["edulution"].get(cn) if prog == "Remedial Programme: Literacy and Numeracy" else None
+			fb_maps["edulution"].get(cn, 0) if prog == "Remedial Programme: Literacy and Numeracy" else None
 		)
-		r.fb_attachment = fb_maps["attachment"].get(cn) if prog == "Vocational Training" else None
+		r.fb_attachment = fb_maps["attachment"].get(cn, 0) if prog == "Vocational Training" else None
 
 		primary_key = _prog_to_primary_fb.get(prog)
 		primary_count = fb_maps[primary_key].get(cn, 0) if primary_key else 0
@@ -399,9 +400,46 @@ def _get_student_data(filters):
 		except Exception:
 			pass
 
+	# Fallback for older records where enrolment_ticket was not filled in:
+	# match by (sh_student, class_link_field) for records with no enrolment_ticket.
+	all_students = list({r.student for r in rows})
+	all_classes = list({r.class_name for r in rows if r.class_name})
+	if all_students and all_classes:
+		st_ph = ", ".join(["%s"] * len(all_students))
+		cl_ph = ", ".join(["%s"] * len(all_classes))
+		no_ticket = "(enrolment_ticket IS NULL OR enrolment_ticket = '')"
+
+		bl_fallback = set()
+		try:
+			bl_fb_rows = frappe.db.sql(  # nosemgrep
+				f"SELECT sh_student, programme_schedule FROM `tabSH Baseline` "
+				f"WHERE sh_student IN ({st_ph}) AND programme_schedule IN ({cl_ph}) "
+				f"AND {no_ticket}",
+				all_students + all_classes,
+			)
+			bl_fallback = {(r[0], r[1]) for r in bl_fb_rows}
+		except Exception:
+			pass
+
+		fb_fallback = set()
+		for _key, (doctype, class_field, _prog) in _FB.items():
+			try:
+				fb_fb_rows = frappe.db.sql(  # nosemgrep
+					f"SELECT sh_student, `{class_field}` FROM `tab{doctype}` "
+					f"WHERE sh_student IN ({st_ph}) AND `{class_field}` IN ({cl_ph}) "
+					f"AND {no_ticket}",
+					all_students + all_classes,
+				)
+				fb_fallback.update((r[0], r[1]) for r in fb_fb_rows if r[0] and r[1])
+			except Exception:
+				pass
+	else:
+		bl_fallback = set()
+		fb_fallback = set()
+
 	for r in rows:
-		r.has_baseline = 1 if r.enrolment_id in bl_set else 0
-		r.has_feedback = 1 if r.enrolment_id in fb_set else 0
+		r.has_baseline = 1 if (r.enrolment_id in bl_set or (r.student, r.class_name) in bl_fallback) else 0
+		r.has_feedback = 1 if (r.enrolment_id in fb_set or (r.student, r.class_name) in fb_fallback) else 0
 
 	return rows
 
