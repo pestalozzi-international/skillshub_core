@@ -116,7 +116,7 @@
 	function loadClassOptions() {
 		api('/api/method/skillshub_core.skillshub_portal.api.get_active_classes')
 			.then(function (response) {
-				var classes = (response && response.message) || [];
+				var classes = (response && response.classes) || [];
 				var select = document.getElementById("att-class");
 				classes.forEach(function (item) {
 					var option = document.createElement("option");
@@ -129,6 +129,11 @@
 						(item.course_run || "");
 					select.appendChild(option);
 				});
+				var counter = document.getElementById("att-class-counter");
+				if (counter) {
+					counter.textContent =
+						(response.active || 0) + " active · " + (response.complete || 0) + " complete";
+				}
 			})
 			.catch(function () {
 				setStatus("Failed to load classes.", true);
