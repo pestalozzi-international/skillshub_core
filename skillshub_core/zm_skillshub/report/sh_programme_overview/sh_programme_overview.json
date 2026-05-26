@@ -28,6 +28,9 @@
   },
   {
    "role": "PI Admin"
+  },
+  {
+   "role": "SH Admin"
   }
  ],
  "timeout": 0
