@@ -603,6 +603,18 @@ def get_portal_form_doc(doctype, name):
 
 
 @frappe.whitelist()  # nosemgrep
+def get_active_classes():
+	if not _has_admin_access():
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	return frappe.db.sql("""
+		SELECT name, skillshub_course, course_run, class_no
+		FROM `tabSH Class`
+		WHERE status != 'Complete'
+		ORDER BY name
+	""", as_dict=True)
+
+
+@frappe.whitelist()  # nosemgrep
 def get_attendance_roster(schedule):
 	if not schedule:
 		frappe.throw(_("Class is required."))
