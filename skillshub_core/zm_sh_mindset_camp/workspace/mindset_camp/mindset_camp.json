@@ -33,7 +33,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-05-12 16:26:18.053919",
+ "modified": "2026-05-26 06:26:54.128917",
  "modified_by": "Administrator",
  "module": "ZM SH Mindset Camp",
  "name": "Mindset Camp",
@@ -42,8 +42,21 @@
  "parent_page": "Zambia: SkillsHub",
  "public": 1,
  "quick_lists": [],
- "roles": [],
- "sequence_id": 10.0,
+ "roles": [
+  {
+   "role": "PI Admin"
+  },
+  {
+   "role": "Administrator"
+  },
+  {
+   "role": "SH Admin"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 11.0,
  "shortcuts": [
   {
    "color": "Grey",

@@ -53,7 +53,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-05-12 16:26:18.111981",
+ "modified": "2026-05-26 06:25:34.722401",
  "modified_by": "Administrator",
  "module": "ZM SH Soft Skills",
  "name": "Soft Skills",
@@ -62,8 +62,21 @@
  "parent_page": "Zambia: SkillsHub",
  "public": 1,
  "quick_lists": [],
- "roles": [],
- "sequence_id": 12.0,
+ "roles": [
+  {
+   "role": "PI Admin"
+  },
+  {
+   "role": "SH Admin"
+  },
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Administrator"
+  }
+ ],
+ "sequence_id": 13.0,
  "shortcuts": [
   {
    "color": "Grey",

@@ -194,7 +194,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-05-12 16:26:18.013767",
+ "modified": "2026-05-26 06:20:13.678224",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "Zambia: SkillsHub",
@@ -209,9 +209,15 @@
   },
   {
    "role": "System Manager"
+  },
+  {
+   "role": "PI Admin"
+  },
+  {
+   "role": "SH Admin"
   }
  ],
- "sequence_id": 9.0,
+ "sequence_id": 10.0,
  "shortcuts": [
   {
    "color": "Green",
