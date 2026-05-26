@@ -1,7 +1,8 @@
 {
  "add_total_row": 0,
+ "add_translate_data": 0,
  "columns": [],
- "creation": "2026-05-24 00:00:00.000000",
+ "creation": "2026-05-24 00:00:00",
  "disabled": 0,
  "docstatus": 0,
  "doctype": "Report",
@@ -10,7 +11,7 @@
  "is_standard": "Yes",
  "json": "{}",
  "letter_head": null,
- "modified": "2026-05-24 00:00:00.000000",
+ "modified": "2026-05-26 07:56:10.275428",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Programme Overview",
