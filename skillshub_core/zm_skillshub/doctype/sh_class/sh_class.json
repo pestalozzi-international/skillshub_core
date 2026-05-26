@@ -15,6 +15,7 @@
   "max_strength",
   "section_break_bksr",
   "academic_year",
+  "cohort",
   "skillshub_programme",
   "column_break_gbly",
   "skillshub_course",
@@ -114,6 +115,15 @@
    "label": "Academic Year",
    "options": "SH Academic Year",
    "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "cohort",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Cohort",
+   "options": "SH Cohort",
    "search_index": 1
   },
   {
