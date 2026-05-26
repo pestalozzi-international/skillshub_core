@@ -609,7 +609,7 @@ def get_active_classes():
 	active = frappe.db.sql("""
 		SELECT name, skillshub_course, course_run, class_no
 		FROM `tabSH Class`
-		WHERE status != 'Complete'
+		WHERE COALESCE(status, '') != 'Complete'
 		ORDER BY name
 	""", as_dict=True)
 	total = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabSH Class`", as_dict=True)[0].cnt
