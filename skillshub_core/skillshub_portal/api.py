@@ -606,12 +606,15 @@ def get_portal_form_doc(doctype, name):
 def get_active_classes():
 	if not _has_admin_access():
 		frappe.throw(_("Not permitted"), frappe.PermissionError)
-	active = frappe.db.sql("""
+	active = frappe.db.sql(
+		"""
 		SELECT name, skillshub_course, course_run, class_no
 		FROM `tabSH Class`
 		WHERE COALESCE(status, '') != 'Complete'
 		ORDER BY name
-	""", as_dict=True)
+	""",
+		as_dict=True,
+	)
 	total = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabSH Class`", as_dict=True)[0].cnt
 	return {"classes": active, "active": len(active), "complete": total - len(active)}
 
