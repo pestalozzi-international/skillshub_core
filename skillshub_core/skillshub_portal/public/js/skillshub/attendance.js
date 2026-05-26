@@ -114,11 +114,9 @@
 	}
 
 	function loadClassOptions() {
-		api(
-			'/api/resource/SH Class?fields=["name","skillshub_course","course_run","class_no"]&filters=[["SH Class","status","!=","Complete"]]&limit_page_length=1000'
-		)
+		api('/api/method/skillshub_core.skillshub_portal.api.get_active_classes')
 			.then(function (response) {
-				var classes = (response && response.data) || [];
+				var classes = (response && response.message) || [];
 				var select = document.getElementById("att-class");
 				classes.forEach(function (item) {
 					var option = document.createElement("option");
