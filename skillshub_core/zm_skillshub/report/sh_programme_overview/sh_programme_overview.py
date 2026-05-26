@@ -276,7 +276,7 @@ def _get_class_data(filters):
             sc.skillshub_course             AS course,
             sc.course_run                   AS course_run,
             sc.academic_year                AS academic_year,
-            MIN(e.cohort)                   AS cohort,
+            COALESCE(sc.cohort, MIN(e.cohort)) AS cohort,
             sc.complete                     AS complete,
             COUNT(DISTINCT e.name)          AS total_enrolments,
             SUM(e.status = 'Enrolled')      AS enrolled,
@@ -535,7 +535,7 @@ def _where(filters, include_student=False):
 		values["intake_year"] = filters.intake_year
 
 	if filters.get("cohort"):
-		conditions.append("e.cohort = %(cohort)s")
+		conditions.append("(sc.cohort = %(cohort)s OR (sc.cohort IS NULL AND e.cohort = %(cohort)s))")
 		values["cohort"] = filters.cohort
 
 	if filters.get("programme"):
