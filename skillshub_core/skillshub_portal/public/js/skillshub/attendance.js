@@ -114,7 +114,7 @@
 	}
 
 	function loadClassOptions() {
-		api('/api/method/skillshub_core.skillshub_portal.api.get_active_classes')
+		api("/api/method/skillshub_core.skillshub_portal.api.get_active_classes")
 			.then(function (response) {
 				var classes = (response && response.classes) || [];
 				var select = document.getElementById("att-class");
@@ -132,7 +132,10 @@
 				var counter = document.getElementById("att-class-counter");
 				if (counter) {
 					counter.textContent =
-						(response.active || 0) + " active · " + (response.complete || 0) + " complete";
+						(response.active || 0) +
+						" active · " +
+						(response.complete || 0) +
+						" complete";
 				}
 			})
 			.catch(function () {
