@@ -1,13 +1,25 @@
 """
-Rename program_schedule → sh_class on SH Soft Skills Feedback.
+Backfill sh_class from program_schedule on SH Soft Skills Feedback.
 
-The old fieldname used American spelling and an ambiguous label.
-The DB column is renamed; data was already corrected in the console
-prior to this patch (enrolment_ticket JOIN used to backfill values).
+The DocType JSON renamed program_schedule → sh_class; bench migrate
+creates the new column automatically. This patch copies the data from
+the old column into the new one so no records lose their class link.
 """
 
 import frappe
 
 
 def execute():
-	frappe.rename_field("SH Soft Skills Feedback", "program_schedule", "sh_class")
+	if not frappe.db.has_column("SH Soft Skills Feedback", "program_schedule"):
+		return  # already cleaned up or never existed
+
+	frappe.db.sql(
+		"""
+        UPDATE `tabSH Soft Skills Feedback`
+        SET `sh_class` = `program_schedule`
+        WHERE (`sh_class` IS NULL OR `sh_class` = '')
+          AND `program_schedule` IS NOT NULL
+          AND `program_schedule` != ''
+        """
+	)
+	frappe.db.commit()
