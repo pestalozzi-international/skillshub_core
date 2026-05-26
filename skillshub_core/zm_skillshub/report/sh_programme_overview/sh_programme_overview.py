@@ -8,7 +8,7 @@ from frappe import _
 # SH Soft Skills Feedback uses "program_schedule" (American spelling — zm_sh_soft_skills wins at migrate)
 _FB = {
 	"mindset_camp": ("SH Mindset Camp Feedback", "programme_schedule", "Mindset Camp"),
-	"soft_skills": ("SH Soft Skills Feedback", "program_schedule", "Soft Skills Programme"),
+	"soft_skills": ("SH Soft Skills Feedback", "sh_class", "Soft Skills Programme"),
 	"vocational": ("SH VT Feedback", "programme_schedule", "Vocational Training"),
 	"edulution": (
 		"SH Edulution Feedback",

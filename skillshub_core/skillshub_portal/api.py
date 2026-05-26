@@ -127,7 +127,7 @@ def _existing_fields(doctype, candidates):
 
 
 def _feedback_schedule_field(doctype):
-	for fieldname in ("programme_schedule", "program_schedule", "sh_programme_schedule", "class"):
+	for fieldname in ("sh_class", "programme_schedule", "program_schedule", "sh_programme_schedule", "class"):
 		if _doctype_has_field(doctype, fieldname):
 			return fieldname
 	return None
