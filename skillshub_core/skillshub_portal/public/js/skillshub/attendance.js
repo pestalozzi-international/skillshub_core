@@ -115,7 +115,7 @@
 
 	function loadClassOptions() {
 		api(
-			'/api/resource/SH Class?fields=["name","skillshub_course","course_run","class_no"]&filters=[["status","!=","Complete"]]&limit_page_length=1000'
+			'/api/resource/SH Class?fields=["name","skillshub_course","course_run","class_no"]&filters=[["SH Class","status","!=","Complete"]]&limit_page_length=1000'
 		)
 			.then(function (response) {
 				var classes = (response && response.data) || [];
