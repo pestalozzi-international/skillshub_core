@@ -116,6 +116,7 @@
 			student_name: sname,
 			sh_student_name: sname,
 			student_full_name: sname,
+			sh_class: c.schedule,
 			programme_schedule: c.schedule,
 			program_schedule: c.schedule,
 			class: c.schedule,

@@ -110,7 +110,7 @@
 	}
 
 	function inferScheduleField() {
-		var names = ["programme_schedule", "program_schedule", "sh_programme_schedule", "class"];
+		var names = ["sh_class", "programme_schedule", "program_schedule", "sh_programme_schedule", "class"];
 		var fields = (state.meta && state.meta.fields) || [];
 		for (var index = 0; index < names.length; index += 1) {
 			if (

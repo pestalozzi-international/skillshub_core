@@ -13,7 +13,7 @@
   "student_name",
   "section_break_fxpc",
   "enrolment_ticket",
-  "program_schedule",
+  "sh_class",
   "milestone",
   "column_break_atze",
   "academic_year",
@@ -92,9 +92,9 @@
   },
   {
    "fetch_from": "enrolment_ticket.class",
-   "fieldname": "program_schedule",
+   "fieldname": "sh_class",
    "fieldtype": "Link",
-   "label": "Program Schedule",
+   "label": "Class",
    "options": "SH Class"
   },
   {

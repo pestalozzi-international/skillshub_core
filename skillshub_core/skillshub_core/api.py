@@ -152,6 +152,8 @@ def _feedback_student_field(doctype):
 
 
 def _feedback_schedule_field(doctype):
+	if _doctype_has_field(doctype, "sh_class"):
+		return "sh_class"
 	if _doctype_has_field(doctype, "programme_schedule"):
 		return "programme_schedule"
 	if _doctype_has_field(doctype, "program_schedule"):
