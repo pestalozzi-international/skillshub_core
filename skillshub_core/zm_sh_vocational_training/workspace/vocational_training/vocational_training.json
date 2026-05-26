@@ -63,7 +63,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-05-12 16:26:18.149091",
+ "modified": "2026-05-26 06:24:44.710386",
  "modified_by": "Administrator",
  "module": "ZM SH Vocational Training",
  "name": "Vocational Training",
@@ -72,8 +72,21 @@
  "parent_page": "Zambia: SkillsHub",
  "public": 1,
  "quick_lists": [],
- "roles": [],
- "sequence_id": 13.0,
+ "roles": [
+  {
+   "role": "PI Admin"
+  },
+  {
+   "role": "SH Admin"
+  },
+  {
+   "role": "Administrator"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 14.0,
  "shortcuts": [
   {
    "color": "Green",

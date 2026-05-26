@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "Alumni & Work",
  "links": [],
- "modified": "2026-05-12 16:26:18.196174",
+ "modified": "2026-05-26 06:23:59.292506",
  "modified_by": "Administrator",
  "module": "ZM SH Post SkillsHub",
  "name": "Alumni & Work",
@@ -22,8 +22,21 @@
  "parent_page": "Zambia: SkillsHub",
  "public": 1,
  "quick_lists": [],
- "roles": [],
- "sequence_id": 14.0,
+ "roles": [
+  {
+   "role": "PI Admin"
+  },
+  {
+   "role": "SH Admin"
+  },
+  {
+   "role": "Administrator"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 15.0,
  "shortcuts": [
   {
    "color": "#8B5CF6",
