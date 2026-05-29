@@ -9,7 +9,12 @@
   "cohort_name",
   "code",
   "section_break_otxk",
-  "cohort_details"
+  "cohort_details",
+  "section_break_usla",
+  "academic_year",
+  "column_break_cxgk",
+  "start_date",
+  "end_date"
  ],
  "fields": [
   {
@@ -27,7 +32,7 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Cohort Name",
-   "options": "\nCohort 0\nCohort 1\nCohort 2\nCohort 3\nCohort 4\nCohort 5\nCohort 6\nCohort 7\nCohort 8\nCohort 9\nCohort 10\nCohort 11\nCohort 12\nCohort 13\nCohort 14\nCohort 15\nCohort 16\nCohort 17\nCohort 18\nCohort 19\nCohort 20\nCohort 21\nCohort 22\nCohort 23\nCohort 24\nCohort 25\nCohort 26\nCohort 27\nCohort 28\nCohort 29\nCohort 30\nCohort 31\nCohort 32\nCohort 33\nCohort 34\nCohort 35\nCohort 36\nCohort 37\nCohort 38\nCohort 39\nCohort 40\nCohort 41\nCohort 42\nCohort 43\nCohort 44\nCohort 45\nCohort 46\nCohort 47\nCohort 48\nCohort 49\nCohort 50",
+   "options": "\nCohort 0\nPilot Cohort\nCohort 1\nCohort 2\nCohort 3\nCohort 4\nCohort 5\nCohort 6\nCohort 7\nCohort 8\nCohort 9\nCohort 10\nCohort 11\nCohort 12\nCohort 13\nCohort 14\nCohort 15\nCohort 16\nCohort 17\nCohort 18\nCohort 19\nCohort 20\nCohort 21\nCohort 22\nCohort 23\nCohort 24\nCohort 25\nCohort 26\nCohort 27\nCohort 28\nCohort 29\nCohort 30\nCohort 31\nCohort 32\nCohort 33\nCohort 34\nCohort 35\nCohort 36\nCohort 37\nCohort 38\nCohort 39\nCohort 40\nCohort 41\nCohort 42\nCohort 43\nCohort 44\nCohort 45\nCohort 46\nCohort 47\nCohort 48\nCohort 49\nCohort 50",
    "reqd": 1
   },
   {
@@ -41,6 +46,30 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Cohort Details"
+  },
+  {
+   "fieldname": "section_break_usla",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "label": "Academic Year",
+   "options": "SH Academic Year"
+  },
+  {
+   "fieldname": "column_break_cxgk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date"
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End Date"
   }
  ],
  "grid_page_length": 50,
@@ -49,9 +78,13 @@
   {
    "link_doctype": "SH Class",
    "link_fieldname": "cohort"
+  },
+  {
+   "link_doctype": "SH Student",
+   "link_fieldname": "intake_cohort"
   }
  ],
- "modified": "2026-04-06 14:26:12.213995",
+ "modified": "2026-05-28 15:30:47.958508",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Cohort",
