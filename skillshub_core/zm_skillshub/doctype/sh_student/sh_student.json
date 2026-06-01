@@ -36,9 +36,6 @@
   "airtel_money_name",
   "language_section",
   "english_language_proficiency",
-  "selection_score",
-  "numeracy_score",
-  "literacy_score",
   "id_and_enrolment_tab",
   "status_section",
   "column_break_ehca",
@@ -64,6 +61,11 @@
   "section_break_xzrn",
   "date_submitted_enrolment_profile_form",
   "applicant_record",
+  "section_break_wusb",
+  "edulution_scores_column",
+  "selection_score",
+  "numeracy_score",
+  "literacy_score",
   "section_break_mtaz",
   "column_break_xzhi",
   "can_read_and_write",
@@ -989,6 +991,15 @@
    "fieldname": "graduation_column",
    "fieldtype": "Column Break",
    "label": "Graduation"
+  },
+  {
+   "fieldname": "section_break_wusb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "edulution_scores_column",
+   "fieldtype": "Column Break",
+   "label": "Edulution Scores"
   }
  ],
  "grid_page_length": 50,
@@ -1036,8 +1047,8 @@
    "link_fieldname": "student"
   }
  ],
- "modified": "2026-06-01 16:00:00.000000",
- "modified_by": "Administrator",
+ "modified": "2026-06-01 12:21:06.699008",
+ "modified_by": "thomas@pestalozzi.international",
  "module": "ZM SkillsHub",
  "name": "SH Student",
  "naming_rule": "By \"Naming Series\" field",
