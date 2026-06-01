@@ -36,6 +36,9 @@
   "airtel_money_name",
   "language_section",
   "english_language_proficiency",
+  "selection_score",
+  "numeracy_score",
+  "literacy_score",
   "id_and_enrolment_tab",
   "status_section",
   "column_break_ehca",
@@ -331,7 +334,7 @@
    "fieldname": "reason_for_leaving_school",
    "fieldtype": "Select",
    "label": "Reason for Leaving School",
-   "options": "\nFinancial difficulties\nEarly parenthood\nFamily responsibilities\nHealth issues\nLack of access to education\nGraduated\nOther"
+   "options": "\nFinancial difficulties\nEarly parenthood\nFamily responsibilities\nHealth issues\nLack of access to education\nLack of Interest\nGraduated\nOther"
   },
   {
    "fieldname": "special_talents",
@@ -614,6 +617,24 @@
    "fieldname": "english_language_proficiency",
    "fieldtype": "Rating",
    "label": "English Language Proficiency"
+  },
+  {
+   "description": "Score from selection/interview process",
+   "fieldname": "selection_score",
+   "fieldtype": "Int",
+   "label": "Selection Score"
+  },
+  {
+   "description": "Numeracy assessment percentage",
+   "fieldname": "numeracy_score",
+   "fieldtype": "Percent",
+   "label": "Numeracy Score"
+  },
+  {
+   "description": "Literacy assessment percentage",
+   "fieldname": "literacy_score",
+   "fieldtype": "Percent",
+   "label": "Literacy Score"
   },
   {
    "fieldname": "guardian_name",
@@ -1008,7 +1029,7 @@
    "link_fieldname": "student"
   }
  ],
- "modified": "2026-06-01 13:00:00.000000",
+ "modified": "2026-06-01 14:00:00.000000",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Student",
