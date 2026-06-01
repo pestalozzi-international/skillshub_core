@@ -110,6 +110,7 @@
   "family_tab",
   "section_break_yswd",
   "household_income",
+  "household_income_range",
   "household_receives_financial_aid",
   "housing_status",
   "guardian_details_section",
@@ -180,10 +181,10 @@
    "label": "Student's Occupation at Selection"
   },
   {
-   "default": "0",
    "fieldname": "can_read_and_write",
-   "fieldtype": "Check",
-   "label": "Can read and write?"
+   "fieldtype": "Select",
+   "label": "Can Read and Write?",
+   "options": "\nYes\nNo\nBasic (limited)"
   },
   {
    "default": "0",
@@ -216,14 +217,20 @@
   },
   {
    "fieldname": "household_income",
-   "fieldtype": "Data",
-   "label": "Household Income"
+   "fieldtype": "Currency",
+   "label": "Household Income (ZMW)"
   },
   {
-   "default": "0",
+   "fieldname": "household_income_range",
+   "fieldtype": "Select",
+   "label": "Household Income Range",
+   "options": "\nLess than 500\n500 to 1000\n1000 to 1500\n1500 to 2000\n2000+"
+  },
+  {
    "fieldname": "household_receives_financial_aid",
-   "fieldtype": "Check",
-   "label": "Household Receives Financial Aid"
+   "fieldtype": "Select",
+   "label": "Household Receives Financial Aid",
+   "options": "\nYes\nNo"
   },
   {
    "fieldname": "housing_status",
@@ -232,10 +239,10 @@
    "options": "\nRented Home\nOwned Home\nGovernment"
   },
   {
-   "default": "0",
    "fieldname": "has_history_of_medical_conditions",
-   "fieldtype": "Check",
-   "label": "Has history of medical conditions"
+   "fieldtype": "Select",
+   "label": "Has History of Medical Conditions",
+   "options": "\nNo\nYes"
   },
   {
    "depends_on": "has_history_of_medical_conditions",
@@ -1001,7 +1008,7 @@
    "link_fieldname": "student"
   }
  ],
- "modified": "2026-06-01 12:00:00.000000",
+ "modified": "2026-06-01 13:00:00.000000",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Student",

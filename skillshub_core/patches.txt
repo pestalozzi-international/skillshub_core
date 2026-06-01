@@ -1,8 +1,10 @@
 [pre_model_sync]
 # Patches added in this section will be executed before doctypes are migrated
 # Read docs to understand patches: https://frappeframework.com/docs/v14/user/en/database-migrations
+skillshub_core.skillshub_core.patches.v1_0.migrate_household_income
 
 [post_model_sync]
 ## Patches added in this section will be executed after doctypes are migrated
 skillshub_core.skillshub_core.patches.v1_0.fix_ss_feedback_enrolment_tickets
 skillshub_core.skillshub_core.patches.v1_0.rename_ss_feedback_program_schedule
+skillshub_core.skillshub_core.patches.v1_0.convert_check_to_select

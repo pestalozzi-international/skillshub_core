@@ -66,12 +66,12 @@ class SHApplicant(Document):
 		field_map = {
 			"mobile": "mobile",
 			"personal_email": "personal_email",
-			"residential_area": "address_line_1",
+			"residential_area": "residential_area",
 			"guardian_name": "guardian_name",
 			"guardian_mobile": "guardian_mobile_number",
 			"guardian_occupation": "guardian_occupation",
 			"guardian_relationship": "relationship",
-			"household_income": "household_income",
+			"household_income": "household_income_range",
 			"housing_status": "housing_status",
 			"number_of_siblings": "number_of_siblings",
 			"highest_level_of_schooling": "highest_level_of_schooling",
@@ -87,23 +87,51 @@ class SHApplicant(Document):
 			"intake_year": "intake_year",
 			"intake_cohort": "intake_cohort",
 			"date_of_birth": "date_of_birth",
+			"marital_status": "marital_status",
+			"emergency_contact": "emergency_contact",
+			"is_parent": "is_parent",
+			"number_of_children": "number_of_children",
+			"reason_for_leaving_school": "reason_for_leaving_school",
+			"special_talents": "special_talents",
+			"community_participation": "community_participation",
+			"currently_employed": "currently_employed",
+			"employment_type": "employment_type",
+			"participation_challenges": "participation_challenges",
+			"why_join_skillshub": "why_join_skillshub",
+			"career_goals": "career_goals",
+			"how_skill_benefits_community": "how_skill_benefits_community",
+			"how_skill_improves_livelihood": "how_skill_improves_livelihood",
+			"preferred_course": "preferred_course",
+			"second_preference_course": "second_preference_course",
+			"application_source": "application_source",
+			"application_date": "application_date",
+			"media_consent": "media_consent",
+			"contact_consent": "contact_consent",
+			"has_health_conditions": "has_history_of_medical_conditions",
+			"health_conditions_details": "details_of_medical_conditions",
 		}
 
-		_check_fields = {"has_vocational_training_history", "has_volunteering_history"}
+		_check_fields = {
+			"has_vocational_training_history",
+			"has_volunteering_history",
+			"is_parent",
+			"currently_employed",
+			"media_consent",
+			"contact_consent",
+		}
 		for applicant_field, student_field in field_map.items():
 			value = getattr(self, applicant_field, None)
 			if (value is not None and value != "" and value != 0) or applicant_field in _check_fields:
-				# For Check fields, include even when 0 so the value is explicit
 				if applicant_field in _check_fields:
 					student_doc[student_field] = cint(value)
 				else:
 					if value is not None and value != "":
 						student_doc[student_field] = value
 
-		# Map household_receives_financial_aid (Yes/No/Maybe) to integer (1/0/0)
+		# household_receives_financial_aid: copy only valid options (drop "Maybe")
 		financial_aid = getattr(self, "household_receives_financial_aid", None)
-		if financial_aid is not None:
-			student_doc["household_receives_financial_aid"] = 1 if financial_aid == "Yes" else 0
+		if financial_aid in ("Yes", "No"):
+			student_doc["household_receives_financial_aid"] = financial_aid
 
 		# Create the SH Student document
 		student = frappe.get_doc(student_doc)
