@@ -80,6 +80,33 @@
   "growth_section",
   "motivations",
   "resilience_links",
+  "section_break_personal_status",
+  "marital_status",
+  "column_break_personal_status",
+  "is_parent",
+  "number_of_children",
+  "emergency_contact",
+  "section_break_employment",
+  "currently_employed",
+  "employment_type",
+  "participation_challenges",
+  "section_break_edu_background",
+  "reason_for_leaving_school",
+  "special_talents",
+  "community_participation",
+  "section_break_motivation_goals",
+  "why_join_skillshub",
+  "career_goals",
+  "how_skill_benefits_community",
+  "how_skill_improves_livelihood",
+  "section_break_course_prefs",
+  "preferred_course",
+  "second_preference_course",
+  "application_source",
+  "application_date",
+  "section_break_consent",
+  "media_consent",
+  "contact_consent",
   "family_tab",
   "section_break_yswd",
   "household_income",
@@ -232,6 +259,152 @@
    "fieldtype": "Table",
    "label": "Resilience Statements",
    "options": "SH Student Resilience Link"
+  },
+  {
+   "fieldname": "section_break_personal_status",
+   "fieldtype": "Section Break",
+   "label": "Personal Status"
+  },
+  {
+   "fieldname": "marital_status",
+   "fieldtype": "Select",
+   "label": "Marital Status",
+   "options": "\nSingle\nMarried\nDivorced\nWidowed\nOther"
+  },
+  {
+   "fieldname": "column_break_personal_status",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_parent",
+   "fieldtype": "Check",
+   "label": "Is a Parent or Guardian?"
+  },
+  {
+   "depends_on": "eval:doc.is_parent",
+   "fieldname": "number_of_children",
+   "fieldtype": "Int",
+   "label": "Number of Children"
+  },
+  {
+   "fieldname": "emergency_contact",
+   "fieldtype": "Data",
+   "label": "Emergency Contact (Name & Number)"
+  },
+  {
+   "fieldname": "section_break_employment",
+   "fieldtype": "Section Break",
+   "label": "Employment"
+  },
+  {
+   "default": "0",
+   "fieldname": "currently_employed",
+   "fieldtype": "Check",
+   "label": "Currently Employed or Engaged?"
+  },
+  {
+   "depends_on": "eval:doc.currently_employed",
+   "fieldname": "employment_type",
+   "fieldtype": "Select",
+   "label": "Employment Type",
+   "options": "\nFull-time\nPart-time"
+  },
+  {
+   "fieldname": "participation_challenges",
+   "fieldtype": "Small Text",
+   "label": "Challenges Affecting Participation"
+  },
+  {
+   "fieldname": "section_break_edu_background",
+   "fieldtype": "Section Break",
+   "label": "Education Background"
+  },
+  {
+   "fieldname": "reason_for_leaving_school",
+   "fieldtype": "Select",
+   "label": "Reason for Leaving School",
+   "options": "\nFinancial difficulties\nEarly parenthood\nFamily responsibilities\nHealth issues\nLack of access to education\nGraduated\nOther"
+  },
+  {
+   "fieldname": "special_talents",
+   "fieldtype": "Small Text",
+   "label": "Special Talents or Abilities"
+  },
+  {
+   "fieldname": "community_participation",
+   "fieldtype": "Small Text",
+   "label": "Community Activities or Organisations"
+  },
+  {
+   "fieldname": "section_break_motivation_goals",
+   "fieldtype": "Section Break",
+   "label": "Motivations & Goals"
+  },
+  {
+   "fieldname": "why_join_skillshub",
+   "fieldtype": "Long Text",
+   "label": "Why Join the Programme"
+  },
+  {
+   "fieldname": "career_goals",
+   "fieldtype": "Long Text",
+   "label": "Career Goals"
+  },
+  {
+   "fieldname": "how_skill_benefits_community",
+   "fieldtype": "Small Text",
+   "label": "How Skill Benefits Community"
+  },
+  {
+   "fieldname": "how_skill_improves_livelihood",
+   "fieldtype": "Small Text",
+   "label": "How Skill Improves Livelihood"
+  },
+  {
+   "fieldname": "section_break_course_prefs",
+   "fieldtype": "Section Break",
+   "label": "Course Preferences"
+  },
+  {
+   "fieldname": "preferred_course",
+   "fieldtype": "Link",
+   "label": "First Course Preference",
+   "options": "SkillsHub Course"
+  },
+  {
+   "fieldname": "second_preference_course",
+   "fieldtype": "Link",
+   "label": "Second Course Preference",
+   "options": "SkillsHub Course"
+  },
+  {
+   "fieldname": "application_source",
+   "fieldtype": "Select",
+   "label": "Application Source",
+   "options": "\nOnline Portal\nWalk-in\nReferral\nOther"
+  },
+  {
+   "fieldname": "application_date",
+   "fieldtype": "Date",
+   "label": "Application Date"
+  },
+  {
+   "fieldname": "section_break_consent",
+   "fieldtype": "Section Break",
+   "label": "Consent & Declaration"
+  },
+  {
+   "default": "0",
+   "fieldname": "media_consent",
+   "fieldtype": "Check",
+   "label": "Media Consent"
+  },
+  {
+   "default": "0",
+   "fieldname": "contact_consent",
+   "fieldtype": "Check",
+   "label": "Contact Consent"
   },
   {
    "fieldname": "last_year_of_schooling",
@@ -828,7 +1001,7 @@
    "link_fieldname": "student"
   }
  ],
- "modified": "2026-05-28 16:15:44.696439",
+ "modified": "2026-06-01 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Student",
