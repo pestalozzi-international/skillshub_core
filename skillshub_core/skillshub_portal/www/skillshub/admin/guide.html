@@ -260,6 +260,11 @@
     <!-- Sidebar TOC -->
     <nav class="guide-toc">
       <div class="guide-toc-title">Contents</div>
+      <a href="#data-model">Data Model</a>
+        <a href="#data-model-who" class="sub">Student Identity</a>
+        <a href="#data-model-what" class="sub">Curriculum Model</a>
+        <a href="#data-model-bridge" class="sub">Enrolment Bridge</a>
+        <a href="#data-model-rules" class="sub">Operational Rules</a>
       <a href="#overview">System Overview</a>
       <a href="#login">Logging In</a>
       <a href="#student-journey">The Student Journey</a>
@@ -277,6 +282,108 @@
 
     <!-- Main content -->
     <div class="guide-content">
+
+      <!-- ─── Data Model ─── -->
+      <section class="guide-section" id="data-model">
+        <div class="guide-section-head">
+          <span class="guide-section-icon">🗂️</span>
+          <div>
+            <div class="guide-section-title">The SkillsHub Data Model</div>
+            <div class="guide-section-sub">How student identity, curriculum, and delivery fit together</div>
+          </div>
+        </div>
+        <div class="guide-section-body">
+
+          <div class="guide-info" style="margin-bottom:1.25rem;">
+            <span class="gi">ℹ️</span>
+            <span>SkillsHub separates <strong>student grouping (Cohort)</strong> from <strong>teaching runs (Class / Course Run)</strong>. This model is the single source of truth used across Desk, portal, enrolments, attendance, and feedback.</span>
+          </div>
+
+          <!-- 1. Student Identity -->
+          <h3 id="data-model-who">1. Student Identity — <em>Who</em></h3>
+          <table class="guide-table" style="margin-bottom:1.25rem;">
+            <thead><tr><th>Record</th><th>What it is</th><th>Key fields</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>🧑‍🎓 <strong>SH Student</strong></td>
+                <td>The person record — one per student.</td>
+                <td>Intake Year, Intake Cohort, Programme Path, contact / background details.</td>
+              </tr>
+              <tr>
+                <td>📅 <strong>Intake Year</strong></td>
+                <td>Year the student joined SkillsHub.</td>
+                <td>Used for long-term cohort and completion trend analysis.</td>
+              </tr>
+              <tr>
+                <td>👥 <strong>Intake Cohort</strong></td>
+                <td>The student grouping — e.g. Cohort 1, Cohort 2.</td>
+                <td><em>Cohort is a student group, not a class run.</em></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- 2. Curriculum Model -->
+          <h3 id="data-model-what">2. Curriculum Model — <em>What</em></h3>
+          <table class="guide-table" style="margin-bottom:0.5rem;">
+            <thead><tr><th>Record</th><th>What it is</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>📚 <strong>SkillsHub Programme</strong></td>
+                <td>Milestone layer — the broad stage of delivery.</td>
+                <td>Mindset Camp, Soft Skills, Vocational Training, …</td>
+              </tr>
+              <tr>
+                <td>📖 <strong>SkillsHub Course</strong></td>
+                <td>Subject / course sitting under a programme.</td>
+                <td>MSC100 (Mindset Camp), SSK200 (Soft Skills), VT300 …</td>
+              </tr>
+              <tr>
+                <td>🔁 <strong>Course Run + Class</strong></td>
+                <td>Delivery instance — the actual teaching run where sessions and attendance happen.</td>
+                <td><code>MSC100-R2A</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="guide-warn" style="margin-bottom:1.25rem;">
+            <span class="gi">⚠️</span>
+            <span><strong>Path A vs Path B</strong> — both paths share Mindset Camp, Soft Skills, Vocational Training, and Attachment. <strong>Path A only</strong> additionally includes Edulution (the remedial literacy &amp; numeracy programme). Path B students skip Edulution. The Edulution Feedback form in the student portal is therefore shown only to Path A students.</span>
+          </div>
+
+          <h3>Programme path breakdown</h3>
+          <table class="guide-table" style="margin-bottom:1.25rem;">
+            <thead><tr><th>Stage</th><th>Programme</th><th>Path A</th><th>Path B</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Mindset Camp</td><td>✅</td><td>✅</td></tr>
+              <tr><td>2</td><td>Edulution (Remedial)</td><td>✅</td><td>—</td></tr>
+              <tr><td>3</td><td>Soft Skills</td><td>✅</td><td>✅</td></tr>
+              <tr><td>4</td><td>Vocational Training</td><td>✅</td><td>✅</td></tr>
+              <tr><td>5</td><td>Attachment</td><td>✅</td><td>✅</td></tr>
+            </tbody>
+          </table>
+
+          <!-- 3. Bridge Record -->
+          <h3 id="data-model-bridge">3. Bridge Record — <em>Student ↔ Class</em></h3>
+          <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:0.65rem;padding:1rem 1.25rem;margin-bottom:1.25rem;">
+            <p style="margin:0 0 0.5rem;"><strong>🎟️ SH Enrolment</strong> — the single source of truth linking one student to one class.</p>
+            <ul style="margin:0 0 0.5rem 1.2rem;font-size:0.9rem;">
+              <li><strong>Naming:</strong> <code>STUDENT-CLASS</code> — e.g. <code>SH260685-MSC100-R2A</code></li>
+              <li><strong>Why it matters:</strong> Attendance stats and feedback completion are tracked against the enrolment, not the student or class in isolation.</li>
+            </ul>
+          </div>
+
+          <!-- 4. Operational Rules -->
+          <h3 id="data-model-rules">4. Operational Rulebook</h3>
+          <ul>
+            <li><strong>Cohort</strong> = student grouping only — it does <em>not</em> define a class run.</li>
+            <li><strong>Class</strong> = teaching schedule instance (formerly called "programme schedule" in legacy labels).</li>
+            <li><strong>Attendance</strong> is captured on SH Attendance by student + class + date.</li>
+            <li><strong>Feedback forms</strong> carry student + class + enrolment ticket context.</li>
+            <li><strong>Portal and Desk</strong> both resolve through the <em>SH Student → SH Enrolment → SH Class</em> chain.</li>
+          </ul>
+
+        </div>
+      </section>
 
       <!-- ─── System Overview ─── -->
       <section class="guide-section" id="overview">
