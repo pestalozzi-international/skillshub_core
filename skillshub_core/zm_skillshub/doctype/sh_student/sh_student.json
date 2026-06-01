@@ -88,7 +88,8 @@
   "column_break_personal_status",
   "is_parent",
   "number_of_children",
-  "emergency_contact",
+  "emergency_contact_name",
+  "emergency_contact_number",
   "section_break_employment",
   "currently_employed",
   "employment_type",
@@ -298,9 +299,15 @@
    "label": "Number of Children"
   },
   {
-   "fieldname": "emergency_contact",
+   "fieldname": "emergency_contact_name",
    "fieldtype": "Data",
-   "label": "Emergency Contact (Name & Number)"
+   "label": "Emergency Contact Name"
+  },
+  {
+   "fieldname": "emergency_contact_number",
+   "fieldtype": "Data",
+   "label": "Emergency Contact Number",
+   "options": "Phone"
   },
   {
    "fieldname": "section_break_employment",
@@ -1029,7 +1036,7 @@
    "link_fieldname": "student"
   }
  ],
- "modified": "2026-06-01 14:00:00.000000",
+ "modified": "2026-06-01 16:00:00.000000",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Student",
