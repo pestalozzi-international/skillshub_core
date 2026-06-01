@@ -20,7 +20,8 @@
   "mobile",
   "personal_email",
   "col_contact_1",
-  "emergency_contact",
+  "emergency_contact_name",
+  "emergency_contact_number",
   "address_section",
   "residential_area",
   "address_line_1",
@@ -183,9 +184,15 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "emergency_contact",
+   "fieldname": "emergency_contact_name",
    "fieldtype": "Data",
-   "label": "Emergency Contact (Name & Number)"
+   "label": "Emergency Contact Name"
+  },
+  {
+   "fieldname": "emergency_contact_number",
+   "fieldtype": "Data",
+   "label": "Emergency Contact Number",
+   "options": "Phone"
   },
   {
    "fieldname": "address_section",
@@ -343,7 +350,7 @@
    "fieldname": "reason_for_leaving_school",
    "fieldtype": "Select",
    "label": "Reason for Leaving School",
-   "options": "\nFinancial difficulties\nEarly parenthood\nFamily responsibilities\nHealth issues\nLack of access to education\nGraduated\nOther",
+   "options": "\nFinancial difficulties\nEarly parenthood\nFamily responsibilities\nHealth issues\nLack of access to education\nLack of Interest\nGraduated\nOther",
    "depends_on": "eval:doc.highest_level_of_schooling && doc.highest_level_of_schooling !== 'Never attended school'"
   },
   {
@@ -622,7 +629,7 @@
    "link_fieldname": "applicant_record"
   }
  ],
- "modified": "2026-05-23 00:00:00.000000",
+ "modified": "2026-06-01 17:00:00.000000",
  "modified_by": "Administrator",
  "module": "ZM SH Admissions",
  "name": "SH Applicant",
