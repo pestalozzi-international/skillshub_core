@@ -7,6 +7,24 @@ from frappe.model.document import Document
 
 
 class SHEnrolment(Document):
+	def autoname(self):
+		"""
+		Force the name to {student}-{class} reliably.
+
+		The DocType autoname expression {student}-{class} fails when
+		created server-side because `class` is a Python reserved word —
+		the ORM never writes it to the document object at autoname time,
+		so the expression resolves to {student}-None and Frappe falls
+		back to a random hash.
+
+		Setting self.name here runs before Frappe's expression evaluator
+		and takes precedence for both single and bulk enrolments.
+		"""
+		student = self.student
+		class_name = self.get("class")
+		if student and class_name:
+			self.name = student + "-" + class_name
+
 	def validate(self):
 		self.validate_duplicate_enrolment()
 		self.validate_path_b_not_edulution()
@@ -28,7 +46,9 @@ class SHEnrolment(Document):
 
 	def validate_path_b_not_edulution(self):
 		"""Path B students must not be enrolled in an Edulution class."""
-		if self.programme_path == "Path B" and self.milestone == "Edulution":
+		# Check self.course (Link → SkillsHub Course), not self.milestone
+		# (which is a Link → SkillsHub Programme e.g. "Remedial Programme: Literacy and Numeracy")
+		if self.programme_path == "Path B" and self.course == "Edulution":
 			frappe.throw(_("Path B students cannot be enrolled in an Edulution class."))
 
 	def compute_attendance_stats(self):
