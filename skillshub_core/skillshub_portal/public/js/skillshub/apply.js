@@ -112,10 +112,16 @@
 				},
 				{ name: "personal_email", label: "Email Address", type: "Email" },
 				{
-					name: "emergency_contact",
-					label: "Emergency Contact (Name & Number)",
+					name: "emergency_contact_name",
+					label: "Emergency Contact Name",
 					type: "Data",
-					desc: "Full name and phone number",
+					desc: "Full name of emergency contact",
+				},
+				{
+					name: "emergency_contact_number",
+					label: "Emergency Contact Number",
+					type: "Phone",
+					desc: "Phone number of emergency contact",
 				},
 				{
 					name: "residential_area",
