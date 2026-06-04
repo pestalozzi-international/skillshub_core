@@ -27,7 +27,6 @@ class SHEnrolment(Document):
 
 	def validate(self):
 		self.validate_duplicate_enrolment()
-		self.validate_path_b_not_edulution()
 		self.compute_attendance_stats()
 
 	def validate_duplicate_enrolment(self):
@@ -43,13 +42,6 @@ class SHEnrolment(Document):
 		)
 		if existing:
 			frappe.throw(_("Student {0} is already enrolled in Class {1}.").format(self.student, class_name))
-
-	def validate_path_b_not_edulution(self):
-		"""Path B students must not be enrolled in an Edulution class."""
-		# Check self.course (Link → SkillsHub Course), not self.milestone
-		# (which is a Link → SkillsHub Programme e.g. "Remedial Programme: Literacy and Numeracy")
-		if self.programme_path == "Path B" and self.course == "Edulution":
-			frappe.throw(_("Path B students cannot be enrolled in an Edulution class."))
 
 	def compute_attendance_stats(self):
 		"""Recompute attendance totals from SH Attendance records for this class."""
