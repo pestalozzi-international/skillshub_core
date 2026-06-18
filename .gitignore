@@ -5,6 +5,4 @@
 tags
 node_modules
 __pycache__*.bak
-
-# Data export/import files
-outputs/
+.claude/worktrees/

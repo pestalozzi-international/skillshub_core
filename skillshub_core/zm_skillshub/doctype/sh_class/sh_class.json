@@ -2,7 +2,6 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
- "autoname": "{course_code}-{course_run}{class_no}",
  "creation": "2026-05-03 11:40:33.559842",
  "default_view": "List",
  "doctype": "DocType",
@@ -217,12 +216,18 @@
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-05-08 15:49:19.890935",
+ "links": [
+  {
+   "group": "Enrolments",
+   "link_doctype": "SH Enrolment",
+   "link_fieldname": "class"
+  }
+ ],
+ "modified": "2026-06-04 19:40:49.381900",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Class",
- "naming_rule": "Expression",
+ "naming_rule": "By script",
  "owner": "Administrator",
  "permissions": [
   {
@@ -255,7 +260,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Student",
+   "role": "SH Student",
    "share": 1
   },
   {

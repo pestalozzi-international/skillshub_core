@@ -608,10 +608,14 @@ def _recompute_enrolment_on_attendance(doc, method=None):
 
 
 @frappe.whitelist()  # nosemgrep
-def update_student_admin(student, payload):
+def update_student_admin(student=None, payload=None):
 	"""Admin-level update for SH Student: accepts a JSON payload and updates fields and child tables.
 	Must be an admin role (System Manager / PI Admin / PI Admin variants).
 	"""
+	if not student:
+		student = frappe.form_dict.get("student")
+	if not student:
+		frappe.throw(_("Student ID is required."))
 	if isinstance(payload, str):
 		payload = json.loads(payload or "{}")
 	payload = payload or {}

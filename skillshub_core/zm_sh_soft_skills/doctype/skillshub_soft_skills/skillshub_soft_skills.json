@@ -70,7 +70,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Student",
+   "role": "SH Student",
    "select": 1,
    "share": 1,
    "write": 1

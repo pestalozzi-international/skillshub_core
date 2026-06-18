@@ -53,7 +53,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-05-26 06:25:34.722401",
+ "modified": "2026-06-10 12:14:20.756675",
  "modified_by": "Administrator",
  "module": "ZM SH Soft Skills",
  "name": "Soft Skills",
@@ -64,16 +64,13 @@
  "quick_lists": [],
  "roles": [
   {
+   "role": "System Manager"
+  },
+  {
    "role": "PI Admin"
   },
   {
    "role": "SH Admin"
-  },
-  {
-   "role": "System Manager"
-  },
-  {
-   "role": "Administrator"
   }
  ],
  "sequence_id": 13.0,

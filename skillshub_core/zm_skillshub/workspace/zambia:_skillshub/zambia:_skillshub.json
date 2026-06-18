@@ -1,13 +1,8 @@
 {
  "charts": [],
- "content": "[{\"id\":\"GT9u3mKvXT\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">SkillsHub Data</span>\",\"col\":12}},{\"id\":\"B4zJiaDoqc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Current Students\",\"col\":4}},{\"id\":\"aSSeyUVobr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Alumni\",\"col\":4}},{\"id\":\"7OGhxqZVSs\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"rn0VIJRaVM\",\"type\":\"card\",\"data\":{\"card_name\":\"Programme Design\",\"col\":4}},{\"id\":\"zCEDYKxuNK\",\"type\":\"card\",\"data\":{\"card_name\":\"Faculty\",\"col\":4}},{\"id\":\"SKkaE9TVdd\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}},{\"id\":\"W36lVSeQ7j\",\"type\":\"card\",\"data\":{\"card_name\":\"Work post SkillsHub\",\"col\":4}},{\"id\":\"gaEa9Bbw18\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"7dj3pDOBzP\",\"type\":\"card\",\"data\":{\"card_name\":\"Baseline Building Blocks\",\"col\":4}},{\"id\":\"YxWip5M53x\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Student Baseline Assessment\",\"col\":4}},{\"id\":\"a6urO1Q_E-\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"OuOmJrpZlk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Cohort Analysis\",\"col\":3}},{\"id\":\"z2qSFPsHxE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Employment & Outcomes\",\"col\":3}},{\"id\":\"rBAjfHTSz_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Programme Overview\",\"col\":3}},{\"id\":\"nfynGDayJf\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>SkillsHub Overview</b></span>\",\"col\":12}},{\"id\":\"5jTSCbIp8C\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Programme Overview\",\"col\":3}},{\"id\":\"66t6MaYky0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SH Enrolment\",\"col\":3}},{\"id\":\"okt619BqeX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"All SkillsHub Students\",\"col\":3}},{\"id\":\"6K_PoA2_uK\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"NkY8yZProk\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"SkillsHub Architecture Guide\",\"col\":12}}]",
+ "content": "[{\"id\":\"GT9u3mKvXT\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">SkillsHub Data</span>\",\"col\":12}},{\"id\":\"B4zJiaDoqc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Current Students\",\"col\":4}},{\"id\":\"aSSeyUVobr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Alumni\",\"col\":4}},{\"id\":\"7OGhxqZVSs\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"rn0VIJRaVM\",\"type\":\"card\",\"data\":{\"card_name\":\"Programme Design\",\"col\":4}},{\"id\":\"zCEDYKxuNK\",\"type\":\"card\",\"data\":{\"card_name\":\"Faculty\",\"col\":4}},{\"id\":\"SKkaE9TVdd\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}},{\"id\":\"W36lVSeQ7j\",\"type\":\"card\",\"data\":{\"card_name\":\"Work post SkillsHub\",\"col\":4}},{\"id\":\"gaEa9Bbw18\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"7dj3pDOBzP\",\"type\":\"card\",\"data\":{\"card_name\":\"Baseline Building Blocks\",\"col\":4}},{\"id\":\"YxWip5M53x\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Student Baseline Assessment\",\"col\":4}},{\"id\":\"a6urO1Q_E-\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"OuOmJrpZlk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Cohort Analysis\",\"col\":3}},{\"id\":\"z2qSFPsHxE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Employment & Outcomes\",\"col\":3}},{\"id\":\"rBAjfHTSz_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SkillsHub Programme Overview\",\"col\":3}},{\"id\":\"Ggpk1ONlPE\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"nfynGDayJf\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>SkillsHub Overview</b></span>\",\"col\":12}},{\"id\":\"5jTSCbIp8C\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Programme Overview\",\"col\":3}},{\"id\":\"66t6MaYky0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SH Enrolment\",\"col\":3}},{\"id\":\"okt619BqeX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"All SkillsHub Students\",\"col\":3}},{\"id\":\"6K_PoA2_uK\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"30jbV11O2U\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>SkillsHub Guide</b><b></b></span>\",\"col\":12}},{\"id\":\"XvLNqZQ4CW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SH Guide\",\"col\":3}},{\"id\":\"WIx7QJjXPm\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"PFVqrNhPTD\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>SkillsHub Applications</b></span>\",\"col\":12}},{\"id\":\"H-czs4_Zb-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SH Applications\",\"col\":3}}]",
  "creation": "2026-05-03 11:40:35.225496",
- "custom_blocks": [
-  {
-   "custom_block_name": "SkillsHub Architecture Guide",
-   "label": "SkillsHub Architecture Guide"
-  }
- ],
+ "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
@@ -194,8 +189,8 @@
    "type": "Link"
   }
  ],
- "modified": "2026-05-26 06:20:13.678224",
- "modified_by": "Administrator",
+ "modified": "2026-06-01 17:03:10.546891",
+ "modified_by": "thomas@pestalozzi.international",
  "module": "ZM SkillsHub",
  "name": "Zambia: SkillsHub",
  "number_cards": [],
@@ -246,6 +241,21 @@
   {
    "color": "Grey",
    "doc_view": "List",
+   "label": "SH Guide",
+   "type": "URL",
+   "url": "https://portal.pestalozzi.education/skillshub/admin/guide"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "SH Applications",
+   "link_to": "SH Applicant",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
    "label": "SkillsHub Cohort Analysis",
    "link_to": "SkillsHub Cohort Analysis",
    "type": "Dashboard"
@@ -286,13 +296,6 @@
    "label": "SkillsHub Programme Overview",
    "link_to": "SkillsHub Programme Overview",
    "type": "Dashboard"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Portal Settings",
-   "link_to": "SkillsHub Portal Settings",
-   "type": "DocType"
   }
  ],
  "title": "Zambia: SkillsHub"
