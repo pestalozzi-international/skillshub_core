@@ -67,7 +67,33 @@
 			Object.assign({ credentials: "include", headers: headers() }, options || {})
 		)
 			.then(function (response) {
-				if (!response.ok) throw new Error("HTTP " + response.status);
+				if (!response.ok) {
+					return response
+						.json()
+						.catch(function () {
+							return {};
+						})
+						.then(function (body) {
+							var msg = "";
+							if (body._server_messages) {
+								try {
+									var msgs = JSON.parse(body._server_messages);
+									msg = (Array.isArray(msgs) ? msgs : [msgs])
+										.map(function (m) {
+											try {
+												return JSON.parse(m).message || m;
+											} catch (_e) {
+												return m;
+											}
+										})
+										.join("\n");
+								} catch (_e) {
+									msg = String(body._server_messages);
+								}
+							}
+							throw new Error(msg || body.message || "HTTP " + response.status);
+						});
+				}
 				return response.json();
 			})
 			.then(function (json) {
@@ -485,6 +511,7 @@
 			esc(field.fieldname) +
 			'">' +
 			esc(field.label || field.fieldname) +
+			(field.reqd ? ' <span style="color:var(--color-red-500)">*</span>' : "") +
 			"</label>";
 
 		var current = value === null || value === undefined ? "" : value;

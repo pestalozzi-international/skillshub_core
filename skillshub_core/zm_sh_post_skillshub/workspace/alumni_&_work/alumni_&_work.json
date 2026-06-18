@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "Alumni & Work",
  "links": [],
- "modified": "2026-05-26 06:23:59.292506",
+ "modified": "2026-06-10 12:14:20.841394",
  "modified_by": "Administrator",
  "module": "ZM SH Post SkillsHub",
  "name": "Alumni & Work",
@@ -24,16 +24,13 @@
  "quick_lists": [],
  "roles": [
   {
+   "role": "System Manager"
+  },
+  {
    "role": "PI Admin"
   },
   {
    "role": "SH Admin"
-  },
-  {
-   "role": "Administrator"
-  },
-  {
-   "role": "System Manager"
   }
  ],
  "sequence_id": 15.0,

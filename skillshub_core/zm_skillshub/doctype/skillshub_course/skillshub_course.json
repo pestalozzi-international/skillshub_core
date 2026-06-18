@@ -55,7 +55,7 @@
    "fieldtype": "Section Break"
   },
   {
-   "description": "Set automatically from the Programme record (via the Programme\u2019s Courses table). Do not edit directly \u2014 use the SkillsHub Programme form to assign this course to a programme.",
+   "description": "Set automatically from the Programme record (via the Programme’s Courses table). Do not edit directly — use the SkillsHub Programme form to assign this course to a programme.",
    "fieldname": "program_category",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -106,7 +106,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Student",
+   "role": "SH Student",
    "share": 1
   },
   {

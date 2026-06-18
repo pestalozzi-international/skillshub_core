@@ -608,10 +608,14 @@ def _recompute_enrolment_on_attendance(doc, method=None):
 
 
 @frappe.whitelist()  # nosemgrep
-def update_student_admin(student, payload):
+def update_student_admin(student=None, payload=None):
 	"""Admin-level update for SH Student: accepts a JSON payload and updates fields and child tables.
 	Must be an admin role (System Manager / PI Admin / PI Admin variants).
 	"""
+	if not student:
+		student = frappe.form_dict.get("student")
+	if not student:
+		frappe.throw(_("Student ID is required."))
 	if isinstance(payload, str):
 		payload = json.loads(payload or "{}")
 	payload = payload or {}
@@ -624,6 +628,8 @@ def update_student_admin(student, payload):
 	student_doc = frappe.get_doc("SH Student", student)
 
 	for key, val in payload.items():
+		if key in ("name", "doctype"):
+			continue
 		try:
 			meta = student_doc.meta.get_field(key) if hasattr(student_doc, "meta") else None
 		except Exception:
@@ -634,14 +640,18 @@ def update_student_admin(student, payload):
 				if isinstance(row, dict):
 					student_doc.append(key, row)
 		else:
-			if key in ("name", "doctype"):
+			if meta and meta.reqd and not val and student_doc.get(key):
 				continue
 			try:
 				student_doc.set(key, val)
 			except Exception:
 				pass
 
-	student_doc.save(ignore_permissions=True)
+	try:
+		student_doc.save(ignore_permissions=True)
+	except frappe.ValidationError as e:
+		frappe.local.message_log = []
+		frappe.throw(str(e))
 	frappe.db.commit()  # nosemgrep
 	return {"ok": True, "name": student_doc.name}
 

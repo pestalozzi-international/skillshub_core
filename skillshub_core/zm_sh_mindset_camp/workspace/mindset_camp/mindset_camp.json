@@ -33,7 +33,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-05-26 06:26:54.128917",
+ "modified": "2026-06-10 12:14:20.676028",
  "modified_by": "Administrator",
  "module": "ZM SH Mindset Camp",
  "name": "Mindset Camp",
@@ -44,16 +44,13 @@
  "quick_lists": [],
  "roles": [
   {
+   "role": "System Manager"
+  },
+  {
    "role": "PI Admin"
   },
   {
-   "role": "Administrator"
-  },
-  {
    "role": "SH Admin"
-  },
-  {
-   "role": "System Manager"
   }
  ],
  "sequence_id": 11.0,

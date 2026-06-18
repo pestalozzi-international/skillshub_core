@@ -265,7 +265,7 @@
   {
    "fieldname": "sh_goals",
    "fieldtype": "Small Text",
-   "label": "What do you hope will improve in your relationship with your family after joining the Skills Hub?\u2028"
+   "label": "What do you hope will improve in your relationship with your family after joining the Skills Hub? "
   },
   {
    "fieldname": "post_sh_contributions",
@@ -432,7 +432,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Student",
+   "role": "SH Student",
    "share": 1
   },
   {

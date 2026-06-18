@@ -20,8 +20,9 @@
   "date_of_birth",
   "age",
   "gender",
-  "religion",
   "nationality",
+  "religion",
+  "religious_denomination",
   "address_column",
   "residential_area",
   "city",
@@ -36,9 +37,6 @@
   "airtel_money_name",
   "language_section",
   "english_language_proficiency",
-  "selection_score",
-  "numeracy_score",
-  "literacy_score",
   "id_and_enrolment_tab",
   "status_section",
   "column_break_ehca",
@@ -64,12 +62,18 @@
   "section_break_xzrn",
   "date_submitted_enrolment_profile_form",
   "applicant_record",
+  "section_break_wusb",
+  "edulution_scores_column",
+  "selection_score",
+  "numeracy_score",
+  "literacy_score",
   "section_break_mtaz",
   "column_break_xzhi",
   "can_read_and_write",
   "last_school_attended",
-  "last_year_of_schooling",
-  "highest_level_of_schooling",
+  "last_grade_completed",
+  "education_level",
+  "year_left_school",
   "students_occupation",
   "highest_salary_in_zmw",
   "section_break_ghqh",
@@ -142,6 +146,7 @@
   "start_date",
   "attachment_completed",
   "end_date",
+  "attachment_notes",
   "section_break_lzmy",
   "emp_start_date",
   "emp_is_current",
@@ -424,12 +429,6 @@
    "label": "Contact Consent"
   },
   {
-   "fieldname": "last_year_of_schooling",
-   "fieldtype": "Select",
-   "label": "Last Year of Schooling",
-   "options": "\nPreschool\nPre-Kindergarten\nKindergarten\nGrade 1\nGrade 2\nGrade 3\nGrade 4\nGrade 5\nGrade 6\nGrade 7\nGrade 8\nGrade 9\nGrade 10\nGrade 11\nGrade 12\nUndergraduate/Bachelor's\nGraduate/Master's\nDoctoral/PhD"
-  },
-  {
    "fieldname": "pestalozzi_student_id",
    "fieldtype": "Read Only",
    "label": "Pestalozzi Student ID",
@@ -678,13 +677,6 @@
    "fieldtype": "Select",
    "label": "Relationship",
    "options": "\nMother\nFather\nStepmother\nStepfather\nGrandmother\nGrandfather\nGrandparent\nAunt\nUncle\nBrother\nSister\nCousin\nLegal Guardian\nFoster Parent\nAdoptive Parent\nDaughter\nHusband\nSelf\nWife"
-  },
-  {
-   "fieldname": "highest_level_of_schooling",
-   "fieldtype": "Select",
-   "label": "Highest Level of Schooling Range",
-   "options": "\nGrades 1 to 7\nGrades 8 to 9\nGrades 10 to 12\nUniversity or Diploma",
-   "read_only": 1
   },
   {
    "fieldname": "student_name",
@@ -989,6 +981,44 @@
    "fieldname": "graduation_column",
    "fieldtype": "Column Break",
    "label": "Graduation"
+  },
+  {
+   "fieldname": "section_break_wusb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "edulution_scores_column",
+   "fieldtype": "Column Break",
+   "label": "Edulution Scores"
+  },
+  {
+   "fieldname": "last_grade_completed",
+   "fieldtype": "Select",
+   "label": "Last Grade Completed",
+   "options": "\nPreschool\nPre-Kindergarten\nKindergarten\nGrade 1\nGrade 2\nGrade 3\nGrade 4\nGrade 5\nGrade 6\nGrade 7\nGrade 8\nGrade 9\nGrade 10\nGrade 11\nGrade 12\nUndergraduate/Bachelor's\nGraduate/Master's\nDoctoral/PhD"
+  },
+  {
+   "fieldname": "education_level",
+   "fieldtype": "Select",
+   "label": "Education Level",
+   "options": "\nGrades 1 to 7\nGrades 8 to 9\nGrades 10 to 12\nUniversity or Diploma",
+   "read_only": 1
+  },
+  {
+   "fieldname": "year_left_school",
+   "fieldtype": "Select",
+   "label": "Year Left School",
+   "options": "\n1900\n1901\n1902\n1903\n1904\n1905\n1906\n1907\n1908\n1909\n1910\n1911\n1912\n1913\n1914\n1915\n1916\n1917\n1918\n1919\n1920\n1921\n1922\n1923\n1924\n1925\n1926\n1927\n1928\n1929\n1930\n1931\n1932\n1933\n1934\n1935\n1936\n1937\n1938\n1939\n1940\n1941\n1942\n1943\n1944\n1945\n1946\n1947\n1948\n1949\n1950\n1951\n1952\n1953\n1954\n1955\n1956\n1957\n1958\n1959\n1960\n1961\n1962\n1963\n1964\n1965\n1966\n1967\n1968\n1969\n1970\n1971\n1972\n1973\n1974\n1975\n1976\n1977\n1978\n1979\n1980\n1981\n1982\n1983\n1984\n1985\n1986\n1987\n1988\n1989\n1990\n1991\n1992\n1993\n1994\n1995\n1996\n1997\n1998\n1999\n2000\n2001\n2002\n2003\n2004\n2005\n2006\n2007\n2008\n2009\n2010\n2011\n2012\n2013\n2014\n2015\n2016\n2017\n2018\n2019\n2020\n2021\n2022\n2023\n2024\n2025\n2026\n2027\n2028\n2029\n2030\n2031\n2032\n2033\n2034\n2035\n2036\n2037\n2038\n2039\n2040\n2041\n2042\n2043\n2044\n2045\n2046\n2047\n2048\n2049\n2050\n2051\n2052\n2053\n2054\n2055\n2056\n2057\n2058\n2059\n2060\n2061\n2062\n2063\n2064\n2065\n2066\n2067\n2068\n2069\n2070\n2071\n2072\n2073\n2074\n2075\n2076\n2077\n2078\n2079\n2080\n2081\n2082\n2083\n2084\n2085\n2086\n2087\n2088\n2089\n2090\n2091\n2092\n2093\n2094\n2095\n2096\n2097\n2098\n2099\n2100"
+  },
+  {
+   "fieldname": "attachment_notes",
+   "fieldtype": "Small Text",
+   "label": "Attachment Notes"
+  },
+  {
+   "fieldname": "religious_denomination",
+   "fieldtype": "Data",
+   "label": "Religious Denomination"
   }
  ],
  "grid_page_length": 50,
@@ -1036,7 +1066,7 @@
    "link_fieldname": "student"
   }
  ],
- "modified": "2026-06-01 16:00:00.000000",
+ "modified": "2026-06-18 09:50:38.392192",
  "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Student",
@@ -1078,7 +1108,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Student",
+   "role": "SH Student",
    "select": 1,
    "share": 1,
    "write": 1
