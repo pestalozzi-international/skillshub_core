@@ -843,12 +843,17 @@
 		var saveBtn = document.getElementById("student-save-btn");
 		saveBtn.disabled = true;
 		saveBtn.textContent = "Saving...";
+
+		// FIX: include `student` in the JSON body alongside `payload`.
+		// When Content-Type is application/json, Frappe does not populate
+		// frappe.form_dict from the query string, so the endpoint's fallback
+		// `student = frappe.form_dict.get("student")` always returned None.
+		// Passing it in the body ensures it is always received correctly.
 		api(
-			"/api/method/skillshub_core.skillshub_core.api.update_student_admin?student=" +
-				encodeURIComponent(state.studentId),
+			"/api/method/skillshub_core.skillshub_core.api.update_student_admin",
 			{
 				method: "POST",
-				body: JSON.stringify({ payload: payload }),
+				body: JSON.stringify({ student: state.studentId, payload: payload }),
 			}
 		)
 			.then(function () {
