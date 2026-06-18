@@ -33,7 +33,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-05-26 06:26:09.237672",
+ "modified": "2026-06-10 12:14:20.716338",
  "modified_by": "Administrator",
  "module": "ZM SH Edulution",
  "name": "Edulution",
@@ -44,16 +44,13 @@
  "quick_lists": [],
  "roles": [
   {
+   "role": "System Manager"
+  },
+  {
    "role": "PI Admin"
   },
   {
    "role": "SH Admin"
-  },
-  {
-   "role": "Administrator"
-  },
-  {
-   "role": "System Manager"
   }
  ],
  "sequence_id": 12.0,

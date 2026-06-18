@@ -216,9 +216,15 @@
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-06-01 12:40:21.418689",
- "modified_by": "thomas@pestalozzi.international",
+ "links": [
+  {
+   "group": "Enrolments",
+   "link_doctype": "SH Enrolment",
+   "link_fieldname": "class"
+  }
+ ],
+ "modified": "2026-06-04 19:40:49.381900",
+ "modified_by": "Administrator",
  "module": "ZM SkillsHub",
  "name": "SH Class",
  "naming_rule": "By script",
@@ -254,7 +260,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Student",
+   "role": "SH Student",
    "share": 1
   },
   {
